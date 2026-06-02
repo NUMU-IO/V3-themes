@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Brand",
+    "name_ar": "العلامة التجارية",
+    "settings": [
+      { "type": "text", "id": "brand_name", "label": "Brand name", "label_ar": "اسم العلامة", "default": "Bazar" },
+      { "type": "text", "id": "brand_name_ar", "label": "Brand name (Arabic)", "label_ar": "اسم العلامة (عربي)", "default": "بازار" },
+      { "type": "image_picker", "id": "logo_url", "label": "Logo", "label_ar": "الشعار", "default": "" },
+      { "type": "color", "id": "primary_color", "label": "Amber (primary)", "label_ar": "اللون الأساسي", "default": "#FFB300" },
+      { "type": "color", "id": "accent_color", "label": "Navy accent", "label_ar": "لون التمييز", "default": "#001F3F" },
+      { "type": "color", "id": "background_color", "label": "Cream background", "label_ar": "لون الخلفية", "default": "#FFF5E1" },
+      { "type": "color", "id": "text_color", "label": "Ink (text)", "label_ar": "لون النص", "default": "#0A0A14" }
+    ]
+  },
+  {
+    "name": "Typography",
+    "name_ar": "الخطوط",
+    "settings": [
+      {
+        "type": "select",
+        "id": "heading_font",
+        "label": "Heading font",
+        "label_ar": "خط العناوين",
+        "default": "inter",
+        "options": [
+          { "value": "inter", "label": "Inter (sans-serif)", "label_ar": "إنتر" },
+          { "value": "poppins", "label": "Poppins (geometric)", "label_ar": "بوبينز" },
+          { "value": "archivo", "label": "Archivo (condensed)", "label_ar": "أرشيفو" }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "body_font",
+        "label": "Body font",
+        "label_ar": "خط النص",
+        "default": "inter",
+        "options": [
+          { "value": "inter", "label": "Inter (sans-serif)", "label_ar": "إنتر" },
+          { "value": "system", "label": "System default", "label_ar": "الافتراضي" }
+        ]
+      }
+    ]
+  }
+]

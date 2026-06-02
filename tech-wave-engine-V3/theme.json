@@ -1,0 +1,170 @@
+{
+  "id": "tech-wave-v3",
+  "name": "Tech wave (V3)",
+  "author": "NUMU",
+  "version": "0.3.0",
+  "layout": "single-column",
+  "description": "Tech Wave (V3) — futuristic dark storefront with neon accents and glassmorphism, ported faithfully from the V2 in-tree theme.",
+  "error_template": "templates/error.html",
+  "loading_template": "templates/loading.html",
+  "presets": {
+    "templates": {
+      "home": {
+        "name": "Home",
+        "sections": [
+          {
+            "type": "tw-announcement-bar",
+            "settings": {
+              "text": "🎉 شحن مجاني للطلبات فوق 500 جنيه",
+              "link_text": "تسوق الآن",
+              "dismissible": true
+            }
+          },
+          {
+            "type": "tech-wave-hero",
+            "settings": {
+              "badge_text": "🎉 خصومات تصل لـ ٢٥٪",
+              "headline": "التكنولوجيا تلتقي بالأناقة",
+              "subtitle": "اكتشف أحدث المنتجات التقنية والإكسسوارات بتوصيل لكل مصر.",
+              "cta_text": "تسوق الآن",
+              "cta_link": "/products",
+              "secondary_text": "العروض",
+              "secondary_link": "/products?tag=sale",
+              "show_trust_strip": true
+            }
+          },
+          {
+            "type": "tech-wave-categories",
+            "settings": {
+              "title": "تسوق حسب الفئة",
+              "columns_desktop": 5,
+              "columns_mobile": 3,
+              "max_items": 0
+            }
+          },
+          {
+            "type": "tech-wave-featured-collection",
+            "settings": {
+              "title": "وصل حديثاً ✨",
+              "subtitle": "أحدث الإضافات",
+              "collection_tag": "new",
+              "view_all_text": "عرض الكل",
+              "view_all_link": "/products",
+              "product_count": 4,
+              "columns": 4
+            }
+          },
+          {
+            "type": "tech-wave-promo-banner",
+            "settings": {
+              "badge_text": "عرض محدود",
+              "headline": "خصم يصل إلى 25٪",
+              "subtitle": "تسوق أحدث تشكيلاتنا التقنية الآن.",
+              "cta_text": "تسوق العرض",
+              "cta_link": "/products?tag=sale"
+            }
+          },
+          {
+            "type": "tech-wave-featured-collection",
+            "settings": {
+              "title": "الأكثر طلباً",
+              "subtitle": "اختيارات العملاء",
+              "collection_tag": "bestseller",
+              "view_all_text": "عرض الكل",
+              "view_all_link": "/products",
+              "product_count": 4,
+              "columns": 4
+            }
+          },
+          {
+            "type": "tech-wave-testimonials",
+            "settings": {
+              "title": "رأي عملاءنا ⭐"
+            }
+          },
+          {
+            "type": "tech-wave-newsletter",
+            "settings": {
+              "title": "كن في الصدارة 📬",
+              "subtitle": "اشترك لتصلك آخر الأخبار والعروض",
+              "button_text": "اشترك",
+              "placeholder": "البريد الإلكتروني"
+            }
+          }
+        ]
+      },
+      "product": {
+        "name": "Product",
+        "sections": [
+          {
+            "type": "tech-wave-product-detail",
+            "settings": {
+              "show_rating": true,
+              "show_stock": true,
+              "show_guarantees": true,
+              "show_related_products": true,
+              "related_products_count": 4
+            }
+          }
+        ]
+      },
+      "products": {
+        "name": "Products",
+        "sections": [
+          {
+            "type": "tech-wave-products-page",
+            "settings": {
+              "show_view_toggle": true,
+              "columns_desktop": 3,
+              "columns_mobile": 2
+            }
+          }
+        ]
+      },
+      "about": {
+        "name": "About",
+        "sections": [
+          {
+            "type": "tech-wave-about",
+            "settings": {}
+          }
+        ]
+      },
+      "contact": {
+        "name": "Contact",
+        "sections": [
+          {
+            "type": "tech-wave-contact",
+            "settings": {}
+          }
+        ]
+      },
+      "profile": {
+        "name": "Profile",
+        "sections": [
+          {
+            "type": "tech-wave-profile",
+            "settings": {}
+          }
+        ]
+      },
+      "cart": {
+        "name": "Cart",
+        "sections": []
+      },
+      "checkout": {
+        "name": "Checkout",
+        "sections": []
+      },
+      "order-confirmation": {
+        "name": "Order confirmation",
+        "sections": [
+          {
+            "type": "tech-wave-order-confirmation-section",
+            "settings": {}
+          }
+        ]
+      }
+    }
+  }
+}

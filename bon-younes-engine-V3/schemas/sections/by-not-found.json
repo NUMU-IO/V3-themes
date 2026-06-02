@@ -1,0 +1,11 @@
+{
+  "type": "by-not-found",
+  "name": "404 — Not found",
+  "settings": [
+    { "type": "text", "id": "status_label", "label": "Status label", "default": "404" },
+    { "type": "text", "id": "headline", "label": "Headline", "default": "Spilled the coffee." },
+    { "type": "textarea", "id": "subhead", "label": "Subhead", "default": "The page you were after isn't on the menu. Let's get you back to something brewing." },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Back to the menu" },
+    { "type": "url", "id": "cta_href", "label": "CTA URL", "default": "/products" }
+  ]
+}

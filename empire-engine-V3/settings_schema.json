@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Brand",
+    "name_ar": "العلامة التجارية",
+    "settings": [
+      { "type": "text", "id": "brand_name", "label": "Brand name", "label_ar": "اسم العلامة", "default": "Empire" },
+      { "type": "text", "id": "brand_name_ar", "label": "Brand name (Arabic)", "label_ar": "اسم العلامة (عربي)", "default": "إمباير" },
+      { "type": "image_picker", "id": "logo_url", "label": "Logo", "label_ar": "الشعار", "default": "" },
+      { "type": "color", "id": "primary_color", "label": "Ink (primary)", "label_ar": "اللون الأساسي", "default": "#1A1A1A" },
+      { "type": "color", "id": "accent_color", "label": "Electric blue accent", "label_ar": "لون التمييز", "default": "#0099FF" },
+      { "type": "color", "id": "background_color", "label": "Off-white background", "label_ar": "لون الخلفية", "default": "#EFEEED" },
+      { "type": "color", "id": "text_color", "label": "Text", "label_ar": "لون النص", "default": "#000000" }
+    ]
+  },
+  {
+    "name": "Typography",
+    "name_ar": "الخطوط",
+    "settings": [
+      {
+        "type": "select",
+        "id": "heading_font",
+        "label": "Heading font",
+        "label_ar": "خط العناوين",
+        "default": "archivo",
+        "options": [
+          { "value": "archivo", "label": "Archivo (wide display)", "label_ar": "أرشيفو" },
+          { "value": "inter", "label": "Inter (sans-serif)", "label_ar": "إنتر" },
+          { "value": "poppins", "label": "Poppins (geometric)", "label_ar": "بوبينز" }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "body_font",
+        "label": "Body font",
+        "label_ar": "خط النص",
+        "default": "inter",
+        "options": [
+          { "value": "inter", "label": "Inter (sans-serif)", "label_ar": "إنتر" },
+          { "value": "system", "label": "System default", "label_ar": "الافتراضي" }
+        ]
+      }
+    ]
+  }
+]

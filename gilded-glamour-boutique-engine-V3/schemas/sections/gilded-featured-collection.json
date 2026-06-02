@@ -1,0 +1,26 @@
+{
+  "type": "gilded-featured-collection",
+  "name": "Gilded Featured Collection",
+  "name_ar": "مجموعة مميزة",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "title", "label": "Title", "label_ar": "العنوان", "default": "Crafted for the Eternal Wardrobe" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "label_ar": "عنوان فرعي", "default": "" },
+    { "type": "product", "id": "product_ids", "label": "Pick products (manual)", "label_ar": "اختيار المنتجات", "default": [], "info": "When you pick products here, they are used in the order selected. Leave empty to auto-fill from the collection below." },
+    {
+      "type": "select", "id": "collection_tag", "label": "Collection (auto-fill)", "label_ar": "المجموعة (تعبئة تلقائية)", "default": "new",
+      "options": [
+        { "label": "New Arrivals", "label_ar": "وصل حديثاً", "value": "new" },
+        { "label": "Best Sellers", "label_ar": "الأكثر مبيعاً", "value": "bestseller" },
+        { "label": "Featured", "label_ar": "مميز", "value": "featured" },
+        { "label": "Sale", "label_ar": "تخفيضات", "value": "sale" }
+      ]
+    },
+    { "type": "text", "id": "view_all_text", "label": "View all text", "label_ar": "نص عرض الكل", "default": "View All" },
+    { "type": "url", "id": "view_all_link", "label": "View all link", "label_ar": "رابط عرض الكل", "default": "/products" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "product_count", "label": "Products to show", "label_ar": "عدد المنتجات", "default": 5, "min": 2, "max": 8, "step": 1 },
+    { "type": "range", "id": "columns", "label": "Columns (desktop)", "label_ar": "أعمدة (ديسكتوب)", "default": 5, "min": 2, "max": 5, "step": 1 }
+  ]
+}

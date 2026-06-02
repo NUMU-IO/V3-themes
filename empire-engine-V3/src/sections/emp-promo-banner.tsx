@@ -1,0 +1,95 @@
+"use client";
+
+import { Link, useResolvedSettings, useShop } from "@numueg/theme-sdk";
+import { ShoppingBag } from "lucide-react";
+import {
+  asImageUrl,
+  asString,
+  demoOrPlaceholder,
+  useDemo,
+  type SectionRenderProps,
+} from "./_shared";
+import { InlineEditable } from "./_inline-editable";
+
+const FALLBACK_IMAGE = {
+  image:
+    "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=70",
+};
+
+const EmpPromoBanner = ({ instance, sectionId }: SectionRenderProps) => {
+  const s = useResolvedSettings(instance);
+  const demo = useDemo();
+  const shop = useShop();
+
+  const configuredImage = asImageUrl(s.image_url);
+  const imageUrl =
+    configuredImage || (demo ? FALLBACK_IMAGE.image : "");
+  const title = asString(s.title) || "EMPIRE";
+  const subtitle = asString(s.subtitle) || "SEASONAL EDIT";
+  const cardLabel = asString(s.card_label) || "CURATED";
+  const ctaText = asString(s.cta_text) || "SHOP NOW";
+  const ctaLink = asString(s.cta_link) || "/products";
+  // The large card's overline uses the live store name (uppercased) so the
+  // editorial banner always reflects the merchant's brand without extra setup.
+  const storeName = (shop?.name || "EMPIRE").toUpperCase();
+  // Demo placeholderize the store-name overline only when the merchant truly
+  // has no store name in context.
+  const overline = demoOrPlaceholder(demo || Boolean(shop?.name), [
+    { name: storeName },
+  ])[0].name || "EMPIRE";
+
+  return (
+    <section className="py-12 md:py-16 lg:py-24 bg-[var(--emp-cream)]">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+          <div className="md:col-span-2 relative rounded-2xl md:rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-[16/10] group emp-card-hover">
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt=""
+                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                loading="lazy"
+              />
+            ) : (
+              <div
+                className="w-full h-full bg-[var(--emp-navy)] flex items-center justify-center relative"
+                aria-hidden="true"
+              >
+                {/* Subtle organic blob to break the flat fill so the
+                    fallback reads as designed empty-state, not "image
+                    failed". */}
+                <div className="absolute -top-10 -end-10 w-40 h-40 bg-[var(--emp-amber)]/20 emp-blob" />
+                <div className="absolute -bottom-12 -start-8 w-32 h-32 bg-[var(--emp-cream)]/10 emp-blob" />
+                <ShoppingBag size={48} className="text-[var(--emp-amber)]/40 relative" />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+            <div className="absolute bottom-4 sm:bottom-6 start-4 sm:start-6">
+              <span className="emp-label text-[var(--emp-amber)]">
+                <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} />
+              </span>
+              <h3 className="emp-heading text-lg sm:text-xl md:text-2xl text-white mt-1 sm:mt-2">
+                {overline}
+              </h3>
+            </div>
+          </div>
+          <div className="relative rounded-2xl md:rounded-3xl overflow-hidden aspect-[16/9] sm:aspect-[3/2] md:aspect-auto group emp-card-hover bg-[var(--emp-amber)]">
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-5 sm:p-6">
+              <span className="emp-label text-[var(--emp-dark)]/60">
+                <InlineEditable sectionId={sectionId} settingKey="card_label" value={cardLabel} />
+              </span>
+              <h3 className="emp-heading text-xl sm:text-2xl md:text-3xl text-[var(--emp-dark)] mt-2 sm:mt-3">
+                <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
+              </h3>
+              <Link to={ctaLink} className="emp-btn mt-4 sm:mt-6 text-[10px] sm:text-[11px]">
+                <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default EmpPromoBanner;

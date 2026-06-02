@@ -1,0 +1,167 @@
+{
+  "id": "kick-game-v3",
+  "name": "Kick game (V3)",
+  "author": "NUMU",
+  "version": "0.3.0",
+  "layout": "single-column",
+  "description": "Kick Game (V3) — warm minimalist luxury streetwear, dense editorial grid, ported faithfully from the V2 in-tree theme.",
+  "error_template": "templates/error.html",
+  "loading_template": "templates/loading.html",
+  "presets": {
+    "templates": {
+      "home": {
+        "name": "Home",
+        "sections": [
+          {
+            "type": "kghero",
+            "settings": {
+              "headline": "NEW DROPS",
+              "subtitle": "ELEVATE YOUR GAME",
+              "cta_text": "SHOP NOW",
+              "cta_link": "/products"
+            }
+          },
+          {
+            "type": "kgcategories",
+            "settings": {
+              "title": "SHOP BY CATEGORY"
+            }
+          },
+          {
+            "type": "kgfeatured",
+            "settings": {
+              "title": "BEST SELLERS",
+              "view_all_text": "VIEW ALL",
+              "view_all_link": "/products?tag=bestseller",
+              "product_count": 8
+            }
+          },
+          {
+            "type": "kgpromo-banner",
+            "settings": {
+              "badge_text": "LIMITED",
+              "headline": "25% OFF ACCESSORIES",
+              "subtitle": "Limited time. Don't sleep.",
+              "cta_text": "SHOP NOW",
+              "cta_link": "/products?category=accessories"
+            }
+          },
+          {
+            "type": "kgfeatured",
+            "settings": {
+              "title": "NEW ARRIVALS",
+              "view_all_text": "VIEW ALL",
+              "view_all_link": "/products?tag=new",
+              "product_count": 8
+            }
+          },
+          {
+            "type": "kgtestimonials",
+            "settings": {
+              "title": "WHAT THEY SAY",
+              "review_1_name": "Omar",
+              "review_1_city": "Cairo",
+              "review_1_text": "Authentic, fast delivery, exactly as pictured. My go-to for sneakers.",
+              "review_1_rating": 5,
+              "review_2_name": "Mariam",
+              "review_2_city": "Alexandria",
+              "review_2_text": "The packaging and the kicks are next level. Highly recommend.",
+              "review_2_rating": 5,
+              "review_3_name": "Youssef",
+              "review_3_city": "Giza",
+              "review_3_text": "Copped the latest drop in minutes. Genuine pairs, great prices.",
+              "review_3_rating": 5
+            }
+          },
+          {
+            "type": "kgnewsletter",
+            "settings": {
+              "title": "STAY IN THE LOOP",
+              "subtitle": "New drops, restocks & exclusive offers.",
+              "button_text": "SUBSCRIBE",
+              "placeholder": "your@email.com"
+            }
+          }
+        ]
+      },
+      "product": {
+        "name": "Product",
+        "sections": [
+          {
+            "type": "kg-product-detail",
+            "settings": {
+              "show_rating": false,
+              "show_stock": false,
+              "show_guarantees": false,
+              "show_related_products": true,
+              "related_products_count": 4
+            }
+          }
+        ]
+      },
+      "products": {
+        "name": "Products",
+        "sections": [
+          {
+            "type": "kg-products-page",
+            "settings": {
+              "show_view_toggle": false,
+              "show_category_subtitle": false,
+              "columns_desktop": 4,
+              "columns_mobile": 2
+            }
+          }
+        ]
+      },
+      "about": {
+        "name": "About",
+        "sections": [
+          {
+            "type": "kg-about",
+            "settings": {}
+          }
+        ]
+      },
+      "contact": {
+        "name": "Contact",
+        "sections": [
+          {
+            "type": "kg-contact",
+            "settings": {}
+          }
+        ]
+      },
+      "profile": {
+        "name": "Profile",
+        "sections": [
+          {
+            "type": "kg-profile",
+            "settings": {}
+          }
+        ]
+      },
+      "cart": {
+        "name": "Cart",
+        "sections": []
+      },
+      "checkout": {
+        "name": "Checkout",
+        "sections": []
+      },
+      "order-confirmation": {
+        "name": "Order confirmation",
+        "sections": [
+          {
+            "type": "kg-order-confirmation",
+            "settings": {
+              "show_progress": false,
+              "show_whatsapp": false,
+              "show_track_order": false,
+              "show_emoji": false
+            }
+          }
+        ]
+      }
+    }
+  }
+}

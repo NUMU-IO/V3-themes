@@ -1,0 +1,14 @@
+{
+  "type": "by-cart",
+  "name": "Cart",
+  "settings": [
+    { "type": "header", "content": "Empty state" },
+    { "type": "text", "id": "empty_headline", "label": "Empty headline", "default": "Your basket is empty" },
+    { "type": "textarea", "id": "empty_subhead", "label": "Empty subhead", "default": "Browse the menu and add a drink — we'll have it ready when you check out." },
+    { "type": "text", "id": "empty_cta_label", "label": "Empty CTA label", "default": "Browse the menu" },
+    { "type": "url", "id": "empty_cta_href", "label": "Empty CTA URL", "default": "/products" },
+    { "type": "header", "content": "Populated state" },
+    { "type": "text", "id": "populated_title", "label": "Section title", "default": "Your basket" },
+    { "type": "text", "id": "checkout_cta_label", "label": "Checkout button label", "default": "Continue to checkout" }
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "id": "vionne-v3",
+  "name": "Vionne (V3)",
+  "author": "",
+  "version": "0.4.1",
+  "layout": "single-column",
+  "description": "Vionne (V3) — refined grayscale storefront for modest fashion, ported faithfully from the V2 in-tree theme.",
+  "error_template": "templates/error.html",
+  "loading_template": "templates/loading.html",
+  "presets": {
+    "templates": {
+      "home": {
+        "name": "Home",
+        "sections": [
+          {
+            "type": "vionne-slideshow",
+            "settings": {
+              "autoplay": true,
+              "interval": 10,
+              "height": "large",
+              "text_alignment": "start",
+              "slide_1_headline": "The Spring Edit",
+              "slide_1_subtitle": "Quietly tailored, made to be lived in.",
+              "slide_1_cta_text": "Shop Now",
+              "slide_1_cta_link": "/products",
+              "slide_2_headline": "Modal Series",
+              "slide_2_subtitle": "Featherweight, breathable, in eight tones.",
+              "slide_2_cta_text": "Discover",
+              "slide_2_cta_link": "/products",
+              "slide_3_headline": "Worldwide Delivery",
+              "slide_3_subtitle": "Now shipping to over forty countries.",
+              "slide_3_cta_text": "Learn More",
+              "slide_3_cta_link": "/about"
+            }
+          },
+          {
+            "type": "vionne-marquee",
+            "settings": {
+              "item_1": "FREE SHIPPING ABOVE 1500 EGP",
+              "item_2": "NEW COLLECTION",
+              "item_3": "WORLDWIDE DELIVERY",
+              "separator": "dot",
+              "size": "sm",
+              "color_scheme": "ink",
+              "direction": "left",
+              "speed_seconds": 30,
+              "pause_on_hover": true,
+              "padding_y": 14,
+              "show_borders": false
+            }
+          },
+          {
+            "type": "vionne-ugc-carousel",
+            "settings": {
+              "eyebrow": "AS WORN BY YOU",
+              "title": "From the ones who wear it best.",
+              "subtitle": "Real customers, real moments.",
+              "cta_text": "Shop the look",
+              "cta_link": "/products"
+            }
+          },
+          {
+            "type": "vionne-featured-collection",
+            "settings": {
+              "title": "Printed",
+              "subtitle": "Just landed",
+              "collection_tag": "new",
+              "view_all_text": "View all",
+              "view_all_link": "/products",
+              "product_count": 8,
+              "columns": 4
+            }
+          },
+          {
+            "type": "vionne-promo-banner",
+            "settings": {
+              "headline": "Get 3 for 850 EGP",
+              "subtitle": "Mix and match the printed edit.",
+              "cta_text": "Shop the edit",
+              "cta_link": "/products"
+            }
+          },
+          {
+            "type": "vionne-featured-collection",
+            "settings": {
+              "title": "Chiffon",
+              "subtitle": "Light layers",
+              "collection_tag": "bestseller",
+              "view_all_text": "View all",
+              "view_all_link": "/products",
+              "product_count": 8,
+              "columns": 4
+            }
+          },
+          {
+            "type": "vionne-collection-strip",
+            "settings": {
+              "title": "Shop the edits",
+              "layout": "image-row",
+              "item_1_label": "Printed Modal",
+              "item_1_link": "/products",
+              "item_2_label": "Plain Modal",
+              "item_2_link": "/products",
+              "item_3_label": "Chiffon",
+              "item_3_link": "/products",
+              "item_4_label": "Accessories",
+              "item_4_link": "/products"
+            }
+          },
+          {
+            "type": "vionne-featured-collection",
+            "settings": {
+              "title": "Accessories",
+              "subtitle": "Finishing touches",
+              "collection_tag": "featured",
+              "view_all_text": "View all",
+              "view_all_link": "/products",
+              "product_count": 8,
+              "columns": 4
+            }
+          },
+          {
+            "type": "vionne-image-comparison",
+            "settings": {
+              "before_image": "https://picsum.photos/seed/vionne-before/900/1200",
+              "after_image": "https://picsum.photos/seed/vionne-after/900/1200",
+              "before_label": "Plain",
+              "after_label": "Styled",
+              "initial_position": 50,
+              "animate_to_center": true,
+              "aspect": "3-4",
+              "full_width": true,
+              "show_labels": false
+            }
+          }
+        ]
+      },
+      "product": {
+        "name": "Product",
+        "sections": [
+          {
+            "type": "vionne-product-detail",
+            "settings": {
+              "show_related_products": true,
+              "related_title": "You may also like"
+            }
+          }
+        ]
+      },
+      "products": {
+        "name": "Products",
+        "sections": [
+          {
+            "type": "vionne-products-page",
+            "settings": {
+              "show_view_toggle": true,
+              "show_category_subtitle": true,
+              "columns_desktop": 4,
+              "columns_mobile": 2
+            }
+          }
+        ]
+      },
+      "about": {
+        "name": "About",
+        "sections": [
+          {
+            "type": "vionne-about",
+            "settings": {}
+          }
+        ]
+      },
+      "contact": {
+        "name": "Contact",
+        "sections": [
+          {
+            "type": "vionne-contact",
+            "settings": {}
+          }
+        ]
+      },
+      "profile": {
+        "name": "Profile",
+        "sections": [
+          {
+            "type": "vionne-profile",
+            "settings": {}
+          }
+        ]
+      },
+      "cart": {
+        "name": "Cart",
+        "sections": []
+      },
+      "checkout": {
+        "name": "Checkout",
+        "sections": []
+      },
+      "order-confirmation": {
+        "name": "Order confirmation",
+        "sections": [
+          {
+            "type": "vionne-order-confirmation-section",
+            "settings": {}
+          }
+        ]
+      }
+    }
+  }
+}

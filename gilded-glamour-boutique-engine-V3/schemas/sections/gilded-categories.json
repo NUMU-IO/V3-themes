@@ -1,0 +1,12 @@
+{
+  "type": "gilded-categories",
+  "name": "Gilded Categories",
+  "name_ar": "شبكة الفئات",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "title", "label": "Section title", "label_ar": "عنوان القسم", "default": "Curated Verticals" },
+
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "max_items", "label": "Max categories", "label_ar": "أقصى عدد فئات", "default": 3, "min": 0, "max": 12, "step": 1, "info": "0 = show all" }
+  ]
+}

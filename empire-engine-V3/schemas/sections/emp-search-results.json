@@ -1,0 +1,19 @@
+{
+  "type": "emp-search-results",
+  "name": "Empire Search Results",
+  "name_ar": "بازار نتائج البحث",
+  "limit": 1,
+  "settings": [
+    { "type": "text", "id": "placeholder_when_no_query", "label": "Empty-query headline", "label_ar": "عنوان البحث الفارغ", "default": "SEARCH THE EMPIRE" },
+    { "type": "text", "id": "search_placeholder", "label": "Search box placeholder", "label_ar": "نص حقل البحث", "default": "Search products…" },
+    { "type": "textarea", "id": "no_results_text", "label": "No-results copy", "label_ar": "نص عدم وجود نتائج", "default": "No matches. Try a different keyword or browse the full edit." },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "label_ar": "أعمدة (ديسكتوب)", "min": 1, "max": 5, "step": 1, "default": 4 }
+  ],
+  "presets": [
+    {
+      "name": "Empire Search Results",
+      "locales": { "en": { "name": "Empire Search Results" }, "ar": { "name": "بازار نتائج البحث" } },
+      "settings": { "placeholder_when_no_query": "SEARCH THE EMPIRE", "columns_desktop": 4 }
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "id": "empire-v3",
+  "name": "Empire (V3)",
+  "author": "NUMU",
+  "version": "0.2.0",
+  "layout": "single-column",
+  "description": "Empire (V3) — premium editorial storefront. Monochrome black-on-off-white palette, electric-blue accent, wide expanded display type, frosted-glass header, and a full multipage set (home, listing, product, cart, search, 404).",
+  "error_template": "templates/error.html",
+  "loading_template": "templates/loading.html",
+  "presets": {
+    "templates": {
+      "404": {
+        "name": "404 — Not found",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-not-found",
+            "settings": {}
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "home": {
+        "name": "Home",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-hero",
+            "settings": {}
+          },
+          {
+            "type": "emp-marquee",
+            "settings": {}
+          },
+          {
+            "type": "emp-featured-collection",
+            "settings": {}
+          },
+          {
+            "type": "emp-image-with-text",
+            "settings": {}
+          },
+          {
+            "type": "emp-promo-banner",
+            "settings": {}
+          },
+          {
+            "type": "emp-about-section",
+            "settings": {}
+          },
+          {
+            "type": "emp-testimonials",
+            "settings": {}
+          },
+          {
+            "type": "emp-newsletter",
+            "settings": {}
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "products": {
+        "name": "Products",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-product-grid",
+            "settings": {}
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "product": {
+        "name": "Product",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-product-detail",
+            "settings": {}
+          },
+          {
+            "type": "emp-related-products",
+            "settings": {}
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "collection": {
+        "name": "Collection",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-product-grid",
+            "settings": {
+              "title": "COLLECTION"
+            }
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "cart": {
+        "name": "Cart",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-cart",
+            "settings": {}
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "checkout": {
+        "name": "Checkout",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "search": {
+        "name": "Search",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-search-results",
+            "settings": {}
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "page": {
+        "name": "Page",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-rich-text",
+            "settings": {}
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      }
+    }
+  }
+}

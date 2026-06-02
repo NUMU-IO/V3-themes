@@ -1,0 +1,302 @@
+/* Fonts used by the gilded sections. Lobster = decorative heading face
+   (V2), Montserrat = the uppercase luxury display face the hero/headings
+   use. Imported here so the bundle's CSS pulls them without relying on the
+   host's font stack. Must precede @tailwind (CSS @import-first rule). */
+@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ───────────────────────────────────────────────────────────────
+ * Ported verbatim from V2 Gilded Glamour Boutique
+ * (numu-egyptian-bazaar/src/themes/gilded-glamour-boutique/styles.css).
+ * The only change: the V2 root selector
+ * :root[data-theme="gilded-glamour-boutique"] is retargeted to the V3
+ * mount element [data-gilded-glamour-boutique-v3-app] so the brand HSL
+ * tokens (--gold, --olive, --background, --foreground, etc.) reach the
+ * sections.
+ * ─────────────────────────────────────────────────────────────── */
+
+/*
+ * Gilded Glamour Boutique theme
+ * Luxury fashion with gold accents and warm beige base.
+ */
+[data-gilded-glamour-boutique-v3-app] {
+  --heading-font: 'Lobster', cursive;
+  /* Keep body font readable — Lobster is decorative */
+  /* Core palette */
+  --background: 40 33% 95%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 0%;
+
+  --primary: 47 27% 56%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 40 33% 95%;
+  --secondary-foreground: 0 0% 0%;
+  --accent: 47 27% 56%;
+  --accent-foreground: 0 0% 0%;
+
+  --muted: 40 20% 90%;
+  --muted-foreground: 0 0% 40%;
+
+  --destructive: 0 84% 32%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 47 20% 80%;
+  --input: 47 20% 80%;
+  --ring: 47 27% 56%;
+  --radius: 0px;
+
+  /* Brand extensions */
+  --gold: 43 37% 48%;
+  --gold-light: 43 40% 60%;
+  --gold-dark: 43 35% 38%;
+  --beige: 40 33% 95%;
+  --olive: 90 20% 34%;
+  --soft-pink: 0 40% 80%;
+  --sale: 0 100% 32%;
+
+  /* Theme gradient — gold sweep */
+  --store-gradient: linear-gradient(135deg, hsl(43 37% 48%), hsl(43 35% 38%));
+}
+
+[data-gilded-glamour-boutique-v3-app] body,
+[data-gilded-glamour-boutique-v3-app] {
+  font-family: var(--body-font, "Inter"), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
+}
+
+[data-gilded-glamour-boutique-v3-app] h1,
+[data-gilded-glamour-boutique-v3-app] h2,
+[data-gilded-glamour-boutique-v3-app] h3,
+[data-gilded-glamour-boutique-v3-app] h4,
+[data-gilded-glamour-boutique-v3-app] h5,
+[data-gilded-glamour-boutique-v3-app] h6 {
+  font-family: var(--heading-font, "Lobster", "Inter"), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Heading-scale: multiply each Tailwind heading text utility (including its
+ * responsive variants) by the merchant's chosen scale. We keep each variant
+ * inside its own @media block so breakpoint switching keeps working — the
+ * Tailwind base rule is overridden by ours via attribute-selector specificity
+ * (1,1,0 vs Tailwind's 0,1,0) inside the same media context. */
+@media (min-width: 0px) {
+  [data-gilded-glamour-boutique-v3-app] .text-3xl { font-size: calc(1.875rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .text-4xl { font-size: calc(2.25rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .text-5xl { font-size: calc(3rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .text-6xl { font-size: calc(3.75rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .text-7xl { font-size: calc(4.5rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .text-8xl { font-size: calc(6rem * var(--gilded-heading-scale, 1)); }
+}
+@media (min-width: 640px) {
+  [data-gilded-glamour-boutique-v3-app] .sm\:text-3xl { font-size: calc(1.875rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .sm\:text-4xl { font-size: calc(2.25rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .sm\:text-5xl { font-size: calc(3rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .sm\:text-6xl { font-size: calc(3.75rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .sm\:text-7xl { font-size: calc(4.5rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .sm\:text-8xl { font-size: calc(6rem * var(--gilded-heading-scale, 1)); }
+}
+@media (min-width: 768px) {
+  [data-gilded-glamour-boutique-v3-app] .md\:text-3xl { font-size: calc(1.875rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .md\:text-4xl { font-size: calc(2.25rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .md\:text-5xl { font-size: calc(3rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .md\:text-6xl { font-size: calc(3.75rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .md\:text-7xl { font-size: calc(4.5rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .md\:text-8xl { font-size: calc(6rem * var(--gilded-heading-scale, 1)); }
+}
+@media (min-width: 1024px) {
+  [data-gilded-glamour-boutique-v3-app] .lg\:text-3xl { font-size: calc(1.875rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .lg\:text-4xl { font-size: calc(2.25rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .lg\:text-5xl { font-size: calc(3rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .lg\:text-6xl { font-size: calc(3.75rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .lg\:text-7xl { font-size: calc(4.5rem * var(--gilded-heading-scale, 1)); }
+  [data-gilded-glamour-boutique-v3-app] .lg\:text-8xl { font-size: calc(6rem * var(--gilded-heading-scale, 1)); }
+}
+
+/* Brand utility classes */
+[data-gilded-glamour-boutique-v3-app] .text-gold {
+  color: hsl(var(--gold));
+}
+[data-gilded-glamour-boutique-v3-app] .bg-gold {
+  background-color: hsl(var(--gold));
+}
+[data-gilded-glamour-boutique-v3-app] .border-gold {
+  border-color: hsl(var(--gold));
+}
+[data-gilded-glamour-boutique-v3-app] .text-olive {
+  color: hsl(var(--olive));
+}
+[data-gilded-glamour-boutique-v3-app] .bg-beige {
+  background-color: hsl(var(--beige));
+}
+[data-gilded-glamour-boutique-v3-app] .text-sale {
+  color: hsl(var(--sale));
+}
+
+/* Decorative gold radial backdrops — used as the default fallback when a
+ * merchant hasn't supplied their own auth/policy hero image. */
+[data-gilded-glamour-boutique-v3-app] .gilded-decor-bg {
+  background:
+    radial-gradient(ellipse at top left, hsl(var(--gold) / 0.25), transparent 60%),
+    radial-gradient(ellipse at bottom right, hsl(var(--gold-dark) / 0.20), transparent 55%);
+}
+
+/* ───────────────────────────────────────────────────────────────
+ * Page-level section utilities (vn-* classes).
+ *
+ * The product-detail / products-page / profile sections are faithful
+ * ports of the proven Vionne V3 page sections, which use Vionne's
+ * `vn-*` utility classes + `--vn-*` tokens. We bring those classes in
+ * here verbatim, but RE-MAP the `--vn-*` tokens onto the Gilded palette
+ * (warm beige band, near-black ink, gold-tinted border) so the pages
+ * render in Gilded's luxury look instead of Vionne's grayscale.
+ * ─────────────────────────────────────────────────────────────── */
+
+[data-gilded-glamour-boutique-v3-app] {
+  --vn-white: #FFFFFF;
+  /* Warm beige band — matches Gilded's --background (40 33% 95%). */
+  --vn-band: #F5F1E9;
+  /* Near-black ink — matches Gilded's --foreground (0 0% 0%). */
+  --vn-surface-dark: #000000;
+  --vn-ink: #0A0A0A;
+  /* Gold-tinted hairline — matches Gilded's --border (47 20% 80%). */
+  --vn-border: #D6CFBE;
+  /* Muted text — matches Gilded's --muted-foreground (0 0% 40%). */
+  --vn-muted: #666666;
+  /* Deep red sale — matches Gilded's --sale (0 100% 32%). */
+  --vn-sale: #A30000;
+}
+
+/* ─── Typography ─── */
+
+.vn-heading {
+  /* Gilded display face: uppercase Montserrat (matches the home hero), not
+     Vionne's grotesk. Kept here so the page headings read as luxury fashion. */
+  font-family: 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.vn-eyebrow {
+  font-family: 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 11px;
+  color: var(--vn-muted);
+}
+
+.vn-label {
+  font-family: 'Montserrat', "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+}
+
+/* ─── Buttons ─── */
+
+.vn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 44px;
+  padding: 0 1.25rem;
+  /* Gilded uses --radius: 0 (sharp luxury edges) — square buttons. */
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: transform 200ms ease, background-color 200ms ease, color 200ms ease, opacity 200ms ease;
+  cursor: pointer;
+}
+
+.vn-btn-filled {
+  /* Gold fill on near-black text — the gilded CTA treatment. */
+  background: hsl(var(--gold));
+  color: var(--vn-ink);
+}
+.vn-btn-filled:hover {
+  background: hsl(var(--gold-dark));
+  transform: translateY(-1px);
+}
+
+.vn-btn-outline-dark {
+  background: transparent;
+  color: var(--vn-ink);
+  border: 1px solid hsl(var(--gold));
+}
+.vn-btn-outline-dark:hover {
+  background: hsl(var(--gold));
+  color: var(--vn-ink);
+  transform: translateY(-1px);
+}
+
+/* ─── Product Card hover ─── */
+
+.vn-product-card .vn-product-image {
+  transition: transform 600ms ease, opacity 280ms ease;
+}
+
+.vn-product-card:hover .vn-product-image {
+  transform: scale(1.03);
+}
+
+.vn-product-card .vn-product-image-secondary {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+
+.vn-product-card:hover .vn-product-image-secondary {
+  opacity: 1;
+}
+
+/* ─── Shimmer (lazy media placeholder) ─── */
+
+.vn-shimmer {
+  background: linear-gradient(90deg, #ECE7DB 0%, #F5F1E9 40%, #ECE7DB 80%);
+  background-size: 200% 100%;
+  animation: vn-shimmer 1400ms ease-in-out infinite;
+}
+
+@keyframes vn-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Misc helpers ─── */
+
+.vn-divider {
+  height: 1px;
+  width: 100%;
+  background: var(--vn-border);
+}
+
+.vn-band {
+  background: var(--vn-band);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

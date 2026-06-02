@@ -1,0 +1,22 @@
+{
+  "cart": {
+    "subtotal": "Subtotal",
+    "quantity_short": "Qty",
+    "title": "Your basket",
+    "empty": "Your basket is empty",
+    "checkout": "Continue to checkout"
+  },
+  "product": {
+    "add_to_cart": "Add to cart",
+    "sold_out": "Sold out",
+    "order": "Order"
+  },
+  "search": {
+    "placeholder": "Search the menu",
+    "no_results": "Nothing on the menu matches that — try another search."
+  },
+  "general": {
+    "loading": "Brewing…",
+    "view_all": "Browse the full menu"
+  }
+}

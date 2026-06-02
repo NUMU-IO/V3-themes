@@ -1,0 +1,11 @@
+{
+  "type": "modern-newsletter",
+  "name": "Newsletter Signup",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "id": "title", "type": "text", "label": "Title", "label_ar": "العنوان", "default": "Subscribe to our newsletter" },
+    { "id": "subtitle", "type": "text", "label": "Subtitle", "label_ar": "عنوان فرعي", "default": "Be the first to hear about new products and exclusive offers" },
+    { "id": "button_text", "type": "text", "label": "Button Text", "label_ar": "نص الزر", "default": "Subscribe" },
+    { "id": "placeholder", "type": "text", "label": "Placeholder", "label_ar": "نص العنصر النائب", "default": "Your email address" }
+  ]
+}

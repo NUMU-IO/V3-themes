@@ -1,0 +1,151 @@
+{
+  "id": "modern-v3",
+  "name": "Modern (V3)",
+  "author": "",
+  "version": "0.3.0",
+  "layout": "single-column",
+  "description": "Modern (V3) — clean teal aesthetic, ported faithfully from the V2 in-tree theme.",
+  "error_template": "templates/error.html",
+  "loading_template": "templates/loading.html",
+  "presets": {
+    "templates": {
+      "home": {
+        "name": "Home",
+        "sections": [
+          {
+            "type": "modern-hero",
+            "settings": {
+              "badge_text": "🎉 خصومات تصل لـ ٢٥٪",
+              "headline": "اكتشف أحلى المنتجات بأفضل الأسعار",
+              "subtitle": "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.",
+              "cta_text": "تسوق الآن",
+              "cta_link": "/products",
+              "secondary_text": "الملابس الجديدة",
+              "secondary_link": "/products?category=clothing",
+              "hero_image_url": "",
+              "show_trust_strip": true
+            }
+          },
+          {
+            "type": "modern-categories",
+            "settings": {
+              "title": "تسوق حسب الفئة",
+              "columns_desktop": 5,
+              "columns_mobile": 3
+            }
+          },
+          {
+            "type": "modern-featured-collection",
+            "settings": {
+              "title": "وصل حديثاً ✨",
+              "subtitle": "أحدث المنتجات اللي ضفناها",
+              "collection_tag": "new",
+              "view_all_text": "عرض الكل",
+              "view_all_link": "/products?tag=new",
+              "product_count": 4,
+              "columns": 4
+            }
+          },
+          {
+            "type": "modern-promo-banner",
+            "settings": {
+              "badge_text": "عرض محدود 🔥",
+              "headline": "خصم ٢٥٪ على كل الإكسسوارات",
+              "subtitle": "العرض ساري لنهاية الشهر. متفوتش الفرصة!",
+              "cta_text": "تسوق الإكسسوارات",
+              "cta_link": "/products?category=accessories"
+            }
+          },
+          {
+            "type": "modern-featured-collection",
+            "settings": {
+              "title": "الأكثر مبيعاً 🔥",
+              "subtitle": "المنتجات اللي الناس بتحبها",
+              "collection_tag": "bestseller",
+              "view_all_text": "عرض الكل",
+              "view_all_link": "/products?tag=bestseller",
+              "product_count": 4,
+              "columns": 4
+            }
+          },
+          {
+            "type": "modern-testimonials",
+            "settings": {
+              "title": "رأي عملاءنا ⭐",
+              "review_1_name": "سارة أحمد",
+              "review_1_city": "القاهرة",
+              "review_1_text": "المنتجات جودتها ممتازة والتوصيل كان سريع جداً. هطلب تاني أكيد!",
+              "review_1_rating": 5,
+              "review_2_name": "محمد عبدالله",
+              "review_2_city": "الإسكندرية",
+              "review_2_text": "أول مرة أطلب أونلاين والتجربة كانت ممتازة. الخامات زي ما في الصور بالظبط.",
+              "review_2_rating": 5,
+              "review_3_name": "نورهان خالد",
+              "review_3_city": "المنصورة",
+              "review_3_text": "أسعار حلوة والمقاسات مظبوطة. خدمة العملاء على الواتساب كانت سريعة.",
+              "review_3_rating": 4
+            }
+          },
+          {
+            "type": "modern-newsletter",
+            "settings": {
+              "title": "اشترك في نشرتنا 📬",
+              "subtitle": "اعرف أول واحد عن العروض والمنتجات الجديدة",
+              "button_text": "اشترك",
+              "placeholder": "البريد الإلكتروني"
+            }
+          }
+        ]
+      },
+      "product": {
+        "name": "Product",
+        "sections": [
+          {
+            "type": "modern-product-detail",
+            "settings": {
+              "show_rating": true,
+              "show_stock": true,
+              "show_guarantees": true,
+              "show_related_products": true,
+              "related_products_count": 4
+            }
+          }
+        ]
+      },
+      "products": {
+        "name": "Products",
+        "sections": [
+          {
+            "type": "modern-products-page",
+            "settings": {
+              "show_view_toggle": true,
+              "columns_desktop": 4,
+              "columns_mobile": 2
+            }
+          }
+        ]
+      },
+      "profile": {
+        "name": "Profile",
+        "sections": [
+          {
+            "type": "modern-profile",
+            "settings": {}
+          }
+        ]
+      },
+      "cart": {
+        "name": "Cart",
+        "sections": []
+      },
+      "checkout": {
+        "name": "Checkout",
+        "sections": []
+      },
+      "order-confirmation": {
+        "name": "Order confirmation",
+        "sections": []
+      }
+    }
+  }
+}

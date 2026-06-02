@@ -1,0 +1,27 @@
+{
+  "type": "tech-wave-about",
+  "name": "About Page (Tech Wave)",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "id": "eyebrow", "type": "text", "label": "Eyebrow", "label_ar": "نص علوي", "default": "ABOUT US" },
+    { "id": "headline", "type": "text", "label": "Headline", "label_ar": "العنوان", "default": "Built different" },
+    { "id": "quote", "type": "textarea", "label": "Quote", "label_ar": "اقتباس", "default": "Technology that meets style — built for the way you live." },
+    { "id": "description", "type": "textarea", "label": "Description", "label_ar": "الوصف", "default": "We curate the latest tech and accessories with a focus on quality, fair pricing, and fast delivery across Egypt." },
+    { "id": "image", "type": "image_picker", "label": "Side image", "label_ar": "الصورة الجانبية", "default": "" },
+
+    { "type": "header", "content": "Values" },
+    { "id": "value_1_title", "type": "text", "label": "Value 1 title", "label_ar": "عنوان القيمة 1", "default": "Authentic products" },
+    { "id": "value_1_text", "type": "textarea", "label": "Value 1 text", "label_ar": "نص القيمة 1", "default": "Every item is 100% genuine and quality-checked." },
+    { "id": "value_2_title", "type": "text", "label": "Value 2 title", "label_ar": "عنوان القيمة 2", "default": "Fast delivery" },
+    { "id": "value_2_text", "type": "textarea", "label": "Value 2 text", "label_ar": "نص القيمة 2", "default": "Shipped across Egypt in 3-5 business days." },
+    { "id": "value_3_title", "type": "text", "label": "Value 3 title", "label_ar": "عنوان القيمة 3", "default": "Secure payment" },
+    { "id": "value_3_text", "type": "textarea", "label": "Value 3 text", "label_ar": "نص القيمة 3", "default": "Pay safely with Paymob, Fawry or cash on delivery." },
+
+    { "type": "header", "content": "Calls To Action" },
+    { "id": "cta_text", "type": "text", "label": "Primary CTA Text", "label_ar": "نص الزر الأساسي", "default": "Shop now" },
+    { "id": "cta_link", "type": "url", "label": "Primary CTA Link", "label_ar": "رابط الزر الأساسي", "default": "/products" },
+    { "id": "contact_cta_text", "type": "text", "label": "Secondary CTA Text", "label_ar": "نص الزر الثانوي", "default": "Get in touch" },
+    { "id": "contact_cta_link", "type": "url", "label": "Secondary CTA Link", "label_ar": "رابط الزر الثانوي", "default": "/contact" }
+  ],
+  "presets": []
+}

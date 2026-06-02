@@ -1,0 +1,11 @@
+{
+  "type": "skeu-newsletter",
+  "name": "Newsletter Signup",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "id": "title", "type": "text", "label": "Title", "label_ar": "العنوان", "default": "اشترك في نشرتنا 📬" },
+    { "id": "subtitle", "type": "text", "label": "Subtitle", "label_ar": "عنوان فرعي", "default": "اعرف أول واحد عن العروض والمنتجات الجديدة" },
+    { "id": "button_text", "type": "text", "label": "Button Text", "label_ar": "نص الزر", "default": "اشترك" },
+    { "id": "placeholder", "type": "text", "label": "Placeholder", "label_ar": "نص العنصر النائب", "default": "البريد الإلكتروني" }
+  ]
+}

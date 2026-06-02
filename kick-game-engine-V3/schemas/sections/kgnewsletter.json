@@ -1,0 +1,16 @@
+{
+  "type": "kgnewsletter",
+  "name": "Newsletter Signup",
+  "name_ar": "اشتراك النشرة",
+  "limit": 1,
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "id": "title", "type": "text", "label": "Title", "label_ar": "العنوان", "default": "STAY IN THE LOOP" },
+    { "id": "subtitle", "type": "text", "label": "Subtitle", "label_ar": "عنوان فرعي", "default": "New drops, restocks & exclusive offers." },
+    { "id": "button_text", "type": "text", "label": "Button Text", "label_ar": "نص الزر", "default": "SUBSCRIBE" },
+    { "id": "placeholder", "type": "text", "label": "Email Placeholder", "label_ar": "نص العنصر النائب", "default": "your@email.com" }
+  ],
+  "presets": [
+    { "name": "Newsletter", "name_ar": "نشرة بريدية", "settings": { "title": "STAY IN THE LOOP", "subtitle": "New drops, restocks & exclusive offers.", "button_text": "SUBSCRIBE" } }
+  ]
+}

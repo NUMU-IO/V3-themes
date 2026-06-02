@@ -1,0 +1,27 @@
+{
+  "type": "boutique-about",
+  "name": "About Page (Boutique)",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "id": "eyebrow", "type": "text", "label": "Eyebrow", "label_ar": "نص علوي", "default": "عن المتجر" },
+    { "id": "headline", "type": "text", "label": "Headline", "label_ar": "العنوان", "default": "أناقة بلمسة عصرية" },
+    { "id": "quote", "type": "textarea", "label": "Quote", "label_ar": "اقتباس", "default": "تشكيلة مختارة بعناية لتناسب ذوقك الرفيع." },
+    { "id": "description", "type": "textarea", "label": "Description", "label_ar": "الوصف", "default": "بوتيك متجر أزياء وإكسسوارات نسائية بتصميمات راقية وجودة عالية، نوصّل لكل مصر." },
+    { "id": "image", "type": "image_picker", "label": "Side image", "label_ar": "الصورة الجانبية", "default": "" },
+
+    { "type": "header", "content": "Values" },
+    { "id": "value_1_title", "type": "text", "label": "Value 1 title", "label_ar": "عنوان الميزة ١", "default": "تشكيلة مميزة" },
+    { "id": "value_1_text", "type": "textarea", "label": "Value 1 text", "label_ar": "نص الميزة ١", "default": "قطع مختارة بعناية كل موسم." },
+    { "id": "value_2_title", "type": "text", "label": "Value 2 title", "label_ar": "عنوان الميزة ٢", "default": "جودة عالية" },
+    { "id": "value_2_text", "type": "textarea", "label": "Value 2 text", "label_ar": "نص الميزة ٢", "default": "خامات ممتازة وتشطيب راقٍ." },
+    { "id": "value_3_title", "type": "text", "label": "Value 3 title", "label_ar": "عنوان الميزة ٣", "default": "شحن لكل مصر" },
+    { "id": "value_3_text", "type": "textarea", "label": "Value 3 text", "label_ar": "نص الميزة ٣", "default": "توصيل سريع وآمن لباب بيتك." },
+
+    { "type": "header", "content": "Calls To Action" },
+    { "id": "cta_text", "type": "text", "label": "Primary CTA Text", "label_ar": "نص الزر الأساسي", "default": "تسوقي الآن" },
+    { "id": "cta_link", "type": "url", "label": "Primary CTA Link", "label_ar": "رابط الزر الأساسي", "default": "/products" },
+    { "id": "contact_cta_text", "type": "text", "label": "Secondary CTA Text", "label_ar": "نص الزر الثانوي", "default": "تواصلي معنا" },
+    { "id": "contact_cta_link", "type": "url", "label": "Secondary CTA Link", "label_ar": "رابط الزر الثانوي", "default": "/contact" }
+  ],
+  "presets": []
+}

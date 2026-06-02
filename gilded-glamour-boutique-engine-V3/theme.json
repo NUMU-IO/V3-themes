@@ -1,0 +1,125 @@
+{
+  "id": "gilded-glamour-boutique-v3",
+  "name": "Gilded glamour boutique (V3)",
+  "author": "Saw Saw Atelier",
+  "version": "0.3.0",
+  "layout": "single-column",
+  "description": "A bold, gold-accented luxury fashion theme with parallax hero, scroll-fill text animations, and curated vertical layouts. V3 port of the in-tree Gilded Glamour Boutique theme.",
+  "error_template": "templates/error.html",
+  "loading_template": "templates/loading.html",
+  "presets": {
+    "templates": {
+      "home": {
+        "name": "Home",
+        "sections": [
+          {
+            "type": "gilded-hero",
+            "settings": {
+              "headline": "THE NEW EMPIRE",
+              "subtitle": "Curated Excellence & Timeless Precision",
+              "cta_text": "Discover Collection",
+              "cta_link": "/products",
+              "enable_parallax": true
+            }
+          },
+          {
+            "type": "gilded-categories",
+            "settings": {
+              "title": "Curated Verticals",
+              "max_items": 3
+            }
+          },
+          {
+            "type": "gilded-featured-collection",
+            "settings": {
+              "title": "Crafted for the Eternal Wardrobe",
+              "subtitle": "The Artisan Way",
+              "collection_tag": "new",
+              "product_count": 5,
+              "columns": 5,
+              "view_all_text": "View All",
+              "view_all_link": "/products"
+            }
+          },
+          {
+            "type": "gilded-promo-banner",
+            "settings": {
+              "headline": "WHERE HERITAGE MEETS THE FUTURE",
+              "subtitle": "Every thread tells a story, every silhouette commands a room, and every piece is destined to become an heirloom."
+            }
+          },
+          {
+            "type": "gilded-featured-collection",
+            "settings": {
+              "title": "Empire Essentials",
+              "subtitle": "Most Loved",
+              "collection_tag": "bestseller",
+              "product_count": 5,
+              "columns": 5,
+              "view_all_text": "Shop All",
+              "view_all_link": "/products"
+            }
+          },
+          {
+            "type": "gilded-newsletter",
+            "settings": {
+              "title": "Newsletter",
+              "subtitle": "Join the empire. Be first to know.",
+              "button_text": "Join",
+              "placeholder": "Your email"
+            }
+          }
+        ]
+      },
+      "product": {
+        "name": "Product",
+        "sections": [
+          {
+            "type": "gilded-product-detail",
+            "settings": {
+              "show_rating": true,
+              "show_stock": true,
+              "show_guarantees": true,
+              "show_related_products": true,
+              "related_products_count": 4
+            }
+          }
+        ]
+      },
+      "products": {
+        "name": "Products",
+        "sections": [
+          {
+            "type": "gilded-products-page",
+            "settings": {
+              "show_view_toggle": true,
+              "columns_desktop": 4,
+              "columns_mobile": 2
+            }
+          }
+        ]
+      },
+      "profile": {
+        "name": "Profile",
+        "sections": [
+          {
+            "type": "gilded-profile",
+            "settings": {}
+          }
+        ]
+      },
+      "cart": {
+        "name": "Cart",
+        "sections": []
+      },
+      "checkout": {
+        "name": "Checkout",
+        "sections": []
+      },
+      "order-confirmation": {
+        "name": "Order confirmation",
+        "sections": []
+      }
+    }
+  }
+}

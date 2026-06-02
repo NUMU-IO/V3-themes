@@ -1,0 +1,328 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ───────────────────────────────────────────────────────────────
+ * Ported verbatim from V2 Luxury Minimal (numu-egyptian-bazaar/src/
+ * themes/luxury-minimal/styles.css). The only change: the V2 root
+ * selector :root[data-theme="luxury-minimal"] is retargeted to the V3
+ * mount element [data-luxury-minimal-v3-app] so the --lux-* + HSL tokens
+ * and the .lux-* helper classes reach the sections.
+ * ─────────────────────────────────────────────────────────────── */
+/* Theme: Luxury Minimal — Ultra-clean refined luxury */
+
+[data-luxury-minimal-v3-app] {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 10%;
+  --card: 0 0% 99%;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 99%;
+  --popover-foreground: 0 0% 10%;
+  --primary: 0 0% 10%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 10%;
+  --muted: 0 0% 95%;
+  --muted-foreground: 0 0% 46%;
+  --accent: 38 75% 40%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 90%;
+  --input: 0 0% 92%;
+  --ring: 0 0% 10%;
+  --radius: 0rem;
+  --store-gradient: linear-gradient(135deg, hsl(0 0% 10%), hsl(0 0% 20%));
+  --hero-bg: 0 0% 97%;
+  --badge-bg: 0 0% 10%;
+  --badge-fg: 0 0% 100%;
+  --whatsapp: 142 70% 40%;
+  --whatsapp-foreground: 0 0% 100%;
+  --announcement-bg: 0 0% 10%;
+  --announcement-fg: 0 0% 95%;
+  --success: 153 50% 38%;
+  --warning: 38 92% 50%;
+
+  /* Luxury-specific tokens */
+  --lux-gold: 38 75% 40%;
+  --lux-black: 0 0% 10%;
+  --lux-white: 0 0% 100%;
+  --lux-gray: 0 0% 96%;
+
+  /* Reset skeu variables */
+  --skeu-shadow-sm: none;
+  --skeu-shadow-md: none;
+  --skeu-shadow-lg: none;
+  --skeu-shadow-inset: none;
+  --skeu-highlight: transparent;
+  --skeu-surface: transparent;
+  --skeu-texture: none;
+  --skeu-depth: 0;
+
+  --sidebar-background: 0 0% 98%;
+  --sidebar-foreground: 0 0% 10%;
+  --sidebar-primary: 0 0% 10%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 0 0% 96%;
+  --sidebar-accent-foreground: 0 0% 10%;
+  --sidebar-border: 0 0% 90%;
+  --sidebar-ring: 0 0% 10%;
+
+  font-family: var(--body-font, "Helvetica Neue"), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Luxury heading — refined spacing */
+[data-luxury-minimal-v3-app] .lux-heading {
+  font-family: var(--heading-font, "Helvetica Neue"), Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Ultra-thin separator */
+[data-luxury-minimal-v3-app] .lux-separator {
+  height: 1px;
+  background: hsl(var(--border));
+}
+
+/* Card — borderless, clean */
+[data-luxury-minimal-v3-app] .lux-card {
+  background: hsl(var(--card));
+  transition: all 0.4s ease;
+}
+[data-luxury-minimal-v3-app] .lux-card:hover {
+  box-shadow: 0 8px 30px hsl(0 0% 0% / 0.06);
+}
+
+/* Button — solid black, sharp edges */
+[data-luxury-minimal-v3-app] .lux-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: hsl(var(--lux-black));
+  color: hsl(var(--lux-white));
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  padding: 1rem 2.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid hsl(var(--lux-black));
+  cursor: pointer;
+}
+[data-luxury-minimal-v3-app] .lux-btn:hover {
+  background: transparent;
+  color: hsl(var(--lux-black));
+}
+
+[data-luxury-minimal-v3-app] .lux-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  padding: 1rem 2.5rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+[data-luxury-minimal-v3-app] .lux-btn-outline:hover {
+  border-color: hsl(var(--foreground));
+}
+
+/* Header — pure, airy */
+[data-luxury-minimal-v3-app] .lux-header {
+  background: hsl(var(--background));
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+/* Footer — dark refined */
+[data-luxury-minimal-v3-app] .lux-footer {
+  background: hsl(var(--lux-black));
+  color: hsl(0 0% 80%);
+}
+
+/* Nav link style */
+[data-luxury-minimal-v3-app] .lux-nav-link {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.3s ease;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+[data-luxury-minimal-v3-app] .lux-nav-link:hover {
+  color: hsl(var(--foreground));
+  border-bottom-color: hsl(var(--foreground));
+}
+
+/* Chip */
+[data-luxury-minimal-v3-app] .lux-chip {
+  border: 1px solid hsl(var(--border));
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+[data-luxury-minimal-v3-app] .lux-chip-active {
+  background: hsl(var(--lux-black));
+  color: hsl(var(--lux-white));
+  border-color: hsl(var(--lux-black));
+}
+
+/* Input — refined */
+[data-luxury-minimal-v3-app] .lux-input {
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+}
+[data-luxury-minimal-v3-app] .lux-input:focus {
+  border-color: hsl(var(--foreground));
+  outline: none;
+}
+
+/* Gold accent */
+[data-luxury-minimal-v3-app] .lux-gold {
+  color: hsl(var(--lux-gold));
+}
+
+/* Force luxury-minimal palette for shared page classes */
+[data-luxury-minimal-v3-app] .store-gradient {
+  background: linear-gradient(135deg, hsl(0 0% 10%), hsl(0 0% 20%)) !important;
+}
+
+/* ───────────────────────────────────────────────────────────────
+ * Page-section helpers — used by the ported page-level sections
+ * (product detail, products listing, profile). These mirror the
+ * Vionne `vn-*` block re-mapped to luxury-minimal's palette (sharp
+ * edges, near-black ink, gold accent, hairline borders) so the page
+ * sections render faithfully and never crash. Scoped under the V3 app
+ * element to match the rest of the theme.
+ * ─────────────────────────────────────────────────────────────── */
+
+[data-luxury-minimal-v3-app] {
+  /* Convenience aliases used by the page sections (kept in sync with the
+     luxury tokens above). */
+  --lux-ink: 0 0% 10%;
+  --lux-band: 0 0% 96%;
+  --lux-muted: 0 0% 46%;
+  --lux-line: 0 0% 90%;
+  --lux-sale: 0 72% 45%;
+}
+
+/* Eyebrow / label */
+[data-luxury-minimal-v3-app] .lux-eyebrow {
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 10px;
+  color: hsl(var(--muted-foreground));
+}
+
+[data-luxury-minimal-v3-app] .lux-label {
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 10px;
+}
+
+/* Filled / outline button variants used by the page sections */
+[data-luxury-minimal-v3-app] .lux-btn-filled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: hsl(var(--lux-black));
+  color: hsl(var(--lux-white));
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  padding: 0.9rem 2rem;
+  border: 1px solid hsl(var(--lux-black));
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+[data-luxury-minimal-v3-app] .lux-btn-filled:hover {
+  background: transparent;
+  color: hsl(var(--lux-black));
+}
+
+[data-luxury-minimal-v3-app] .lux-btn-outline-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--foreground));
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  padding: 0.9rem 2rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+[data-luxury-minimal-v3-app] .lux-btn-outline-dark:hover {
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+}
+
+/* Product-card hover treatments (image zoom + secondary image reveal) */
+[data-luxury-minimal-v3-app] .lux-product-card .lux-product-image {
+  transition: transform 600ms ease, opacity 280ms ease;
+}
+[data-luxury-minimal-v3-app] .lux-product-card:hover .lux-product-image {
+  transform: scale(1.03);
+}
+[data-luxury-minimal-v3-app] .lux-product-card .lux-product-image-secondary {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+[data-luxury-minimal-v3-app] .lux-product-card:hover .lux-product-image-secondary {
+  opacity: 1;
+}
+
+/* Shimmer placeholder for lazy media */
+[data-luxury-minimal-v3-app] .lux-shimmer {
+  background: linear-gradient(90deg, #ececec 0%, #f5f5f5 40%, #ececec 80%);
+  background-size: 200% 100%;
+  animation: lux-shimmer 1400ms ease-in-out infinite;
+}
+@keyframes lux-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-luxury-minimal-v3-app] .lux-shimmer {
+    animation: none;
+  }
+}
+
+/* Scrollbar-hide (thumbnail rail / category strip) */
+[data-luxury-minimal-v3-app] .scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+[data-luxury-minimal-v3-app] .scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

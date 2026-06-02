@@ -1,0 +1,15 @@
+{
+  "type": "elegant-promo-banner",
+  "name": "Elegant Promo Banner",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "id": "badge_text", "type": "text", "label": "Badge Text", "label_ar": "نص الشارة", "default": "" },
+    { "id": "headline", "type": "text", "label": "Headline", "label_ar": "العنوان", "default": "Special Offer" },
+    { "id": "subtitle", "type": "text", "label": "Subtitle", "label_ar": "عنوان فرعي", "default": "Shop our latest collection" },
+    { "id": "cta_text", "type": "text", "label": "Button Text", "label_ar": "نص الزر", "default": "Shop Now" },
+    { "id": "cta_link", "type": "url", "label": "Button Link", "label_ar": "رابط الزر", "default": "/products" },
+
+    { "type": "header", "content": "Media" },
+    { "id": "image_url", "type": "image_picker", "label": "Image", "label_ar": "الصورة", "default": "" }
+  ]
+}

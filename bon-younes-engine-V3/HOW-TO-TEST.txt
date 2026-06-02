@@ -1,0 +1,202 @@
+═══════════════════════════════════════════════════════════════════
+  HOW TO TEST BON YOUNES (or any V3 theme) IN THE MERCHANT HUB
+═══════════════════════════════════════════════════════════════════
+
+Your store info (already discovered from the API):
+  store id   : cc8f3673-90a7-4b7c-b4a0-f594b6e06ec5
+  subdomain  : testlocal
+  store url  : http://testlocal.localhost:3100   (dev)
+  dashboard  : http://localhost:8080/online-store/themes
+
+
+─── ONE-TIME SETUP (done — keep for reference) ────────────────────
+
+1. Env var so CLI hits local API (set permanently for your user):
+     [Environment]::SetEnvironmentVariable("NUMU_API_URL",
+       "http://localhost:8000/api/v1", "User")
+
+2. Login token saved to ~/.numurc:
+     C:\Users\PC\.numurc   (already populated; valid until ~30 min,
+                            then re-run `numu-theme login`)
+
+3. Theme CLI built (rebuild only if cli source changes):
+     cd C:\Users\PC\Desktop\NUMU\numu-theme-cli
+     pnpm install ; pnpm build
+
+
+─── DAILY WORKFLOW — 4 TERMINALS ──────────────────────────────────
+
+OPEN FOUR POWERSHELL WINDOWS. Each one runs a long-lived dev server.
+
+┌── Terminal 1 — Backend API ─────────────────────────────────────┐
+│ cd C:\Users\PC\Desktop\NUMU\NUMU-api                           │
+│ make dev                                                       │
+│ # Listens on http://localhost:8000                             │
+└────────────────────────────────────────────────────────────────┘
+
+┌── Terminal 2 — Merchant Hub ────────────────────────────────────┐
+│ cd C:\Users\PC\Desktop\NUMU\numo-merchant-hub                   │
+│ npm run dev                                                     │
+│ # Listens on http://localhost:8080                              │
+└────────────────────────────────────────────────────────────────┘
+
+┌── Terminal 3 — Storefront (Next.js) ────────────────────────────┐
+│ cd C:\Users\PC\Desktop\NUMU\numu-storefront                     │
+│ npm run dev                                                     │
+│ # Listens on http://localhost:3100                              │
+│ # (was 3000 — fixed today, package.json now uses -p 3100)       │
+└────────────────────────────────────────────────────────────────┘
+
+┌── Terminal 4 — The theme you want to test ──────────────────────┐
+│ cd C:\Users\PC\Desktop\NUMU\v3-themes\bon-younes-engine-V3      │
+│                                                                 │
+│ # ONE command — starts vite + tells the API to use this bundle:│
+│ node C:\Users\PC\Desktop\NUMU\numu-theme-cli\dist\index.js dev `│
+│   --store cc8f3673-90a7-4b7c-b4a0-f594b6e06ec5                  │
+│                                                                 │
+│ # Listens on http://localhost:5173 — that's where the storefron│
+│ # will fetch theme.js + theme.css from.                         │
+└────────────────────────────────────────────────────────────────┘
+
+To switch to a different V3 theme (e.g. luxury-minimal):
+  - Stop Terminal 4 (Ctrl+C)
+  - cd C:\Users\PC\Desktop\NUMU\v3-themes\luxury-minimal-engine-V3
+  - Run the same `numu-theme dev --store cc8f3673-...` command
+  - Refresh the merchant hub iframe — luxury-minimal renders now.
+
+
+─── TESTING ──────────────────────────────────────────────────────
+
+1. Open in your browser:
+     http://localhost:8080/online-store/themes/editor-v3
+
+   The right side is an iframe pointing at:
+     http://testlocal.localhost:3100/...
+
+   The storefront fetches the dev bundle from localhost:5173.
+
+2. Click on any text in the iframe (headline, subtitle, CTA, etc.)
+   → A dashed caramel frame appears
+   → Click again → it goes editable
+   → Type a new value → press Enter (or click outside)
+   → The text is saved to the draft AND the matching field in the
+     left panel scrolls into view and focuses with your new value.
+
+3. Public store (no editor chrome):
+     http://testlocal.localhost:3100/
+
+   Same theme, same data, no inline-edit affordances (those only
+   show inside the customizer iframe).
+
+4. Stand-alone theme preview (no backend, fake products):
+     http://localhost:5173/
+
+   Uses the floating dev HUD (HOME / PRODUCT / CART / CHECKOUT) to
+   switch templates. Append `?editor=v3` to test the inline-edit
+   hover affordance without the merchant-hub running.
+
+
+─── COMMON GOTCHAS ───────────────────────────────────────────────
+
+• "EACCES on port 3000"
+    Windows reserves some ports. Storefront is now on 3100. If 3100
+    is also reserved, run:
+      net stop winnat
+      netsh int ip reset
+      net start winnat
+    Or pick another port in numu-storefront/package.json AND update
+    numo-merchant-hub/.env.local's VITE_STOREFRONT_URL to match.
+
+• "ENOTFOUND api.numu.io"
+    CLI is hitting prod. Make sure ~/.numurc has:
+      "api_url": "http://localhost:8000/api/v1"
+    (already set today)
+
+• "Loading preview…" stuck in editor
+    Two things to check:
+      (a) numo-merchant-hub/.env.local has:
+            VITE_STOREFRONT_URL=http://{subdomain}.localhost:3100
+      (b) The storefront on 3100 actually started (Terminal 3).
+
+• Token expired (30-minute access tokens)
+    Run `numu-theme login` again. Token refreshes in ~/.numurc.
+
+• Port 5173 already in use
+    You probably have `npm run dev` running in the theme folder
+    AND `numu-theme dev` trying to start vite too. Pick one.
+
+
+─── HOW DO I MAKE THEMES APPEAR IN THE MARKETPLACE? ──────────────
+
+What you see today: "Currently active" + "Browse themes" lists the
+EXTERNAL theme registered for YOUR store. The "Theme marketplace"
+section at the bottom is the storefront for FREE published themes
+that any merchant can install with one click.
+
+Three concepts to keep separate:
+
+  1. DEV-MODE EXTERNAL — what we've been doing.
+     One store, one external theme, points at localhost:5173.
+     Set via `numu-theme dev --store <id>`. Stays on that one store.
+     Disappears when the store unsets it.
+
+  2. INSTALLED EXTERNAL — a built bundle uploaded to NUMU storage.
+     Belongs to one store. Permanent until the merchant uninstalls.
+     Set via `numu-theme submit` after `numu-theme build`.
+
+  3. MARKETPLACE THEME — a published theme that ANY merchant can
+     browse + install in one click. This is what appears in the
+     "Theme marketplace" panel at the bottom of the dashboard.
+
+To make Bon Younes appear in the marketplace for free:
+
+  STEP A — Build the production bundle
+    cd C:\Users\PC\Desktop\NUMU\v3-themes\bon-younes-engine-V3
+    node C:\Users\PC\Desktop\NUMU\numu-theme-cli\dist\index.js build
+
+  STEP B — Submit to the marketplace
+    node C:\Users\PC\Desktop\NUMU\numu-theme-cli\dist\index.js submit `
+      --theme-id <new-uuid-or-omit-to-create>
+
+    The first submit creates a theme record + uploads the bundle as
+    version 0.1.0. Subsequent submits create new version rows.
+
+  STEP C — Approve + publish in admin panel (numu-admin)
+    Open http://localhost:5000 (numu-admin runs on port 5000).
+    Find the new theme submission, set status = "approved",
+    set pricing = "free", click Publish.
+
+    This flips a flag in the DB so the public marketplace endpoint
+    (`/api/v1/marketplace/themes`) returns it and merchants see it
+    in the dashboard's "Theme marketplace" panel.
+
+  STEP D — Repeat for each theme you want available.
+    Do the same `build` + `submit` for:
+      - luxury-minimal-engine-V3
+      - vionne-engine-V3
+      - empire-engine-V3
+      - ...etc. for every theme in v3-themes/
+
+    Then approve them all in numu-admin.
+
+After that, when a merchant opens their dashboard and clicks any
+theme in the marketplace panel, the platform pulls the right bundle
+from NUMU's storage and renders it in their storefront. You can
+keep adding bon-younes-v2, bon-younes-iced-edition, etc. — each is
+its own marketplace row.
+
+
+─── QUICK COMMAND CHEATSHEET ─────────────────────────────────────
+
+# CLI shortcut (add to your PowerShell $PROFILE once):
+function numu-theme { node C:\Users\PC\Desktop\NUMU\numu-theme-cli\dist\index.js @args }
+
+# Common commands:
+numu-theme login                         # if token expired
+numu-theme dev --store <id>              # local dev against a store
+numu-theme build                         # production bundle
+numu-theme submit --theme-id <uuid>      # submit to marketplace
+numu-theme status                        # what's currently set
+numu-theme doctor                        # health check the project
+
+═══════════════════════════════════════════════════════════════════

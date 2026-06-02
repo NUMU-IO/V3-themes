@@ -1,0 +1,169 @@
+{
+  "id": "skeuomorphic-v3",
+  "name": "Skeuomorphic (V3)",
+  "author": "NUMU",
+  "version": "0.3.0",
+  "layout": "single-column",
+  "description": "Skeuomorphic (V3) — physical, tactile 3D interface, ported faithfully from the V2 in-tree theme.",
+  "error_template": "templates/error.html",
+  "loading_template": "templates/loading.html",
+  "presets": {
+    "templates": {
+      "home": {
+        "name": "Home",
+        "sections": [
+          {
+            "type": "skeu-announcement-bar",
+            "settings": {
+              "text": "🎉 شحن مجاني للطلبات فوق 500 جنيه",
+              "link_text": "تسوق الآن",
+              "dismissible": true
+            }
+          },
+          {
+            "type": "skeu-hero",
+            "settings": {
+              "badge_text": "🎉 عروض حصرية",
+              "headline": "اكتشف منتجات مميزة",
+              "subtitle": "تشكيلة متنوعة من المنتجات بجودة عالية وأسعار مناسبة. توصيل لكل مصر.",
+              "cta_text": "تسوق الآن",
+              "cta_link": "/products",
+              "show_trust_strip": true
+            }
+          },
+          {
+            "type": "skeu-categories",
+            "settings": {
+              "title": "تسوق حسب الفئة",
+              "columns_desktop": 5,
+              "columns_mobile": 3
+            }
+          },
+          {
+            "type": "skeu-featured-collection",
+            "settings": {
+              "title": "وصل حديثاً ✨",
+              "collection_tag": "new",
+              "product_count": 4,
+              "columns": 4
+            }
+          },
+          {
+            "type": "skeu-promo-banner",
+            "settings": {
+              "badge_text": "عرض محدود 🔥",
+              "headline": "خصم ٢٥٪ على كل الإكسسوارات",
+              "cta_text": "تسوق العرض",
+              "cta_link": "/products?category=accessories"
+            }
+          },
+          {
+            "type": "skeu-featured-collection",
+            "settings": {
+              "title": "الأكثر مبيعاً 🔥",
+              "collection_tag": "bestseller",
+              "product_count": 4,
+              "columns": 4
+            }
+          },
+          {
+            "type": "skeu-testimonials",
+            "settings": {
+              "title": "رأي عملائنا ⭐",
+              "review_1_name": "سارة أحمد",
+              "review_1_city": "القاهرة",
+              "review_1_text": "المنتجات جودتها ممتازة والتوصيل سريع.",
+              "review_1_rating": 5,
+              "review_2_name": "محمد عبدالله",
+              "review_2_city": "الإسكندرية",
+              "review_2_text": "الخامات زي ما في الصور بالظبط.",
+              "review_2_rating": 5,
+              "review_3_name": "نورهان خالد",
+              "review_3_city": "المنصورة",
+              "review_3_text": "أسعار حلوة وخدمة عملاء سريعة.",
+              "review_3_rating": 4
+            }
+          },
+          {
+            "type": "skeu-newsletter",
+            "settings": {
+              "title": "اشترك في نشرتنا 📬",
+              "subtitle": "اعرف أول واحد عن العروض والمنتجات الجديدة",
+              "button_text": "اشترك",
+              "placeholder": "البريد الإلكتروني"
+            }
+          }
+        ]
+      },
+      "product": {
+        "name": "Product",
+        "sections": [
+          {
+            "type": "skeu-product-detail",
+            "settings": {
+              "show_related_products": true,
+              "related_products_count": 4
+            }
+          }
+        ]
+      },
+      "products": {
+        "name": "Products",
+        "sections": [
+          {
+            "type": "skeu-products-page",
+            "settings": {
+              "show_view_toggle": true,
+              "columns_desktop": 4,
+              "columns_mobile": 2
+            }
+          }
+        ]
+      },
+      "about": {
+        "name": "About",
+        "sections": [
+          {
+            "type": "skeu-about",
+            "settings": {}
+          }
+        ]
+      },
+      "contact": {
+        "name": "Contact",
+        "sections": [
+          {
+            "type": "skeu-contact",
+            "settings": {}
+          }
+        ]
+      },
+      "profile": {
+        "name": "Profile",
+        "sections": [
+          {
+            "type": "skeu-profile",
+            "settings": {}
+          }
+        ]
+      },
+      "cart": {
+        "name": "Cart",
+        "sections": []
+      },
+      "checkout": {
+        "name": "Checkout",
+        "sections": []
+      },
+      "order-confirmation": {
+        "name": "Order confirmation",
+        "sections": [
+          {
+            "type": "skeu-order-confirmation-section",
+            "settings": {}
+          }
+        ]
+      }
+    }
+  }
+}
