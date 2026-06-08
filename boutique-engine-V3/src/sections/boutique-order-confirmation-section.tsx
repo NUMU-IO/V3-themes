@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import { Link, Money, useOrders } from "@numueg/theme-sdk";
+import { Link, Money, useOrders, useLocale } from "@numueg/theme-sdk";
 import { Check, Copy, Package, ArrowLeft, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Boutique order-confirmation section.
@@ -15,17 +15,22 @@ import { asString, type SectionRenderProps } from "./_shared";
  */
 export default function BoutiqueOrderConfirmationSection({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
   const showProgress = s.show_progress ?? true;
   const showWhatsApp = s.show_whatsapp ?? true;
   const showTrackOrder = s.show_track_order ?? true;
   const showEmoji = s.show_emoji ?? true;
 
-  const title = asString(s.title) || "تم تأكيد طلبك";
+  const title = asString(s.title) || localized(locale, "Your order is confirmed", "تم تأكيد طلبك");
   const subtitle =
     asString(s.subtitle) ||
-    "شكراً لطلبك. هنبعتلك تفاصيل الطلب على الواتساب.";
-  const continueText = asString(s.continue_shopping_text) || "متابعة التسوق";
+    localized(
+      locale,
+      "Thank you for your order. We'll send the order details over WhatsApp.",
+      "شكراً لطلبك. هنبعتلك تفاصيل الطلب على الواتساب.",
+    );
+  const continueText = asString(s.continue_shopping_text) || localized(locale, "Continue shopping", "متابعة التسوق");
   const continueLink = asString(s.continue_shopping_link) || "/";
 
   const { orders } = useOrders();
@@ -43,7 +48,12 @@ export default function BoutiqueOrderConfirmationSection({ instance }: SectionRe
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const steps = ["تم الطلب", "قيد التجهيز", "في الطريق", "تم التوصيل"];
+  const steps = [
+    localized(locale, "Ordered", "تم الطلب"),
+    localized(locale, "Processing", "قيد التجهيز"),
+    localized(locale, "On the way", "في الطريق"),
+    localized(locale, "Delivered", "تم التوصيل"),
+  ];
 
   return (
     <div
@@ -78,7 +88,7 @@ export default function BoutiqueOrderConfirmationSection({ instance }: SectionRe
         >
           {/* Title */}
           <span className="block mb-2 text-[10px] sm:text-[11px] uppercase tracking-widest text-primary">
-            تم تأكيد الطلب
+            {localized(locale, "Order confirmed", "تم تأكيد الطلب")}
           </span>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-3 leading-tight">
             {title}{showEmoji ? " 🎉" : ""}
@@ -92,7 +102,7 @@ export default function BoutiqueOrderConfirmationSection({ instance }: SectionRe
             <div className="space-y-4 text-sm">
               {/* Order number */}
               <div className="flex justify-between items-center">
-                <span className="text-xs sm:text-sm text-muted-foreground">رقم الطلب</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">{localized(locale, "Order number", "رقم الطلب")}</span>
                 <div className="flex items-center gap-2">
                   <span
                     className="font-mono text-sm sm:text-base text-foreground font-semibold tracking-wider"
@@ -103,7 +113,7 @@ export default function BoutiqueOrderConfirmationSection({ instance }: SectionRe
                   <button
                     onClick={handleCopy}
                     className="p-1.5 rounded-md transition-colors hover:bg-white/60 active:scale-95"
-                    title="نسخ"
+                    title={localized(locale, "Copy", "نسخ")}
                   >
                     {copied ? (
                       <Check size={14} className="text-primary" />
@@ -119,7 +129,7 @@ export default function BoutiqueOrderConfirmationSection({ instance }: SectionRe
                 <>
                   <div className="h-px bg-border" />
                   <div className="flex justify-between">
-                    <span className="text-xs sm:text-sm text-muted-foreground">الإجمالي</span>
+                    <span className="text-xs sm:text-sm text-muted-foreground">{localized(locale, "Total", "الإجمالي")}</span>
                     <span className="text-xs sm:text-sm font-medium text-foreground">
                       <Money amount={total} currency={currency} />
                     </span>
@@ -130,15 +140,15 @@ export default function BoutiqueOrderConfirmationSection({ instance }: SectionRe
               {/* Delivery */}
               <div className="h-px bg-border" />
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-muted-foreground">موعد التوصيل المتوقع</span>
-                <span className="text-xs sm:text-sm font-medium text-foreground">3-5 أيام عمل</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">{localized(locale, "Estimated delivery", "موعد التوصيل المتوقع")}</span>
+                <span className="text-xs sm:text-sm font-medium text-foreground">{localized(locale, "3-5 business days", "3-5 أيام عمل")}</span>
               </div>
 
               {/* Status */}
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-muted-foreground">الحالة</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">{localized(locale, "Status", "الحالة")}</span>
                 <span className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-foreground">
-                  <Package size={14} /> قيد التجهيز
+                  <Package size={14} /> {localized(locale, "Processing", "قيد التجهيز")}
                 </span>
               </div>
             </div>
@@ -186,21 +196,28 @@ export default function BoutiqueOrderConfirmationSection({ instance }: SectionRe
             <div className="bg-card border border-border rounded-[var(--radius)] p-4 sm:p-5 mb-6 sm:mb-7 text-start">
               <div className="flex items-center gap-2 mb-2.5 sm:mb-3 text-[10px] sm:text-[11px] uppercase tracking-widest">
                 <MessageCircle size={16} className="text-whatsapp" />
-                <span className="text-sm font-bold text-whatsapp">رسالة واتساب</span>
+                <span className="text-sm font-bold text-whatsapp">{localized(locale, "WhatsApp message", "رسالة واتساب")}</span>
               </div>
               <div className="bg-accent/30 rounded-md p-3 sm:p-4 text-xs sm:text-sm text-foreground leading-relaxed">
-                <p>أهلاً! 👋</p>
+                <p>{localized(locale, "Hi there! 👋", "أهلاً! 👋")}</p>
                 <p className="mt-1">
-                  طلبك{" "}
-                  <strong className="font-semibold text-foreground">{orderNumber}</strong> اتسجّل بنجاح.
+                  {localized(locale, "Your order ", "طلبك ")}
+                  <strong className="font-semibold text-foreground">{orderNumber}</strong>
+                  {localized(locale, " has been placed successfully.", " اتسجّل بنجاح.")}
                 </p>
                 {typeof total === "number" && total > 0 && (
                   <p className="mt-1">
-                    الإجمالي: <strong><Money amount={total} currency={currency} /></strong>
+                    {localized(locale, "Total: ", "الإجمالي: ")}<strong><Money amount={total} currency={currency} /></strong>
                   </p>
                 )}
-                <p className="mt-1">هنوصّله خلال 3-5 أيام عمل. لو عندك أي سؤال، تواصلي معنا هنا.</p>
-                <p className="mt-1">شكراً لتسوقك معنا ❤️</p>
+                <p className="mt-1">
+                  {localized(
+                    locale,
+                    "We'll deliver it within 3-5 business days. If you have any questions, reach out to us here.",
+                    "هنوصّله خلال 3-5 أيام عمل. لو عندك أي سؤال، تواصلي معنا هنا.",
+                  )}
+                </p>
+                <p className="mt-1">{localized(locale, "Thank you for shopping with us ❤️", "شكراً لتسوقك معنا ❤️")}</p>
               </div>
             </div>
           )}
@@ -215,7 +232,7 @@ export default function BoutiqueOrderConfirmationSection({ instance }: SectionRe
                   "py-3 sm:py-3.5 text-xs sm:text-sm"
                 }
               >
-                <Package size={18} /> تتبّعي الطلب
+                <Package size={18} /> {localized(locale, "Track order", "تتبّعي الطلب")}
               </Link>
             )}
             <Link

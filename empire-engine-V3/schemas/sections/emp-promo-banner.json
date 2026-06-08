@@ -3,18 +3,65 @@
   "name": "Empire Editorial",
   "name_ar": "بازار تحريري",
   "settings": [
-    { "type": "image_picker", "id": "image_url", "label": "Large Image", "label_ar": "صورة كبيرة", "info": "Big editorial card. Leave empty for a branded fallback." },
-    { "type": "text", "id": "subtitle", "label": "Large Card Overline", "label_ar": "تسمية البطاقة الكبيرة", "default": "SEASONAL EDIT" },
-    { "type": "text", "id": "card_label", "label": "Small Card Label", "label_ar": "تسمية البطاقة الصغيرة", "default": "CURATED" },
-    { "type": "text", "id": "title", "label": "Small Card Title", "label_ar": "عنوان البطاقة الصغيرة", "default": "EMPIRE" },
-    { "type": "text", "id": "cta_text", "label": "Button Text", "label_ar": "نص الزر", "default": "SHOP NOW" },
-    { "type": "url", "id": "cta_link", "label": "Button Link", "label_ar": "رابط الزر", "default": "/products" }
+    {
+      "type": "image_picker",
+      "id": "image_url",
+      "label": "Large Image",
+      "label_ar": "صورة كبيرة",
+      "aspect_ratio": "4/3",
+      "info": "Big editorial card. Leave empty for a branded fallback."
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Large Card Overline",
+      "label_ar": "تسمية البطاقة الكبيرة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "card_label",
+      "label": "Small Card Label",
+      "label_ar": "تسمية البطاقة الصغيرة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Small Card Title",
+      "label_ar": "عنوان البطاقة الصغيرة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button Text",
+      "label_ar": "نص الزر",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button Link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    }
   ],
   "presets": [
     {
       "name": "Empire Editorial",
-      "locales": { "en": { "name": "Empire Editorial" }, "ar": { "name": "بازار تحريري" } },
-      "settings": { "title": "EMPIRE", "subtitle": "SEASONAL EDIT" }
+      "locales": {
+        "en": {
+          "name": "Empire Editorial"
+        },
+        "ar": {
+          "name": "بازار تحريري"
+        }
+      },
+      "settings": {
+        "title": "",
+        "subtitle": ""
+      }
     }
   ]
 }

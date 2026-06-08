@@ -1,7 +1,7 @@
 "use client";
-import { Link, useCollections } from "@numueg/theme-sdk";
+import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Editorial categories — faithful port of V2
@@ -16,7 +16,8 @@ export default function EdCategories({ instance }: SectionRenderProps) {
   const { collections } = useCollections();
   const isLoading = false;
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "تسوق حسب الفئة";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Shop by Category", "تسوق حسب الفئة");
   const maxItems = asNumber(s.max_items, 0);
 
   const displayCategories = maxItems > 0 ? collections.slice(0, maxItems) : collections;
@@ -33,7 +34,7 @@ export default function EdCategories({ instance }: SectionRenderProps) {
 
         {!isLoading && displayCategories.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-10">
-            لا توجد فئات بعد
+            {localized(locale, "No categories yet", "لا توجد فئات بعد")}
           </p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -64,7 +65,7 @@ export default function EdCategories({ instance }: SectionRenderProps) {
                       {cat.name}
                     </span>
                     <p className="text-white/60 text-xs mt-1">
-                      {cat.product_count} منتج
+                      {cat.product_count} {localized(locale, "products", "منتج")}
                     </p>
                   </div>
                 </Link>

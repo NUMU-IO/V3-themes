@@ -1,11 +1,14 @@
 "use client";
 
-import { Link, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { Gem, Shield, Users, Palette, Star, type LucideIcon } from "lucide-react";
 import {
+  applyImageTransform,
+  asImageTransform,
   asString,
   asImageUrl,
   demoOrPlaceholder,
+  localized,
   readBlocks,
   useDemo,
   type SectionRenderProps,
@@ -29,38 +32,46 @@ const ICONS: Record<string, LucideIcon> = {
 };
 const iconFor = (key: string): LucideIcon => ICONS[key.toLowerCase()] ?? Star;
 
-const FALLBACK_VALUES: ValueCard[] = [
-  { icon: "gem", title: "QUALITY", description: "EVERY PIECE IS CRAFTED WITH OBSESSIVE ATTENTION TO DETAIL. WE SOURCE ONLY THE FINEST MATERIALS THAT MEET OUR UNCOMPROMISING STANDARDS." },
-  { icon: "shield", title: "AUTHENTICITY", description: "NO IMITATIONS. NO SHORTCUTS. EVERYTHING WE OFFER IS GENUINE, ORIGINAL, AND TRUE TO ITS CRAFT." },
-  { icon: "users", title: "COMMUNITY", description: "WE BUILD MORE THAN A STORE — WE BUILD CONNECTIONS. OUR CUSTOMERS ARE OUR COLLABORATORS IN THE PURSUIT OF BETTER." },
-  { icon: "palette", title: "CRAFT", description: "THE INVISIBLE DETAILS MATTER MOST. FROM STITCHING TO FINISH, EVERY STEP IS A DELIBERATE ACT OF CREATION." },
+const fallbackValues = (locale: string | undefined): ValueCard[] => [
+  { icon: "gem", title: localized(locale, "QUALITY", "الجودة"), description: localized(locale, "EVERY PIECE IS CRAFTED WITH OBSESSIVE ATTENTION TO DETAIL. WE SOURCE ONLY THE FINEST MATERIALS THAT MEET OUR UNCOMPROMISING STANDARDS.", "كل قطعة معمولة باهتمام شديد بالتفاصيل. بنختار أجود الخامات اللي بتوصل لمعاييرنا اللي مفيهاش تنازل.") },
+  { icon: "shield", title: localized(locale, "AUTHENTICITY", "الأصالة"), description: localized(locale, "NO IMITATIONS. NO SHORTCUTS. EVERYTHING WE OFFER IS GENUINE, ORIGINAL, AND TRUE TO ITS CRAFT.", "مفيش تقليد. مفيش طرق مختصرة. كل اللي بنقدمه أصلي وحقيقي ووفي لحرفته.") },
+  { icon: "users", title: localized(locale, "COMMUNITY", "المجتمع"), description: localized(locale, "WE BUILD MORE THAN A STORE — WE BUILD CONNECTIONS. OUR CUSTOMERS ARE OUR COLLABORATORS IN THE PURSUIT OF BETTER.", "إحنا بنبني أكتر من مجرد متجر — بنبني علاقات. عملاؤنا شركاؤنا في السعي للأفضل.") },
+  { icon: "palette", title: localized(locale, "CRAFT", "الحِرفة"), description: localized(locale, "THE INVISIBLE DETAILS MATTER MOST. FROM STITCHING TO FINISH, EVERY STEP IS A DELIBERATE ACT OF CREATION.", "التفاصيل الخفية هي الأهم. من الخياطة للمسة الأخيرة، كل خطوة فعل إبداع مقصود.") },
 ];
 
 const BzAboutSection = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const demo = useDemo();
+  const locale = useLocale();
 
-  const eyebrow = asString(s.eyebrow) || "ABOUT US";
-  const headline = asString(s.headline) || "OUR STORY";
+  const eyebrow = asString(s.eyebrow) || localized(locale, "ABOUT US", "من نحن");
+  const headline = asString(s.headline) || localized(locale, "OUR STORY", "قصتنا");
   const quote =
     asString(s.quote) ||
-    "THE THINGS WE KEEP CLOSE SAY EVERYTHING ABOUT WHO WE ARE.";
-  const whoLabel = asString(s.who_label) || "WHO WE ARE";
-  const whoHeadline = asString(s.who_headline) || "WELCOME TO BAZAR";
+    localized(locale, "THE THINGS WE KEEP CLOSE SAY EVERYTHING ABOUT WHO WE ARE.", "الأشياء اللي بنحبها بتحكي كل حاجة عننا.");
+  const whoLabel = asString(s.who_label) || localized(locale, "WHO WE ARE", "مين إحنا");
+  const whoHeadline = asString(s.who_headline) || localized(locale, "WELCOME TO BAZAR", "أهلًا بيك في بازار");
   const description =
     asString(s.description) ||
-    "WE STARTED WITH A SIMPLE BELIEF — THAT EVERYDAY OBJECTS DESERVE THE SAME CARE AND INTENTION AS THE EXTRAORDINARY ONES. BAZAR WAS BORN FROM A DESIRE TO BRIDGE THE GAP BETWEEN FUNCTION AND BEAUTY, BETWEEN CRAFT AND COMMERCE.";
+    localized(
+      locale,
+      "WE STARTED WITH A SIMPLE BELIEF — THAT EVERYDAY OBJECTS DESERVE THE SAME CARE AND INTENTION AS THE EXTRAORDINARY ONES. BAZAR WAS BORN FROM A DESIRE TO BRIDGE THE GAP BETWEEN FUNCTION AND BEAUTY, BETWEEN CRAFT AND COMMERCE.",
+      "بدأنا بفكرة بسيطة — إن الحاجات اللي بنستخدمها كل يوم تستاهل نفس الاهتمام والإتقان زي الحاجات الاستثنائية. بازار اتولد من رغبة إننا نوصّل بين الوظيفة والجمال، بين الحِرفة والتجارة.",
+    );
   const marqueeText =
     asString(s.marquee_text) ||
-    "QUALITY • AUTHENTICITY • COMMUNITY • CRAFT • BOLD VISION •";
-  const valuesLabel = asString(s.values_label) || "WHAT DRIVES US";
-  const valuesHeadline = asString(s.values_headline) || "OUR VALUES";
-  const ctaLabel = asString(s.cta_label) || "NEXT STEPS";
-  const ctaHeadline = asString(s.cta_headline) || "READY TO DISCOVER?";
+    localized(locale, "QUALITY • AUTHENTICITY • COMMUNITY • CRAFT • BOLD VISION •", "جودة • أصالة • مجتمع • حِرفة • رؤية جريئة •");
+  const valuesLabel = asString(s.values_label) || localized(locale, "WHAT DRIVES US", "اللي بيحركنا");
+  const valuesHeadline = asString(s.values_headline) || localized(locale, "OUR VALUES", "قيمنا");
+  const ctaLabel = asString(s.cta_label) || localized(locale, "NEXT STEPS", "الخطوة الجاية");
+  const ctaHeadline = asString(s.cta_headline) || localized(locale, "READY TO DISCOVER?", "جاهز تكتشف؟");
   const imageUrl = asImageUrl(s.image_url);
-  const ctaText = asString(s.cta_text) || "EXPLORE OUR COLLECTION";
+  // Non-destructive focal/zoom/rotation for the faded hero background image.
+  // Undefined → the image renders exactly as before (object-cover).
+  const imageTransform = asImageTransform(s.image_url);
+  const ctaText = asString(s.cta_text) || localized(locale, "EXPLORE OUR COLLECTION", "استكشف تشكيلتنا");
   const ctaLink = asString(s.cta_link) || "/products";
-  const contactCtaText = asString(s.contact_cta_text) || "GET IN TOUCH";
+  const contactCtaText = asString(s.contact_cta_text) || localized(locale, "GET IN TOUCH", "تواصل معانا");
   const contactCtaLink = asString(s.contact_cta_link) || "/contact";
 
   // Repeatable value cards come from editor `value` blocks; if the merchant
@@ -74,14 +85,14 @@ const BzAboutSection = ({ instance, sectionId }: SectionRenderProps) => {
     }))
     .filter((v) => v.title);
   const values =
-    configured.length > 0 ? configured : demoOrPlaceholder(demo, FALLBACK_VALUES);
+    configured.length > 0 ? configured : demoOrPlaceholder(demo, fallbackValues(locale));
 
   return (
     <div className="bg-[var(--bz-cream)]">
       {/* HERO */}
       <section className="relative min-h-[50vh] md:min-h-[60vh] flex flex-col items-center justify-center overflow-hidden bz-wavy-bg py-16 md:py-0">
         {imageUrl && (
-          <img src={imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+          <img src={imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" style={applyImageTransform(imageTransform, "cover")} />
         )}
         <div className="relative z-10 text-center px-4">
           <span className="bz-label text-[var(--bz-dark)]/60 tracking-[0.2em] sm:tracking-[0.3em]">

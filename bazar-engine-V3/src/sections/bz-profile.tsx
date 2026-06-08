@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Link,
   useCustomer,
+  useLocale,
   useOrders,
   useCustomerActions,
   useCustomerAddresses,
@@ -24,7 +25,7 @@ import {
   Briefcase,
   X,
 } from "lucide-react";
-import { asBool, asString, type SectionRenderProps } from "./_shared";
+import { asBool, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -50,26 +51,26 @@ import { InlineEditable } from "./_inline-editable";
 
 type Tab = "orders" | "addresses" | "settings";
 
-const STATUS_LABELS: Record<string, string> = {
-  pending: "Pending",
-  confirmed: "Confirmed",
-  processing: "Processing",
-  shipped: "Shipped",
-  delivered: "Delivered",
-  cancelled: "Cancelled",
-  refunded: "Refunded",
-};
+const statusLabels = (locale: string | undefined): Record<string, string> => ({
+  pending: localized(locale, "Pending", "قيد الانتظار"),
+  confirmed: localized(locale, "Confirmed", "تم التأكيد"),
+  processing: localized(locale, "Processing", "قيد التجهيز"),
+  shipped: localized(locale, "Shipped", "تم الشحن"),
+  delivered: localized(locale, "Delivered", "تم التوصيل"),
+  cancelled: localized(locale, "Cancelled", "ملغي"),
+  refunded: localized(locale, "Refunded", "تم الاسترداد"),
+});
 
 const LABEL_ICON: Record<string, typeof Home> = {
   home: Home,
   work: Briefcase,
   other: MapPin,
 };
-const LABEL_NAME: Record<string, string> = {
-  home: "Home",
-  work: "Work",
-  other: "Other",
-};
+const labelName = (locale: string | undefined): Record<string, string> => ({
+  home: localized(locale, "Home", "المنزل"),
+  work: localized(locale, "Work", "العمل"),
+  other: localized(locale, "Other", "آخر"),
+});
 
 const EMPTY_ADDRESS: Partial<CustomerAddress> = {
   first_name: "",
@@ -82,11 +83,14 @@ const EMPTY_ADDRESS: Partial<CustomerAddress> = {
 
 export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
-  const title = asString(s.title) || "MY ACCOUNT";
-  const ordersTitle = asString(s.orders_title) || "MY ORDERS";
-  const addressesTitle = asString(s.addresses_title) || "MY ADDRESSES";
-  const settingsTitle = asString(s.settings_title) || "SETTINGS";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "MY ACCOUNT", "حسابي");
+  const ordersTitle = asString(s.orders_title) || localized(locale, "MY ORDERS", "طلباتي");
+  const addressesTitle = asString(s.addresses_title) || localized(locale, "MY ADDRESSES", "عناويني");
+  const settingsTitle = asString(s.settings_title) || localized(locale, "SETTINGS", "الإعدادات");
   const showStats = asBool(s.show_stats, true);
+  const STATUS_LABELS = statusLabels(locale);
+  const LABEL_NAME = labelName(locale);
 
   const customer = useCustomer();
   const { orders, loading: loadingOrders } = useOrders();
@@ -134,16 +138,16 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
             <User size={24} className="text-[var(--bz-amber)]" />
           </div>
           <p className="bz-heading text-xl text-[var(--bz-dark)] mb-1">
-            LOGIN TO VIEW YOUR ACCOUNT
+            {localized(locale, "LOGIN TO VIEW YOUR ACCOUNT", "سجّل دخولك لعرض حسابك")}
           </p>
           <p className="text-xs text-[var(--bz-gray)] mb-6">
-            Track orders, manage addresses and settings
+            {localized(locale, "Track orders, manage addresses and settings", "تتبّع طلباتك، وادِر عناوينك وإعداداتك")}
           </p>
           <Link
             to="/auth?redirect=/profile"
             className="bz-btn bz-btn-filled inline-flex rounded-full"
           >
-            LOGIN
+            {localized(locale, "LOGIN", "تسجيل الدخول")}
           </Link>
         </div>
       </div>
@@ -240,14 +244,14 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
     icon: typeof Package;
     count?: number;
   }[] = [
-    { key: "orders", label: "Orders", icon: Package, count: orders.length },
+    { key: "orders", label: localized(locale, "Orders", "الطلبات"), icon: Package, count: orders.length },
     {
       key: "addresses",
-      label: "Addresses",
+      label: localized(locale, "Addresses", "العناوين"),
       icon: MapPin,
       count: addresses.length,
     },
-    { key: "settings", label: "Settings", icon: Settings },
+    { key: "settings", label: localized(locale, "Settings", "الإعدادات"), icon: Settings },
   ];
 
   const inputClass =
@@ -261,7 +265,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 bz-label text-[10px] text-[var(--bz-gray)] mb-8">
           <Link to="/" className="hover:text-[var(--bz-amber-dark)] transition-colors">
-            HOME
+            {localized(locale, "HOME", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <span className="text-[var(--bz-dark)]">
@@ -284,7 +288,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
               <div className="flex gap-4 mb-6 pb-6 border-b border-[var(--bz-dark)]/10">
                 <div>
                   <p className="bz-heading text-2xl text-[var(--bz-dark)]">{orders.length}</p>
-                  <p className="bz-label text-[10px] text-[var(--bz-gray)]">Orders</p>
+                  <p className="bz-label text-[10px] text-[var(--bz-gray)]">{localized(locale, "Orders", "الطلبات")}</p>
                 </div>
                 <div>
                   <p className="bz-heading text-2xl text-[var(--bz-dark)]">
@@ -326,7 +330,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
               className="flex items-center gap-2 px-4 py-2 bz-label text-[10px] text-[var(--bz-gray)] hover:text-[var(--bz-dark)] transition-colors"
             >
               <LogOut size={13} />
-              Logout
+              {localized(locale, "Logout", "تسجيل الخروج")}
             </button>
           </div>
 
@@ -345,15 +349,15 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                 ) : orders.length === 0 ? (
                   <div className="text-center py-16 border-2 border-[var(--bz-dark)]/10 rounded-2xl">
                     <Package size={32} className="mx-auto text-[var(--bz-amber)] mb-4" />
-                    <p className="bz-heading text-base text-[var(--bz-dark)] mb-1">NO ORDERS YET</p>
+                    <p className="bz-heading text-base text-[var(--bz-dark)] mb-1">{localized(locale, "NO ORDERS YET", "لسه مفيش طلبات")}</p>
                     <p className="text-xs text-[var(--bz-gray)] mb-5">
-                      Your orders will appear here after your first purchase
+                      {localized(locale, "Your orders will appear here after your first purchase", "طلباتك هتظهر هنا بعد أول عملية شراء")}
                     </p>
                     <Link
                       to="/products"
                       className="bz-btn bz-btn-filled inline-flex rounded-full text-[11px]"
                     >
-                      BROWSE PRODUCTS
+                      {localized(locale, "BROWSE PRODUCTS", "تصفّح المنتجات")}
                     </Link>
                   </div>
                 ) : (
@@ -380,7 +384,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                                   })
                                 : ""}
                               {order.item_count
-                                ? ` · ${order.item_count} item${order.item_count > 1 ? "s" : ""}`
+                                ? ` · ${order.item_count} ${localized(locale, `item${order.item_count > 1 ? "s" : ""}`, order.item_count > 2 ? "منتجات" : "منتج")}`
                                 : ""}
                             </span>
                           </div>
@@ -414,7 +418,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                       className="flex items-center gap-1.5 bz-label text-[10px] text-[var(--bz-dark)] hover:text-[var(--bz-amber-dark)] transition-colors"
                     >
                       <Plus size={13} />
-                      Add address
+                      {localized(locale, "Add address", "أضف عنوان")}
                     </button>
                   )}
                 </div>
@@ -423,7 +427,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                   <div className="border-2 border-[var(--bz-dark)]/10 rounded-2xl p-5 mb-5">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="bz-heading text-sm text-[var(--bz-dark)]">
-                        {editingId ? "EDIT ADDRESS" : "NEW ADDRESS"}
+                        {editingId ? localized(locale, "EDIT ADDRESS", "تعديل العنوان") : localized(locale, "NEW ADDRESS", "عنوان جديد")}
                       </h3>
                       <button
                         type="button"
@@ -436,7 +440,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                       <div>
-                        <label className={labelClass}>First name</label>
+                        <label className={labelClass}>{localized(locale, "First name", "الاسم الأول")}</label>
                         <input
                           value={form.first_name ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, first_name: e.target.value }))}
@@ -444,7 +448,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>Last name</label>
+                        <label className={labelClass}>{localized(locale, "Last name", "اسم العائلة")}</label>
                         <input
                           value={form.last_name ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, last_name: e.target.value }))}
@@ -453,17 +457,17 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                       </div>
                     </div>
                     <div className="mb-3">
-                      <label className={labelClass}>Address</label>
+                      <label className={labelClass}>{localized(locale, "Address", "العنوان")}</label>
                       <input
                         value={form.address_line1 ?? ""}
                         onChange={(e) => setForm((p) => ({ ...p, address_line1: e.target.value }))}
-                        placeholder="Street, building, apt"
+                        placeholder={localized(locale, "Street, building, apt", "الشارع، العمارة، الشقة")}
                         className={inputClass}
                       />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                       <div>
-                        <label className={labelClass}>City</label>
+                        <label className={labelClass}>{localized(locale, "City", "المدينة")}</label>
                         <input
                           value={form.city ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
@@ -471,7 +475,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>Phone</label>
+                        <label className={labelClass}>{localized(locale, "Phone", "التليفون")}</label>
                         <input
                           value={form.phone ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
@@ -513,9 +517,9 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                         {savingAddress ? (
                           <Loader2 size={14} className="animate-spin" />
                         ) : editingId ? (
-                          "UPDATE"
+                          localized(locale, "UPDATE", "تحديث")
                         ) : (
-                          "SAVE"
+                          localized(locale, "SAVE", "حفظ")
                         )}
                       </button>
                       <button
@@ -523,7 +527,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                         onClick={closeAddressForm}
                         className="px-5 py-2 bz-label text-[10px] text-[var(--bz-gray)] hover:text-[var(--bz-dark)] transition-colors"
                       >
-                        Cancel
+                        {localized(locale, "Cancel", "إلغاء")}
                       </button>
                     </div>
                   </div>
@@ -536,16 +540,16 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                 ) : addresses.length === 0 && !showAddressForm ? (
                   <div className="text-center py-16 border-2 border-[var(--bz-dark)]/10 rounded-2xl">
                     <MapPin size={32} className="mx-auto text-[var(--bz-amber)] mb-4" />
-                    <p className="bz-heading text-base text-[var(--bz-dark)] mb-1">NO SAVED ADDRESSES</p>
+                    <p className="bz-heading text-base text-[var(--bz-dark)] mb-1">{localized(locale, "NO SAVED ADDRESSES", "لسه مفيش عناوين محفوظة")}</p>
                     <p className="text-xs text-[var(--bz-gray)] mb-5">
-                      Add an address to speed up checkout
+                      {localized(locale, "Add an address to speed up checkout", "أضف عنوان عشان تسرّع إتمام الشراء")}
                     </p>
                     <button
                       type="button"
                       onClick={openNewAddress}
                       className="bz-btn bz-btn-filled inline-flex rounded-full text-[11px]"
                     >
-                      ADD ADDRESS
+                      {localized(locale, "ADD ADDRESS", "أضف عنوان")}
                     </button>
                   </div>
                 ) : (
@@ -566,11 +570,11 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                             <div className="flex items-center gap-2">
                               <LabelIcon size={13} className="text-[var(--bz-gray)]" />
                               <span className="bz-label text-[10px] text-[var(--bz-dark)]">
-                                {LABEL_NAME[addr.label ?? "other"] || "Other"}
+                                {LABEL_NAME[addr.label ?? "other"] || localized(locale, "Other", "آخر")}
                               </span>
                               {addr.is_default && (
                                 <span className="bz-label text-[9px] px-1.5 py-0.5 rounded-full bg-[var(--bz-amber)] text-[var(--bz-dark)]">
-                                  Default
+                                  {localized(locale, "Default", "افتراضي")}
                                 </span>
                               )}
                             </div>
@@ -580,7 +584,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                                 onClick={() => openEditAddress(addr)}
                                 className="bz-label text-[10px] text-[var(--bz-gray)] hover:text-[var(--bz-dark)] transition-colors px-1"
                               >
-                                Edit
+                                {localized(locale, "Edit", "تعديل")}
                               </button>
                               <button
                                 type="button"
@@ -614,7 +618,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                               onClick={() => setDefaultAddress(addr.id)}
                               className="bz-label text-[10px] text-[var(--bz-gray)] hover:text-[var(--bz-dark)] transition-colors mt-2 border-b border-current pb-px"
                             >
-                              Set as default
+                              {localized(locale, "Set as default", "تعيين كافتراضي")}
                             </button>
                           )}
                         </div>
@@ -635,7 +639,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                   <div className="border-2 border-[var(--bz-dark)]/10 rounded-2xl p-5 space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className={labelClass}>First name</label>
+                        <label className={labelClass}>{localized(locale, "First name", "الاسم الأول")}</label>
                         <input
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
@@ -643,7 +647,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>Last name</label>
+                        <label className={labelClass}>{localized(locale, "Last name", "اسم العائلة")}</label>
                         <input
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
@@ -652,7 +656,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                       </div>
                     </div>
                     <div>
-                      <label className={labelClass}>Email</label>
+                      <label className={labelClass}>{localized(locale, "Email", "البريد الإلكتروني")}</label>
                       <input
                         value={customer.email}
                         disabled
@@ -661,7 +665,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>Phone</label>
+                      <label className={labelClass}>{localized(locale, "Phone", "التليفون")}</label>
                       <input
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -676,16 +680,16 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                       disabled={savingProfile}
                       className="bz-btn bz-btn-filled rounded-full disabled:opacity-50"
                     >
-                      {savingProfile ? <Loader2 size={14} className="animate-spin" /> : "SAVE CHANGES"}
+                      {savingProfile ? <Loader2 size={14} className="animate-spin" /> : localized(locale, "SAVE CHANGES", "حفظ التغييرات")}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <h2 className={headingClass}>CHANGE PASSWORD</h2>
+                  <h2 className={headingClass}>{localized(locale, "CHANGE PASSWORD", "تغيير كلمة المرور")}</h2>
                   <div className="border-2 border-[var(--bz-dark)]/10 rounded-2xl p-5 space-y-3">
                     <div>
-                      <label className={labelClass}>Current password</label>
+                      <label className={labelClass}>{localized(locale, "Current password", "كلمة المرور الحالية")}</label>
                       <input
                         type="password"
                         value={currentPw}
@@ -694,12 +698,12 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>New password</label>
+                      <label className={labelClass}>{localized(locale, "New password", "كلمة المرور الجديدة")}</label>
                       <input
                         type="password"
                         value={newPw}
                         onChange={(e) => setNewPw(e.target.value)}
-                        placeholder="Min 8 characters"
+                        placeholder={localized(locale, "Min 8 characters", "٨ حروف على الأقل")}
                         className={inputClass}
                       />
                     </div>
@@ -709,7 +713,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                       disabled={changingPw || !currentPw || !newPw}
                       className="bz-btn bz-btn-filled rounded-full disabled:opacity-50"
                     >
-                      {changingPw ? <Loader2 size={14} className="animate-spin" /> : "CHANGE PASSWORD"}
+                      {changingPw ? <Loader2 size={14} className="animate-spin" /> : localized(locale, "CHANGE PASSWORD", "تغيير كلمة المرور")}
                     </button>
                   </div>
                 </div>

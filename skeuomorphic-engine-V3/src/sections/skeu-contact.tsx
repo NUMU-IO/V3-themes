@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { Link, useShop } from "@numueg/theme-sdk";
+import { Link, useShop, useLocale } from "@numueg/theme-sdk";
 import { ChevronRight, MessageCircle, Phone, Mail, Instagram, Clock } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Normalise a merchant-provided Instagram value into a { handle, url } pair.
@@ -32,6 +32,7 @@ function normalizeInstagram(raw: string | null | undefined): { handle: string; u
  */
 const SkeuContact = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
   const shop = useShop();
   const socials = (shop?.social_links ?? {}) as Record<string, string>;
   const pick = (...keys: string[]): string => {
@@ -57,20 +58,20 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
   );
   const email = contact.email || "";
 
-  const eyebrow = asString(s.eyebrow) || "تواصل معنا";
-  const title = asString(s.title) || "اتصل بنا";
+  const eyebrow = asString(s.eyebrow) || localized(locale, "Get in touch", "تواصل معنا");
+  const title = asString(s.title) || localized(locale, "Contact us", "اتصل بنا");
   const subtitle = asString(s.subtitle);
-  const nameLabel = asString(s.name_label) || "الاسم";
-  const phoneLabel = asString(s.phone_label) || "رقم الهاتف";
-  const messageLabel = asString(s.message_label) || "رسالتك";
-  const submitText = asString(s.submit_text) || "إرسال";
-  const successTitle = asString(s.success_title) || "شكراً لتواصلك معنا";
-  const successMessage = asString(s.success_message) || "سنرد عليك في أقرب وقت ممكن.";
+  const nameLabel = asString(s.name_label) || localized(locale, "Name", "الاسم");
+  const phoneLabel = asString(s.phone_label) || localized(locale, "Phone number", "رقم الهاتف");
+  const messageLabel = asString(s.message_label) || localized(locale, "Your message", "رسالتك");
+  const submitText = asString(s.submit_text) || localized(locale, "Send", "إرسال");
+  const successTitle = asString(s.success_title) || localized(locale, "Thanks for reaching out", "شكراً لتواصلك معنا");
+  const successMessage = asString(s.success_message) || localized(locale, "We'll get back to you as soon as possible.", "سنرد عليك في أقرب وقت ممكن.");
   const showWorkingHours = s.show_working_hours !== false;
-  const weekdaysLabel = asString(s.hours_weekdays_label) || "السبت – الخميس";
-  const weekdaysValue = asString(s.hours_weekdays_value) || "9 ص – 9 م";
-  const fridayLabel = asString(s.hours_friday_label) || "الجمعة";
-  const fridayValue = asString(s.hours_friday_value) || "2 م – 9 م";
+  const weekdaysLabel = asString(s.hours_weekdays_label) || localized(locale, "Sat – Thu", "السبت – الخميس");
+  const weekdaysValue = asString(s.hours_weekdays_value) || localized(locale, "9 AM – 9 PM", "9 ص – 9 م");
+  const fridayLabel = asString(s.hours_friday_label) || localized(locale, "Friday", "الجمعة");
+  const fridayValue = asString(s.hours_friday_value) || localized(locale, "2 PM – 9 PM", "2 م – 9 م");
   const showMap = s.show_map === true;
   const mapEmbedUrl = asString(s.map_embed_url);
 
@@ -86,7 +87,7 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
   if (whatsappDigits) {
     methods.push({
       icon: MessageCircle,
-      label: "واتساب",
+      label: localized(locale, "WhatsApp", "واتساب"),
       value: formatPhoneForDisplay(whatsappDigits),
       href: `https://wa.me/${whatsappDigits}`,
     });
@@ -94,18 +95,18 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
   if (phoneDigits) {
     methods.push({
       icon: Phone,
-      label: "اتصل بنا",
+      label: localized(locale, "Call us", "اتصل بنا"),
       value: formatPhoneForDisplay(phoneDigits),
       href: `tel:+${phoneDigits}`,
     });
   }
   if (email) {
-    methods.push({ icon: Mail, label: "البريد", value: email, href: `mailto:${email}` });
+    methods.push({ icon: Mail, label: localized(locale, "Email", "البريد"), value: email, href: `mailto:${email}` });
   }
   if (instagramHandle) {
     methods.push({
       icon: Instagram,
-      label: "إنستجرام",
+      label: localized(locale, "Instagram", "إنستجرام"),
       value: `@${instagramHandle}`,
       href: instagramUrl,
     });
@@ -116,7 +117,7 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
       <div className="container mx-auto px-4 py-10 md:py-14 max-w-5xl">
         <nav className="flex items-center gap-1.5 text-xs vn-label text-[var(--vn-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            الرئيسية
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ChevronRight size={12} className="rtl:rotate-180" />
           <span className="text-[var(--vn-ink)]">{title}</span>
@@ -196,7 +197,7 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
               <div className="pt-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Clock size={14} className="text-[var(--vn-muted)]" />
-                  <span className="vn-eyebrow text-[10px]">ساعات العمل</span>
+                  <span className="vn-eyebrow text-[10px]">{localized(locale, "Working hours", "ساعات العمل")}</span>
                 </div>
                 <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 xs:gap-4 text-sm text-[var(--vn-muted)]">
                   <div>
@@ -215,7 +216,7 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
               <div className="pt-6">
                 <iframe
                   src={mapEmbedUrl}
-                  title="خريطة موقع المتجر"
+                  title={localized(locale, "Store location map", "خريطة موقع المتجر")}
                   className="w-full h-64 skeu-img-frame rounded-xl"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"

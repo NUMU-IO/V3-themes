@@ -1,16 +1,18 @@
 "use client";
 import { useState } from "react";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { ShoppingBag } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const KGHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const headline = asString(s.headline) || "NEW DROPS";
-  const subtitle = asString(s.subtitle) || "ELEVATE YOUR GAME";
-  const ctaText = asString(s.cta_text) || "SHOP NOW";
+  const locale = useLocale();
+  const headline = asString(s.headline) || localized(locale, "NEW DROPS", "وصل جديد");
+  const subtitle = asString(s.subtitle) || localized(locale, "ELEVATE YOUR GAME", "ارفع مستواك");
+  const ctaText = asString(s.cta_text) || localized(locale, "SHOP NOW", "اتسوّق دلوقتي");
   const ctaLink = asString(s.cta_link) || "/products";
   const heroImage = asString(s.hero_image_url);
+  const heroImageTransform = asImageTransform(s.hero_image_url);
 
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -60,6 +62,7 @@ const KGHero = ({ instance }: SectionRenderProps) => {
                 transition: "opacity 0.4s ease",
                 position: "absolute",
                 inset: 0,
+                ...applyImageTransform(heroImageTransform, "contain"),
               }}
             />
           )}

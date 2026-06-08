@@ -2,27 +2,69 @@
   "type": "by-menu",
   "name": "Menu / featured",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow (small label)", "default": "drinks & treats" },
-    { "type": "text", "id": "title", "label": "Title", "default": "Our menu" },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow (small label)",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": ""
+    },
     {
       "type": "textarea",
       "id": "subtitle",
       "label": "Subtitle",
-      "default": "From the first espresso of the morning to the last slice of basbousa — every item is made in-house, every day."
+      "default": ""
     },
-    { "type": "text", "id": "view_all_label", "label": "View-all label", "default": "Browse the full menu" },
-    { "type": "url", "id": "view_all_link", "label": "View-all URL", "default": "/products" },
-    { "type": "text", "id": "card_cta_label", "label": "Product card button", "default": "Order" },
-    { "type": "text", "id": "empty_category_text", "label": "Empty category message", "default": "No items in this category yet." }
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "View-all label",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View-all URL",
+      "default": "/products"
+    },
+    {
+      "type": "text",
+      "id": "card_cta_label",
+      "label": "Product card button",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "empty_category_text",
+      "label": "Empty category message",
+      "default": ""
+    }
   ],
   "blocks": [
     {
       "type": "tab",
       "name": "Category tab",
       "settings": [
-        { "type": "text", "id": "id", "label": "Tab id (slug)" },
-        { "type": "text", "id": "label", "label": "Label" },
-        { "type": "text", "id": "match", "label": "Match tag/category (optional)" }
+        {
+          "type": "text",
+          "id": "id",
+          "label": "Tab id (slug)"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label"
+        },
+        {
+          "type": "text",
+          "id": "match",
+          "label": "Match tag/category (optional)"
+        }
       ]
     }
   ],
@@ -30,13 +72,37 @@
   "presets": [
     {
       "name": "Menu with category tabs",
-      "locales": { "ar": { "name": "قائمة مع تبويبات" } },
+      "locales": {
+        "ar": {
+          "name": "قائمة مع تبويبات"
+        }
+      },
       "category": "products",
       "settings": {},
       "blocks": [
-        { "type": "tab", "settings": { "id": "all", "label": "All" } },
-        { "type": "tab", "settings": { "id": "coffee", "label": "Coffee", "match": "coffee" } },
-        { "type": "tab", "settings": { "id": "treats", "label": "Treats", "match": "dessert" } }
+        {
+          "type": "tab",
+          "settings": {
+            "id": "all",
+            "label": ""
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "id": "coffee",
+            "label": "",
+            "match": ""
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "id": "treats",
+            "label": "",
+            "match": ""
+          }
+        }
       ]
     }
   ]

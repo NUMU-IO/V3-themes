@@ -1,19 +1,20 @@
 "use client";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
-import { asString, asNumber, type SectionRenderProps } from "./_shared";
+import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
 
 const HEADING_SHADOW = "0 1px 0 hsl(35 30% 100% / 0.6)";
 
 const SkeuFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products, loading: isLoading } = useProducts();
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "وصل حديثاً ✨";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "New arrivals ✨", "وصل حديثاً ✨");
   const subtitle = asString(s.subtitle);
   const viewAllLink = asString(s.view_all_link) || "/products";
   const count = asNumber(s.product_count, 4);
   const cols = asNumber(s.columns, 4);
-  const viewAllText = asString(s.view_all_text) || "عرض الكل";
+  const viewAllText = asString(s.view_all_text) || localized(locale, "View all", "عرض الكل");
 
   // Optional manual product selection, else the SSR-prefetched catalog.
   const manualIds = Array.isArray(s.product_ids)
@@ -86,6 +87,7 @@ const SkeuFeaturedCollection = ({ instance }: SectionRenderProps) => {
 
 /** Inline skeuomorphic product card — framed image + tactile info block. */
 function SkeuProductCard({ product }: { product: Product }) {
+  const locale = useLocale();
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -111,13 +113,13 @@ function SkeuProductCard({ product }: { product: Product }) {
         )}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-2 start-2 skeu-badge px-2.5 py-1 rounded-lg text-[10px] font-bold">
-            خصم
+            {localized(locale, "Sale", "خصم")}
           </span>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
             <span className="skeu-chip text-foreground text-[11px] px-3 py-1.5 rounded-lg font-bold">
-              نفذت الكمية
+              {localized(locale, "Sold out", "نفذت الكمية")}
             </span>
           </div>
         )}

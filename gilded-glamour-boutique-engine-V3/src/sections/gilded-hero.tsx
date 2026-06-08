@@ -1,15 +1,16 @@
 "use client";
 import { useRef } from "react";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const GildedHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const headline = asString(s.headline) || "THE NEW EMPIRE";
-  const subtitle = asString(s.subtitle) || "Curated Excellence & Timeless Precision";
-  const ctaText = asString(s.cta_text) || "Discover Collection";
+  const headline = asString(s.headline) || localized(locale, "THE NEW GILDED", "العصر الذهبي الجديد");
+  const subtitle = asString(s.subtitle) || localized(locale, "Curated Excellence & Timeless Precision", "تشكيلة منتقاة بعناية وإتقان لا يعرف الزمن");
+  const ctaText = asString(s.cta_text) || localized(locale, "Discover Collection", "اكتشف التشكيلة");
   const ctaLink = asString(s.cta_link) || "/products";
   const heroImageUrl = asString(s.hero_image_url) || undefined;
   const heroImageUrlMobile = asString(s.hero_image_mobile) || undefined;
@@ -19,6 +20,11 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
   // aspect on mobile so a wide banner isn't crushed/cropped.
   const mobileImage = heroImageUrlMobile || heroImageUrl;
   const hasMobileArt = Boolean(heroImageUrlMobile);
+  // Non-destructive image transforms (focal/zoom/rotation). With no saved
+  // transform asImageTransform → undefined and applyImageTransform → {}, so
+  // the image renders exactly as before.
+  const heroImageTransform = asImageTransform(s.hero_image_url);
+  const heroImageMobileTransform = asImageTransform(s.hero_image_mobile);
   const enableParallax = s.enable_parallax !== false;
 
   const ref = useRef<HTMLDivElement>(null);
@@ -48,6 +54,7 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
               src={mobileImage}
               alt={headline}
               className="w-full h-full object-contain"
+              style={applyImageTransform(heroImageMobileTransform, "contain")}
             />
           </div>
         ) : mobileImage ? (
@@ -86,6 +93,7 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
             alt=""
             aria-hidden="true"
             className="relative w-full h-full object-contain"
+            style={applyImageTransform(heroImageTransform, "contain")}
           />
         ) : null}
         <div className="absolute inset-0 bg-foreground/40" />

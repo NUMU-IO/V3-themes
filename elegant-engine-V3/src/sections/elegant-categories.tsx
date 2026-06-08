@@ -1,13 +1,14 @@
 "use client";
-import { Link, useCollections } from "@numueg/theme-sdk";
+import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 const ElegantCategories = ({ instance }: SectionRenderProps) => {
   const { collections, loading: isLoading } = useCollections();
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const title = asString(s.title) || "تسوق حسب الفئة";
+  const title = asString(s.title) || localized(locale, "Shop by Category", "تسوق حسب الفئة");
   const colsDesktop = asNumber(s.columns_desktop, 4);
   const colsMobile = asNumber(s.columns_mobile, 2);
   const maxItems = asNumber(s.max_items, 0);
@@ -53,7 +54,7 @@ const ElegantCategories = ({ instance }: SectionRenderProps) => {
         ) : displayCategories.length === 0 ? (
           /* Empty state */
           <p className="text-sm text-muted-foreground text-center py-14">
-            لا توجد فئات بعد
+            {localized(locale, "No categories yet", "لا توجد فئات بعد")}
           </p>
         ) : (
           /* Category grid */
@@ -95,7 +96,7 @@ const ElegantCategories = ({ instance }: SectionRenderProps) => {
                       {cat.name}
                     </span>
                     <span className="text-white/60 text-xs mt-0.5 block">
-                      {cat.product_count} منتج
+                      {cat.product_count} {localized(locale, "items", "منتج")}
                     </span>
                   </div>
                 </Link>

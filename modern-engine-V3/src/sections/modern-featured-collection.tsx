@@ -1,7 +1,7 @@
 "use client";
-import { Link, Money, useProducts } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
-import { type SectionRenderProps } from "./_shared";
+import { localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Modern featured collection — faithful port of the V2 in-tree
@@ -19,9 +19,10 @@ const ModernFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
   const isLoading = false;
   const s = instance.settings ?? {};
-  const title = s.title ?? "وصل حديثاً";
-  const subtitle = s.subtitle ?? "أحدث المنتجات اللي ضفناها";
-  const viewAllText = s.view_all_text ?? "عرض الكل";
+  const locale = useLocale();
+  const title = s.title ?? localized(locale, "New arrivals", "وصل حديثاً");
+  const subtitle = s.subtitle ?? localized(locale, "The latest products we've added", "أحدث المنتجات اللي ضفناها");
+  const viewAllText = s.view_all_text ?? localized(locale, "View all", "عرض الكل");
   const viewAllLink = s.view_all_link ?? "/products";
   const count = Number(s.product_count ?? 4);
   const cols = Number(s.columns ?? 4);
@@ -89,7 +90,7 @@ const ModernFeaturedCollection = ({ instance }: SectionRenderProps) => {
         ) : displayProducts.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground text-sm">
-              لا توجد منتجات بعد
+              {localized(locale, "No products yet", "لا توجد منتجات بعد")}
             </p>
           </div>
         ) : (

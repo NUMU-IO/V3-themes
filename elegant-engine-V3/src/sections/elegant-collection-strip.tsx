@@ -1,9 +1,10 @@
 "use client";
 import { Link } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, type ImageTransform, type SectionRenderProps } from "./_shared";
 
 interface Item {
   image: string;
+  imageTransform?: ImageTransform;
   label: string;
   link: string;
 }
@@ -16,10 +17,11 @@ export default function CollectionStrip({ instance }: SectionRenderProps) {
   const items: Item[] = [];
   for (let i = 1; i <= 4; i++) {
     const image = asString(s[`item_${i}_image`]);
+    const imageTransform = asImageTransform(s[`item_${i}_image`]);
     const label = asString(s[`item_${i}_label`]);
     const link = asString(s[`item_${i}_link`]);
     if (!image && !label) continue;
-    items.push({ image, label, link });
+    items.push({ image, imageTransform, label, link });
   }
 
   if (!items.length) return null;
@@ -59,7 +61,8 @@ export default function CollectionStrip({ instance }: SectionRenderProps) {
                   <img
                     src={it.image}
                     alt={it.label}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ${it.imageTransform ? "" : "group-hover:scale-105"}`}
+                    style={applyImageTransform(it.imageTransform, "cover")}
                   />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />

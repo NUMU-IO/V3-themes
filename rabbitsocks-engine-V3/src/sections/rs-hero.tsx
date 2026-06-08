@@ -1,6 +1,6 @@
 "use client";
-import { Link, useProducts } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { Link, useProducts, useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const DiamondFrame = ({ image, name }: { image?: string; name?: string }) => (
   <div className="rs-hero-frame relative" style={{ aspectRatio: "1 / 0.9" }}>
@@ -74,15 +74,17 @@ const TriangleFrame = ({ image, name }: { image?: string; name?: string }) => (
 
 const RsHero = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
+  const locale = useLocale();
   const s = instance.settings ?? {};
-  const badgeText = asString(s.badge_text, "AUTUMN/WINTER COLLECTION");
-  const headline = asString(s.headline, "Elegance\nwithout limits.");
-  const subtitle = asString(
-    s.subtitle,
+  const badgeText = asString(s.badge_text) || localized(locale, "AUTUMN/WINTER COLLECTION", "تشكيلة خريف/شتاء");
+  const headline = asString(s.headline) || localized(locale, "Elegance\nwithout limits.", "أناقة\nمن غير حدود.");
+  const subtitle = asString(s.subtitle) || localized(
+    locale,
     "We believe in quiet luxury for everyday essentials. Crafted with technical precision and selected for the modern wardrobe.",
+    "بنؤمن بالرفاهية الهادئة في تفاصيل يومك. مصنوعة بدقة واتختارت بعناية لخزانة العصري.",
   );
   const ctaLink = asString(s.cta_link, "/products");
-  const ctaText = asString(s.cta_text, "SHOP NOW");
+  const ctaText = asString(s.cta_text) || localized(locale, "SHOP NOW", "تسوّق دلوقتي");
 
   const getImg = (i: number) => products[i]?.images?.[0]?.url;
   const getName = (i: number) => products[i]?.name;

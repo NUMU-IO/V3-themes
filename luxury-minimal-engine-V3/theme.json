@@ -2,7 +2,7 @@
   "id": "luxury-minimal-v3",
   "name": "Luxury Minimal (V3)",
   "author": "NUMU",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "layout": "single-column",
   "description": "Minimalist luxury fashion theme — ultra-clean typography, refined neutrals, subtle motion. Great for clothing, accessories, and beauty brands that want timeless polish.",
   "error_template": "templates/error.html",
@@ -15,17 +15,12 @@
           {
             "type": "lux-hero",
             "settings": {
-              "badge_text": "مجموعة جديدة",
-              "headline": "أناقة بلا حدود",
-              "subtitle": "منتجات فاخرة مختارة بعناية",
-              "cta_text": "اكتشف المجموعة",
               "cta_link": "/products"
             }
           },
           {
             "type": "lux-categories",
             "settings": {
-              "title": "تسوق حسب الفئة",
               "columns_desktop": 5,
               "columns_mobile": 2,
               "max_items": 0
@@ -34,9 +29,6 @@
           {
             "type": "lux-featured-collection",
             "settings": {
-              "title": "الجديد",
-              "collection_tag": "new",
-              "view_all_text": "عرض الكل",
               "view_all_link": "/products",
               "product_count": 4,
               "columns": 4
@@ -45,19 +37,12 @@
           {
             "type": "lux-promo-banner",
             "settings": {
-              "badge_text": "عرض محدود",
-              "headline": "خصم ٢٥٪ على كل الإكسسوارات",
-              "subtitle": "العرض ساري لنهاية الشهر. متفوتش الفرصة!",
-              "cta_text": "تسوق الآن",
               "cta_link": "/products"
             }
           },
           {
             "type": "lux-featured-collection",
             "settings": {
-              "title": "الأكثر طلباً",
-              "collection_tag": "bestseller",
-              "view_all_text": "عرض الكل",
               "view_all_link": "/products",
               "product_count": 4,
               "columns": 4
@@ -66,29 +51,14 @@
           {
             "type": "lux-testimonials",
             "settings": {
-              "title": "رأي عملاءنا",
-              "review_1_name": "ليلى",
-              "review_1_city": "القاهرة",
-              "review_1_text": "الجودة استثنائية والمقاس مظبوط تماماً. هرجع أكيد.",
               "review_1_rating": 5,
-              "review_2_name": "منى",
-              "review_2_city": "الإسكندرية",
-              "review_2_text": "مناسب للعمل وللسهرات — متعدد الاستخدامات وأنيق.",
               "review_2_rating": 5,
-              "review_3_name": "سارة",
-              "review_3_city": "الجيزة",
-              "review_3_text": "الشحن كان سريع والتغليف جميل. تجربة راقية فعلاً.",
               "review_3_rating": 5
             }
           },
           {
             "type": "lux-newsletter",
-            "settings": {
-              "title": "كن أول من يعرف",
-              "subtitle": "اشترك لتصلك أحدث المنتجات والعروض الحصرية",
-              "button_text": "اشترك",
-              "placeholder": "البريد الإلكتروني"
-            }
+            "settings": {}
           }
         ]
       },
@@ -141,7 +111,6 @@
           {
             "type": "lux-profile-section",
             "settings": {
-              "title": "حسابي",
               "show_stats": true
             }
           }

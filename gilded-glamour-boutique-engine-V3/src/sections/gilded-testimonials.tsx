@@ -1,7 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 interface TestimonialReview {
   name: string;
@@ -29,7 +30,8 @@ function getReviewsFromSettings(s: Record<string, unknown>): TestimonialReview[]
 
 const GildedTestimonials = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "What Our Clients Say";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "What Our Clients Say", "آراء عملائنا");
   const reviews = getReviewsFromSettings(s);
 
   if (reviews.length === 0) return null;
@@ -40,7 +42,7 @@ const GildedTestimonials = ({ instance }: SectionRenderProps) => {
         {/* Section heading */}
         <div className="text-center mb-10 md:mb-16">
           <p className="text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase text-muted-foreground mb-3 md:mb-4">
-            Testimonials
+            {localized(locale, "Testimonials", "شهادات العملاء")}
           </p>
           <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-foreground uppercase tracking-[0.04em] sm:tracking-[0.08em]">
             {title}

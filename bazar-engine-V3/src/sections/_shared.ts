@@ -8,7 +8,7 @@
  * only the CSS prefix (`by-` → `bz-`) and the placeholder palette differ.
  */
 
-import { createContext, useContext } from "react";
+import { createContext, useContext, type CSSProperties } from "react";
 import type { SectionInstance } from "@numueg/theme-sdk";
 
 export interface SectionRenderProps {
@@ -28,6 +28,33 @@ export interface SectionRenderProps {
  */
 export const DemoContext = createContext<boolean>(false);
 export const useDemo = (): boolean => useContext(DemoContext);
+
+/**
+ * Host-provided page context (Phase 4.4b parity with bon-younes). The
+ * storefront's /pages/[handle] route passes the resolved CMS page record as
+ * `ctx.page = { type:"page", handle, title, data:{ page:{...} } }`. Bazar
+ * mirrors it into this context so content sections (bz-rich-text) render the
+ * real page title + body instead of their own default copy. Null on non-page
+ * routes — sections then fall back to their own settings.
+ */
+export interface MountPageData {
+  type?: string;
+  handle?: string;
+  title?: string;
+  data?: {
+    page?: {
+      handle?: string;
+      title?: string | null;
+      body?: string | null;
+      title_i18n?: Record<string, string> | null;
+      body_i18n?: Record<string, string> | null;
+      seo?: unknown;
+    };
+  };
+}
+export const PageDataContext = createContext<MountPageData | null>(null);
+export const usePageData = (): MountPageData | null =>
+  useContext(PageDataContext);
 
 /**
  * Neutral "add an image" placeholder, on-brand for Bazar (cream box + amber
@@ -63,6 +90,17 @@ export function placeholderize<T>(items: T[]): T[] {
 /** demo ? items : placeholderize(items) — the canonical fallback gate. */
 export function demoOrPlaceholder<T>(demo: boolean, items: T[]): T[] {
   return demo ? items : placeholderize(items);
+}
+
+/**
+ * ENG-3: pick the locale-appropriate default copy. Merchant-entered values
+ * still win because callers do `asString(s.x) || localized(locale, en, ar)`.
+ * Only the empty-state DEFAULT is locale-driven; the editable setting is
+ * untouched. `locale` comes from the SDK's `useLocale()` (active visitor
+ * locale, e.g. "en" | "ar").
+ */
+export function localized(locale: string | undefined, en: string, ar: string): string {
+  return (locale || "").toLowerCase().startsWith("ar") ? ar : en;
 }
 
 export function asString(v: unknown, fallback = ""): string {
@@ -162,4 +200,58 @@ export function readBlocks(
 export function productHref(slugOrId: string | undefined | null): string {
   if (!slugOrId) return "/products";
   return `/products/${slugOrId}`;
+}
+
+// ── Non-destructive image transform (focal / zoom / rotation) ───────────────
+//
+// An image setting value may carry optional `transform` metadata
+// (`{ url, alt, transform }`). The original asset is never modified — the
+// storefront reproduces the framing purely from these numbers via CSS, so the
+// SAME uploaded image can be framed differently per placement (hero vs card).
+//
+// ⚠ This is a MIRROR of the merchant-hub editor's
+// `numo-merchant-hub/src/features/theme-editor-v3/components/inputs/imageTransform.ts`
+// — `applyImageTransform` MUST stay equivalent so the editor preview matches the
+// storefront render exactly. (Phase 2 hoists this into @numueg/theme-sdk so every
+// theme imports one copy.)
+export interface ImageTransform {
+  v: 1;
+  focal?: { x: number; y: number }; // 0..1, default center
+  zoom?: number;                    // 1..4, default 1
+  rotation?: number;                // degrees, default 0
+  fit?: "cover" | "contain";
+}
+
+const _clampT = (n: number, lo: number, hi: number): number =>
+  Math.min(hi, Math.max(lo, Number.isFinite(n) ? n : lo));
+
+/** Read the transform off an image setting value (string | {url,alt,transform}). */
+export function asImageTransform(v: unknown): ImageTransform | undefined {
+  if (v && typeof v === "object" && "transform" in v) {
+    const t = (v as { transform?: unknown }).transform;
+    if (t && typeof t === "object") return t as ImageTransform;
+  }
+  return undefined;
+}
+
+/** CSS reproducing the transform on an <img> filling a fixed-aspect,
+ *  overflow-hidden container. Empty object when there is no transform → the
+ *  image renders exactly as before (full backward compatibility). */
+export function applyImageTransform(
+  t: ImageTransform | undefined | null,
+  fit: "cover" | "contain" = "cover",
+): CSSProperties {
+  if (!t) return {};
+  const fx = Math.round(_clampT(t.focal?.x ?? 0.5, 0, 1) * 1e4) / 100;
+  const fy = Math.round(_clampT(t.focal?.y ?? 0.5, 0, 1) * 1e4) / 100;
+  const zoom = _clampT(t.zoom ?? 1, 1, 4);
+  const rot = ((t.rotation ?? 0) % 360 + 360) % 360;
+  const effFit = t.fit ?? fit;
+  const style: CSSProperties = {
+    transform: `scale(${zoom}) rotate(${rot}deg)`,
+    transformOrigin: `${fx}% ${fy}%`,
+    objectFit: effFit,
+  };
+  if (effFit === "cover") style.objectPosition = `${fx}% ${fy}%`;
+  return style;
 }

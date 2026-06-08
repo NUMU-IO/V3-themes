@@ -1,8 +1,29 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { type SectionRenderProps } from "./_shared";
+import {
+  applyImageTransform,
+  asImageTransform,
+  localized,
+  type SectionRenderProps,
+} from "./_shared";
+
+/**
+ * Read an image-picker URL. The value is a plain URL string for legacy/no-crop
+ * settings, or an `{ url, alt, transform }` object once the merchant frames the
+ * image in the editor. Returns "" for any other shape so the no-image fallback
+ * still renders exactly as before.
+ */
+function imgUrl(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object") {
+    const r = v as Record<string, unknown>;
+    if (typeof r.url === "string") return r.url;
+    if (typeof r.src === "string") return r.src;
+  }
+  return "";
+}
 
 /**
  * Modern hero — faithful port of the V2 in-tree ModernHero
@@ -13,16 +34,20 @@ import { type SectionRenderProps } from "./_shared";
  */
 const ModernHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const badge = s.badge_text ?? "وصل حديثاً";
-  const headline = s.headline ?? "اكتشف أحلى المنتجات بأفضل الأسعار";
+  const locale = useLocale();
+  const badge = s.badge_text ?? localized(locale, "New arrivals", "وصل حديثاً");
+  const headline = s.headline ?? localized(locale, "Discover the best products at the best prices", "اكتشف أحلى المنتجات بأفضل الأسعار");
   const subtitle =
     s.subtitle ??
-    "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.";
-  const ctaText = s.cta_text ?? "تسوق الآن";
+    localized(locale, "A curated selection of clothing and accessories, delivered across Egypt. High quality at fair prices.", "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.");
+  const ctaText = s.cta_text ?? localized(locale, "Shop now", "تسوق الآن");
   const ctaLink = s.cta_link ?? "/products";
-  const secondaryText = s.secondary_text ?? "تصفح الفئات";
+  const secondaryText = s.secondary_text ?? localized(locale, "Browse categories", "تصفح الفئات");
   const secondaryLink = s.secondary_link ?? "/products?category=clothing";
-  const heroImage = s.hero_image_url as string | undefined;
+  const heroImage = imgUrl(s.hero_image_url) || undefined;
+  // Non-destructive focal/zoom/rotation the merchant framed on the hero image.
+  // Undefined → the <img> renders exactly as before.
+  const heroImageTransform = asImageTransform(s.hero_image_url);
 
   return (
     <section className="relative min-h-[70vh] md:min-h-[80vh] overflow-hidden">
@@ -33,6 +58,7 @@ const ModernHero = ({ instance }: SectionRenderProps) => {
             src={heroImage}
             alt=""
             className="w-full h-full object-contain"
+            style={applyImageTransform(heroImageTransform, "contain")}
           />
           <div className="absolute inset-0 bg-gradient-to-l from-black/70 via-black/50 to-black/70" />
         </div>

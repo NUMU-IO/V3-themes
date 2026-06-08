@@ -2,7 +2,10 @@
   "type": "modern-products-page",
   "name": "Products Page",
   "settings": [
-    { "type": "header", "content": "Layout" },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
     {
       "id": "show_view_toggle",
       "type": "checkbox",

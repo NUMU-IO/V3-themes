@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { Link, useNavigation, useShop, useThemeSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useNavigation, useShop, useThemeSettings } from "@numueg/theme-sdk";
 import { Facebook, Instagram, MapPin, Phone, Send, Twitter } from "lucide-react";
-import { asString } from "./_shared";
+import { asString, localized } from "./_shared";
 
 /**
  * Vionne global footer.
@@ -34,32 +34,39 @@ interface FooterColumn {
   links: FooterLink[];
 }
 
-const DEFAULT_COLUMNS: FooterColumn[] = [
+/** Locale-aware default footer columns (used only when the merchant has
+ *  configured no "footer" navigation menu). */
+const buildDefaultColumns = (locale: string | undefined): FooterColumn[] => [
   {
-    title: "Shop",
+    title: localized(locale, "Shop", "تسوّقي"),
     links: [
-      { label: "New in", href: "/products" },
-      { label: "Best sellers", href: "/products" },
-      { label: "Accessories", href: "/products" },
+      { label: localized(locale, "New in", "وصل حديثًا"), href: "/products" },
+      { label: localized(locale, "Best sellers", "الأكثر مبيعًا"), href: "/products" },
+      { label: localized(locale, "Accessories", "إكسسوارات"), href: "/products" },
     ],
   },
   {
-    title: "Help",
+    title: localized(locale, "Help", "المساعدة"),
     links: [
-      { label: "Shipping", href: "/shipping" },
-      { label: "Returns", href: "/returns" },
-      { label: "Contact", href: "/contact" },
+      { label: localized(locale, "Shipping", "الشحن"), href: "/shipping" },
+      { label: localized(locale, "Returns", "الإرجاع"), href: "/returns" },
+      { label: localized(locale, "Contact", "تواصلي معنا"), href: "/contact" },
     ],
   },
 ];
 
 const VionneFooter = () => {
+  const locale = useLocale();
   const shop = useShop();
   const themeSettings = useThemeSettings();
   const brandName = shop?.name || "Vionne";
   const tagline =
     asString(themeSettings.global_settings?.footer_tagline) ||
-    "Modest fashion, quietly tailored — made to be lived in.";
+    localized(
+      locale,
+      "Modest fashion, quietly tailored — made to be lived in.",
+      "موضة محتشمة بخياطة راقية — مصمَّمة تتلبس كل يوم.",
+    );
 
   // Merchant-managed footer menu wins; childless items collapse into one
   // leading heading-less column, items with children become titled columns.
@@ -82,7 +89,7 @@ const VionneFooter = () => {
     if (loose.length > 0) cols.unshift({ title: "", links: loose });
     return cols;
   })();
-  const columns = menuColumns.length > 0 ? menuColumns : DEFAULT_COLUMNS;
+  const columns = menuColumns.length > 0 ? menuColumns : buildDefaultColumns(locale);
 
   const socialLinks =
     (shop?.social_links as Record<string, string> | undefined) ?? {};
@@ -164,9 +171,9 @@ const VionneFooter = () => {
           ))}
 
           <div>
-            <h4 className="vn-eyebrow text-white/90 mb-3">Newsletter</h4>
+            <h4 className="vn-eyebrow text-white/90 mb-3">{localized(locale, "Newsletter", "النشرة البريدية")}</h4>
             <p className="text-sm text-white/70 mb-3">
-              Sign up for new arrivals and private offers.
+              {localized(locale, "Sign up for new arrivals and private offers.", "اشتركي وكوني أول من يعرف بكل جديد وعروضنا الخاصة.")}
             </p>
             <form
               onSubmit={(e) => {
@@ -192,7 +199,7 @@ const VionneFooter = () => {
                 type="submit"
                 className="vn-btn vn-btn-outline-light text-xs px-4 whitespace-nowrap"
               >
-                {submitted ? "Thanks" : "Join"}
+                {submitted ? localized(locale, "Thanks", "شكرًا") : localized(locale, "Join", "اشتركي")}
               </button>
             </form>
           </div>
@@ -200,9 +207,9 @@ const VionneFooter = () => {
 
         <div className="mt-12 pt-6 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/55">
           <span>
-            © {new Date().getFullYear()} {brandName}. All rights reserved.
+            © {new Date().getFullYear()} {brandName}. {localized(locale, "All rights reserved.", "جميع الحقوق محفوظة.")}
           </span>
-          <span>Powered by NUMU</span>
+          <span>{localized(locale, "Powered by NUMU", "مدعوم من NUMU")}</span>
         </div>
       </div>
     </footer>

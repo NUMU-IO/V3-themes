@@ -1,7 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
+import { useLocale } from "@numueg/theme-sdk";
 import { Star } from "lucide-react";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 interface Review {
   name: string;
@@ -31,7 +32,8 @@ const bgColors = ["bg-primary", "bg-secondary", "bg-accent"];
 
 const NBTestimonials = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const title = asString(s.title, "رأي عملاءنا ⭐");
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "What our customers say ⭐", "رأي عملاءنا ⭐");
   const reviews = getReviewsFromSettings(s);
 
   if (reviews.length === 0) return null;

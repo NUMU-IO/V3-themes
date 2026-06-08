@@ -2,37 +2,42 @@
   "type": "elegant-profile",
   "name": "Elegant Account Page",
   "settings": [
-    { "type": "header", "content": "Content" },
+    {
+      "type": "header",
+      "content": "Content"
+    },
     {
       "id": "title",
       "type": "text",
       "label": "Page title",
       "label_ar": "عنوان الصفحة",
-      "default": "My account"
+      "default": ""
     },
     {
       "id": "orders_title",
       "type": "text",
       "label": "Orders heading",
       "label_ar": "عنوان الطلبات",
-      "default": "My orders"
+      "default": ""
     },
     {
       "id": "addresses_title",
       "type": "text",
       "label": "Addresses heading",
       "label_ar": "عنوان العناوين",
-      "default": "My addresses"
+      "default": ""
     },
     {
       "id": "settings_title",
       "type": "text",
       "label": "Settings heading",
       "label_ar": "عنوان الإعدادات",
-      "default": "Settings"
+      "default": ""
     },
-
-    { "type": "header", "content": "Layout" },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
     {
       "id": "show_stats",
       "type": "checkbox",

@@ -3,14 +3,39 @@
   "name": "Empire Marquee",
   "name_ar": "بازار شريط متحرك",
   "settings": [
-    { "type": "text", "id": "text", "label": "Marquee Text", "label_ar": "نص الشريط", "default": "PREMIUM QUALITY • EMPIRE • BOLD DESIGN • EXCLUSIVE DROPS •" },
-    { "type": "range", "id": "repeat_count", "label": "Repeat Count", "label_ar": "عدد التكرار", "default": 2, "min": 1, "max": 10, "step": 1 }
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Marquee Text",
+      "label_ar": "نص الشريط",
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "repeat_count",
+      "label": "Repeat Count",
+      "label_ar": "عدد التكرار",
+      "default": 2,
+      "min": 1,
+      "max": 10,
+      "step": 1
+    }
   ],
   "presets": [
     {
       "name": "Empire Marquee",
-      "locales": { "en": { "name": "Empire Marquee" }, "ar": { "name": "بازار شريط متحرك" } },
-      "settings": { "text": "PREMIUM QUALITY • EMPIRE • BOLD DESIGN • EXCLUSIVE DROPS •", "repeat_count": 2 }
+      "locales": {
+        "en": {
+          "name": "Empire Marquee"
+        },
+        "ar": {
+          "name": "بازار شريط متحرك"
+        }
+      },
+      "settings": {
+        "text": "",
+        "repeat_count": 2
+      }
     }
   ]
 }

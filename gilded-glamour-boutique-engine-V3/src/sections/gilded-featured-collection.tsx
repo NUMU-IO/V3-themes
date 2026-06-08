@@ -1,11 +1,12 @@
 "use client";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { asString, asNumber, type SectionRenderProps } from "./_shared";
+import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /** Inline Gilded product card — mirrors the V2 GildedProductCard look:
  *  sharp-edged image, hover zoom, uppercase name, gold price. */
 function GildedProductCard({ product }: { product: Product }) {
+  const locale = useLocale();
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -39,7 +40,7 @@ function GildedProductCard({ product }: { product: Product }) {
         )}
         {hasDiscount && (
           <span className="absolute top-3 start-3 px-2.5 py-1 bg-[hsl(var(--sale))] text-card text-[10px] tracking-[0.1em] uppercase font-semibold">
-            Sale
+            {localized(locale, "Sale", "تخفيض")}
           </span>
         )}
       </div>
@@ -66,11 +67,12 @@ const GildedFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
   const isLoading = false;
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const heading = asString(s.title) || "Crafted for the Eternal Wardrobe";
+  const heading = asString(s.title) || localized(locale, "Crafted for the Eternal Wardrobe", "صُمّم ليبقى في خزانتك للأبد");
   const subheading = asString(s.subtitle);
   const viewAllLink = asString(s.view_all_link) || "/products";
-  const viewAllText = asString(s.view_all_text) || "View All";
+  const viewAllText = asString(s.view_all_text) || localized(locale, "View All", "عرض الكل");
   const productCount = asNumber(s.product_count, 5);
   const columns = asNumber(s.columns, 5);
   const manualIds = Array.isArray(s.product_ids)

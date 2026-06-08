@@ -354,7 +354,7 @@ const v3Handle = {
   manifest: {
     id: "bon-younes-v3",
     name: "Bon Younes (V3)",
-    version: "0.1.12",
+    version: "0.1.16",
   },
   mount,
 };

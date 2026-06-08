@@ -147,7 +147,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "rabbitsocks-v3", name: "Rabbitsocks (V3)", version: "0.1.0" },
+  manifest: { id: "rabbitsocks-v3", name: "Rabbitsocks (V3)", version: "0.3.3" },
   mount,
 };
 export default v3Handle;

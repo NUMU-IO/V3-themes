@@ -1,9 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Skeuomorphic products-listing (PLP) section.
@@ -26,6 +26,7 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
   const showViewToggle = s.show_view_toggle ?? true;
 
   const { products, loading } = useProducts();
+  const locale = useLocale();
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | null>(null);
@@ -82,15 +83,15 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 vn-label text-[10px] text-[var(--vn-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            الرئيسية
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
-          <span className="text-[var(--vn-ink)]">{category ?? "المتجر"}</span>
+          <span className="text-[var(--vn-ink)]">{category ?? localized(locale, "Store", "المتجر")}</span>
         </div>
 
         {/* Title */}
         <h1 className="vn-heading text-2xl md:text-4xl text-[var(--vn-ink)] mb-8">
-          {category ?? "كل المنتجات"}
+          {category ?? localized(locale, "All products", "كل المنتجات")}
         </h1>
 
         {/* Search */}
@@ -101,7 +102,7 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
           />
           <input
             type="text"
-            placeholder="ابحث عن منتجات"
+            placeholder={localized(locale, "Search products", "ابحث عن منتجات")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full h-11 ps-9 pe-9 text-sm rounded-xl skeu-inset focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
@@ -111,7 +112,7 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
             <button
               type="button"
               onClick={() => setSearch("")}
-              aria-label="مسح البحث"
+              aria-label={localized(locale, "Clear search", "مسح البحث")}
               className="absolute end-3 top-1/2 -translate-y-1/2 text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors z-[1]"
             >
               <X size={14} />
@@ -135,7 +136,7 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
               data-testid="storefront-products-category"
               data-category-id="all"
             >
-              الكل
+              {localized(locale, "All", "الكل")}
             </button>
             {categories.map((cat) => (
               <button
@@ -161,27 +162,27 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
           data-testid="storefront-products-toolbar"
         >
           <span className="vn-label text-[10px] text-[var(--vn-muted)]">
-            {filtered.length} منتج
+            {filtered.length} {localized(locale, "products", "منتج")}
           </span>
           <div className="flex items-center gap-4">
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              aria-label="ترتيب المنتجات"
+              aria-label={localized(locale, "Sort products", "ترتيب المنتجات")}
               className="text-xs px-3 py-2 rounded-lg skeu-inset focus:outline-none focus:ring-2 focus:ring-ring transition-colors cursor-pointer"
               data-testid="storefront-products-sort"
             >
-              <option value="default">ترتيب حسب</option>
-              <option value="price-asc">السعر: الأقل</option>
-              <option value="price-desc">السعر: الأعلى</option>
-              <option value="name">الاسم</option>
+              <option value="default">{localized(locale, "Sort by", "ترتيب حسب")}</option>
+              <option value="price-asc">{localized(locale, "Price: low to high", "السعر: الأقل")}</option>
+              <option value="price-desc">{localized(locale, "Price: high to low", "السعر: الأعلى")}</option>
+              <option value="name">{localized(locale, "Name", "الاسم")}</option>
             </select>
             {showViewToggle && (
               <div className="flex items-center gap-1">
                 <button
                   type="button"
                   onClick={() => setViewMode("grid")}
-                  aria-label="عرض شبكي"
+                  aria-label={localized(locale, "Grid view", "عرض شبكي")}
                   className={
                     "p-2 rounded-lg skeu-chip transition-all " +
                     (viewMode === "grid" ? "skeu-chip-active" : "text-foreground")
@@ -192,7 +193,7 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
                 <button
                   type="button"
                   onClick={() => setViewMode("list")}
-                  aria-label="عرض قائمة"
+                  aria-label={localized(locale, "List view", "عرض قائمة")}
                   className={
                     "p-2 rounded-lg skeu-chip transition-all " +
                     (viewMode === "list" ? "skeu-chip-active" : "text-foreground")
@@ -221,9 +222,9 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-12 h-px bg-[var(--vn-border)] mx-auto mb-6" />
-            <p className="text-sm text-[var(--vn-muted)] mb-1">لا توجد نتائج</p>
+            <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No results", "لا توجد نتائج")}</p>
             <p className="text-xs text-[var(--vn-muted)]">
-              جرّب تعديل البحث أو الفلتر
+              {localized(locale, "Try adjusting your search or filter", "جرّب تعديل البحث أو الفلتر")}
             </p>
           </div>
         ) : (
@@ -264,6 +265,7 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
 
 /** Inline skeuomorphic product card (framed image + tactile info block). */
 function ProductCard({ product, list }: { product: Product; list?: boolean }) {
+  const locale = useLocale();
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -303,13 +305,13 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         )}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-2 start-2 skeu-badge px-2.5 py-1 rounded-lg text-[10px] font-bold">
-            خصم
+            {localized(locale, "Sale", "خصم")}
           </span>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
             <span className="skeu-chip text-foreground text-[11px] px-3 py-1.5 rounded-lg font-bold">
-              نفذت الكمية
+              {localized(locale, "Sold out", "نفذت الكمية")}
             </span>
           </div>
         )}

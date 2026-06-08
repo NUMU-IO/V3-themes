@@ -1,16 +1,18 @@
 "use client";
 import { useState } from "react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const HEADING_SHADOW = "0 1px 0 hsl(35 30% 100% / 0.6)";
 
 const SkeuNewsletter = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "اشترك في نشرتنا 📬";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Join our newsletter 📬", "اشترك في نشرتنا 📬");
   const subtitle =
-    asString(s.subtitle) || "اعرف أول واحد عن العروض والمنتجات الجديدة";
-  const buttonText = asString(s.button_text) || "اشترك";
-  const placeholder = asString(s.placeholder) || "البريد الإلكتروني";
+    asString(s.subtitle) || localized(locale, "Be the first to know about new drops and offers", "اعرف أول واحد عن العروض والمنتجات الجديدة");
+  const buttonText = asString(s.button_text) || localized(locale, "Subscribe", "اشترك");
+  const placeholder = asString(s.placeholder) || localized(locale, "Email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -36,7 +38,7 @@ const SkeuNewsletter = ({ instance }: SectionRenderProps) => {
           {submitted ? (
             <div className="skeu-card rounded-xl p-5">
               <p className="text-sm font-bold text-foreground relative z-[1]">
-                شكراً لاشتراكك! ✅
+                {localized(locale, "Thanks for subscribing! ✅", "شكراً لاشتراكك! ✅")}
               </p>
             </div>
           ) : (

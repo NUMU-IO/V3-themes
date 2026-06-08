@@ -1,6 +1,6 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { Link, useLocale } from "@numueg/theme-sdk";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const BTN_FILLED =
   "inline-flex items-center justify-center gap-2 h-11 px-6 rounded-full font-semibold text-sm text-primary-foreground transition-all hover:scale-[1.02]";
@@ -9,11 +9,13 @@ const BTN_OUTLINE =
 
 const BoutiqueAbout = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const eyebrow = asString(s.eyebrow) || "عن المتجر";
-  const headline = asString(s.headline) || "أناقة بلمسة عصرية";
+  const locale = useLocale();
+  const eyebrow = asString(s.eyebrow) || localized(locale, "About the Store", "عن المتجر");
+  const headline = asString(s.headline) || localized(locale, "Elegance with a Modern Touch", "أناقة بلمسة عصرية");
   const quote = asString(s.quote);
   const description = asString(s.description);
   const image = asString(s.image);
+  const imageTransform = asImageTransform(s.image);
 
   const ctaText = asString(s.cta_text);
   const ctaLink = asString(s.cta_link) || "/products";
@@ -66,7 +68,7 @@ const BoutiqueAbout = ({ instance }: SectionRenderProps) => {
           </div>
           {image ? (
             <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-muted">
-              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" style={applyImageTransform(imageTransform, "cover")} />
             </div>
           ) : null}
         </div>

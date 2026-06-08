@@ -1,14 +1,15 @@
 "use client";
-import { Link, useCollections } from "@numueg/theme-sdk";
+import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 const BoutiqueCategories = ({ instance }: SectionRenderProps) => {
   const { collections } = useCollections();
   const isLoading = false;
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const title = asString(s.title) || "تسوقي حسب الفئة";
+  const title = asString(s.title) || localized(locale, "Shop by Category", "تسوقي حسب الفئة");
   const maxItems = asNumber(s.max_items, 0);
 
   const displayCategories =
@@ -71,7 +72,7 @@ const BoutiqueCategories = ({ instance }: SectionRenderProps) => {
                       {cat.name}
                     </h3>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {cat.product_count} منتج
+                      {cat.product_count} {localized(locale, "items", "منتج")}
                     </p>
                   </div>
                 </Link>

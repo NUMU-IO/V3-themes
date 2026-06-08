@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Link,
   useCart,
+  useLocale,
   useResolvedSettings,
   useShop,
   useThemeSettings,
@@ -12,6 +13,7 @@ import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import {
   asImageUrl,
   asString,
+  localized,
   readBlocks,
   type SectionRenderProps,
 } from "./_shared";
@@ -22,11 +24,11 @@ interface NavItem {
   href: string;
 }
 
-const DEFAULT_NAV: NavItem[] = [
-  { label: "HOME", href: "/" },
-  { label: "SHOP", href: "/products" },
-  { label: "ABOUT", href: "/about" },
-  { label: "CONTACT", href: "/contact" },
+const defaultNav = (locale: string | undefined): NavItem[] => [
+  { label: localized(locale, "HOME", "الرئيسية"), href: "/" },
+  { label: localized(locale, "SHOP", "تسوّق"), href: "/products" },
+  { label: localized(locale, "ABOUT", "من نحن"), href: "/about" },
+  { label: localized(locale, "CONTACT", "تواصل معنا"), href: "/contact" },
 ];
 
 /**
@@ -42,6 +44,7 @@ export default function EmpHeader({ instance, sectionId }: SectionRenderProps) {
   const shop = useShop();
   const { cart } = useCart();
   const themeSettings = useThemeSettings();
+  const locale = useLocale();
 
   const brandName =
     asString(s.brand_name) ||
@@ -57,7 +60,11 @@ export default function EmpHeader({ instance, sectionId }: SectionRenderProps) {
 
   const announcement =
     asString(s.announcement_text) ||
-    "FREE SHIPPING OVER 500 EGP • NEW ARRIVALS WEEKLY • SHOP THE EDIT";
+    localized(
+      locale,
+      "FREE SHIPPING OVER 500 EGP • NEW ARRIVALS WEEKLY • SHOP THE EDIT",
+      "شحن مجاني للطلبات فوق ٥٠٠ ج.م • وصل حديثًا كل أسبوع • تسوّق التشكيلة",
+    );
 
   const showAnnouncement = (s.show_announcement as boolean) !== false;
   const showSearch = (s.show_search as boolean) !== false;
@@ -72,7 +79,7 @@ export default function EmpHeader({ instance, sectionId }: SectionRenderProps) {
             href: asString(r.href) || "/",
           }))
           .filter((n) => n.label)
-      : DEFAULT_NAV;
+      : defaultNav(locale);
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -209,7 +216,7 @@ export default function EmpHeader({ instance, sectionId }: SectionRenderProps) {
                 aria-label={`Cart (${itemCount} items)`}
               >
                 <span className="hidden sm:inline text-xs font-bold tracking-[0.2em]">
-                  CART
+                  {localized(locale, "CART", "السلة")}
                 </span>
                 <ShoppingBag size={18} aria-hidden="true" />
                 {itemCount > 0 && (

@@ -1,10 +1,13 @@
 "use client";
 
-import { Link, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import {
+  applyImageTransform,
+  asImageTransform,
   asImageUrl,
   asString,
   demoOrPlaceholder,
+  localized,
   useDemo,
   type SectionRenderProps,
 } from "./_shared";
@@ -18,21 +21,33 @@ const FALLBACK_IMAGE = {
 const BzImageWithText = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const demo = useDemo();
+  const locale = useLocale();
 
-  const label = asString(s.label) || "THE PHILOSOPHY";
-  const headline = asString(s.headline) || "THE LUXURY OF THINGS THAT LAST.";
+  const label = asString(s.label) || localized(locale, "THE PHILOSOPHY", "الفلسفة");
+  const headline = asString(s.headline) || localized(locale, "THE LUXURY OF THINGS THAT LAST.", "رفاهية الأشياء اللي بتدوم.");
   const quote =
     asString(s.quote) ||
-    "Born from a pursuit of the perfect tactile experience. We don't chase trends; we refine the invisible details of the daily ritual.";
+    localized(
+      locale,
+      "Born from a pursuit of the perfect tactile experience. We don't chase trends; we refine the invisible details of the daily ritual.",
+      "اتولدنا من السعي لتجربة لمس مثالية. إحنا مبنجريش ورا الموضة؛ بنتقن التفاصيل الخفية في روتين يومك.",
+    );
   const body =
     asString(s.body) ||
-    "Our materials are sourced from the finest mills, ensuring every thread meets our standards for thermal regulation and enduring softness.";
-  const ctaText = asString(s.cta_text) || "LEARN MORE";
+    localized(
+      locale,
+      "Our materials are sourced from the finest mills, ensuring every thread meets our standards for thermal regulation and enduring softness.",
+      "خاماتنا مختارة من أجود المصانع، عشان كل خيط يوصل لمعاييرنا في توازن الحرارة ونعومة تدوم.",
+    );
+  const ctaText = asString(s.cta_text) || localized(locale, "LEARN MORE", "اعرف أكتر");
   const ctaLink = asString(s.cta_link) || "/about";
   // Demo-mode fills in a real photo; outside demo an unset image collapses to
   // the branded "B" placeholder block (designed empty-state, below).
   const configuredImage = asImageUrl(s.image_url);
   const imageUrl = configuredImage || demoOrPlaceholder(demo, [FALLBACK_IMAGE])[0].image;
+  // Non-destructive focal/zoom/rotation the merchant set in the editor. When
+  // absent, the image renders exactly as before (object-cover + hover-zoom).
+  const imageTransform = asImageTransform(s.image_url);
   const colorScheme = asString(s.color_scheme) || "dark";
 
   return (
@@ -68,7 +83,8 @@ const BzImageWithText = ({ instance, sectionId }: SectionRenderProps) => {
                 <img
                   src={imageUrl}
                   alt=""
-                  className="w-full h-full object-cover opacity-80 bz-img-zoom"
+                  className={`w-full h-full object-cover opacity-80 ${imageTransform ? "" : "bz-img-zoom"}`}
+                  style={applyImageTransform(imageTransform, "cover")}
                   loading="lazy"
                 />
               </div>

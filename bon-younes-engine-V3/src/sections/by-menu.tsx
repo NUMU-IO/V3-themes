@@ -4,13 +4,14 @@ import { useMemo, useState } from "react";
 import {
   Link,
   Money,
+  useLocale,
   useProducts,
   useResolvedSettings,
   useThemeSettings,
 } from "@numueg/theme-sdk";
 import type { Product } from "@numueg/theme-sdk";
 import { ArrowUpRight } from "lucide-react";
-import { asArray, asRecord, asString, demoOrPlaceholder, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type SectionRenderProps } from "./_shared";
+import { asArray, asRecord, asString, demoOrPlaceholder, localized, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 interface MenuTab {
@@ -20,13 +21,13 @@ interface MenuTab {
   match?: string;
 }
 
-const DEFAULT_TABS: MenuTab[] = [
-  { id: "all", label: "All" },
-  { id: "coffee", label: "Coffee", match: "coffee" },
-  { id: "latte", label: "Latte", match: "latte" },
-  { id: "iced", label: "Iced", match: "iced" },
-  { id: "juice", label: "Juice", match: "juice" },
-  { id: "dessert", label: "Desserts", match: "dessert" },
+const DEFAULT_TABS = (locale: string | undefined): MenuTab[] => [
+  { id: "all", label: localized(locale, "All", "الكل") },
+  { id: "coffee", label: localized(locale, "Coffee", "قهوة"), match: "coffee" },
+  { id: "latte", label: localized(locale, "Latte", "لاتيه"), match: "latte" },
+  { id: "iced", label: localized(locale, "Iced", "مثلجة"), match: "iced" },
+  { id: "juice", label: localized(locale, "Juice", "عصير"), match: "juice" },
+  { id: "dessert", label: localized(locale, "Desserts", "حلويات"), match: "dessert" },
 ];
 
 interface FallbackItem {
@@ -40,71 +41,73 @@ interface FallbackItem {
 }
 
 // Prices are major units (EGP). Real products use <Money>, fallbacks
-// use the formatter at the bottom of this file.
-const FALLBACK_ITEMS: FallbackItem[] = [
+// use the formatter at the bottom of this file. Marketplace-preview-only and
+// bilingual: these render solely when the store has no products AND we're in
+// demo mode — a real store (demo=false) gets [] (see demoOrPlaceholder).
+const FALLBACK_ITEMS = (locale: string | undefined): FallbackItem[] => [
   {
     id: "espresso",
-    name: "Espresso",
-    description: "Double shot of our seasonal blend. Dense and clean.",
+    name: localized(locale, "Espresso", "إسبريسو"),
+    description: localized(locale, "Double shot of our seasonal blend. Dense and clean.", "دبل شوت من خلطة الموسم. تقيل ونضيف."),
     price: 45,
     image: "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?auto=format&fit=crop&w=900&q=70",
-    badge: "Signature",
+    badge: localized(locale, "Signature", "مميز"),
     tag: "coffee",
   },
   {
     id: "vanilla-latte",
-    name: "Vanilla Latte",
-    description: "Espresso, steamed milk and a slow swirl of vanilla syrup.",
+    name: localized(locale, "Vanilla Latte", "لاتيه فانيليا"),
+    description: localized(locale, "Espresso, steamed milk and a slow swirl of vanilla syrup.", "إسبريسو ولبن متبخّر ولفّة فانيليا على مهل."),
     price: 85,
     image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=900&q=70",
-    badge: "Popular",
+    badge: localized(locale, "Popular", "الأكثر طلبًا"),
     tag: "latte",
   },
   {
     id: "iced-mocha",
-    name: "Iced Mocha",
-    description: "Cold brew, dark chocolate, milk and a crown of cream.",
+    name: localized(locale, "Iced Mocha", "موكا مثلجة"),
+    description: localized(locale, "Cold brew, dark chocolate, milk and a crown of cream.", "كولد برو وشيكولاتة دارك ولبن وتاج من الكريمة."),
     price: 95,
     image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=900&q=70",
     tag: "iced",
   },
   {
     id: "mango-juice",
-    name: "Fresh Mango",
-    description: "Cold-pressed Egyptian mango. Nothing added.",
+    name: localized(locale, "Fresh Mango", "مانجة طازة"),
+    description: localized(locale, "Cold-pressed Egyptian mango. Nothing added.", "مانجة مصري معصورة على البارد. من غير أي إضافات."),
     price: 70,
     image: "https://images.unsplash.com/photo-1605191568878-8efe22b526ee?auto=format&fit=crop&w=900&q=70",
     tag: "juice",
   },
   {
     id: "basbousa",
-    name: "Basbousa",
-    description: "Semolina cake soaked in citrus syrup. House recipe.",
+    name: localized(locale, "Basbousa", "بسبوسة"),
+    description: localized(locale, "Semolina cake soaked in citrus syrup. House recipe.", "كيكة سميد مغموسة في شربات الموالح. وصفة البيت."),
     price: 55,
     image: "https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&fit=crop&w=900&q=70",
     tag: "dessert",
   },
   {
     id: "flat-white",
-    name: "Flat White",
-    description: "Velvet microfoam over a double ristretto.",
+    name: localized(locale, "Flat White", "فلات وايت"),
+    description: localized(locale, "Velvet microfoam over a double ristretto.", "رغوة ناعمة زي القطيفة فوق دبل ريستريتو."),
     price: 80,
     image: "https://images.unsplash.com/photo-1485808191679-5f86510681a2?auto=format&fit=crop&w=900&q=70",
     tag: "coffee",
   },
   {
     id: "caramel-frappe",
-    name: "Caramel Frappé",
-    description: "Blended ice, espresso, caramel and milk.",
+    name: localized(locale, "Caramel Frappé", "كراميل فرابيه"),
+    description: localized(locale, "Blended ice, espresso, caramel and milk.", "تلج مخفوق وإسبريسو وكراميل ولبن."),
     price: 90,
     image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=900&q=70",
-    badge: "New",
+    badge: localized(locale, "New", "جديد"),
     tag: "iced",
   },
   {
     id: "brownie",
-    name: "Walnut Brownie",
-    description: "Fudgy, dense, with a slow caramel finish.",
+    name: localized(locale, "Walnut Brownie", "براوني بعين الجمل"),
+    description: localized(locale, "Fudgy, dense, with a slow caramel finish.", "هش وتقيل، وبلمسة كراميل على مهل."),
     price: 65,
     image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=70",
     tag: "dessert",
@@ -163,17 +166,22 @@ export default function ByMenu({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const themeSettings = useThemeSettings();
   const { products } = useProducts();
+  const locale = useLocale();
 
-  const eyebrow = asString(s.eyebrow) || "drinks & treats";
-  const title = asString(s.title) || "Our menu";
+  const eyebrow = asString(s.eyebrow) || localized(locale, "drinks & treats", "مشروبات وحلويات");
+  const title = asString(s.title) || localized(locale, "Our menu", "المنيو بتاعنا");
   const subtitle =
     asString(s.subtitle) ||
-    "From the first espresso of the morning to the last slice of basbousa — every item is made in-house, every day.";
-  const viewAllLabel = asString(s.view_all_label) || "Browse the full menu";
+    localized(
+      locale,
+      "From the first espresso of the morning to the last slice of basbousa — every item is made in-house, every day.",
+      "من أول إسبريسو الصبح لآخر قطعة بسبوسة — كل حاجة بنعملها بإيدينا، كل يوم.",
+    );
+  const viewAllLabel = asString(s.view_all_label) || localized(locale, "Browse the full menu", "اتفرّج على المنيو كامل");
   const viewAllHref = asString(s.view_all_link) || "/products";
-  const cardCtaLabel = asString(s.card_cta_label) || "Order";
+  const cardCtaLabel = asString(s.card_cta_label) || localized(locale, "Order", "اطلب");
   const emptyText =
-    asString(s.empty_category_text) || "No items in this category yet.";
+    asString(s.empty_category_text) || localized(locale, "No items in this category yet.", "مفيش حاجة في القسم ده لسه.");
   const fallbackCurrency =
     (themeSettings.global_settings?.currency as string) || "EGP";
 
@@ -189,7 +197,7 @@ export default function ByMenu({ instance, sectionId }: SectionRenderProps) {
     })
     .filter((t) => t.label);
 
-  const tabs = configuredTabs.length > 0 ? configuredTabs : DEFAULT_TABS;
+  const tabs = configuredTabs.length > 0 ? configuredTabs : DEFAULT_TABS(locale);
   const [activeTab, setActiveTab] = useState<string>(tabs[0]?.id ?? "all");
 
   const demo = useDemo();
@@ -199,10 +207,10 @@ export default function ByMenu({ instance, sectionId }: SectionRenderProps) {
     // previously emptied realItems and leaked the FALLBACK_ITEMS coffee cards.
     const realItems = products.map(productToDisplay);
     if (realItems.length > 0) return realItems;
-    return demoOrPlaceholder(demo, FALLBACK_ITEMS).map((f) =>
+    return demoOrPlaceholder(demo, FALLBACK_ITEMS(locale)).map((f) =>
       fallbackToDisplay(f, fallbackCurrency),
     );
-  }, [products, fallbackCurrency, demo]);
+  }, [products, fallbackCurrency, demo, locale]);
 
   const activeMatch = tabs.find((t) => t.id === activeTab)?.match;
   const filtered = activeMatch

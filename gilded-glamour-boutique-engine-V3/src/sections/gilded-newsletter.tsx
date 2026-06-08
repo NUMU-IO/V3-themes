@@ -1,17 +1,19 @@
 "use client";
 import { useState } from "react";
 import { Check } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const GildedNewsletter = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const title = asString(s.title) || "Newsletter";
-  const subtitle = asString(s.subtitle) || "Join the empire. Be first to know.";
-  const buttonText = asString(s.button_text) || "Join";
-  const placeholder = asString(s.placeholder) || "Your email";
+  const title = asString(s.title) || localized(locale, "Newsletter", "النشرة البريدية");
+  const subtitle = asString(s.subtitle) || localized(locale, "Join the gilded circle. Be first to know.", "انضم لدائرة النخبة الذهبية. وكن أول من يعرف الجديد.");
+  const buttonText = asString(s.button_text) || localized(locale, "Join", "اشترك");
+  const placeholder = asString(s.placeholder) || localized(locale, "Your email", "بريدك الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -36,7 +38,7 @@ const GildedNewsletter = ({ instance }: SectionRenderProps) => {
           {submitted ? (
             <div className="flex items-center justify-center gap-2 h-12 text-sm font-semibold text-[hsl(var(--olive))]">
               <Check className="h-5 w-5" />
-              <span>Successfully subscribed</span>
+              <span>{localized(locale, "Successfully subscribed", "تم الاشتراك بنجاح")}</span>
             </div>
           ) : (
             <div className="flex flex-col sm:flex-row max-w-md mx-auto gap-2 sm:gap-0">

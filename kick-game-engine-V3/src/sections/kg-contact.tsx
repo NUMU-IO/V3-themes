@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { Link, useShop } from "@numueg/theme-sdk";
+import { Link, useShop, useLocale } from "@numueg/theme-sdk";
 import { ChevronRight, MessageCircle, Phone, Mail, Instagram, Clock } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Kick Game contact page. Ported from the proven vionne V3 contact section
@@ -29,6 +29,7 @@ function normalizeInstagram(raw: string | null | undefined): { handle: string; u
 
 const KGContact = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
   const shop = useShop();
   const socials = (shop?.social_links ?? {}) as Record<string, string>;
   const pick = (...keys: string[]): string => {
@@ -54,20 +55,20 @@ const KGContact = ({ instance }: SectionRenderProps) => {
   );
   const email = contact.email || "";
 
-  const eyebrow = asString(s.eyebrow) || "GET IN TOUCH";
-  const title = asString(s.title) || "Contact us";
+  const eyebrow = asString(s.eyebrow) || localized(locale, "GET IN TOUCH", "تواصل معانا");
+  const title = asString(s.title) || localized(locale, "Contact us", "اتصل بينا");
   const subtitle = asString(s.subtitle);
-  const nameLabel = asString(s.name_label) || "Name";
-  const phoneLabel = asString(s.phone_label) || "Phone number";
-  const messageLabel = asString(s.message_label) || "Your message";
-  const submitText = asString(s.submit_text) || "Send";
-  const successTitle = asString(s.success_title) || "Thanks for reaching out";
-  const successMessage = asString(s.success_message) || "We'll get back to you as soon as possible.";
+  const nameLabel = asString(s.name_label) || localized(locale, "Name", "الاسم");
+  const phoneLabel = asString(s.phone_label) || localized(locale, "Phone number", "رقم الموبايل");
+  const messageLabel = asString(s.message_label) || localized(locale, "Your message", "رسالتك");
+  const submitText = asString(s.submit_text) || localized(locale, "Send", "إرسال");
+  const successTitle = asString(s.success_title) || localized(locale, "Thanks for reaching out", "شكراً لتواصلك معانا");
+  const successMessage = asString(s.success_message) || localized(locale, "We'll get back to you as soon as possible.", "هنرد عليك في أقرب وقت.");
   const showWorkingHours = s.show_working_hours !== false;
-  const weekdaysLabel = asString(s.hours_weekdays_label) || "Saturday – Thursday";
-  const weekdaysValue = asString(s.hours_weekdays_value) || "9 AM – 9 PM";
-  const fridayLabel = asString(s.hours_friday_label) || "Friday";
-  const fridayValue = asString(s.hours_friday_value) || "2 PM – 9 PM";
+  const weekdaysLabel = asString(s.hours_weekdays_label) || localized(locale, "Saturday – Thursday", "السبت – الخميس");
+  const weekdaysValue = asString(s.hours_weekdays_value) || localized(locale, "9 AM – 9 PM", "٩ ص – ٩ م");
+  const fridayLabel = asString(s.hours_friday_label) || localized(locale, "Friday", "الجمعة");
+  const fridayValue = asString(s.hours_friday_value) || localized(locale, "2 PM – 9 PM", "٢ م – ٩ م");
   const showMap = s.show_map === true;
   const mapEmbedUrl = asString(s.map_embed_url);
 
@@ -91,13 +92,13 @@ const KGContact = ({ instance }: SectionRenderProps) => {
   if (phoneDigits) {
     methods.push({
       icon: Phone,
-      label: "Call us",
+      label: localized(locale, "Call us", "اتصل بينا"),
       value: formatPhoneForDisplay(phoneDigits),
       href: `tel:+${phoneDigits}`,
     });
   }
   if (email) {
-    methods.push({ icon: Mail, label: "Email", value: email, href: `mailto:${email}` });
+    methods.push({ icon: Mail, label: localized(locale, "Email", "البريد الإلكتروني"), value: email, href: `mailto:${email}` });
   }
   if (instagramHandle) {
     methods.push({
@@ -113,7 +114,7 @@ const KGContact = ({ instance }: SectionRenderProps) => {
       <div className="container mx-auto px-4 py-10 md:py-14 max-w-5xl">
         <nav className="flex items-center gap-1.5 text-xs vn-label text-[var(--vn-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ChevronRight size={12} className="rtl:rotate-180" />
           <span className="text-[var(--vn-ink)]">{title}</span>
@@ -191,7 +192,7 @@ const KGContact = ({ instance }: SectionRenderProps) => {
               <div className="pt-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Clock size={14} className="text-[var(--vn-muted)]" />
-                  <span className="vn-eyebrow text-[10px]">Business hours</span>
+                  <span className="vn-eyebrow text-[10px]">{localized(locale, "Business hours", "مواعيد العمل")}</span>
                 </div>
                 <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 xs:gap-4 text-sm text-[var(--vn-muted)]">
                   <div>

@@ -1,6 +1,6 @@
 {
   "name": "empire-v3",
-  "version": "0.2.0",
+  "version": "0.2.4",
   "private": true,
   "description": "Empire (V3) (V3 port)",
   "type": "module",

@@ -2,15 +2,29 @@
   "type": "by-rich-text",
   "name": "Rich text",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "About Bon Younes" },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": ""
+    },
     {
       "type": "richtext",
       "id": "body",
       "label": "Body",
-      "default": "<p>Specialty coffee, brewed slowly in Mansoura. Beans roasted on site every Wednesday — drop by, or order online.</p>"
+      "default": ""
     }
   ],
   "presets": [
-    { "name": "Rich text", "locales": { "ar": { "name": "نص منسّق" } }, "category": "content", "settings": {} }
+    {
+      "name": "Rich text",
+      "locales": {
+        "ar": {
+          "name": "نص منسّق"
+        }
+      },
+      "category": "content",
+      "settings": {}
+    }
   ]
 }

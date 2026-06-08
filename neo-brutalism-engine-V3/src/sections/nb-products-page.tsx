@@ -1,9 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Neo-brutalism products-listing (PLP) section.
@@ -21,6 +21,7 @@ import { asNumber, type SectionRenderProps } from "./_shared";
  */
 export default function NBProductsPage({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
   const colsDesktop = asNumber(s.columns_desktop, 4);
   const colsMobile = asNumber(s.columns_mobile, 2);
@@ -85,15 +86,15 @@ export default function NBProductsPage({ instance }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 vn-label text-[10px] text-[var(--vn-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
-          <span className="text-[var(--vn-ink)]">{category ?? "Shop"}</span>
+          <span className="text-[var(--vn-ink)]">{category ?? localized(locale, "Shop", "المتجر")}</span>
         </div>
 
         {/* Title */}
         <h1 className="vn-heading text-2xl md:text-4xl text-[var(--vn-ink)] mb-8">
-          {category ?? "All products"}
+          {category ?? localized(locale, "All products", "كل المنتجات")}
         </h1>
 
         {/* Search */}
@@ -104,7 +105,7 @@ export default function NBProductsPage({ instance }: SectionRenderProps) {
           />
           <input
             type="text"
-            placeholder="Search products"
+            placeholder={localized(locale, "Search products", "ابحث عن منتجات")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full h-11 ps-9 pe-9 text-sm nb-input rounded-lg focus:outline-none placeholder:text-[var(--vn-muted)]"
@@ -138,7 +139,7 @@ export default function NBProductsPage({ instance }: SectionRenderProps) {
               data-testid="storefront-products-category"
               data-category-id="all"
             >
-              All
+              {localized(locale, "All", "الكل")}
             </button>
             {categories.map((cat) => (
               <button
@@ -164,7 +165,7 @@ export default function NBProductsPage({ instance }: SectionRenderProps) {
           data-testid="storefront-products-toolbar"
         >
           <span className="vn-label text-[10px] text-[var(--vn-muted)]">
-            {filtered.length} products
+            {filtered.length} {localized(locale, "products", "منتج")}
           </span>
           <div className="flex items-center gap-4">
             <select
@@ -174,10 +175,10 @@ export default function NBProductsPage({ instance }: SectionRenderProps) {
               className="text-xs px-3 py-2 nb-input rounded-lg focus:outline-none cursor-pointer"
               data-testid="storefront-products-sort"
             >
-              <option value="default">Sort by</option>
-              <option value="price-asc">Price: Low</option>
-              <option value="price-desc">Price: High</option>
-              <option value="name">Name</option>
+              <option value="default">{localized(locale, "Sort by", "ترتيب حسب")}</option>
+              <option value="price-asc">{localized(locale, "Price: Low", "السعر: الأقل")}</option>
+              <option value="price-desc">{localized(locale, "Price: High", "السعر: الأعلى")}</option>
+              <option value="name">{localized(locale, "Name", "الاسم")}</option>
             </select>
             {showViewToggle && (
               <div className="flex items-center gap-1">
@@ -228,9 +229,9 @@ export default function NBProductsPage({ instance }: SectionRenderProps) {
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-12 h-1 bg-[var(--vn-border)] mx-auto mb-6" />
-            <p className="text-sm text-[var(--vn-muted)] mb-1 font-black">No results</p>
+            <p className="text-sm text-[var(--vn-muted)] mb-1 font-black">{localized(locale, "No results", "لا توجد نتائج")}</p>
             <p className="text-xs text-[var(--vn-muted)]">
-              Try adjusting your search or filter
+              {localized(locale, "Try adjusting your search or filter", "جرّب تعديل البحث أو الفلتر")}
             </p>
           </div>
         ) : (
@@ -271,6 +272,7 @@ export default function NBProductsPage({ instance }: SectionRenderProps) {
 
 /** Inline neo-brutalism product card — mirrors NBProductCard's markup. */
 function ProductCard({ product, list }: { product: Product; list?: boolean }) {
+  const locale = useLocale();
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -319,13 +321,13 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         )}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-2 start-2 nb-badge-pink px-2 py-0.5 rounded text-[10px]">
-            Sale
+            {localized(locale, "Sale", "خصم")}
           </span>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-white/65 flex items-center justify-center">
             <span className="nb-badge text-[11px] px-3 py-1.5 rounded">
-              Sold out
+              {localized(locale, "Sold out", "نفذت الكمية")}
             </span>
           </div>
         )}

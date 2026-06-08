@@ -2,7 +2,7 @@
   "id": "gilded-glamour-boutique-v3",
   "name": "Gilded glamour boutique (V3)",
   "author": "Saw Saw Atelier",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "layout": "single-column",
   "description": "A bold, gold-accented luxury fashion theme with parallax hero, scroll-fill text animations, and curated vertical layouts. V3 port of the in-tree Gilded Glamour Boutique theme.",
   "error_template": "templates/error.html",
@@ -15,9 +15,6 @@
           {
             "type": "gilded-hero",
             "settings": {
-              "headline": "THE NEW EMPIRE",
-              "subtitle": "Curated Excellence & Timeless Precision",
-              "cta_text": "Discover Collection",
               "cta_link": "/products",
               "enable_parallax": true
             }
@@ -25,49 +22,32 @@
           {
             "type": "gilded-categories",
             "settings": {
-              "title": "Curated Verticals",
               "max_items": 3
             }
           },
           {
             "type": "gilded-featured-collection",
             "settings": {
-              "title": "Crafted for the Eternal Wardrobe",
-              "subtitle": "The Artisan Way",
-              "collection_tag": "new",
               "product_count": 5,
               "columns": 5,
-              "view_all_text": "View All",
               "view_all_link": "/products"
             }
           },
           {
             "type": "gilded-promo-banner",
-            "settings": {
-              "headline": "WHERE HERITAGE MEETS THE FUTURE",
-              "subtitle": "Every thread tells a story, every silhouette commands a room, and every piece is destined to become an heirloom."
-            }
+            "settings": {}
           },
           {
             "type": "gilded-featured-collection",
             "settings": {
-              "title": "Empire Essentials",
-              "subtitle": "Most Loved",
-              "collection_tag": "bestseller",
               "product_count": 5,
               "columns": 5,
-              "view_all_text": "Shop All",
               "view_all_link": "/products"
             }
           },
           {
             "type": "gilded-newsletter",
-            "settings": {
-              "title": "Newsletter",
-              "subtitle": "Join the empire. Be first to know.",
-              "button_text": "Join",
-              "placeholder": "Your email"
-            }
+            "settings": {}
           }
         ]
       },

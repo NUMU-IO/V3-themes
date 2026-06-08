@@ -2,11 +2,41 @@
   "type": "skeu-announcement-bar",
   "name": "Announcement Bar",
   "settings": [
-    { "type": "header", "content": "Content" },
-    { "id": "text", "type": "text", "label": "Announcement Text", "label_ar": "نص الإعلان", "default": "🎉 شحن مجاني للطلبات فوق 500 جنيه" },
-    { "id": "link_url", "type": "url", "label": "Link URL", "label_ar": "رابط", "default": "" },
-    { "id": "link_text", "type": "text", "label": "Link Text", "label_ar": "نص الرابط", "default": "تسوق الآن" },
-    { "type": "header", "content": "Behavior" },
-    { "id": "dismissible", "type": "checkbox", "label": "Can be dismissed", "label_ar": "قابل للإغلاق", "default": true }
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "id": "text",
+      "type": "text",
+      "label": "Announcement Text",
+      "label_ar": "نص الإعلان",
+      "default": ""
+    },
+    {
+      "id": "link_url",
+      "type": "url",
+      "label": "Link URL",
+      "label_ar": "رابط",
+      "default": ""
+    },
+    {
+      "id": "link_text",
+      "type": "text",
+      "label": "Link Text",
+      "label_ar": "نص الرابط",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "id": "dismissible",
+      "type": "checkbox",
+      "label": "Can be dismissed",
+      "label_ar": "قابل للإغلاق",
+      "default": true
+    }
   ]
 }

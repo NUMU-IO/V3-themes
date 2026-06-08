@@ -1,7 +1,7 @@
 "use client";
-import { Link, useCollections } from "@numueg/theme-sdk";
+import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Luxury Minimal categories — faithful port of the V2 LuxCategories (centered
@@ -14,8 +14,9 @@ export default function LuxCategories({ instance }: SectionRenderProps) {
   const { collections } = useCollections();
   const isLoading = false;
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const title = asString(s.title) || "تسوق حسب الفئة";
+  const title = asString(s.title) || localized(locale, "Shop by Category", "تسوق حسب الفئة");
   const columnsDesktop = asNumber(s.columns_desktop, 5);
   const columnsMobile = asNumber(s.columns_mobile, 2);
   const maxItems = asNumber(s.max_items, 0);

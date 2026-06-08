@@ -1,7 +1,7 @@
 "use client";
-import { Link, useCollections } from "@numueg/theme-sdk";
+import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Tech Wave categories — faithful port of the V2 in-tree
@@ -16,7 +16,8 @@ const TechWaveCategories = ({ instance }: SectionRenderProps) => {
   const { collections, loading } = useCollections();
   const isLoading = loading;
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "تسوق حسب الفئة";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Shop by category", "تسوق حسب الفئة");
   const colsDesktop = asNumber(s.columns_desktop, 5);
   const colsMobile = asNumber(s.columns_mobile, 3);
   const maxItems = asNumber(s.max_items, 0);
@@ -74,7 +75,7 @@ const TechWaveCategories = ({ instance }: SectionRenderProps) => {
                       {cat.name}
                     </span>
                     <span className="text-white/60 text-[10px] block">
-                      {cat.product_count} منتج
+                      {cat.product_count} {localized(locale, "products", "منتج")}
                     </span>
                   </div>
                 </Link>

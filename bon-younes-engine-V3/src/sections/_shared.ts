@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 /**
  * Shared helpers for Bon Younes V3 sections.
  *
@@ -110,6 +111,18 @@ export function demoOrPlaceholder<T extends Record<string, unknown>>(
   items: T[],
 ): T[] {
   return demo ? items : [];
+}
+
+/**
+ * ENG-3: pick the locale-appropriate DEFAULT copy. Merchant-entered values
+ * still win because callers do `asString(s.x) || localized(locale, en, ar)`.
+ * Only widens the hardcoded empty-state default a section renders when the
+ * merchant hasn't typed a value — under `?locale=ar` (RTL) Arabic shows, else
+ * English. (Strings already wired through `useTranslation(...)` keep using the
+ * locale catalog; this is for the remaining HARDCODED literals.)
+ */
+export function localized(locale: string | undefined, en: string, ar: string): string {
+  return (locale || "").toLowerCase().startsWith("ar") ? ar : en;
 }
 
 export function asString(v: unknown, fallback = ""): string {
@@ -311,4 +324,44 @@ export function resolveBlockNodes(
 export function productHref(slugOrId: string | undefined | null): string {
   if (!slugOrId) return "/products";
   return `/products/${slugOrId}`;
+}
+
+
+// ── Non-destructive image transform (focal / zoom / rotation) — Phase 2 ──────
+// Mirror of merchant-hub imageTransform.ts (and bazar _shared). Keep
+// applyImageTransform in sync so the editor preview == the storefront render.
+// Identity-safe: with no transform it returns {}, so images render unchanged.
+export interface ImageTransform {
+  v: 1;
+  focal?: { x: number; y: number };
+  zoom?: number;
+  rotation?: number;
+  fit?: "cover" | "contain";
+}
+const _clampImgT = (n: number, lo: number, hi: number): number =>
+  Math.min(hi, Math.max(lo, Number.isFinite(n) ? n : lo));
+export function asImageTransform(v: unknown): ImageTransform | undefined {
+  if (v && typeof v === "object" && "transform" in v) {
+    const t = (v as { transform?: unknown }).transform;
+    if (t && typeof t === "object") return t as ImageTransform;
+  }
+  return undefined;
+}
+export function applyImageTransform(
+  t: ImageTransform | undefined | null,
+  fit: "cover" | "contain" = "cover",
+): CSSProperties {
+  if (!t) return {};
+  const fx = Math.round(_clampImgT(t.focal?.x ?? 0.5, 0, 1) * 1e4) / 100;
+  const fy = Math.round(_clampImgT(t.focal?.y ?? 0.5, 0, 1) * 1e4) / 100;
+  const zoom = _clampImgT(t.zoom ?? 1, 1, 4);
+  const rot = ((t.rotation ?? 0) % 360 + 360) % 360;
+  const effFit = t.fit ?? fit;
+  const style: CSSProperties = {
+    transform: `scale(${zoom}) rotate(${rot}deg)`,
+    transformOrigin: `${fx}% ${fy}%`,
+    objectFit: effFit,
+  };
+  if (effFit === "cover") style.objectPosition = `${fx}% ${fy}%`;
+  return style;
 }

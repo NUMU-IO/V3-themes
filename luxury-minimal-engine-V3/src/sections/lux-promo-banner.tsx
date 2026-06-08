@@ -1,8 +1,25 @@
 "use client";
 import { useState } from "react";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import {
+  applyImageTransform,
+  asImageTransform,
+  asString,
+  localized,
+  type SectionRenderProps,
+} from "./_shared";
+
+/** Read an image-picker value's URL. The editor stores it as a plain URL string
+ *  (legacy / no-transform) or as `{ url, alt?, transform }` once a focal/zoom/
+ *  rotation is set. asString() can't see the object's url, so resolve it here. */
+function imagePickerUrl(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object" && typeof (v as { url?: unknown }).url === "string") {
+    return (v as { url: string }).url;
+  }
+  return "";
+}
 
 /**
  * Luxury Minimal promo-banner — faithful port of the V2 LuxPromoBanner
@@ -12,12 +29,19 @@ import { asString, type SectionRenderProps } from "./_shared";
  */
 export default function LuxPromoBanner({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
-  const badge = asString(s.badge_text) || "عرض محدود";
-  const headline = asString(s.headline) || "خصم ٢٥٪ على كل الإكسسوارات";
-  const subtitle = asString(s.subtitle) || "العرض ساري لنهاية الشهر. متفوتش الفرصة!";
-  const ctaText = asString(s.cta_text) || "تسوق الآن";
+  const locale = useLocale();
+  const badge = asString(s.badge_text) || localized(locale, "Limited Offer", "عرض محدود");
+  const headline =
+    asString(s.headline) ||
+    localized(locale, "25% Off All Accessories", "خصم ٢٥٪ على كل الإكسسوارات");
+  const subtitle =
+    asString(s.subtitle) ||
+    localized(locale, "Offer ends this month. Don't miss out!", "العرض ساري لنهاية الشهر. متفوتش الفرصة!");
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products?category=accessories";
-  const imageUrl = asString(s.image_url);
+  const imageUrl = imagePickerUrl(s.image_url) || asString(s.image_url);
+  // Non-destructive focal/zoom/rotation. Undefined → image renders unchanged.
+  const imageTransform = asImageTransform(s.image_url);
 
   const [imageError, setImageError] = useState(false);
 
@@ -33,6 +57,7 @@ export default function LuxPromoBanner({ instance }: SectionRenderProps) {
                   src={imageUrl}
                   alt=""
                   className="w-full h-full object-cover"
+                  style={applyImageTransform(imageTransform, "cover")}
                   onError={() => setImageError(true)}
                 />
               ) : (

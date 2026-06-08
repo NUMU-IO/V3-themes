@@ -1,7 +1,7 @@
 "use client";
 import { useRef } from "react";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /** Inline Rabbitsocks product card — mirrors RsProductCard's editorial look. */
 function RsProductCard({ product }: { product: Product }) {
@@ -39,10 +39,11 @@ function RsProductCard({ product }: { product: Product }) {
 
 const RsFeatured = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
+  const locale = useLocale();
   const s = instance.settings ?? {};
-  const label = asString(s.label, "SEASONAL EDIT");
-  const title = asString(s.title, "The Fine Material Series");
-  const viewAllText = asString(s.view_all_text, "VIEW ALL");
+  const label = asString(s.label) || localized(locale, "SEASONAL EDIT", "إصدار الموسم");
+  const title = asString(s.title) || localized(locale, "The Fine Material Series", "سلسلة الخامات الفاخرة");
+  const viewAllText = asString(s.view_all_text) || localized(locale, "VIEW ALL", "شوف الكل");
   const viewAllLink = asString(s.view_all_link, "/products");
   const count = asNumber(s.product_count, 8);
   const scrollRef = useRef<HTMLDivElement>(null);

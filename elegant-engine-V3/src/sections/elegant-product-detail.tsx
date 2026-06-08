@@ -7,11 +7,12 @@ import {
   useProductOptional,
   useVariantSelection,
   useRelatedProducts,
+  useLocale,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Elegant product-detail section.
@@ -35,6 +36,7 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
   const showGuarantees = s.show_guarantees ?? true;
   const showRelated = s.show_related_products ?? true;
   const relatedCount = asNumber(s.related_products_count, 4);
+  const locale = useLocale();
 
   const product = useProductOptional();
 
@@ -58,15 +60,15 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
     return (
       <div className="bg-background min-h-[50vh] flex items-center justify-center px-4 py-20 text-center">
         <div className="max-w-sm">
-          <span className="eg-eyebrow block mb-3 text-[var(--eg-muted)]">Product</span>
+          <span className="eg-eyebrow block mb-3 text-[var(--eg-muted)]">{localized(locale, "Product", "المنتج")}</span>
           <h1 className="eg-heading text-2xl md:text-3xl text-[var(--eg-ink)] mb-3">
-            No product to show yet
+            {localized(locale, "No product to show yet", "لا يوجد منتج لعرضه بعد")}
           </h1>
           <p className="text-sm text-[var(--eg-muted)] mb-7 leading-relaxed">
-            Open a product from the shop to see its details here.
+            {localized(locale, "Open a product from the shop to see its details here.", "افتح منتجاً من المتجر لعرض تفاصيله هنا.")}
           </p>
           <Link to="/products" className="eg-btn eg-btn-filled inline-flex">
-            Browse products
+            {localized(locale, "Browse products", "تصفح المنتجات")}
           </Link>
         </div>
       </div>
@@ -107,11 +109,11 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 eg-label text-[10px] text-[var(--eg-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--eg-ink)] transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <Link to="/products" className="hover:text-[var(--eg-ink)] transition-colors">
-            Shop
+            {localized(locale, "Shop", "المتجر")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <span className="text-[var(--eg-ink)] line-clamp-1 normal-case tracking-normal">
@@ -198,7 +200,7 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
             {showRating && (
               <div className="flex items-center gap-1 mb-4 text-[var(--eg-muted)]">
                 <span className="text-sm text-[hsl(var(--warning))]">★★★★★</span>
-                <span className="text-xs">(reviews)</span>
+                <span className="text-xs">{localized(locale, "(reviews)", "(التقييمات)")}</span>
               </div>
             )}
 
@@ -236,9 +238,9 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
                 <span className={inStock ? "text-[var(--eg-muted)]" : "text-[var(--eg-sale)]"}>
                   {inStock
                     ? typeof stockQty === "number" && stockQty > 0 && stockQty <= 5
-                      ? `Only ${stockQty} left`
-                      : "In stock"
-                    : "Sold out"}
+                      ? localized(locale, `Only ${stockQty} left`, `باقي ${stockQty} فقط`)
+                      : localized(locale, "In stock", "متوفر")
+                    : localized(locale, "Sold out", "نفذت الكمية")}
                 </span>
               </div>
             )}
@@ -339,13 +341,13 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
                 className="eg-btn eg-btn-filled flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                 label={
                   <>
-                    <ShoppingBag size={16} /> Add to bag
+                    <ShoppingBag size={16} /> {localized(locale, "Add to bag", "أضف إلى الحقيبة")}
                   </>
                 }
-                loadingLabel="Adding…"
+                loadingLabel={localized(locale, "Adding…", "جارٍ الإضافة…")}
                 soldOutLabel={
                   <>
-                    <ShoppingBag size={16} /> Sold out
+                    <ShoppingBag size={16} /> {localized(locale, "Sold out", "نفذت الكمية")}
                   </>
                 }
                 data-testid="storefront-add-to-cart"
@@ -356,9 +358,9 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
             {showGuarantees && (
               <div className="mt-8 pt-6 border-t border-[var(--eg-border)] flex flex-wrap items-center justify-between gap-4">
                 {[
-                  { icon: Truck, label: "Fast Shipping", desc: "3-5 days" },
-                  { icon: RotateCcw, label: "Easy Returns", desc: "14 days" },
-                  { icon: ShieldCheck, label: "Authentic", desc: "100% Genuine" },
+                  { icon: Truck, label: localized(locale, "Fast Shipping", "شحن سريع"), desc: localized(locale, "3-5 days", "3-5 أيام") },
+                  { icon: RotateCcw, label: localized(locale, "Easy Returns", "إرجاع سهل"), desc: localized(locale, "14 days", "14 يوم") },
+                  { icon: ShieldCheck, label: localized(locale, "Authentic", "أصلي"), desc: localized(locale, "100% Genuine", "100% مضمون") },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2 text-[var(--eg-muted)]">
                     <item.icon size={15} className="shrink-0" />
@@ -382,7 +384,7 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
             className="mt-16 pt-10 border-t border-[var(--eg-border)]"
             data-testid="storefront-related-products"
           >
-            <h2 className="eg-eyebrow text-[var(--eg-muted)] mb-6">You may also like</h2>
+            <h2 className="eg-eyebrow text-[var(--eg-muted)] mb-6">{localized(locale, "You may also like", "قد يعجبك أيضاً")}</h2>
             <div
               className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
               data-testid="storefront-related-products-grid"

@@ -1,9 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowLeft, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Boutique products-listing (PLP) section.
@@ -19,6 +19,7 @@ import { asNumber, type SectionRenderProps } from "./_shared";
  */
 export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
   const colsDesktop = asNumber(s.columns_desktop, 4);
   const colsMobile = asNumber(s.columns_mobile, 2);
@@ -81,15 +82,15 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground mb-6">
           <Link to="/" className="hover:text-foreground transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowLeft size={10} className="rtl:rotate-180" />
-          <span className="text-foreground">{category ?? "Shop"}</span>
+          <span className="text-foreground">{category ?? localized(locale, "Shop", "المتجر")}</span>
         </div>
 
         {/* Title */}
         <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-8">
-          {category ?? "All products"}
+          {category ?? localized(locale, "All products", "كل المنتجات")}
         </h1>
 
         {/* Search */}
@@ -100,7 +101,7 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
           />
           <input
             type="text"
-            placeholder="Search products"
+            placeholder={localized(locale, "Search products", "ابحثي عن منتجات")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full h-10 ps-7 pe-7 text-sm bg-transparent border-b border-border focus:border-primary focus:outline-none transition-colors placeholder:text-muted-foreground"
@@ -110,7 +111,7 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
             <button
               type="button"
               onClick={() => setSearch("")}
-              aria-label="Clear search"
+              aria-label={localized(locale, "Clear search", "مسح البحث")}
               className="absolute end-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <X size={14} />
@@ -136,7 +137,7 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
               data-testid="storefront-products-category"
               data-category-id="all"
             >
-              All
+              {localized(locale, "All", "الكل")}
             </button>
             {categories.map((cat) => (
               <button
@@ -164,27 +165,27 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
           data-testid="storefront-products-toolbar"
         >
           <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
-            {filtered.length} products
+            {filtered.length} {localized(locale, "products", "منتج")}
           </span>
           <div className="flex items-center gap-4">
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              aria-label="Sort products"
+              aria-label={localized(locale, "Sort products", "ترتيب المنتجات")}
               className="text-xs px-2 py-1.5 bg-transparent border-b border-border focus:border-primary focus:outline-none transition-colors cursor-pointer"
               data-testid="storefront-products-sort"
             >
-              <option value="default">Sort by</option>
-              <option value="price-asc">Price: Low</option>
-              <option value="price-desc">Price: High</option>
-              <option value="name">Name</option>
+              <option value="default">{localized(locale, "Sort by", "الترتيب")}</option>
+              <option value="price-asc">{localized(locale, "Price: Low", "السعر: الأقل")}</option>
+              <option value="price-desc">{localized(locale, "Price: High", "السعر: الأعلى")}</option>
+              <option value="name">{localized(locale, "Name", "الاسم")}</option>
             </select>
             {showViewToggle && (
               <div className="flex items-center gap-1">
                 <button
                   type="button"
                   onClick={() => setViewMode("grid")}
-                  aria-label="Grid view"
+                  aria-label={localized(locale, "Grid view", "عرض شبكي")}
                   className={
                     "p-1.5 transition-colors " +
                     (viewMode === "grid"
@@ -197,7 +198,7 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
                 <button
                   type="button"
                   onClick={() => setViewMode("list")}
-                  aria-label="List view"
+                  aria-label={localized(locale, "List view", "عرض قائمة")}
                   className={
                     "p-1.5 transition-colors " +
                     (viewMode === "list"
@@ -228,9 +229,9 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-12 h-px bg-border mx-auto mb-6" />
-            <p className="text-sm text-muted-foreground mb-1">No results</p>
+            <p className="text-sm text-muted-foreground mb-1">{localized(locale, "No results", "لا توجد نتائج")}</p>
             <p className="text-xs text-muted-foreground">
-              Try adjusting your search or filter
+              {localized(locale, "Try adjusting your search or filter", "جرّبي تعديل البحث أو الفلتر")}
             </p>
           </div>
         ) : (
@@ -258,7 +259,7 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <ProductCard product={product} list={viewMode === "list"} />
+                  <ProductCard product={product} list={viewMode === "list"} locale={locale} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -270,7 +271,7 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
 }
 
 /** Inline Boutique product card — pink palette, rounded cards. */
-function ProductCard({ product, list }: { product: Product; list?: boolean }) {
+function ProductCard({ product, list, locale }: { product: Product; list?: boolean; locale?: string }) {
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -319,13 +320,13 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         )}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-3 start-3 px-2.5 py-1 bg-primary text-primary-foreground rounded-full text-[10px] font-bold">
-            Sale
+            {localized(locale, "Sale", "تخفيض")}
           </span>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-white/65 flex items-center justify-center">
             <span className="text-foreground text-[11px] font-bold bg-white px-3 py-1.5 rounded-full border border-border">
-              Sold out
+              {localized(locale, "Sold out", "نفذت الكمية")}
             </span>
           </div>
         )}

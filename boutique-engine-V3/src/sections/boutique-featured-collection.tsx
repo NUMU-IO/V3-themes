@@ -1,16 +1,17 @@
 "use client";
-import { Link, Money, useProducts } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 const BoutiqueFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
   const isLoading = false;
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const title = asString(s.title) || "وصل حديثاً";
+  const title = asString(s.title) || localized(locale, "New Arrivals", "وصل حديثاً");
   const viewAllLink = asString(s.view_all_link) || "/products";
-  const viewAllText = asString(s.view_all_text) || "عرض الكل";
+  const viewAllText = asString(s.view_all_text) || localized(locale, "View All", "عرض الكل");
   const productCount = asNumber(s.product_count, 4);
   const columns = asNumber(s.columns, 4);
 

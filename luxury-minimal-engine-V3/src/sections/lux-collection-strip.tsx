@@ -1,6 +1,23 @@
 "use client";
 import { Link } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import {
+  applyImageTransform,
+  asImageTransform,
+  asString,
+  type ImageTransform,
+  type SectionRenderProps,
+} from "./_shared";
+
+/** Read an image-picker value's URL. The editor stores it as a plain URL string
+ *  (legacy / no-transform) or as `{ url, alt?, transform }` once a focal/zoom/
+ *  rotation is set. asString() can't see the object's url, so resolve it here. */
+function imagePickerUrl(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object" && typeof (v as { url?: unknown }).url === "string") {
+    return (v as { url: string }).url;
+  }
+  return "";
+}
 
 /**
  * Luxury Minimal collection-strip — ported from the shared V2 collection-strip
@@ -12,6 +29,8 @@ interface Item {
   image: string;
   label: string;
   link: string;
+  /** Non-destructive focal/zoom/rotation for this tile's merchant image. */
+  transform?: ImageTransform;
 }
 
 export default function LuxCollectionStrip({ instance }: SectionRenderProps) {
@@ -21,11 +40,12 @@ export default function LuxCollectionStrip({ instance }: SectionRenderProps) {
 
   const items: Item[] = [];
   for (let i = 1; i <= 4; i++) {
-    const image = asString(s[`item_${i}_image`]);
+    const raw = s[`item_${i}_image`];
+    const image = imagePickerUrl(raw) || asString(raw);
     const label = asString(s[`item_${i}_label`]);
     const link = asString(s[`item_${i}_link`]);
     if (!image && !label) continue;
-    items.push({ image, label, link });
+    items.push({ image, label, link, transform: asImageTransform(raw) });
   }
 
   if (!items.length) return null;
@@ -67,7 +87,8 @@ export default function LuxCollectionStrip({ instance }: SectionRenderProps) {
                   <img
                     src={it.image}
                     alt={it.label}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ${it.transform ? "" : "group-hover:scale-[1.04]"}`}
+                    style={applyImageTransform(it.transform, "cover")}
                     loading="lazy"
                   />
                 )}

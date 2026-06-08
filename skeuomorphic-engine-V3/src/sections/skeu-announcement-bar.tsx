@@ -1,14 +1,15 @@
 "use client";
 import { useState } from "react";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { X } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const SkeuAnnouncementBar = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const text = asString(s.text) || "🎉 شحن مجاني للطلبات فوق 500 جنيه";
+  const locale = useLocale();
+  const text = asString(s.text) || localized(locale, "🎉 Free shipping on orders over 500 EGP", "🎉 شحن مجاني للطلبات فوق 500 جنيه");
   const linkUrl = asString(s.link_url);
-  const linkText = asString(s.link_text) || "تسوق الآن";
+  const linkText = asString(s.link_text) || localized(locale, "Shop now", "تسوق الآن");
   const dismissible = s.dismissible ?? true;
   const [dismissed, setDismissed] = useState(false);
 

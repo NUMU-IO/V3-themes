@@ -1,7 +1,7 @@
 "use client";
-import { Link, useCollections } from "@numueg/theme-sdk";
+import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Neo-brutalism category grid — faithful V2 port re-plumbed on the V3 SDK.
@@ -17,7 +17,8 @@ import { asNumber, asString, type SectionRenderProps } from "./_shared";
 const NBCategories = ({ instance }: SectionRenderProps) => {
   const { collections, loading: isLoading } = useCollections();
   const s = instance.settings ?? {};
-  const title = asString(s.title, "تسوق حسب الفئة");
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Shop by category", "تسوق حسب الفئة");
   const colsDesktop = asNumber(s.columns_desktop, 5);
   const colsMobile = asNumber(s.columns_mobile, 3);
   const maxItems = asNumber(s.max_items, 0);
@@ -43,7 +44,7 @@ const NBCategories = ({ instance }: SectionRenderProps) => {
 
         {!isLoading && displayCategories.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-10">
-            لا توجد فئات بعد
+            {localized(locale, "No categories yet", "لا توجد فئات بعد")}
           </p>
         ) : (
           <div className={gridClassName} style={cssVars}>
@@ -73,7 +74,7 @@ const NBCategories = ({ instance }: SectionRenderProps) => {
                       {cat.name}
                     </span>
                     <span className="text-white/60 text-[10px] block font-bold">
-                      {cat.product_count} منتج
+                      {cat.product_count} {localized(locale, "products", "منتج")}
                     </span>
                   </div>
                 </Link>

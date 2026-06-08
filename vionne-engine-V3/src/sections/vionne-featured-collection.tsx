@@ -1,16 +1,17 @@
 "use client";
-import { Link, Money, useProducts } from "@numueg/theme-sdk";
+import { Link, Money, useLocale, useProducts } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
-import { type SectionRenderProps } from "./_shared";
+import { localized, type SectionRenderProps } from "./_shared";
 
 const VionneFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
+  const locale = useLocale();
   const isLoading = false;
   const s = instance.settings ?? {};
-  const title = s.title ?? "New Arrivals";
+  const title = s.title ?? localized(locale, "New Arrivals", "وصل حديثًا");
   const subtitle = s.subtitle ?? "";
   const tag = s.collection_tag ?? "new";
-  const viewAllText = s.view_all_text ?? "View all";
+  const viewAllText = s.view_all_text ?? localized(locale, "View all", "عرض الكل");
   const viewAllLink = s.view_all_link ?? "/products";
   const count = Number(s.product_count ?? 8);
   const cols = Number(s.columns ?? 4);

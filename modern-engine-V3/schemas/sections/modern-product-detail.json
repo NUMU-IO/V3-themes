@@ -2,7 +2,10 @@
   "type": "modern-product-detail",
   "name": "Product Detail",
   "settings": [
-    { "type": "header", "content": "Layout" },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
     {
       "id": "show_rating",
       "type": "checkbox",
@@ -24,8 +27,10 @@
       "label_ar": "إظهار ضمانات الثقة",
       "default": true
     },
-
-    { "type": "header", "content": "Related products" },
+    {
+      "type": "header",
+      "content": "Related products"
+    },
     {
       "id": "show_related_products",
       "type": "checkbox",

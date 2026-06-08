@@ -1,11 +1,12 @@
 "use client";
 
 import { Star, Quote } from "lucide-react";
-import { useResolvedSettings } from "@numueg/theme-sdk";
+import { useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import {
   asNumber,
   asString,
   demoOrPlaceholder,
+  localized,
   readBlocks,
   useDemo,
   type SectionRenderProps,
@@ -19,10 +20,10 @@ interface Review {
   rating: number;
 }
 
-const FALLBACK_REVIEWS: Review[] = [
-  { name: "Sarah A.", city: "Cairo", text: "The quality exceeded my expectations. Fast delivery too!", rating: 5 },
-  { name: "Mohamed K.", city: "Alexandria", text: "First time ordering online and it was perfect. Exactly as described.", rating: 5 },
-  { name: "Nour H.", city: "Mansoura", text: "Great prices and accurate sizing. WhatsApp support was very helpful.", rating: 4 },
+const fallbackReviews = (locale: string | undefined): Review[] => [
+  { name: localized(locale, "Sarah A.", "سارة أ."), city: localized(locale, "Cairo", "القاهرة"), text: localized(locale, "The quality exceeded my expectations. Fast delivery too!", "الجودة فاقت توقعاتي. والتوصيل كمان كان سريع!"), rating: 5 },
+  { name: localized(locale, "Mohamed K.", "محمد ك."), city: localized(locale, "Alexandria", "الإسكندرية"), text: localized(locale, "First time ordering online and it was perfect. Exactly as described.", "أول مرة أطلب أونلاين وكانت تجربة ممتازة. زي الوصف بالظبط."), rating: 5 },
+  { name: localized(locale, "Nour H.", "نور ح."), city: localized(locale, "Mansoura", "المنصورة"), text: localized(locale, "Great prices and accurate sizing. WhatsApp support was very helpful.", "أسعار حلوة والمقاسات مظبوطة. ودعم الواتساب ساعدني جدًا."), rating: 4 },
 ];
 
 const initials = (name: string): string => {
@@ -41,7 +42,8 @@ const clampRating = (value: unknown): number => {
 const EmpTestimonials = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const demo = useDemo();
-  const title = asString(s.title) || "WHAT THEY SAY";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "WHAT THEY SAY", "آراء عملائنا");
 
   // Reviews come from editor `review` blocks; fall back to the curated demo
   // set (or neutral placeholders outside demo mode) when none configured.
@@ -56,7 +58,7 @@ const EmpTestimonials = ({ instance, sectionId }: SectionRenderProps) => {
   const reviews =
     configured.length > 0
       ? configured
-      : demoOrPlaceholder(demo, FALLBACK_REVIEWS).map((r) => ({
+      : demoOrPlaceholder(demo, fallbackReviews(locale)).map((r) => ({
           ...r,
           rating: clampRating(r.rating),
         }));

@@ -1,20 +1,24 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { Link, useLocale } from "@numueg/theme-sdk";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const RsEditorial = ({ instance }: SectionRenderProps) => {
+  const locale = useLocale();
   const s = instance.settings ?? {};
-  const title = asString(s.title, "The Art of Stillness");
-  const subtitle = asString(s.subtitle, "Read the journal");
-  const body = asString(
-    s.body,
+  const title = asString(s.title) || localized(locale, "The Art of Stillness", "فن السكون");
+  const subtitle = asString(s.subtitle) || localized(locale, "Read the journal", "اقرا المجلة");
+  const body = asString(s.body) || localized(
+    locale,
     "A collection of objects and garments that define the modern daily ritual. Simple in form, exceptional in quality.",
+    "مجموعة من القطع والملابس اللي بتعرّف طقوس يومك العصري. بسيطة في الشكل، استثنائية في الجودة.",
   );
-  const sideTitle = asString(s.side_title, "Curated Comfort");
-  const ctaText = asString(s.cta_text, "Explore the collection");
+  const sideTitle = asString(s.side_title) || localized(locale, "Curated Comfort", "راحة منتقاة");
+  const ctaText = asString(s.cta_text) || localized(locale, "Explore the collection", "اكتشف المجموعة");
   const ctaUrl = asString(s.cta_url) || "/products";
   const imageMain = asString(s.image_main);
+  const imageMainTransform = asImageTransform(s.image_main);
   const imageSide = asString(s.image_side);
+  const imageSideTransform = asImageTransform(s.image_side);
 
   return (
     <section className="py-16 md:py-24 px-6 md:px-12 bg-[hsl(var(--rs-surface))]">
@@ -26,6 +30,7 @@ const RsEditorial = ({ instance }: SectionRenderProps) => {
               src={imageMain}
               alt={title}
               className="w-full h-full object-cover grayscale"
+              style={applyImageTransform(imageMainTransform, "cover")}
               loading="lazy"
             />
           )}
@@ -51,6 +56,7 @@ const RsEditorial = ({ instance }: SectionRenderProps) => {
               src={imageSide}
               alt={body}
               className="w-full h-1/2 object-cover mb-6 md:mb-8"
+              style={applyImageTransform(imageSideTransform, "cover")}
               loading="lazy"
             />
           ) : (

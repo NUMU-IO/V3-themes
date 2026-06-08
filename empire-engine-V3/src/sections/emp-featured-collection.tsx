@@ -2,12 +2,13 @@
 
 import {
   Link,
+  useLocale,
   useProducts,
   useResolvedSettings,
   type Product,
 } from "@numueg/theme-sdk";
 import { ShoppingBag } from "lucide-react";
-import { asArray, asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asArray, asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { EmpProductCard } from "./emp-product-grid";
 
@@ -28,10 +29,11 @@ export default function EmpFeaturedCollection({
 }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const { products, loading } = useProducts();
+  const locale = useLocale();
 
-  const title = asString(s.title) || "THE COLLECTION";
-  const subtitle = asString(s.subtitle) || "SEASONAL EDIT";
-  const viewAllLabel = asString(s.view_all_label) || "VIEW ALL";
+  const title = asString(s.title) || localized(locale, "THE COLLECTION", "التشكيلة");
+  const subtitle = asString(s.subtitle) || localized(locale, "SEASONAL EDIT", "تشكيلة الموسم");
+  const viewAllLabel = asString(s.view_all_label) || localized(locale, "VIEW ALL", "عرض الكل");
   const viewAllLink = asString(s.view_all_link) || "/products";
   const count = Math.max(2, Math.min(12, asNumber(s.product_count, 8)));
   const cols = Math.max(2, Math.min(5, asNumber(s.columns, 4)));
@@ -119,9 +121,9 @@ export default function EmpFeaturedCollection({
               className="mx-auto text-[var(--emp-amber)] mb-4"
               aria-hidden="true"
             />
-            <p className="emp-heading text-lg text-[var(--emp-dark)]">COMING SOON</p>
+            <p className="emp-heading text-lg text-[var(--emp-dark)]">{localized(locale, "COMING SOON", "قريبًا")}</p>
             <p className="text-sm text-[var(--emp-gray)] mt-2">
-              Our collection is being prepared.
+              {localized(locale, "Our collection is being prepared.", "تشكيلتنا بتتجهز دلوقتي.")}
             </p>
           </div>
         )}

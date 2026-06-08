@@ -2,7 +2,25 @@
 import { Link } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import {
+  applyImageTransform,
+  asImageTransform,
+  asString,
+  localized,
+  type SectionRenderProps,
+} from "./_shared";
+
+/** Read an image-picker value's URL. The editor stores it as a plain URL string
+ *  (legacy / no-transform) or as `{ url, alt?, transform }` once a focal/zoom/
+ *  rotation is set. asString() can't see the object's url, so resolve it here. */
+function imagePickerUrl(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object" && typeof (v as { url?: unknown }).url === "string") {
+    return (v as { url: string }).url;
+  }
+  return "";
+}
 
 /**
  * Luxury Minimal hero — faithful port of the V2 LuxHero
@@ -12,15 +30,24 @@ import { asString, type SectionRenderProps } from "./_shared";
  */
 export default function LuxHero({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const headline = asString(s.headline) || "اكتشف فن الأناقة الراقية";
+  const headline =
+    asString(s.headline) ||
+    localized(locale, "Discover the Art of Refined Elegance", "اكتشف فن الأناقة الراقية");
   const subtitle =
     asString(s.subtitle) ||
-    "تشكيلة مميزة من الملابس والإكسسوارات بتصميم عصري وجودة عالية";
-  const ctaText = asString(s.cta_text) || "تسوق الآن";
+    localized(
+      locale,
+      "A curated edit of clothing and accessories — contemporary design, exceptional quality.",
+      "تشكيلة مميزة من الملابس والإكسسوارات بتصميم عصري وجودة عالية",
+    );
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
-  const heroImageUrl = asString(s.hero_image_url);
-  const badgeText = asString(s.badge_text) || "مجموعة جديدة";
+  const heroImageUrl = imagePickerUrl(s.hero_image_url) || asString(s.hero_image_url);
+  // Non-destructive focal/zoom/rotation. Undefined → image renders unchanged.
+  const heroImageTransform = asImageTransform(s.hero_image_url);
+  const badgeText = asString(s.badge_text) || localized(locale, "New Collection", "مجموعة جديدة");
 
   return (
     <section className="relative">
@@ -39,6 +66,7 @@ export default function LuxHero({ instance }: SectionRenderProps) {
                   src={heroImageUrl}
                   alt=""
                   className="w-full h-full object-contain"
+                  style={applyImageTransform(heroImageTransform, "contain")}
                 />
               )}
             </div>

@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import { Link, Money, useOrders } from "@numueg/theme-sdk";
+import { Link, Money, useOrders, useLocale } from "@numueg/theme-sdk";
 import { Check, Copy, Package, ArrowLeft, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Luxury Minimal order-confirmation section.
@@ -27,12 +27,17 @@ export default function LuxOrderConfirmationSection({ instance }: SectionRenderP
   const showWhatsApp = s.show_whatsapp ?? false;
   const showTrackOrder = s.show_track_order ?? false;
   const showEmoji = s.show_emoji ?? false;
+  const locale = useLocale();
 
-  const title = asString(s.title) || "تم تأكيد الطلب";
+  const title = asString(s.title) || localized(locale, "Order Confirmed", "تم تأكيد الطلب");
   const subtitle =
     asString(s.subtitle) ||
-    "شكراً لطلبك. سنرسل لك تفاصيل الطلب عبر واتساب.";
-  const continueText = asString(s.continue_shopping_text) || "متابعة التسوق";
+    localized(
+      locale,
+      "Thank you for your order. We'll send you the order details over WhatsApp.",
+      "شكراً لطلبك. سنرسل لك تفاصيل الطلب عبر واتساب.",
+    );
+  const continueText = asString(s.continue_shopping_text) || localized(locale, "Continue shopping", "متابعة التسوق");
   const continueLink = asString(s.continue_shopping_link) || "/";
 
   const { orders } = useOrders();
@@ -50,7 +55,12 @@ export default function LuxOrderConfirmationSection({ instance }: SectionRenderP
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const steps = ["تم الطلب", "قيد التجهيز", "في الطريق", "تم التوصيل"];
+  const steps = [
+    localized(locale, "Ordered", "تم الطلب"),
+    localized(locale, "Processing", "قيد التجهيز"),
+    localized(locale, "On the way", "في الطريق"),
+    localized(locale, "Delivered", "تم التوصيل"),
+  ];
 
   return (
     <div className="bg-background min-h-[60vh] flex items-start justify-center px-4 py-10 sm:px-6 sm:py-14 md:py-20">
@@ -68,7 +78,7 @@ export default function LuxOrderConfirmationSection({ instance }: SectionRenderP
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           {/* Title */}
-          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-3">شكراً لطلبك</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-3">{localized(locale, "Thank you for your order", "شكراً لطلبك")}</p>
           <h1 className="lux-heading text-xl mb-8 text-foreground leading-tight">
             {title}{showEmoji ? " 🎉" : ""}
           </h1>
@@ -79,7 +89,7 @@ export default function LuxOrderConfirmationSection({ instance }: SectionRenderP
             <div className="space-y-4 text-sm">
               {/* Order number */}
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground text-xs">رقم الطلب</span>
+                <span className="text-muted-foreground text-xs">{localized(locale, "Order number", "رقم الطلب")}</span>
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-xs text-foreground" dir="ltr">
                     {orderNumber}
@@ -87,7 +97,7 @@ export default function LuxOrderConfirmationSection({ instance }: SectionRenderP
                   <button
                     onClick={handleCopy}
                     className="p-1 hover:opacity-50 transition-opacity"
-                    title="Copy"
+                    title={localized(locale, "Copy", "نسخ")}
                   >
                     {copied ? (
                       <Check size={12} className="text-[hsl(var(--success))]" />
@@ -103,7 +113,7 @@ export default function LuxOrderConfirmationSection({ instance }: SectionRenderP
                 <>
                   <div className="lux-separator" />
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground text-xs">الإجمالي</span>
+                    <span className="text-muted-foreground text-xs">{localized(locale, "Total", "الإجمالي")}</span>
                     <span className="text-xs text-foreground">
                       <Money amount={total} currency={currency} />
                     </span>
@@ -114,15 +124,15 @@ export default function LuxOrderConfirmationSection({ instance }: SectionRenderP
               {/* Delivery */}
               <div className="lux-separator" />
               <div className="flex justify-between">
-                <span className="text-muted-foreground text-xs">التوصيل المتوقع</span>
-                <span className="text-xs text-foreground">3-5 أيام عمل</span>
+                <span className="text-muted-foreground text-xs">{localized(locale, "Estimated delivery", "التوصيل المتوقع")}</span>
+                <span className="text-xs text-foreground">{localized(locale, "3-5 business days", "3-5 أيام عمل")}</span>
               </div>
 
               {/* Status */}
               <div className="flex justify-between">
-                <span className="text-muted-foreground text-xs">الحالة</span>
+                <span className="text-muted-foreground text-xs">{localized(locale, "Status", "الحالة")}</span>
                 <span className="flex items-center gap-1.5 text-xs text-foreground">
-                  <Package size={14} /> قيد التجهيز
+                  <Package size={14} /> {localized(locale, "Processing", "قيد التجهيز")}
                 </span>
               </div>
             </div>
@@ -157,21 +167,21 @@ export default function LuxOrderConfirmationSection({ instance }: SectionRenderP
             <div className="border border-border p-5 mb-8 text-start">
               <div className="flex items-center gap-2 mb-3 text-[10px] uppercase tracking-[0.2em]">
                 <MessageCircle size={16} className="text-[hsl(var(--whatsapp))]" />
-                <span className="text-sm font-medium text-[hsl(var(--whatsapp))]">رسالة واتساب</span>
+                <span className="text-sm font-medium text-[hsl(var(--whatsapp))]">{localized(locale, "WhatsApp message", "رسالة واتساب")}</span>
               </div>
               <div className="bg-[hsl(var(--lux-gray))] p-4 text-xs text-foreground leading-relaxed">
-                <p>مرحباً! 👋</p>
+                <p>{localized(locale, "Hello! 👋", "مرحباً! 👋")}</p>
                 <p className="mt-1">
-                  تم استلام طلبك{" "}
-                  <strong className="font-semibold text-foreground">{orderNumber}</strong> بنجاح.
+                  {localized(locale, "Your order", "تم استلام طلبك")}{" "}
+                  <strong className="font-semibold text-foreground">{orderNumber}</strong> {localized(locale, "was placed successfully.", "بنجاح.")}
                 </p>
                 {typeof total === "number" && total > 0 && (
                   <p className="mt-1">
-                    الإجمالي: <strong><Money amount={total} currency={currency} /></strong>
+                    {localized(locale, "Total", "الإجمالي")}: <strong><Money amount={total} currency={currency} /></strong>
                   </p>
                 )}
-                <p className="mt-1">سنوصله خلال 3-5 أيام عمل. لأي استفسار، تواصل معنا هنا.</p>
-                <p className="mt-1">شكراً لتسوقك معنا ❤️</p>
+                <p className="mt-1">{localized(locale, "We'll deliver it within 3-5 business days. For any questions, reach out to us here.", "سنوصله خلال 3-5 أيام عمل. لأي استفسار، تواصل معنا هنا.")}</p>
+                <p className="mt-1">{localized(locale, "Thank you for shopping with us ❤️", "شكراً لتسوقك معنا ❤️")}</p>
               </div>
             </div>
           )}
@@ -183,7 +193,7 @@ export default function LuxOrderConfirmationSection({ instance }: SectionRenderP
                 to={`/track?tn=${orderNumber}`}
                 className="lux-btn-outline-dark flex-1 inline-flex items-center justify-center gap-2"
               >
-                <Package size={18} /> تتبع الطلب
+                <Package size={18} /> {localized(locale, "Track order", "تتبع الطلب")}
               </Link>
             )}
             <Link

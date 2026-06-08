@@ -1,7 +1,8 @@
 "use client";
+import { useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 interface TestimonialReview {
   name: string;
@@ -30,7 +31,8 @@ function getReviewsFromSettings(s: Record<string, unknown>): TestimonialReview[]
 
 const BoutiqueTestimonials = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "رأي عملاءنا ⭐";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "What Our Customers Say ⭐", "رأي عملاءنا ⭐");
   const reviews = getReviewsFromSettings(s);
 
   if (reviews.length === 0) return null;

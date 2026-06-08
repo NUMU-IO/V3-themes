@@ -2,7 +2,7 @@
   "id": "editorial-v3",
   "name": "Editorial (V3)",
   "author": "NUMU",
-  "version": "0.3.0",
+  "version": "0.3.5",
   "layout": "single-column",
   "description": "Editorial (V3) — bold fashion editorial with oversized typography and a dramatic green palette, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
@@ -15,9 +15,6 @@
           {
             "type": "ed-hero",
             "settings": {
-              "headline": "Discover the latest\nfashion trends",
-              "subtitle": "A curated collection of the finest global brands",
-              "cta_text": "Shop the Collection",
               "cta_link": "/products",
               "hero_image_url": ""
             }
@@ -25,16 +22,13 @@
           {
             "type": "ed-categories",
             "settings": {
-              "title": "Shop by Category",
               "max_items": 0
             }
           },
           {
             "type": "ed-featured-collection",
             "settings": {
-              "title": "New Arrivals",
               "collection_tag": "new",
-              "view_all_text": "View all",
               "view_all_link": "/products",
               "product_count": 8,
               "columns": 4
@@ -43,9 +37,6 @@
           {
             "type": "ed-promo-banner",
             "settings": {
-              "headline": "Special Offer",
-              "subtitle": "Shop our latest collection",
-              "cta_text": "Shop Now",
               "cta_link": "/products",
               "image_url": ""
             }
@@ -53,9 +44,7 @@
           {
             "type": "ed-featured-collection",
             "settings": {
-              "title": "Best Sellers",
               "collection_tag": "bestseller",
-              "view_all_text": "View all",
               "view_all_link": "/products",
               "product_count": 8,
               "columns": 4
@@ -63,18 +52,11 @@
           },
           {
             "type": "ed-testimonials",
-            "settings": {
-              "title": "What Our Customers Say"
-            }
+            "settings": {}
           },
           {
             "type": "ed-newsletter",
-            "settings": {
-              "title": "Subscribe to our newsletter",
-              "subtitle": "Be the first to hear about new products and exclusive offers",
-              "button_text": "Subscribe",
-              "placeholder": "Your email address"
-            }
+            "settings": {}
           }
         ]
       },
@@ -85,8 +67,8 @@
             "type": "ed-product-detail-section",
             "settings": {
               "show_rating": false,
-              "show_stock": false,
-              "show_guarantees": false,
+              "show_stock": true,
+              "show_guarantees": true,
               "show_related_products": true,
               "related_products_count": 4
             }

@@ -1,8 +1,8 @@
 "use client";
 
-import { Link, useProducts, usePage, useResolvedSettings, type Product } from "@numueg/theme-sdk";
+import { Link, useLocale, useProducts, usePage, useResolvedSettings, type Product } from "@numueg/theme-sdk";
 import { useMemo } from "react";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -25,13 +25,14 @@ export default function BySearchResults({
   const s = useResolvedSettings(instance);
   const page = usePage();
   const { products } = useProducts();
+  const locale = useLocale();
 
   const placeholderEmpty =
     asString(s.placeholder_when_no_query) ||
-    "Search the menu — try 'latte' or 'mango'.";
+    localized(locale, "Search the menu — try 'latte' or 'mango'.", "دوّر في المنيو — جرّب 'لاتيه' أو 'مانجو'.");
   const noResultsText =
     asString(s.no_results_text) ||
-    "No matches. Try a different keyword or browse all drinks.";
+    localized(locale, "No matches. Try a different keyword or browse all drinks.", "مفيش نتائج. جرّب كلمة تانية أو اتفرّج على كل المشروبات.");
   const cols = Math.max(1, Math.min(5, asNumber(s.columns_desktop, 3)));
 
   // The storefront's search route puts the query string on page.data.q;
@@ -77,7 +78,7 @@ export default function BySearchResults({
               margin: 0,
             }}
           >
-            Search
+            {localized(locale, "Search", "بحث")}
           </p>
           <h1
             style={{
@@ -88,7 +89,7 @@ export default function BySearchResults({
             }}
           >
             {hasQuery ? (
-              <>Results for &ldquo;{query}&rdquo;</>
+              <>{localized(locale, "Results for", "نتائج البحث عن")} &ldquo;{query}&rdquo;</>
             ) : (
               <InlineEditable
                 sectionId={sectionId}

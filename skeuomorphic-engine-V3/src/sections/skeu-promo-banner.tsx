@@ -1,19 +1,21 @@
 "use client";
 import { useState } from "react";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
-import { asString, asImageUrl, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, asImageUrl, localized, type SectionRenderProps } from "./_shared";
 
 const HEADING_SHADOW = "0 1px 0 hsl(35 30% 100% / 0.5)";
 
 const SkeuPromoBanner = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
   const badge = asString(s.badge_text);
-  const headline = asString(s.headline) || "Special Offer";
-  const subtitle = asString(s.subtitle) || "Shop our latest collection";
-  const ctaText = asString(s.cta_text) || "Shop Now";
+  const headline = asString(s.headline) || localized(locale, "Special offer", "عرض خاص");
+  const subtitle = asString(s.subtitle) || localized(locale, "Shop our latest collection", "تسوّق أحدث تشكيلة");
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
   const imageUrl = asImageUrl(s.image_url);
+  const imageTransform = asImageTransform(s.image_url);
 
   const [imageError, setImageError] = useState(!imageUrl);
 
@@ -53,6 +55,7 @@ const SkeuPromoBanner = ({ instance }: SectionRenderProps) => {
                   src={imageUrl}
                   alt=""
                   className="w-full h-full object-cover"
+                  style={applyImageTransform(imageTransform, "cover")}
                   onError={() => setImageError(true)}
                 />
               )}

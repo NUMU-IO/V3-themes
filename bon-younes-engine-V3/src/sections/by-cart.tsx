@@ -3,11 +3,12 @@
 import {
   Link,
   useCart,
+  useLocale,
   useResolvedSettings,
   useTranslation,
   type CartItem,
 } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -28,15 +29,20 @@ export default function ByCart({ instance, sectionId }: SectionRenderProps) {
   // catalog so a merchant can rebrand them in Edit theme content. Keys
   // match locales/<lang>.json (see the theme's locale catalog).
   const { t } = useTranslation();
+  const locale = useLocale();
 
-  const headline = asString(s.empty_headline) || "Your basket is empty";
+  const headline = asString(s.empty_headline) || localized(locale, "Your basket is empty", "سلتك فاضية");
   const subhead =
     asString(s.empty_subhead) ||
-    "Browse the menu and add a drink — we'll have it ready when you check out.";
-  const emptyCta = asString(s.empty_cta_label) || "Browse the menu";
+    localized(
+      locale,
+      "Browse the menu and add a drink — we'll have it ready when you check out.",
+      "اتفرّج على المنيو وضيف مشروبك — هيكون جاهز أول ما تكمّل الطلب.",
+    );
+  const emptyCta = asString(s.empty_cta_label) || localized(locale, "Browse the menu", "اتفرّج على المنيو");
   const emptyCtaHref = asString(s.empty_cta_href) || "/products";
-  const populatedTitle = asString(s.populated_title) || "Your basket";
-  const checkoutCta = asString(s.checkout_cta_label) || "Continue to checkout";
+  const populatedTitle = asString(s.populated_title) || localized(locale, "Your basket", "سلتك");
+  const checkoutCta = asString(s.checkout_cta_label) || localized(locale, "Continue to checkout", "كمّل للدفع");
 
   const items: CartItem[] = cart?.items ?? [];
   const isEmpty = items.length === 0;

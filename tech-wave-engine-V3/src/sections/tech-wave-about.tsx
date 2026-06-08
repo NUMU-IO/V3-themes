@@ -1,6 +1,6 @@
 "use client";
-import { Link, useResolvedSettings } from "@numueg/theme-sdk";
-import { asImageUrl, asString, type SectionRenderProps } from "./_shared";
+import { Link, useResolvedSettings, useLocale } from "@numueg/theme-sdk";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Tech Wave about section.
@@ -13,11 +13,13 @@ import { asImageUrl, asString, type SectionRenderProps } from "./_shared";
  */
 const TechWaveAbout = ({ instance }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
-  const eyebrow = asString(s.eyebrow, "ABOUT US");
-  const headline = asString(s.headline, "Built different");
+  const locale = useLocale();
+  const eyebrow = asString(s.eyebrow) || localized(locale, "ABOUT US", "من نحن");
+  const headline = asString(s.headline) || localized(locale, "Built different", "مختلفين عن الباقي");
   const quote = asString(s.quote);
   const description = asString(s.description);
   const image = asImageUrl(s.image);
+  const imageTransform = asImageTransform(s.image);
 
   const ctaText = asString(s.cta_text);
   const ctaLink = asString(s.cta_link, "/products");
@@ -70,7 +72,7 @@ const TechWaveAbout = ({ instance }: SectionRenderProps) => {
           </div>
           {image ? (
             <div className="relative aspect-[4/5] overflow-hidden rounded-xl tw-img-frame">
-              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" style={applyImageTransform(imageTransform, "cover")} />
             </div>
           ) : null}
         </div>

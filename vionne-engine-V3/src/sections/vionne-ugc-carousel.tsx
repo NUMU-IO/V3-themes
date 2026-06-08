@@ -1,26 +1,30 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
-import { type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, localized, type ImageTransform, type SectionRenderProps } from "./_shared";
 
 interface Item {
   media: string;
+  mediaTransform?: ImageTransform;
   video: string;
   caption: string;
   productImage: string;
+  productImageTransform?: ImageTransform;
   productLink: string;
 }
 
 const VionneUgcCarousel = ({ instance }: SectionRenderProps) => {
+  const locale = useLocale();
   const s = instance.settings ?? {};
   const eyebrow = s.eyebrow ?? "";
-  const title = s.title ?? "Tagged by you";
+  const title = s.title ?? localized(locale, "Tagged by you", "صوّرتونا");
   const subtitle = s.subtitle ?? "";
   const ctaText = s.cta_text ?? "";
   const ctaLink = s.cta_link ?? "/products";
   const introImage = s.intro_image ?? "";
-  const badgeText = (s.badge_text as string) ?? "Shop now";
+  const introImageTransform = asImageTransform(s.intro_image);
+  const badgeText = (s.badge_text as string) ?? localized(locale, "Shop now", "تسوّقي دلوقتي");
 
   const items: Item[] = [];
   for (let i = 1; i <= 6; i++) {
@@ -29,9 +33,11 @@ const VionneUgcCarousel = ({ instance }: SectionRenderProps) => {
     if (!media && !video) continue;
     items.push({
       media,
+      mediaTransform: asImageTransform(s[`item_${i}_media`]),
       video,
       caption: (s[`item_${i}_caption`] ?? "") as string,
       productImage: (s[`item_${i}_product_image`] ?? "") as string,
+      productImageTransform: asImageTransform(s[`item_${i}_product_image`]),
       productLink: (s[`item_${i}_product_link`] ?? "") as string,
     });
   }
@@ -101,6 +107,7 @@ const VionneUgcCarousel = ({ instance }: SectionRenderProps) => {
                   src={introImage}
                   alt=""
                   className="absolute inset-0 w-full h-full object-cover opacity-50"
+                  style={applyImageTransform(introImageTransform, "cover")}
                 />
               )}
               <div className="absolute inset-0 flex flex-col items-start justify-between p-5 text-start">
@@ -144,7 +151,7 @@ const VionneUgcCarousel = ({ instance }: SectionRenderProps) => {
                     autoPlay
                   />
                 ) : it.media ? (
-                  <img src={it.media} alt={it.caption} className="absolute inset-0 w-full h-full object-cover" />
+                  <img src={it.media} alt={it.caption} className="absolute inset-0 w-full h-full object-cover" style={applyImageTransform(it.mediaTransform, "cover")} />
                 ) : (
                   <div className="absolute inset-0 vn-shimmer" />
                 )}
@@ -162,7 +169,7 @@ const VionneUgcCarousel = ({ instance }: SectionRenderProps) => {
                   className="bg-white px-3 py-2.5 flex items-center gap-2.5 hover:bg-[var(--vn-band)] transition-colors"
                 >
                   {it.productImage && (
-                    <img src={it.productImage} alt="" className="w-9 h-9 object-cover rounded-sm shrink-0" />
+                    <img src={it.productImage} alt="" className="w-9 h-9 object-cover rounded-sm shrink-0" style={applyImageTransform(it.productImageTransform, "cover")} />
                   )}
                   <span className="vn-label text-[10px] text-[var(--vn-ink)] flex-1 text-start">
                     {badgeText}

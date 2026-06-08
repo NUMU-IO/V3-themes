@@ -1,7 +1,7 @@
 "use client";
-import { Link, useCollections } from "@numueg/theme-sdk";
+import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { asString, asNumber, type SectionRenderProps } from "./_shared";
+import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
 
 const PLACEHOLDER_SQUARE =
   "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&h=600&q=60";
@@ -10,8 +10,9 @@ const GildedCategories = ({ instance }: SectionRenderProps) => {
   const { collections } = useCollections();
   const isLoading = false;
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const title = asString(s.title) || "Curated Verticals";
+  const title = asString(s.title) || localized(locale, "Curated Verticals", "أقسام مختارة بعناية");
   const maxItems = asNumber(s.max_items, 0);
 
   const displayCategories =

@@ -2,7 +2,7 @@
   "id": "rabbitsocks-v3",
   "name": "Rabbitsocks (V3)",
   "author": "NUMU",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "layout": "single-column",
   "description": "Rabbitsocks (V3) — quiet-luxury editorial minimalism (serif italic headlines, generous whitespace), ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
@@ -15,11 +15,7 @@
           {
             "type": "rs-hero",
             "settings": {
-              "badge_text": "AUTUMN/WINTER COLLECTION",
-              "cta_text": "SHOP NOW",
-              "cta_link": "/products",
-              "headline": "Elegance\nwithout limits.",
-              "subtitle": "We believe in quiet luxury for everyday essentials. Crafted with technical precision and selected for the modern wardrobe."
+              "cta_link": "/products"
             }
           },
           {
@@ -31,9 +27,6 @@
           {
             "type": "rs-featured",
             "settings": {
-              "label": "SEASONAL EDIT",
-              "title": "The Fine Material Series",
-              "view_all_text": "VIEW ALL",
               "view_all_link": "/products",
               "product_count": 8
             }
@@ -41,10 +34,6 @@
           {
             "type": "rs-image-with-text",
             "settings": {
-              "label": "THE PHILOSOPHY",
-              "headline": "The luxury of things that",
-              "headline_accent": "last.",
-              "text": "\"Rabbitsocks was born from a pursuit of the perfect tactile experience. We don't chase trends; we refine the invisible details of the daily ritual.\"",
               "image_alt": "Curated objects",
               "image_position": "right"
             }
@@ -52,42 +41,24 @@
           {
             "type": "rs-promo-banner",
             "settings": {
-              "journal_label": "READ THE JOURNAL",
-              "journal_title": "Volume IV: The Art of Stillness",
               "journal_link": "/blog",
-              "edit_label": "Curated Comfort",
-              "edit_text": "A collection of objects and garments that define the modern daily ritual.",
-              "edit_link": "/products",
-              "cta_text": "SHOP NOW"
+              "edit_link": "/products"
             }
           },
           {
             "type": "rs-newsletter",
-            "settings": {
-              "subtitle": "Subscribe to our newsletter for the latest collections and exclusive offers.",
-              "placeholder": "Email address"
-            }
+            "settings": {}
           },
           {
             "type": "rs-image-with-text",
             "settings": {
-              "label": "The Philosophy",
-              "headline": "The luxury of things that",
-              "headline_accent": "last.",
-              "text": "This store was born from the pursuit of a perfect tactile experience. We don't chase trends; we refine the invisible details of daily ritual.",
               "image_position": "left",
-              "cta_text": "Learn more about our sources",
               "cta_link": "/contact"
             }
           },
           {
             "type": "rs-editorial",
             "settings": {
-              "title": "Join our curatorial circle",
-              "subtitle": "Read the journal",
-              "side_title": "Curated Comfort",
-              "body": "Early access to limited editions and editorial features.",
-              "cta_text": "Explore the collection",
               "cta_url": "/products"
             }
           }
@@ -127,23 +98,13 @@
           {
             "type": "rs-image-with-text",
             "settings": {
-              "label": "OUR STORY",
-              "headline": "The luxury of things that",
-              "headline_accent": "last.",
-              "text": "Rabbitsocks was born from a pursuit of the perfect tactile experience. We don't chase trends; we refine the invisible details of the daily ritual.",
               "image_position": "right",
-              "cta_text": "Shop the collection",
               "cta_link": "/products"
             }
           },
           {
             "type": "rs-editorial",
             "settings": {
-              "subtitle": "Our philosophy",
-              "title": "The Art of Stillness",
-              "side_title": "Curated Comfort",
-              "body": "Our materials are sourced from the finest mills, ensuring every thread meets our standards for thermal regulation and enduring softness.",
-              "cta_text": "Explore the collection",
               "cta_url": "/products"
             }
           }
@@ -155,20 +116,12 @@
           {
             "type": "rs-editorial",
             "settings": {
-              "subtitle": "Get in touch",
-              "title": "We'd love to hear from you",
-              "side_title": "Visit us",
-              "body": "Questions about an order or our materials? Reach out and our team will get back to you shortly.",
-              "cta_text": "Browse products",
               "cta_url": "/products"
             }
           },
           {
             "type": "rs-newsletter",
-            "settings": {
-              "subtitle": "Subscribe to our newsletter for the latest collections and exclusive offers.",
-              "placeholder": "Email address"
-            }
+            "settings": {}
           }
         ]
       },

@@ -4,21 +4,79 @@
   "name_ar": "بازار تفاصيل المنتج",
   "limit": 1,
   "settings": [
-    { "type": "header", "content": "Buy-box labels" },
-    { "type": "text", "id": "add_to_cart_label", "label": "Add-to-cart button", "label_ar": "زر الإضافة للسلة", "default": "ADD TO CART" },
-    { "type": "text", "id": "added_label", "label": "Added confirmation", "label_ar": "تأكيد الإضافة", "default": "ADDED!" },
-    { "type": "text", "id": "out_of_stock_label", "label": "Out-of-stock label", "label_ar": "تسمية نفاد المخزون", "default": "OUT OF STOCK" },
-    { "type": "text", "id": "in_stock_label", "label": "In-stock label", "label_ar": "تسمية المتوفر", "default": "IN STOCK" },
-    { "type": "text", "id": "quantity_label", "label": "Quantity label", "label_ar": "تسمية الكمية", "default": "QUANTITY" },
-    { "type": "header", "content": "Breadcrumb" },
-    { "type": "text", "id": "home_label", "label": "Home crumb", "label_ar": "تسمية الرئيسية", "default": "HOME" },
-    { "type": "text", "id": "shop_label", "label": "Shop crumb", "label_ar": "تسمية المتجر", "default": "SHOP" }
+    {
+      "type": "header",
+      "content": "Buy-box labels"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_label",
+      "label": "Add-to-cart button",
+      "label_ar": "زر الإضافة للسلة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "added_label",
+      "label": "Added confirmation",
+      "label_ar": "تأكيد الإضافة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "out_of_stock_label",
+      "label": "Out-of-stock label",
+      "label_ar": "تسمية نفاد المخزون",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "in_stock_label",
+      "label": "In-stock label",
+      "label_ar": "تسمية المتوفر",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "quantity_label",
+      "label": "Quantity label",
+      "label_ar": "تسمية الكمية",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Breadcrumb"
+    },
+    {
+      "type": "text",
+      "id": "home_label",
+      "label": "Home crumb",
+      "label_ar": "تسمية الرئيسية",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "shop_label",
+      "label": "Shop crumb",
+      "label_ar": "تسمية المتجر",
+      "default": ""
+    }
   ],
   "presets": [
     {
       "name": "Empire Product Detail",
-      "locales": { "en": { "name": "Empire Product Detail" }, "ar": { "name": "بازار تفاصيل المنتج" } },
-      "settings": { "add_to_cart_label": "ADD TO CART", "quantity_label": "QUANTITY" }
+      "locales": {
+        "en": {
+          "name": "Empire Product Detail"
+        },
+        "ar": {
+          "name": "بازار تفاصيل المنتج"
+        }
+      },
+      "settings": {
+        "add_to_cart_label": "",
+        "quantity_label": ""
+      }
     }
   ]
 }

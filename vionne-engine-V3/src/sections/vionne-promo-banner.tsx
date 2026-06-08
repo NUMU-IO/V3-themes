@@ -1,17 +1,19 @@
 "use client";
 import { useState } from "react";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 export default function PromoBanner({ instance }: SectionRenderProps) {
+  const locale = useLocale();
   const s = instance.settings ?? {};
   const badge = asString(s.badge_text);
-  const headline = asString(s.headline) || "Special Offer";
-  const subtitle = asString(s.subtitle) || "Shop our latest collection";
-  const ctaText = asString(s.cta_text) || "Shop Now";
+  const headline = asString(s.headline) || localized(locale, "Special Offer", "عرض خاص");
+  const subtitle = asString(s.subtitle) || localized(locale, "Shop our latest collection", "اكتشفي أحدث تشكيلة");
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوّقي دلوقتي");
   const ctaLink = asString(s.cta_link) || "/products";
   const imageUrl = asString(s.image_url);
+  const imageTransform = asImageTransform(s.image_url);
 
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(!imageUrl);
@@ -53,6 +55,7 @@ export default function PromoBanner({ instance }: SectionRenderProps) {
                     className={`w-full h-full object-cover transition-opacity duration-300 ${
                       imageLoading ? "opacity-0" : "opacity-100"
                     }`}
+                    style={applyImageTransform(imageTransform, "cover")}
                     onLoad={() => setImageLoading(false)}
                     onError={() => {
                       setImageLoading(false);

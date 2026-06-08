@@ -3,13 +3,56 @@
   "name": "Bazar Philosophy",
   "name_ar": "بازار فلسفة",
   "settings": [
-    { "type": "text", "id": "label", "label": "Label", "label_ar": "التسمية", "default": "THE PHILOSOPHY" },
-    { "type": "text", "id": "headline", "label": "Headline", "label_ar": "العنوان الرئيسي", "default": "THE LUXURY OF THINGS THAT LAST." },
-    { "type": "textarea", "id": "quote", "label": "Quote", "label_ar": "اقتباس", "default": "Born from a pursuit of the perfect tactile experience. We don't chase trends; we refine the invisible details of the daily ritual." },
-    { "type": "textarea", "id": "body", "label": "Body Text", "label_ar": "نص المحتوى", "default": "Our materials are sourced from the finest mills, ensuring every thread meets our standards for thermal regulation and enduring softness." },
-    { "type": "text", "id": "cta_text", "label": "Button Text", "label_ar": "نص الزر", "default": "LEARN MORE" },
-    { "type": "url", "id": "cta_link", "label": "Button Link", "label_ar": "رابط الزر", "default": "/about" },
-    { "type": "image_picker", "id": "image_url", "label": "Image", "label_ar": "صورة", "info": "Leave empty for the branded letter block." },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "label_ar": "التسمية",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "label_ar": "العنوان الرئيسي",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "Quote",
+      "label_ar": "اقتباس",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body Text",
+      "label_ar": "نص المحتوى",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button Text",
+      "label_ar": "نص الزر",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button Link",
+      "label_ar": "رابط الزر",
+      "default": "/about"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_url",
+      "label": "Image",
+      "label_ar": "صورة",
+      "info": "Leave empty for the branded letter block.",
+      "aspect_ratio": "4/5"
+    },
     {
       "type": "select",
       "id": "color_scheme",
@@ -17,16 +60,34 @@
       "label_ar": "مخطط الألوان",
       "default": "dark",
       "options": [
-        { "value": "dark", "label": "Dark", "label_ar": "داكن" },
-        { "value": "light", "label": "Light", "label_ar": "فاتح" }
+        {
+          "value": "dark",
+          "label": "Dark",
+          "label_ar": "داكن"
+        },
+        {
+          "value": "light",
+          "label": "Light",
+          "label_ar": "فاتح"
+        }
       ]
     }
   ],
   "presets": [
     {
       "name": "Bazar Philosophy",
-      "locales": { "en": { "name": "Bazar Philosophy" }, "ar": { "name": "بازار فلسفة" } },
-      "settings": { "label": "THE PHILOSOPHY", "headline": "THE LUXURY OF THINGS THAT LAST." }
+      "locales": {
+        "en": {
+          "name": "Bazar Philosophy"
+        },
+        "ar": {
+          "name": "بازار فلسفة"
+        }
+      },
+      "settings": {
+        "label": "",
+        "headline": ""
+      }
     }
   ]
 }

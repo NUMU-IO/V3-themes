@@ -4,12 +4,13 @@ import { useState } from "react";
 import {
   Link,
   Money,
+  useLocale,
   useOrders,
   useResolvedSettings,
 } from "@numueg/theme-sdk";
 import { Check, Copy, Package, ArrowLeft, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { asBool, asString, type SectionRenderProps } from "./_shared";
+import { asBool, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -31,22 +32,23 @@ export default function BzOrderConfirmation({
   sectionId,
 }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
+  const locale = useLocale();
 
-  const eyebrow = asString(s.eyebrow) || "ORDER CONFIRMED";
-  const title = asString(s.title) || "THANK YOU!";
+  const eyebrow = asString(s.eyebrow) || localized(locale, "ORDER CONFIRMED", "تم تأكيد الطلب");
+  const title = asString(s.title) || localized(locale, "THANK YOU!", "شكرًا ليك!");
   const subtitle =
     asString(s.subtitle) ||
-    "Your order has been placed successfully. We'll send you the order details via WhatsApp.";
-  const continueText = asString(s.continue_shopping_text) || "CONTINUE SHOPPING";
+    localized(locale, "Your order has been placed successfully. We'll send you the order details via WhatsApp.", "تم تسجيل طلبك بنجاح. هنبعتلك تفاصيل الطلب على واتساب.");
+  const continueText = asString(s.continue_shopping_text) || localized(locale, "CONTINUE SHOPPING", "كمّل تسوّق");
   const continueLink = asString(s.continue_shopping_link) || "/products";
 
-  const orderNumberLabel = asString(s.order_number_label) || "ORDER NUMBER";
-  const totalLabel = asString(s.total_label) || "TOTAL";
-  const deliveryLabel = asString(s.delivery_label) || "ESTIMATED DELIVERY";
-  const deliveryValue = asString(s.delivery_value) || "3-5 business days";
-  const statusLabel = asString(s.status_label) || "STATUS";
-  const statusValue = asString(s.status_value) || "Processing";
-  const trackOrderText = asString(s.track_order_text) || "TRACK ORDER";
+  const orderNumberLabel = asString(s.order_number_label) || localized(locale, "ORDER NUMBER", "رقم الطلب");
+  const totalLabel = asString(s.total_label) || localized(locale, "TOTAL", "الإجمالي");
+  const deliveryLabel = asString(s.delivery_label) || localized(locale, "ESTIMATED DELIVERY", "التوصيل المتوقع");
+  const deliveryValue = asString(s.delivery_value) || localized(locale, "3-5 business days", "من ٣ لـ ٥ أيام عمل");
+  const statusLabel = asString(s.status_label) || localized(locale, "STATUS", "الحالة");
+  const statusValue = asString(s.status_value) || localized(locale, "Processing", "قيد التجهيز");
+  const trackOrderText = asString(s.track_order_text) || localized(locale, "TRACK ORDER", "تتبّع الطلب");
 
   const showProgress = asBool(s.show_progress, true);
   const showWhatsApp = asBool(s.show_whatsapp, true);
@@ -70,7 +72,12 @@ export default function BzOrderConfirmation({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const steps = ["Order Placed", "Processing", "On the Way", "Delivered"];
+  const steps = [
+    localized(locale, "Order Placed", "تم الطلب"),
+    localized(locale, "Processing", "قيد التجهيز"),
+    localized(locale, "On the Way", "في الطريق"),
+    localized(locale, "Delivered", "تم التوصيل"),
+  ];
 
   return (
     <div
@@ -201,21 +208,22 @@ export default function BzOrderConfirmation({
             <div className="bg-white border border-[var(--bz-dark)]/10 rounded-2xl p-4 sm:p-5 mb-6 sm:mb-7 text-start shadow-sm">
               <div className="flex items-center gap-2 mb-2.5 sm:mb-3">
                 <MessageCircle size={16} className="text-[#25D366]" />
-                <span className="bz-label text-sm text-[#25D366]">WHATSAPP MESSAGE</span>
+                <span className="bz-label text-sm text-[#25D366]">{localized(locale, "WHATSAPP MESSAGE", "رسالة واتساب")}</span>
               </div>
               <div className="bg-[var(--bz-cream)] rounded-xl p-3 sm:p-4 text-xs sm:text-sm text-[var(--bz-dark)] leading-relaxed">
-                <p>Hello! 👋</p>
+                <p>{localized(locale, "Hello! 👋", "أهلًا! 👋")}</p>
                 <p className="mt-1">
-                  Your order{" "}
-                  <strong className="font-semibold text-[var(--bz-dark)]">{orderNumber}</strong> has been received successfully.
+                  {localized(locale, "Your order ", "طلبك ")}
+                  <strong className="font-semibold text-[var(--bz-dark)]" dir="ltr">{orderNumber}</strong>
+                  {localized(locale, " has been received successfully.", " وصلنا بنجاح.")}
                 </p>
                 {typeof total === "number" && total > 0 && (
                   <p className="mt-1">
-                    Total: <strong><Money amount={total} currency={currency} /></strong>
+                    {localized(locale, "Total: ", "الإجمالي: ")}<strong><Money amount={total} currency={currency} /></strong>
                   </p>
                 )}
-                <p className="mt-1">We&apos;ll deliver it within {deliveryValue}. If you have any questions, contact us here.</p>
-                <p className="mt-1">Thank you for shopping with us ❤️</p>
+                <p className="mt-1">{localized(locale, `We'll deliver it within ${deliveryValue}. If you have any questions, contact us here.`, `هنوصّله ليك خلال ${deliveryValue}. لو عندك أي استفسار، تواصل معانا هنا.`)}</p>
+                <p className="mt-1">{localized(locale, "Thank you for shopping with us ❤️", "شكرًا لتسوّقك معانا ❤️")}</p>
               </div>
             </div>
           )}

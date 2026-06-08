@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import { Link, Money, useOrders } from "@numueg/theme-sdk";
+import { Link, Money, useOrders, useLocale } from "@numueg/theme-sdk";
 import { Check, Copy, Package, ArrowLeft, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Rabbitsocks order-confirmation section.
@@ -19,17 +19,22 @@ import { asString, type SectionRenderProps } from "./_shared";
  */
 export default function RsOrderConfirmationSection({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
   const showProgress = s.show_progress ?? true;
   const showWhatsApp = s.show_whatsapp ?? true;
   const showTrackOrder = s.show_track_order ?? true;
   const showEmoji = s.show_emoji ?? false;
 
-  const title = asString(s.title) || "Order confirmed";
+  const title = asString(s.title) || localized(locale, "Order confirmed", "تم تأكيد الطلب");
   const subtitle =
     asString(s.subtitle) ||
-    "Thank you for your order. We'll send you the order details via WhatsApp.";
-  const continueText = asString(s.continue_shopping_text) || "Continue shopping";
+    localized(
+      locale,
+      "Thank you for your order. We'll send you the order details via WhatsApp.",
+      "شكراً لطلبك. هنبعتلك تفاصيل الطلب على الواتساب.",
+    );
+  const continueText = asString(s.continue_shopping_text) || localized(locale, "Continue shopping", "كمّل تسوّق");
   const continueLink = asString(s.continue_shopping_link) || "/";
 
   const { orders } = useOrders();
@@ -47,7 +52,12 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const steps = ["Order Placed", "Processing", "On the Way", "Delivered"];
+  const steps = [
+    localized(locale, "Order Placed", "اتعمل الطلب"),
+    localized(locale, "Processing", "بنجهّز"),
+    localized(locale, "On the Way", "في الطريق"),
+    localized(locale, "Delivered", "اتسلّم"),
+  ];
 
   return (
     <div
@@ -81,7 +91,7 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
         >
           {/* Title */}
           <span className="vn-eyebrow block mb-2 text-[10px] sm:text-[11px]">
-            ORDER CONFIRMED
+            {localized(locale, "ORDER CONFIRMED", "تم تأكيد الطلب")}
           </span>
           <h1 className="vn-heading text-2xl sm:text-3xl md:text-4xl text-[var(--vn-ink)] mb-2 sm:mb-3 leading-tight">
             {title}{showEmoji ? " 🎉" : ""}
@@ -95,7 +105,7 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
             <div className="space-y-4 text-sm">
               {/* Order number */}
               <div className="flex justify-between items-center">
-                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">Order Number</span>
+                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">{localized(locale, "Order Number", "رقم الطلب")}</span>
                 <div className="flex items-center gap-2">
                   <span
                     className="font-mono text-sm sm:text-base text-[var(--vn-ink)] font-semibold tracking-wider"
@@ -106,7 +116,7 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
                   <button
                     onClick={handleCopy}
                     className="p-1.5 rounded-md transition-colors hover:bg-white/60 active:scale-95"
-                    title="Copy"
+                    title={localized(locale, "Copy", "نسخ")}
                   >
                     {copied ? (
                       <Check size={14} className="text-[var(--vn-ink)]" />
@@ -122,7 +132,7 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
                 <>
                   <div className="h-px bg-[var(--vn-border)]" />
                   <div className="flex justify-between">
-                    <span className="text-xs sm:text-sm text-[var(--vn-muted)]">Total</span>
+                    <span className="text-xs sm:text-sm text-[var(--vn-muted)]">{localized(locale, "Total", "الإجمالي")}</span>
                     <span className="text-xs sm:text-sm font-medium text-[var(--vn-ink)]">
                       <Money amount={total} currency={currency} />
                     </span>
@@ -133,15 +143,15 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
               {/* Delivery */}
               <div className="h-px bg-[var(--vn-border)]" />
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">Estimated Delivery</span>
-                <span className="text-xs sm:text-sm font-medium text-[var(--vn-ink)]">3-5 business days</span>
+                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">{localized(locale, "Estimated Delivery", "موعد التوصيل المتوقع")}</span>
+                <span className="text-xs sm:text-sm font-medium text-[var(--vn-ink)]">{localized(locale, "3-5 business days", "٣-٥ أيام عمل")}</span>
               </div>
 
               {/* Status */}
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">Status</span>
+                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">{localized(locale, "Status", "الحالة")}</span>
                 <span className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[var(--vn-ink)]">
-                  <Package size={14} /> Processing
+                  <Package size={14} /> {localized(locale, "Processing", "بنجهّز")}
                 </span>
               </div>
             </div>
@@ -188,21 +198,21 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
             <div className="bg-white border border-[var(--vn-border)] rounded-md p-4 sm:p-5 mb-6 sm:mb-7 text-start">
               <div className="flex items-center gap-2 mb-2.5 sm:mb-3 vn-eyebrow text-[10px] sm:text-[11px]">
                 <MessageCircle size={16} className="text-whatsapp" />
-                <span className="text-sm font-bold text-whatsapp">WhatsApp Message</span>
+                <span className="text-sm font-bold text-whatsapp">{localized(locale, "WhatsApp Message", "رسالة واتساب")}</span>
               </div>
               <div className="bg-[var(--vn-band)] rounded-md p-3 sm:p-4 text-xs sm:text-sm text-[var(--vn-ink)] leading-relaxed">
-                <p>Hello! 👋</p>
+                <p>{localized(locale, "Hello! 👋", "أهلاً! 👋")}</p>
                 <p className="mt-1">
-                  Your order{" "}
-                  <strong className="font-semibold text-[var(--vn-ink)]">{orderNumber}</strong> has been received successfully.
+                  {localized(locale, "Your order", "طلبك")}{" "}
+                  <strong className="font-semibold text-[var(--vn-ink)]" dir="ltr">{orderNumber}</strong> {localized(locale, "has been received successfully.", "اتستلم بنجاح.")}
                 </p>
                 {typeof total === "number" && total > 0 && (
                   <p className="mt-1">
-                    Total: <strong><Money amount={total} currency={currency} /></strong>
+                    {localized(locale, "Total:", "الإجمالي:")} <strong><Money amount={total} currency={currency} /></strong>
                   </p>
                 )}
-                <p className="mt-1">We'll deliver it within 3-5 business days. If you have any questions, contact us here.</p>
-                <p className="mt-1">Thank you for shopping with us ❤️</p>
+                <p className="mt-1">{localized(locale, "We'll deliver it within 3-5 business days. If you have any questions, contact us here.", "هنوصّلهولك خلال ٣-٥ أيام عمل. لو عندك أي استفسار، كلّمنا هنا.")}</p>
+                <p className="mt-1">{localized(locale, "Thank you for shopping with us ❤️", "شكراً لتسوّقك معانا ❤️")}</p>
               </div>
             </div>
           )}
@@ -217,7 +227,7 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
                   "py-3 sm:py-3.5 text-xs sm:text-sm"
                 }
               >
-                <Package size={18} /> Track Order
+                <Package size={18} /> {localized(locale, "Track Order", "تتبّع الطلب")}
               </Link>
             )}
             <Link

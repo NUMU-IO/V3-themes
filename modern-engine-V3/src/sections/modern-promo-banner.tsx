@@ -1,8 +1,29 @@
 "use client";
 import { useState } from "react";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { ArrowLeft, ShoppingBag, Sparkles } from "lucide-react";
-import { type SectionRenderProps } from "./_shared";
+import {
+  applyImageTransform,
+  asImageTransform,
+  localized,
+  type SectionRenderProps,
+} from "./_shared";
+
+/**
+ * Read an image-picker URL. The value is a plain URL string for legacy/no-crop
+ * settings, or an `{ url, alt, transform }` object once the merchant frames the
+ * image in the editor. Returns "" for any other shape so the bag fallback still
+ * renders exactly as before.
+ */
+function imgUrl(v: unknown): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object") {
+    const r = v as Record<string, unknown>;
+    if (typeof r.url === "string") return r.url;
+    if (typeof r.src === "string") return r.src;
+  }
+  return "";
+}
 
 /**
  * Modern promo banner — faithful port of the V2 in-tree ModernPromoBanner
@@ -16,12 +37,16 @@ import { type SectionRenderProps } from "./_shared";
  */
 const ModernPromoBanner = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
   const badge = s.badge_text ?? "";
-  const headline = s.headline ?? "Special Offer";
-  const subtitle = s.subtitle ?? "Shop our latest collection";
-  const ctaText = s.cta_text ?? "Shop Now";
+  const headline = s.headline ?? localized(locale, "Special Offer", "عرض خاص");
+  const subtitle = s.subtitle ?? localized(locale, "Shop our latest collection", "تسوق أحدث تشكيلاتنا");
+  const ctaText = s.cta_text ?? localized(locale, "Shop Now", "تسوق الآن");
   const ctaLink = s.cta_link ?? "/products";
-  const imageUrl = (s.image_url as string) || "";
+  const imageUrl = imgUrl(s.image_url);
+  // Non-destructive focal/zoom/rotation the merchant framed on the banner image.
+  // Undefined → the <img> renders exactly as before.
+  const imageTransform = asImageTransform(s.image_url);
 
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(!imageUrl);
@@ -74,6 +99,7 @@ const ModernPromoBanner = ({ instance }: SectionRenderProps) => {
                     className={`w-full h-full object-cover transition-opacity duration-300 ${
                       imageLoading ? "opacity-0" : "opacity-100"
                     }`}
+                    style={applyImageTransform(imageTransform, "cover")}
                     onLoad={() => setImageLoading(false)}
                     onError={() => {
                       setImageLoading(false);

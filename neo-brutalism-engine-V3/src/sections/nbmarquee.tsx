@@ -1,10 +1,13 @@
 "use client";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 const NBMarquee = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const text = asString(
-    s.text,
+  const locale = useLocale();
+  const text = asString(s.text) || localized(
+    locale,
+    "✦ Exclusive deals ✦ Fast shipping ✦ Authentic products ✦ Guaranteed quality ✦ Cash on delivery ✦",
     "✦ خصومات حصرية ✦ شحن سريع ✦ منتجات أصلية ✦ جودة مضمونة ✦ الدفع عند الاستلام ✦",
   );
   const repeatCount = asNumber(s.repeat_count, 2);

@@ -2,7 +2,7 @@
   "id": "elegant-v3",
   "name": "Elegant (V3)",
   "author": "NUMU",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "layout": "single-column",
   "description": "Elegant (V3) — rich warm-brown classic storefront, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
@@ -15,16 +15,12 @@
           {
             "type": "elegant-hero",
             "settings": {
-              "headline": "تسوق أرقى المنتجات",
-              "subtitle": "اكتشف تشكيلة مميزة من المنتجات الفاخرة بأسعار مناسبة. جودة استثنائية وتوصيل لكل مصر.",
-              "cta_text": "تسوق الآن",
               "cta_link": "/products"
             }
           },
           {
             "type": "elegant-categories",
             "settings": {
-              "title": "تسوق حسب الفئة",
               "columns_desktop": 4,
               "columns_mobile": 2
             }
@@ -32,9 +28,6 @@
           {
             "type": "elegant-featured-collection",
             "settings": {
-              "title": "وصل حديثاً",
-              "subtitle": "أحدث الإضافات لمجموعتنا",
-              "collection_tag": "new",
               "product_count": 4,
               "columns": 4
             }
@@ -42,53 +35,30 @@
           {
             "type": "elegant-promo-banner",
             "settings": {
-              "headline": "عرض خاص",
-              "subtitle": "تسوق أحدث تشكيلاتنا الآن",
-              "cta_text": "تسوق الآن",
               "cta_link": "/products"
             }
           },
           {
             "type": "elegant-collection-strip",
             "settings": {
-              "title": "تسوق المجموعات",
               "layout": "image-row",
-              "item_1_label": "وصل حديثاً",
               "item_1_link": "/products",
-              "item_2_label": "الأكثر مبيعاً",
               "item_2_link": "/products",
-              "item_3_label": "مميز",
               "item_3_link": "/products",
-              "item_4_label": "تخفيضات",
               "item_4_link": "/products"
             }
           },
           {
             "type": "elegant-testimonials",
             "settings": {
-              "title": "آراء عملائنا",
-              "review_1_name": "سارة أحمد",
-              "review_1_city": "القاهرة",
-              "review_1_text": "جودة المنتجات ممتازة والتغليف كان أنيق جداً.",
               "review_1_rating": 5,
-              "review_2_name": "أحمد محمود",
-              "review_2_city": "الإسكندرية",
-              "review_2_text": "الخامات فاخرة والتوصيل كان سريع.",
               "review_2_rating": 5,
-              "review_3_name": "منى خالد",
-              "review_3_city": "المنصورة",
-              "review_3_text": "خدمة عملاء ممتازة وأسعار مناسبة للجودة.",
               "review_3_rating": 4
             }
           },
           {
             "type": "elegant-newsletter",
-            "settings": {
-              "title": "ابقَ على اطلاع",
-              "subtitle": "اشترك في نشرتنا لتصلك آخر العروض",
-              "button_text": "اشترك",
-              "placeholder": "البريد الإلكتروني"
-            }
+            "settings": {}
           }
         ]
       },

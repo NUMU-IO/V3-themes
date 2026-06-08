@@ -1,17 +1,23 @@
 "use client";
 import { useState } from "react";
+import { useLocale } from "@numueg/theme-sdk";
 import { Check } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const BoutiqueNewsletter = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const title = asString(s.title) || "اشتركي في نشرتنا";
+  const title = asString(s.title) || localized(locale, "Join Our Newsletter", "اشتركي في نشرتنا");
   const subtitle =
     asString(s.subtitle) ||
-    "كوني أول من يعرف عن أحدث التشكيلات والعروض الحصرية";
-  const buttonText = asString(s.button_text) || "اشتركي";
-  const placeholder = asString(s.placeholder) || "البريد الإلكتروني";
+    localized(
+      locale,
+      "Be the first to know about new arrivals and exclusive offers.",
+      "كوني أول من يعرف عن أحدث التشكيلات والعروض الحصرية",
+    );
+  const buttonText = asString(s.button_text) || localized(locale, "Subscribe", "اشتركي");
+  const placeholder = asString(s.placeholder) || localized(locale, "Email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -50,7 +56,7 @@ const BoutiqueNewsletter = ({ instance }: SectionRenderProps) => {
           {submitted ? (
             <div className="flex items-center justify-center gap-2 h-12 text-sm font-semibold text-green-600">
               <Check className="h-5 w-5" />
-              <span>تم الاشتراك بنجاح</span>
+              <span>{localized(locale, "Subscribed successfully", "تم الاشتراك بنجاح")}</span>
             </div>
           ) : (
             <div className="flex gap-2">

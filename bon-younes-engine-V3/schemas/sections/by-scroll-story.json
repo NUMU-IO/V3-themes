@@ -6,13 +6,13 @@
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow",
-      "default": "the menu, told slowly"
+      "default": ""
     },
     {
       "type": "text",
       "id": "title",
       "label": "Section title",
-      "default": "Five reasons to come back tomorrow"
+      "default": ""
     }
   ],
   "blocks": [
@@ -20,10 +20,29 @@
       "type": "panel",
       "name": "Story panel",
       "settings": [
-        { "type": "text", "id": "title", "label": "Title" },
-        { "type": "text", "id": "binomial", "label": "Subtitle / italic line", "default": "a short tagline", "info": "A separate italic line under the title — keep it distinct from the Title (do not bind to the same source)." },
-        { "type": "textarea", "id": "body", "label": "Body copy" },
-        { "type": "image_picker", "id": "image", "label": "Image" }
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "binomial",
+          "label": "Subtitle / italic line",
+          "default": "",
+          "info": "A separate italic line under the title — keep it distinct from the Title (do not bind to the same source)."
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Body copy"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "aspect_ratio": "16/11"
+        }
       ]
     }
   ],
@@ -31,12 +50,30 @@
   "presets": [
     {
       "name": "Scroll story",
-      "locales": { "ar": { "name": "قصة تمرير" } },
+      "locales": {
+        "ar": {
+          "name": "قصة تمرير"
+        }
+      },
       "category": "content",
       "settings": {},
       "blocks": [
-        { "type": "panel", "settings": { "title": "Roasted on site", "binomial": "fresh weekly", "body": "Beans roasted on site every Wednesday." } },
-        { "type": "panel", "settings": { "title": "Brewed slow", "binomial": "poured with care", "body": "Every cup poured with care." } }
+        {
+          "type": "panel",
+          "settings": {
+            "title": "",
+            "binomial": "",
+            "body": ""
+          }
+        },
+        {
+          "type": "panel",
+          "settings": {
+            "title": "",
+            "binomial": "",
+            "body": ""
+          }
+        }
       ]
     }
   ]

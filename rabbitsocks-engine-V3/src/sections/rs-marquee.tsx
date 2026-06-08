@@ -1,19 +1,20 @@
 "use client";
-import { useShop } from "@numueg/theme-sdk";
-import { asNumber, type SectionRenderProps } from "./_shared";
-
-const TAGLINES = [
-  { text: "WALK IN STYLE", italic: false },
-  { text: "Minimalist Luxury", italic: true },
-  { text: "PREMIUM COMFORT", italic: false },
-  { text: "Quiet Luxury", italic: true },
-];
+import { useShop, useLocale } from "@numueg/theme-sdk";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 const RsMarquee = ({ instance }: SectionRenderProps) => {
   const shop = useShop();
+  const locale = useLocale();
   const s = instance.settings ?? {};
   const storeName = shop?.name || "RabbitSocks";
   const repeat = asNumber(s.repeat, 3) || 3;
+
+  const TAGLINES = [
+    { text: localized(locale, "WALK IN STYLE", "اتمشى بأناقة"), italic: false },
+    { text: localized(locale, "Minimalist Luxury", "رفاهية بسيطة"), italic: true },
+    { text: localized(locale, "PREMIUM COMFORT", "راحة فاخرة"), italic: false },
+    { text: localized(locale, "Quiet Luxury", "فخامة هادئة"), italic: true },
+  ];
 
   const unit = (
     <>

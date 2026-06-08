@@ -2,9 +2,30 @@
   "type": "rs-newsletter",
   "name": "Newsletter (Rabbitsocks)",
   "settings": [
-    { "type": "header", "content": "Content" },
-    { "id": "subtitle", "type": "textarea", "label": "Subtitle", "label_ar": "الوصف", "default": "Subscribe to our newsletter for the latest collections and exclusive offers." },
-    { "id": "placeholder", "type": "text", "label": "Input placeholder", "label_ar": "نص الحقل", "default": "Email address" },
-    { "id": "success_text", "type": "text", "label": "Success message", "label_ar": "رسالة النجاح", "default": "Thank you for subscribing! We'll keep you posted." }
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "id": "subtitle",
+      "type": "textarea",
+      "label": "Subtitle",
+      "label_ar": "الوصف",
+      "default": ""
+    },
+    {
+      "id": "placeholder",
+      "type": "text",
+      "label": "Input placeholder",
+      "label_ar": "نص الحقل",
+      "default": ""
+    },
+    {
+      "id": "success_text",
+      "type": "text",
+      "label": "Success message",
+      "label_ar": "رسالة النجاح",
+      "default": ""
+    }
   ]
 }

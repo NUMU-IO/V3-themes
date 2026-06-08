@@ -2,7 +2,7 @@
 
 import { sanitizeHtml, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { asString, usePageData, type SectionRenderProps } from "./_shared";
+import { asString, localized, usePageData, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -56,11 +56,15 @@ export default function ByRichText({
   const isCms = Boolean(cmsTitle || cmsBody);
 
   const heading =
-    cmsTitle || asString(s.heading) || "About Bon Younes";
+    cmsTitle || asString(s.heading) || localized(locale, "About Bon Younes", "عن بون يونس");
   const bodyRaw =
     cmsBody ||
     asString(s.body) ||
-    "<p>Specialty coffee, brewed slowly in Mansoura. Beans roasted on site every Wednesday — drop by, or order online.</p><p>This text was added via the rich-text section. Merchants can edit it in the customizer's Sections panel.</p>";
+    localized(
+      locale,
+      "<p>Specialty coffee, brewed slowly in Mansoura. Beans roasted on site every Wednesday — drop by, or order online.</p><p>This text was added via the rich-text section. Merchants can edit it in the customizer's Sections panel.</p>",
+      "<p>قهوة مختصة بتتحضّر على مهل في المنصورة. بنحمّص البُن في المحل كل أربع — عدّي علينا، أو اطلب أونلاين.</p><p>النص ده اتضاف من سيكشن النص الغني. التاجر يقدر يعدّله من قسم السيكشنز في المحرّر.</p>",
+    );
 
   const safeBody = useMemo(() => sanitizeHtml(bodyRaw), [bodyRaw]);
 

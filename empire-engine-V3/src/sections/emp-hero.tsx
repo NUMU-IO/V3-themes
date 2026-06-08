@@ -1,24 +1,29 @@
 "use client";
 
 import { useRef } from "react";
-import { Link, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
 import {
+  applyImageTransform,
+  asImageTransform,
   asImageUrl,
   asString,
+  localized,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const EmpHero = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
+  const locale = useLocale();
 
   const letter = asString(s.letter);
-  const headline = asString(s.headline) || "EMPIRE DREAMS";
-  const subline = asString(s.subline) || "COME TO LIFE";
+  const headline = asString(s.headline) || localized(locale, "EMPIRE DREAMS", "أحلام الإمبراطورية");
+  const subline = asString(s.subline) || localized(locale, "COME TO LIFE", "بتتحقق");
   const tagline =
-    asString(s.tagline) || "Handpicked summer essentials, made in Egypt.";
-  const ctaText = asString(s.cta_text) || "SHOP NEW ARRIVALS";
+    asString(s.tagline) ||
+    localized(locale, "Handpicked summer essentials, made in Egypt.", "مختارات الصيف الأساسية، صناعة مصرية.");
+  const ctaText = asString(s.cta_text) || localized(locale, "SHOP NEW ARRIVALS", "تسوّق وصل حديثًا");
   const ctaLink = asString(s.cta_link) || "/products";
   const secondaryCtaText = asString(s.secondary_cta_text);
   const secondaryCtaLink = asString(s.secondary_cta_link) || "/collections";
@@ -27,6 +32,11 @@ const EmpHero = ({ instance, sectionId }: SectionRenderProps) => {
   // the 16:9 crop aspect instead of the default 1:1 square. Falls back to
   // the legacy `image_url` key for any merchant who set it before the rename.
   const imageUrl = asImageUrl(s.hero_image_url) || asImageUrl(s.image_url);
+  // Match the URL precedence above: use the transform that belongs to whichever
+  // key actually supplied the rendered image.
+  const imageTransform = asImageUrl(s.hero_image_url)
+    ? asImageTransform(s.hero_image_url)
+    : asImageTransform(s.image_url);
   const colorScheme = asString(s.color_scheme) || "auto";
 
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -48,14 +58,19 @@ const EmpHero = ({ instance, sectionId }: SectionRenderProps) => {
         </div>
       )}
 
-      <h1 className="emp-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[var(--emp-dark)] leading-[1.05]">
+      {/* EMP-1: the hero content sits on the dark `.emp-wavy-bg` (navy→ink),
+          so the dark-ink headline/subline that work on bazar's bright-yellow
+          hero render near-invisible here. Use the off-white cream token (the
+          bg's own default text color) so the store's most prominent text is
+          legible. */}
+      <h1 className="emp-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[var(--emp-cream)] leading-[1.05]">
         <InlineEditable
           sectionId={sectionId}
           settingKey="headline"
           value={headline}
         />
         <br />
-        <span className="text-[var(--emp-navy)]">
+        <span className="text-[var(--emp-cream)]/80">
           <InlineEditable
             sectionId={sectionId}
             settingKey="subline"
@@ -65,7 +80,7 @@ const EmpHero = ({ instance, sectionId }: SectionRenderProps) => {
       </h1>
 
       {tagline && (
-        <p className="mt-5 text-sm sm:text-base text-[var(--emp-dark)]/75 leading-relaxed max-w-sm">
+        <p className="mt-5 text-sm sm:text-base text-[var(--emp-cream)]/75 leading-relaxed max-w-sm">
           <InlineEditable
             sectionId={sectionId}
             settingKey="tagline"
@@ -90,7 +105,7 @@ const EmpHero = ({ instance, sectionId }: SectionRenderProps) => {
         {secondaryCtaText && (
           <Link
             to={secondaryCtaLink}
-            className="emp-btn rounded-full px-6 py-3.5 text-[12px] inline-flex items-center gap-2 border-2 border-[var(--emp-dark)] text-[var(--emp-dark)] hover:bg-[var(--emp-dark)] hover:text-[var(--emp-amber)] transition-colors"
+            className="emp-btn rounded-full px-6 py-3.5 text-[12px] inline-flex items-center gap-2 border-2 border-[var(--emp-cream)] text-[var(--emp-cream)] hover:bg-[var(--emp-cream)] hover:text-[var(--emp-dark)] transition-colors"
           >
             <InlineEditable
               sectionId={sectionId}
@@ -102,8 +117,8 @@ const EmpHero = ({ instance, sectionId }: SectionRenderProps) => {
       </div>
 
       {trustText && (
-        <div className="mt-8 pt-6 border-t-2 border-[var(--emp-dark)]/15">
-          <p className="emp-label text-[11px] text-[var(--emp-dark)]/70 tracking-wider">
+        <div className="mt-8 pt-6 border-t-2 border-[var(--emp-cream)]/20">
+          <p className="emp-label text-[11px] text-[var(--emp-cream)]/70 tracking-wider">
             <InlineEditable
               sectionId={sectionId}
               settingKey="trust_text"
@@ -131,6 +146,7 @@ const EmpHero = ({ instance, sectionId }: SectionRenderProps) => {
               src={imageUrl}
               alt=""
               className="max-h-full max-w-full w-auto h-auto object-contain"
+              style={applyImageTransform(imageTransform, "contain")}
               loading="eager"
             />
           </div>

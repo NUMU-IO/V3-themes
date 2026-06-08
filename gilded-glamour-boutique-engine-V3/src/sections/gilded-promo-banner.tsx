@@ -1,15 +1,20 @@
 "use client";
 import { useRef } from "react";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const GildedPromoBanner = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const heading = asString(s.headline) || "WHERE HERITAGE MEETS THE FUTURE";
+  const locale = useLocale();
+  const heading = asString(s.headline) || localized(locale, "WHERE HERITAGE MEETS THE FUTURE", "حيث يلتقي التراث بالمستقبل");
   const body =
     asString(s.subtitle) ||
-    "Every thread tells a story, every silhouette commands a room, and every piece is destined to become an heirloom.";
+    localized(
+      locale,
+      "Every thread tells a story, every silhouette commands a room, and every piece is destined to become an heirloom.",
+      "كل خيط بيحكي حكاية، وكل تصميم بيخطف الأنظار، وكل قطعة مقدّر لها تبقى إرث يتوارث.",
+    );
   const ctaText = asString(s.cta_text);
   const ctaLink = asString(s.cta_link) || "/products";
 
@@ -32,7 +37,7 @@ const GildedPromoBanner = ({ instance }: SectionRenderProps) => {
           ref={ref}
           className="relative text-xl sm:text-2xl md:text-4xl lg:text-6xl font-bold tracking-[0.04em] sm:tracking-[0.08em] uppercase break-words"
         >
-          <span className="text-muted-foreground/20 select-none">{heading}</span>
+          <span className="text-muted-foreground/50 select-none">{heading}</span>
           <motion.span
             style={{ clipPath }}
             className="absolute inset-0 text-[hsl(var(--gold))]"

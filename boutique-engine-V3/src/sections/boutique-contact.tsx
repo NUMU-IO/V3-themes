@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { Link, useShop } from "@numueg/theme-sdk";
+import { Link, useShop, useLocale } from "@numueg/theme-sdk";
 import { ChevronRight, MessageCircle, Phone, Mail, Instagram, Clock } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const BTN_FILLED =
   "inline-flex items-center justify-center gap-2 h-11 px-6 rounded-full font-semibold text-sm text-primary-foreground transition-all hover:scale-[1.02]";
@@ -26,6 +26,7 @@ function normalizeInstagram(raw: string | null | undefined): { handle: string; u
 
 const BoutiqueContact = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
   // Pull channels from the merchant-configured contact info. Never invent
   // placeholder numbers/emails/handles — hide a channel if not configured.
   const shop = useShop();
@@ -53,20 +54,22 @@ const BoutiqueContact = ({ instance }: SectionRenderProps) => {
   );
   const email = contact.email || "";
 
-  const eyebrow = asString(s.eyebrow) || "تواصلي معنا";
-  const title = asString(s.title) || "اتصلي بنا";
+  const eyebrow = asString(s.eyebrow) || localized(locale, "Get in Touch", "تواصلي معنا");
+  const title = asString(s.title) || localized(locale, "Contact Us", "اتصلي بنا");
   const subtitle = asString(s.subtitle);
-  const nameLabel = asString(s.name_label) || "الاسم";
-  const phoneLabel = asString(s.phone_label) || "رقم الهاتف";
-  const messageLabel = asString(s.message_label) || "رسالتك";
-  const submitText = asString(s.submit_text) || "إرسال";
-  const successTitle = asString(s.success_title) || "شكراً لتواصلك معنا";
-  const successMessage = asString(s.success_message) || "سنعاود التواصل معك في أقرب وقت ممكن.";
+  const nameLabel = asString(s.name_label) || localized(locale, "Name", "الاسم");
+  const phoneLabel = asString(s.phone_label) || localized(locale, "Phone number", "رقم الهاتف");
+  const messageLabel = asString(s.message_label) || localized(locale, "Your message", "رسالتك");
+  const submitText = asString(s.submit_text) || localized(locale, "Send", "إرسال");
+  const successTitle = asString(s.success_title) || localized(locale, "Thank you for reaching out", "شكراً لتواصلك معنا");
+  const successMessage =
+    asString(s.success_message) ||
+    localized(locale, "We'll get back to you as soon as possible.", "سنعاود التواصل معك في أقرب وقت ممكن.");
   const showWorkingHours = s.show_working_hours !== false;
-  const weekdaysLabel = asString(s.hours_weekdays_label) || "السبت – الخميس";
-  const weekdaysValue = asString(s.hours_weekdays_value) || "9 ص – 9 م";
-  const fridayLabel = asString(s.hours_friday_label) || "الجمعة";
-  const fridayValue = asString(s.hours_friday_value) || "2 م – 9 م";
+  const weekdaysLabel = asString(s.hours_weekdays_label) || localized(locale, "Sat – Thu", "السبت – الخميس");
+  const weekdaysValue = asString(s.hours_weekdays_value) || localized(locale, "9 AM – 9 PM", "9 ص – 9 م");
+  const fridayLabel = asString(s.hours_friday_label) || localized(locale, "Friday", "الجمعة");
+  const fridayValue = asString(s.hours_friday_value) || localized(locale, "2 PM – 9 PM", "2 م – 9 م");
   const showMap = s.show_map === true;
   const mapEmbedUrl = asString(s.map_embed_url);
 
@@ -90,13 +93,13 @@ const BoutiqueContact = ({ instance }: SectionRenderProps) => {
   if (phoneDigits) {
     methods.push({
       icon: Phone,
-      label: "اتصلي بنا",
+      label: localized(locale, "Call us", "اتصلي بنا"),
       value: formatPhoneForDisplay(phoneDigits),
       href: `tel:+${phoneDigits}`,
     });
   }
   if (email) {
-    methods.push({ icon: Mail, label: "البريد الإلكتروني", value: email, href: `mailto:${email}` });
+    methods.push({ icon: Mail, label: localized(locale, "Email", "البريد الإلكتروني"), value: email, href: `mailto:${email}` });
   }
   if (instagramHandle) {
     methods.push({
@@ -112,7 +115,7 @@ const BoutiqueContact = ({ instance }: SectionRenderProps) => {
       <div className="container mx-auto px-4 py-10 md:py-14 max-w-5xl">
         <nav className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground mb-6">
           <Link to="/" className="hover:text-foreground transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ChevronRight size={12} className="rtl:rotate-180" />
           <span className="text-foreground">{title}</span>
@@ -190,7 +193,7 @@ const BoutiqueContact = ({ instance }: SectionRenderProps) => {
               <div className="pt-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Clock size={14} className="text-muted-foreground" />
-                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">ساعات العمل</span>
+                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{localized(locale, "Working hours", "ساعات العمل")}</span>
                 </div>
                 <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 xs:gap-4 text-sm text-muted-foreground">
                   <div>

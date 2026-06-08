@@ -1,7 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
-import { asString, asNumber, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
 
 const HEADING_SHADOW = "0 1px 0 hsl(35 30% 100% / 0.5)";
 
@@ -32,7 +33,8 @@ function getReviewsFromSettings(s: Record<string, unknown>): TestimonialReview[]
 
 const SkeuTestimonials = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "رأي عملاءنا ⭐";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "What our customers say ⭐", "رأي عملاءنا ⭐");
   const reviews = getReviewsFromSettings(s);
 
   if (reviews.length === 0) return null;
