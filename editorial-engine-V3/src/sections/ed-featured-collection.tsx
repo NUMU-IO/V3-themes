@@ -1,7 +1,7 @@
 "use client";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Editorial featured collection — faithful port of V2
@@ -17,9 +17,10 @@ export default function EdFeaturedCollection({ instance }: SectionRenderProps) {
   const { products } = useProducts();
   const isLoading = false;
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "وصل حديثاً";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "New Arrivals", "وصل حديثاً");
   const viewAllLink = asString(s.view_all_link) || "/products";
-  const viewAllText = asString(s.view_all_text) || "عرض الكل";
+  const viewAllText = asString(s.view_all_text) || localized(locale, "View all", "عرض الكل");
   const count = asNumber(s.product_count, 4);
   const cols = asNumber(s.columns, 4);
 

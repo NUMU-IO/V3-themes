@@ -2,10 +2,37 @@
   "type": "boutique-newsletter",
   "name": "Newsletter Signup",
   "settings": [
-    { "type": "header", "content": "Content" },
-    { "id": "title", "type": "text", "label": "Title", "label_ar": "العنوان", "default": "اشتركي في نشرتنا" },
-    { "id": "subtitle", "type": "text", "label": "Subtitle", "label_ar": "عنوان فرعي", "default": "كوني أول من يعرف عن أحدث التشكيلات والعروض الحصرية" },
-    { "id": "button_text", "type": "text", "label": "Button text", "label_ar": "نص الزر", "default": "اشتركي" },
-    { "id": "placeholder", "type": "text", "label": "Placeholder", "label_ar": "نص العنصر النائب", "default": "البريد الإلكتروني" }
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "label": "Subtitle",
+      "label_ar": "عنوان فرعي",
+      "default": ""
+    },
+    {
+      "id": "button_text",
+      "type": "text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": ""
+    },
+    {
+      "id": "placeholder",
+      "type": "text",
+      "label": "Placeholder",
+      "label_ar": "نص العنصر النائب",
+      "default": ""
+    }
   ]
 }

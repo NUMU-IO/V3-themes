@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
+import { useLocale } from "@numueg/theme-sdk";
 import { Check, Mail } from "lucide-react";
-import { type SectionRenderProps } from "./_shared";
+import { localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Modern newsletter — faithful port of the V2 in-tree ModernNewsletter
@@ -18,11 +19,12 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const ModernNewsletter = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const title = s.title ?? "اشترك في نشرتنا البريدية";
+  const locale = useLocale();
+  const title = s.title ?? localized(locale, "Subscribe to our newsletter", "اشترك في نشرتنا البريدية");
   const subtitle =
-    s.subtitle ?? "اعرف أول واحد عن العروض والمنتجات الجديدة";
-  const buttonText = s.button_text ?? "اشترك";
-  const placeholder = s.placeholder ?? "البريد الإلكتروني";
+    s.subtitle ?? localized(locale, "Be the first to know about offers and new products", "اعرف أول واحد عن العروض والمنتجات الجديدة");
+  const buttonText = s.button_text ?? localized(locale, "Subscribe", "اشترك");
+  const placeholder = s.placeholder ?? localized(locale, "Email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -65,7 +67,7 @@ const ModernNewsletter = ({ instance }: SectionRenderProps) => {
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100">
                   <Check className="h-5 w-5" />
                 </div>
-                <span>تم الاشتراك بنجاح</span>
+                <span>{localized(locale, "Subscribed successfully", "تم الاشتراك بنجاح")}</span>
               </div>
             ) : (
               <div className="flex gap-3 max-w-md mx-auto">

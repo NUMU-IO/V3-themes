@@ -1,15 +1,17 @@
 "use client";
 import { useState } from "react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const NBNewsletter = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const title = asString(s.title, "اشترك في نشرتنا 📬");
-  const subtitle = asString(s.subtitle, "اعرف أول واحد عن العروض والمنتجات الجديدة");
-  const buttonText = asString(s.button_text, "اشترك");
-  const placeholder = asString(s.placeholder, "البريد الإلكتروني");
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Subscribe to our newsletter 📬", "اشترك في نشرتنا 📬");
+  const subtitle = asString(s.subtitle) || localized(locale, "Be the first to know about offers and new products", "اعرف أول واحد عن العروض والمنتجات الجديدة");
+  const buttonText = asString(s.button_text) || localized(locale, "Subscribe", "اشترك");
+  const placeholder = asString(s.placeholder) || localized(locale, "Email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -30,7 +32,7 @@ const NBNewsletter = ({ instance }: SectionRenderProps) => {
           </p>
           {submitted ? (
             <div className="nb-badge inline-block px-4 py-2 rounded text-sm">
-              ✓ تم الاشتراك بنجاح
+              {localized(locale, "✓ Subscribed successfully", "✓ تم الاشتراك بنجاح")}
             </div>
           ) : (
             <div className="flex gap-0">

@@ -7,11 +7,12 @@ import {
   useProductOptional,
   useVariantSelection,
   useRelatedProducts,
+  useLocale,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Tech Wave product-detail section.
@@ -26,6 +27,7 @@ import { asNumber, type SectionRenderProps } from "./_shared";
  */
 export default function TechWaveProductDetail({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
   const showRating = s.show_rating ?? true;
   const showStock = s.show_stock ?? true;
@@ -51,15 +53,15 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
     return (
       <div className="bg-background min-h-[50vh] flex items-center justify-center px-4 py-20 text-center">
         <div className="max-w-sm">
-          <span className="vn-eyebrow block mb-3 text-[var(--vn-muted)]">Product</span>
+          <span className="vn-eyebrow block mb-3 text-[var(--vn-muted)]">{localized(locale, "Product", "منتج")}</span>
           <h1 className="vn-heading text-2xl md:text-3xl text-[var(--vn-ink)] mb-3">
-            No product to show yet
+            {localized(locale, "No product to show yet", "مفيش منتج نعرضه لسه")}
           </h1>
           <p className="text-sm text-[var(--vn-muted)] mb-7 leading-relaxed">
-            Open a product from the shop to see its details here.
+            {localized(locale, "Open a product from the shop to see its details here.", "افتح منتج من المتجر عشان تشوف تفاصيله هنا.")}
           </p>
           <Link to="/products" className="vn-btn vn-btn-filled inline-flex">
-            Browse products
+            {localized(locale, "Browse products", "تصفّح المنتجات")}
           </Link>
         </div>
       </div>
@@ -96,11 +98,11 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 vn-label text-[10px] text-[var(--vn-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <Link to="/products" className="hover:text-[var(--vn-ink)] transition-colors">
-            Shop
+            {localized(locale, "Shop", "المتجر")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <span className="text-[var(--vn-ink)] line-clamp-1 normal-case tracking-normal">
@@ -187,7 +189,7 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
             {showRating && (
               <div className="flex items-center gap-1 mb-4 text-[var(--vn-muted)]">
                 <span className="text-sm tw-star text-[hsl(var(--warning))]">★★★★★</span>
-                <span className="text-xs">(reviews)</span>
+                <span className="text-xs">{localized(locale, "(reviews)", "(تقييمات)")}</span>
               </div>
             )}
 
@@ -225,9 +227,9 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
                 <span className={inStock ? "text-[var(--vn-muted)]" : "text-[var(--vn-sale)]"}>
                   {inStock
                     ? typeof stockQty === "number" && stockQty > 0 && stockQty <= 5
-                      ? `Only ${stockQty} left`
-                      : "In stock"
-                    : "Sold out"}
+                      ? localized(locale, `Only ${stockQty} left`, `باقي ${stockQty} بس`)
+                      : localized(locale, "In stock", "متوفر")
+                    : localized(locale, "Sold out", "نفذت الكمية")}
                 </span>
               </div>
             )}
@@ -254,7 +256,7 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
                           type="button"
                           key={value}
                           onClick={() => vs.select(opt.name, value)}
-                          aria-label={soldOut ? `${value} — sold out` : value}
+                          aria-label={soldOut ? `${value} — ${localized(locale, "sold out", "نفذت الكمية")}` : value}
                           className={
                             isColor
                               ? "flex items-center gap-2 px-3 py-2 text-sm transition-colors border rounded-md " +
@@ -321,13 +323,13 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
                 className="vn-btn vn-btn-filled flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                 label={
                   <>
-                    <ShoppingBag size={16} /> Add to bag
+                    <ShoppingBag size={16} /> {localized(locale, "Add to bag", "أضف للحقيبة")}
                   </>
                 }
-                loadingLabel="Adding…"
+                loadingLabel={localized(locale, "Adding…", "جاري الإضافة…")}
                 soldOutLabel={
                   <>
-                    <ShoppingBag size={16} /> Sold out
+                    <ShoppingBag size={16} /> {localized(locale, "Sold out", "نفذت الكمية")}
                   </>
                 }
                 data-testid="storefront-add-to-cart"
@@ -338,9 +340,9 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
             {showGuarantees && (
               <div className="mt-8 pt-6 border-t border-[var(--vn-border)] flex flex-wrap items-center justify-between gap-4">
                 {[
-                  { icon: Truck, label: "Fast Shipping", desc: "3-5 days" },
-                  { icon: RotateCcw, label: "Easy Returns", desc: "14 days" },
-                  { icon: ShieldCheck, label: "Authentic", desc: "100% Genuine" },
+                  { icon: Truck, label: localized(locale, "Fast Shipping", "شحن سريع"), desc: localized(locale, "3-5 days", "٣-٥ أيام") },
+                  { icon: RotateCcw, label: localized(locale, "Easy Returns", "إرجاع سهل"), desc: localized(locale, "14 days", "١٤ يوم") },
+                  { icon: ShieldCheck, label: localized(locale, "Authentic", "أصلي"), desc: localized(locale, "100% Genuine", "أصلي ١٠٠٪") },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2 text-[var(--vn-muted)]">
                     <item.icon size={15} className="shrink-0 text-[hsl(var(--primary))]" />
@@ -364,7 +366,7 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
             className="mt-16 pt-10 border-t border-[var(--vn-border)]"
             data-testid="storefront-related-products"
           >
-            <h2 className="vn-eyebrow text-[var(--vn-muted)] mb-6">You may also like</h2>
+            <h2 className="vn-eyebrow text-[var(--vn-muted)] mb-6">{localized(locale, "You may also like", "ممكن يعجبك كمان")}</h2>
             <div
               className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
               data-testid="storefront-related-products-grid"

@@ -1,9 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Elegant products-listing (PLP) section.
@@ -26,6 +26,7 @@ export default function ElegantProductsPage({ instance }: SectionRenderProps) {
   const colsDesktop = asNumber(s.columns_desktop, 4);
   const colsMobile = asNumber(s.columns_mobile, 2);
   const showViewToggle = s.show_view_toggle ?? true;
+  const locale = useLocale();
 
   const { products, loading } = useProducts();
 
@@ -85,15 +86,15 @@ export default function ElegantProductsPage({ instance }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 eg-label text-[10px] text-[var(--eg-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--eg-ink)] transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
-          <span className="text-[var(--eg-ink)]">{category ?? "Shop"}</span>
+          <span className="text-[var(--eg-ink)]">{category ?? localized(locale, "Shop", "المتجر")}</span>
         </div>
 
         {/* Title */}
         <h1 className="eg-heading text-2xl md:text-4xl text-[var(--eg-ink)] mb-8">
-          {category ?? "All products"}
+          {category ?? localized(locale, "All products", "جميع المنتجات")}
         </h1>
 
         {/* Search */}
@@ -104,7 +105,7 @@ export default function ElegantProductsPage({ instance }: SectionRenderProps) {
           />
           <input
             type="text"
-            placeholder="Search products"
+            placeholder={localized(locale, "Search products", "ابحث عن المنتجات")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full h-10 ps-7 pe-7 text-sm bg-transparent border-b border-[var(--eg-border)] focus:border-[var(--eg-ink)] focus:outline-none transition-colors placeholder:text-[var(--eg-muted)]"
@@ -140,7 +141,7 @@ export default function ElegantProductsPage({ instance }: SectionRenderProps) {
               data-testid="storefront-products-category"
               data-category-id="all"
             >
-              All
+              {localized(locale, "All", "الكل")}
             </button>
             {categories.map((cat) => (
               <button
@@ -168,7 +169,7 @@ export default function ElegantProductsPage({ instance }: SectionRenderProps) {
           data-testid="storefront-products-toolbar"
         >
           <span className="eg-label text-[10px] text-[var(--eg-muted)]">
-            {filtered.length} products
+            {filtered.length} {localized(locale, "products", "منتج")}
           </span>
           <div className="flex items-center gap-4">
             <select
@@ -178,10 +179,10 @@ export default function ElegantProductsPage({ instance }: SectionRenderProps) {
               className="text-xs px-2 py-1.5 bg-transparent border-b border-[var(--eg-border)] focus:border-[var(--eg-ink)] focus:outline-none transition-colors cursor-pointer"
               data-testid="storefront-products-sort"
             >
-              <option value="default">Sort by</option>
-              <option value="price-asc">Price: Low</option>
-              <option value="price-desc">Price: High</option>
-              <option value="name">Name</option>
+              <option value="default">{localized(locale, "Sort by", "ترتيب حسب")}</option>
+              <option value="price-asc">{localized(locale, "Price: Low", "السعر: من الأقل")}</option>
+              <option value="price-desc">{localized(locale, "Price: High", "السعر: من الأعلى")}</option>
+              <option value="name">{localized(locale, "Name", "الاسم")}</option>
             </select>
             {showViewToggle && (
               <div className="flex items-center gap-1">
@@ -232,9 +233,9 @@ export default function ElegantProductsPage({ instance }: SectionRenderProps) {
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-12 h-px bg-[var(--eg-border)] mx-auto mb-6" />
-            <p className="text-sm text-[var(--eg-muted)] mb-1">No results</p>
+            <p className="text-sm text-[var(--eg-muted)] mb-1">{localized(locale, "No results", "لا توجد نتائج")}</p>
             <p className="text-xs text-[var(--eg-muted)]">
-              Try adjusting your search or filter
+              {localized(locale, "Try adjusting your search or filter", "حاول تعديل البحث أو الفلتر")}
             </p>
           </div>
         ) : (
@@ -262,7 +263,7 @@ export default function ElegantProductsPage({ instance }: SectionRenderProps) {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <ProductCard product={product} list={viewMode === "list"} />
+                  <ProductCard product={product} list={viewMode === "list"} locale={locale} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -274,7 +275,7 @@ export default function ElegantProductsPage({ instance }: SectionRenderProps) {
 }
 
 /** Inline elegant product card. */
-function ProductCard({ product, list }: { product: Product; list?: boolean }) {
+function ProductCard({ product, list, locale }: { product: Product; list?: boolean; locale?: string }) {
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -323,13 +324,13 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         )}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-3 start-3 eg-label px-2.5 py-1 bg-[var(--eg-sale)] text-white rounded-full text-[10px]">
-            Sale
+            {localized(locale, "Sale", "تخفيض")}
           </span>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-white/65 flex items-center justify-center">
             <span className="eg-label text-[var(--eg-ink)] text-[11px] bg-white px-3 py-1.5 rounded-full border border-[var(--eg-border)]">
-              Sold out
+              {localized(locale, "Sold out", "نفذت الكمية")}
             </span>
           </div>
         )}

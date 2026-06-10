@@ -1,9 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Tech Wave products-listing (PLP) section.
@@ -21,6 +21,7 @@ import { asNumber, type SectionRenderProps } from "./_shared";
 export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
 
+  const locale = useLocale();
   const colsDesktop = asNumber(s.columns_desktop, 3);
   const colsMobile = asNumber(s.columns_mobile, 2);
   const showViewToggle = s.show_view_toggle ?? true;
@@ -82,15 +83,15 @@ export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 vn-label text-[10px] text-[var(--vn-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
-          <span className="text-[var(--vn-ink)]">{category ?? "Shop"}</span>
+          <span className="text-[var(--vn-ink)]">{category ?? localized(locale, "Shop", "المتجر")}</span>
         </div>
 
         {/* Title */}
         <h1 className="vn-heading text-2xl md:text-4xl text-[var(--vn-ink)] mb-8">
-          {category ?? "All products"}
+          {category ?? localized(locale, "All products", "كل المنتجات")}
         </h1>
 
         {/* Search */}
@@ -101,7 +102,7 @@ export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
           />
           <input
             type="text"
-            placeholder="Search products"
+            placeholder={localized(locale, "Search products", "ابحث عن المنتجات")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full h-11 ps-10 pe-9 text-sm rounded-xl tw-inset placeholder:text-[var(--vn-muted)]"
@@ -111,7 +112,7 @@ export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
             <button
               type="button"
               onClick={() => setSearch("")}
-              aria-label="Clear search"
+              aria-label={localized(locale, "Clear search", "مسح البحث")}
               className="absolute end-3 top-1/2 -translate-y-1/2 text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors"
             >
               <X size={14} />
@@ -135,7 +136,7 @@ export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
               data-testid="storefront-products-category"
               data-category-id="all"
             >
-              All
+              {localized(locale, "All", "الكل")}
             </button>
             {categories.map((cat) => (
               <button
@@ -161,27 +162,27 @@ export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
           data-testid="storefront-products-toolbar"
         >
           <span className="vn-label text-[10px] text-[var(--vn-muted)]">
-            {filtered.length} products
+            {filtered.length} {localized(locale, "products", "منتج")}
           </span>
           <div className="flex items-center gap-4">
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              aria-label="Sort products"
+              aria-label={localized(locale, "Sort products", "ترتيب المنتجات")}
               className="text-xs px-3 py-2 rounded-lg tw-inset cursor-pointer"
               data-testid="storefront-products-sort"
             >
-              <option value="default">Sort by</option>
-              <option value="price-asc">Price: Low</option>
-              <option value="price-desc">Price: High</option>
-              <option value="name">Name</option>
+              <option value="default">{localized(locale, "Sort by", "ترتيب حسب")}</option>
+              <option value="price-asc">{localized(locale, "Price: Low", "السعر: من الأقل")}</option>
+              <option value="price-desc">{localized(locale, "Price: High", "السعر: من الأعلى")}</option>
+              <option value="name">{localized(locale, "Name", "الاسم")}</option>
             </select>
             {showViewToggle && (
               <div className="flex items-center gap-1">
                 <button
                   type="button"
                   onClick={() => setViewMode("grid")}
-                  aria-label="Grid view"
+                  aria-label={localized(locale, "Grid view", "عرض شبكي")}
                   className={
                     "p-1.5 transition-colors " +
                     (viewMode === "grid"
@@ -194,7 +195,7 @@ export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
                 <button
                   type="button"
                   onClick={() => setViewMode("list")}
-                  aria-label="List view"
+                  aria-label={localized(locale, "List view", "عرض قائمة")}
                   className={
                     "p-1.5 transition-colors " +
                     (viewMode === "list"
@@ -225,9 +226,9 @@ export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-12 h-px bg-[var(--vn-border)] mx-auto mb-6" />
-            <p className="text-sm text-[var(--vn-muted)] mb-1">No results</p>
+            <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No results", "مفيش نتائج")}</p>
             <p className="text-xs text-[var(--vn-muted)]">
-              Try adjusting your search or filter
+              {localized(locale, "Try adjusting your search or filter", "جرّب تعدّل البحث أو الفلتر")}
             </p>
           </div>
         ) : (
@@ -268,6 +269,7 @@ export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
 
 /** Inline Tech Wave product card — neon glass card with sale badge. */
 function ProductCard({ product, list }: { product: Product; list?: boolean }) {
+  const locale = useLocale();
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -316,13 +318,13 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         )}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-[var(--vn-sale)] text-white rounded-full text-[10px]">
-            Sale
+            {localized(locale, "Sale", "خصم")}
           </span>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-[hsl(220,40%,5%/0.7)] flex items-center justify-center">
             <span className="vn-label text-[var(--vn-ink)] text-[11px] tw-chip px-3 py-1.5 rounded-full">
-              Sold out
+              {localized(locale, "Sold out", "نفذت الكمية")}
             </span>
           </div>
         )}

@@ -1,6 +1,6 @@
 "use client";
-import { Link, useResolvedSettings } from "@numueg/theme-sdk";
-import { asImageUrl, asString, type SectionRenderProps } from "./_shared";
+import { Link, useResolvedSettings, useLocale } from "@numueg/theme-sdk";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Skeuomorphic About section. Ported from the Vionne V3 About, re-skinned to
@@ -10,11 +10,13 @@ import { asImageUrl, asString, type SectionRenderProps } from "./_shared";
  */
 const SkeuAbout = ({ instance }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
-  const eyebrow = asString(s.eyebrow, "عن المتجر");
-  const headline = asString(s.headline, "مصنوع لطريقتك في الحياة");
+  const locale = useLocale();
+  const eyebrow = asString(s.eyebrow) || localized(locale, "About the store", "عن المتجر");
+  const headline = asString(s.headline) || localized(locale, "Made for the way you live", "مصنوع لطريقتك في الحياة");
   const quote = asString(s.quote);
   const description = asString(s.description);
   const image = asImageUrl(s.image);
+  const imageTransform = asImageTransform(s.image);
 
   const ctaText = asString(s.cta_text);
   const ctaLink = asString(s.cta_link, "/products");
@@ -63,7 +65,7 @@ const SkeuAbout = ({ instance }: SectionRenderProps) => {
           </div>
           {image ? (
             <div className="relative aspect-[4/5] overflow-hidden skeu-img-frame rounded-xl">
-              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" style={applyImageTransform(imageTransform, "cover")} />
             </div>
           ) : null}
         </div>

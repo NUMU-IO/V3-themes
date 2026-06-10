@@ -1,20 +1,23 @@
 "use client";
 import { useState } from "react";
-import { useShop } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useShop, useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const RsNewsletter = ({ instance }: SectionRenderProps) => {
   const shop = useShop();
+  const locale = useLocale();
   const s = instance.settings ?? {};
   const storeName = shop?.name || "RabbitSocks";
-  const subtitle = asString(
-    s.subtitle,
+  const subtitle = asString(s.subtitle) || localized(
+    locale,
     "Subscribe to our newsletter for the latest collections and exclusive offers.",
+    "اشترك في نشرتنا عشان توصلك أحدث التشكيلات والعروض الحصرية.",
   );
-  const placeholder = asString(s.placeholder, "Email address");
-  const successText = asString(
-    s.success_text,
+  const placeholder = asString(s.placeholder) || localized(locale, "Email address", "البريد الإلكتروني");
+  const successText = asString(s.success_text) || localized(
+    locale,
     "Thank you for subscribing! We'll keep you posted.",
+    "شكراً لاشتراكك! هنطمنك على كل جديد.",
   );
 
   const [email, setEmail] = useState("");
@@ -64,15 +67,15 @@ const RsNewsletter = ({ instance }: SectionRenderProps) => {
         <div className="flex flex-col md:flex-row gap-12 md:gap-16">
           <div className="flex flex-col gap-4">
             <span className="rs-label mb-4 text-[hsl(var(--rs-primary))]">
-              Navigation
+              {localized(locale, "Navigation", "روابط")}
             </span>
-            <a href="/shipping" className="rs-footer-link">Shipping &amp; Delivery</a>
-            <a href="/returns" className="rs-footer-link">Returns &amp; Exchanges</a>
-            <a href="/contact" className="rs-footer-link">Contact us</a>
+            <a href="/shipping" className="rs-footer-link">{localized(locale, "Shipping & Delivery", "الشحن والتوصيل")}</a>
+            <a href="/returns" className="rs-footer-link">{localized(locale, "Returns & Exchanges", "الاسترجاع والاستبدال")}</a>
+            <a href="/contact" className="rs-footer-link">{localized(locale, "Contact us", "اتصل بينا")}</a>
           </div>
           <div className="flex flex-col gap-4">
             <span className="rs-label mb-4 text-[hsl(var(--rs-primary))]">
-              Follow us
+              {localized(locale, "Follow us", "تابعنا")}
             </span>
             <a href="#" className="rs-footer-link">Instagram</a>
             <a href="#" className="rs-footer-link">Pinterest</a>

@@ -1,18 +1,25 @@
 "use client";
 import { useState } from "react";
 import { Check } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const ElegantNewsletter = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const title = asString(s.title) || "انضم لعالمنا";
+  const title = asString(s.title) || localized(locale, "Join Our World", "انضم لعالمنا");
   const subtitle =
-    asString(s.subtitle) || "اشترك ليصلك كل جديد من العروض والتشكيلات الحصرية";
-  const buttonText = asString(s.button_text) || "اشترك";
-  const placeholder = asString(s.placeholder) || "البريد الإلكتروني";
+    asString(s.subtitle) ||
+    localized(
+      locale,
+      "Subscribe for the latest offers and exclusive collections.",
+      "اشترك ليصلك كل جديد من العروض والتشكيلات الحصرية",
+    );
+  const buttonText = asString(s.button_text) || localized(locale, "Subscribe", "اشترك");
+  const placeholder = asString(s.placeholder) || localized(locale, "Email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -46,7 +53,7 @@ const ElegantNewsletter = ({ instance }: SectionRenderProps) => {
           {submitted ? (
             <div className="flex items-center justify-center gap-2 h-12 text-sm font-medium text-primary">
               <Check className="h-5 w-5" />
-              <span>تم الاشتراك بنجاح</span>
+              <span>{localized(locale, "Subscribed successfully", "تم الاشتراك بنجاح")}</span>
             </div>
           ) : (
             <div className="flex gap-2">

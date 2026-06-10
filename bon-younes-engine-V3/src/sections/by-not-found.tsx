@@ -1,7 +1,7 @@
 "use client";
 
-import { Link, useResolvedSettings } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -15,11 +15,16 @@ export default function ByNotFound({
   sectionId,
 }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
-  const headline = asString(s.headline) || "Spilled the coffee.";
+  const locale = useLocale();
+  const headline = asString(s.headline) || localized(locale, "Spilled the coffee.", "القهوة وقعت.");
   const subhead =
     asString(s.subhead) ||
-    "The page you were after isn't on the menu. Let's get you back to something brewing.";
-  const ctaLabel = asString(s.cta_label) || "Back to the menu";
+    localized(
+      locale,
+      "The page you were after isn't on the menu. Let's get you back to something brewing.",
+      "الصفحة اللي بتدوّر عليها مش موجودة في المنيو. خلّينا نرجّعك لحاجة بتتحضّر على نار هادية.",
+    );
+  const ctaLabel = asString(s.cta_label) || localized(locale, "Back to the menu", "ارجع للمنيو");
   const ctaHref = asString(s.cta_href) || "/products";
   const status = asString(s.status_label) || "404";
 

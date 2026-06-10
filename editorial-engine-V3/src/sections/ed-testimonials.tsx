@@ -1,7 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Editorial testimonials — faithful port of V2
@@ -39,7 +40,8 @@ function getReviewsFromSettings(s: Record<string, unknown>): TestimonialReview[]
 
 export default function EdTestimonials({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "آراء العملاء";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "What Our Customers Say", "آراء العملاء");
   const reviews = getReviewsFromSettings(s);
 
   if (reviews.length === 0) return null;

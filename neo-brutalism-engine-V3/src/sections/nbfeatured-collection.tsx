@@ -1,8 +1,8 @@
 "use client";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { ArrowLeft, Star } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, asString, asArray, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, asArray, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Neo-brutalism featured collection — faithful V2 port re-plumbed on the V3 SDK.
@@ -19,13 +19,14 @@ const NBFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
   const isLoading = false;
   const s = instance.settings ?? {};
-  const title = asString(s.title, "وصل حديثاً ✨");
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "New arrivals ✨", "وصل حديثاً ✨");
   const subtitle = asString(s.subtitle, "");
   const tag = asString(s.collection_tag, "new");
   const viewAllLink = asString(s.view_all_link, "/products");
   const count = asNumber(s.product_count, 4);
   const cols = asNumber(s.columns, 4);
-  const viewAllText = asString(s.view_all_text, "عرض الكل");
+  const viewAllText = asString(s.view_all_text) || localized(locale, "View all", "عرض الكل");
 
   const manualIds = asArray(s.product_ids).filter(
     (x): x is string => typeof x === "string" && x.length > 0,
@@ -98,6 +99,7 @@ const NBFeaturedCollection = ({ instance }: SectionRenderProps) => {
 
 /** Inline neo-brutalism product card — mirrors NBProductCard's markup/classes. */
 export function NBProductCard({ product }: { product: Product }) {
+  const locale = useLocale();
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -133,12 +135,12 @@ export function NBProductCard({ product }: { product: Product }) {
           <div className="absolute top-2 right-2 flex flex-col gap-1">
             {hasDiscount && (
               <span className="nb-badge-pink px-2 py-0.5 text-[10px] rounded">
-                خصم {discountPercent}%
+                {localized(locale, `${discountPercent}% off`, `خصم ${discountPercent}%`)}
               </span>
             )}
             {isNew && (
               <span className="nb-badge px-2 py-0.5 text-[10px] rounded">
-                جديد
+                {localized(locale, "New", "جديد")}
               </span>
             )}
           </div>
@@ -166,7 +168,7 @@ export function NBProductCard({ product }: { product: Product }) {
           </div>
           {product.in_stock === false && (
             <span className="text-[10px] font-black text-destructive uppercase">
-              نفذ
+              {localized(locale, "Sold out", "نفذ")}
             </span>
           )}
         </div>

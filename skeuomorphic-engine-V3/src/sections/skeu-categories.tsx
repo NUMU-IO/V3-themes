@@ -1,7 +1,7 @@
 "use client";
-import { Link, useCollections } from "@numueg/theme-sdk";
+import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { asString, asNumber, type SectionRenderProps } from "./_shared";
+import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
 
 const HEADING_SHADOW = "0 1px 0 hsl(35 30% 100% / 0.6)";
 const LABEL_SHADOW = "0 1px 3px rgba(0,0,0,0.6)";
@@ -9,7 +9,8 @@ const LABEL_SHADOW = "0 1px 3px rgba(0,0,0,0.6)";
 const SkeuCategories = ({ instance }: SectionRenderProps) => {
   const { collections, loading: isLoading } = useCollections();
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "تسوق حسب الفئة";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Shop by category", "تسوق حسب الفئة");
   const colsDesktop = asNumber(s.columns_desktop, 5);
   const colsMobile = asNumber(s.columns_mobile, 3);
   const maxItems = asNumber(s.max_items, 0);
@@ -38,7 +39,7 @@ const SkeuCategories = ({ instance }: SectionRenderProps) => {
 
         {!isLoading && displayCategories.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-10">
-            لا توجد فئات بعد
+            {localized(locale, "No categories yet", "لا توجد فئات بعد")}
           </p>
         ) : (
           <div className={gridClassName} style={cssVars}>
@@ -76,7 +77,7 @@ const SkeuCategories = ({ instance }: SectionRenderProps) => {
                     </span>
                     {typeof cat.product_count === "number" && cat.product_count > 0 && (
                       <span className="text-white/70 text-[10px] block">
-                        {cat.product_count} منتج
+                        {cat.product_count} {localized(locale, "products", "منتج")}
                       </span>
                     )}
                   </div>

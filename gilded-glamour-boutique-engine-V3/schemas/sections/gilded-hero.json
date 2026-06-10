@@ -3,17 +3,68 @@
   "name": "Gilded Hero",
   "name_ar": "البانر الرئيسي",
   "settings": [
-    { "type": "header", "content": "Content" },
-    { "type": "text", "id": "headline", "label": "Headline", "label_ar": "العنوان الرئيسي", "default": "THE NEW EMPIRE" },
-    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "label_ar": "العنوان الفرعي", "default": "Curated Excellence & Timeless Precision" },
-    { "type": "text", "id": "cta_text", "label": "Button text", "label_ar": "نص الزر", "default": "Discover Collection" },
-    { "type": "url", "id": "cta_link", "label": "Button link", "label_ar": "رابط الزر", "default": "/products" },
-
-    { "type": "header", "content": "Media" },
-    { "type": "image_picker", "id": "hero_image_url", "label": "Hero image (desktop)", "label_ar": "الصورة الرئيسية", "default": "" },
-    { "type": "image_picker", "id": "hero_image_mobile", "label": "Hero image (mobile)", "label_ar": "صورة البانر للهاتف", "default": "" },
-
-    { "type": "header", "content": "Layout" },
-    { "type": "checkbox", "id": "enable_parallax", "label": "Enable parallax", "label_ar": "تفعيل التأثير الحركي", "default": true }
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "label_ar": "العنوان الرئيسي",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "label_ar": "العنوان الفرعي",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_url",
+      "label": "Hero image (desktop)",
+      "label_ar": "الصورة الرئيسية",
+      "aspect_ratio": "16/9",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_mobile",
+      "label": "Hero image (mobile)",
+      "label_ar": "صورة البانر للهاتف",
+      "aspect_ratio": "4/5",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_parallax",
+      "label": "Enable parallax",
+      "label_ar": "تفعيل التأثير الحركي",
+      "default": true
+    }
   ]
 }

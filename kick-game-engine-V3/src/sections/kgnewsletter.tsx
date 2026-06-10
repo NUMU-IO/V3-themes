@@ -1,6 +1,7 @@
 "use client";
 import { useState, type FormEvent } from "react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Kick Game newsletter signup.
@@ -12,10 +13,11 @@ import { asString, type SectionRenderProps } from "./_shared";
  */
 const KGNewsletter = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const headline = asString(s.title) || asString(s.headline) || "STAY IN THE LOOP";
+  const locale = useLocale();
+  const headline = asString(s.title) || asString(s.headline) || localized(locale, "STAY IN THE LOOP", "خليك على اطّلاع");
   const subtitle =
-    asString(s.subtitle) || "New drops, restocks & exclusive offers.";
-  const buttonText = asString(s.button_text) || "SUBSCRIBE";
+    asString(s.subtitle) || localized(locale, "New drops, restocks & exclusive offers.", "وصل جديد، رجوع المنتجات، وعروض حصرية.");
+  const buttonText = asString(s.button_text) || localized(locale, "SUBSCRIBE", "اشترك");
   const placeholder = asString(s.placeholder) || "your@email.com";
 
   const [email, setEmail] = useState("");
@@ -76,7 +78,7 @@ const KGNewsletter = ({ instance }: SectionRenderProps) => {
               color: "#d9cd9a",
             }}
           >
-            Thanks for subscribing!
+            {localized(locale, "Thanks for subscribing!", "شكراً لاشتراكك!")}
           </p>
         ) : (
           <form

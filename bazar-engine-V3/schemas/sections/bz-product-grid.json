@@ -4,19 +4,75 @@
   "name_ar": "بازار شبكة المنتجات",
   "limit": 1,
   "settings": [
-    { "type": "text", "id": "title", "label": "Title", "label_ar": "العنوان", "default": "SHOP ALL" },
-    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "label_ar": "العنوان الفرعي", "default": "The full edit, in one place." },
-    { "type": "header", "content": "Layout" },
-    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "label_ar": "أعمدة (ديسكتوب)", "min": 1, "max": 6, "step": 1, "default": 4 },
-    { "type": "range", "id": "columns_mobile", "label": "Columns (mobile)", "label_ar": "أعمدة (موبايل)", "min": 1, "max": 3, "step": 1, "default": 2 },
-    { "type": "number", "id": "max_items", "label": "Max products (0 = all)", "label_ar": "أقصى عدد للمنتجات (0 = الكل)", "default": 0 },
-    { "type": "textarea", "id": "empty_state_text", "label": "Empty state copy", "label_ar": "نص حالة الفراغ", "default": "Nothing here yet — check back soon." }
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "label_ar": "العنوان الفرعي",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (desktop)",
+      "label_ar": "أعمدة (ديسكتوب)",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columns (mobile)",
+      "label_ar": "أعمدة (موبايل)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "number",
+      "id": "max_items",
+      "label": "Max products (0 = all)",
+      "label_ar": "أقصى عدد للمنتجات (0 = الكل)",
+      "default": 0
+    },
+    {
+      "type": "textarea",
+      "id": "empty_state_text",
+      "label": "Empty state copy",
+      "label_ar": "نص حالة الفراغ",
+      "default": ""
+    }
   ],
   "presets": [
     {
       "name": "Bazar Product Grid",
-      "locales": { "en": { "name": "Bazar Product Grid" }, "ar": { "name": "بازار شبكة المنتجات" } },
-      "settings": { "title": "SHOP ALL", "columns_desktop": 4, "columns_mobile": 2 }
+      "locales": {
+        "en": {
+          "name": "Bazar Product Grid"
+        },
+        "ar": {
+          "name": "بازار شبكة المنتجات"
+        }
+      },
+      "settings": {
+        "title": "",
+        "columns_desktop": 4,
+        "columns_mobile": 2
+      }
     }
   ]
 }

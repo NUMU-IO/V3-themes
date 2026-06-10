@@ -3,20 +3,21 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { motion } from "framer-motion";
-import { useResolvedSettings } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const BzNewsletter = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
-  const title = asString(s.title) || "JOIN THE CIRCLE";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "JOIN THE CIRCLE", "انضم لدائرتنا");
   const subtitle =
     asString(s.subtitle) ||
-    "Early access to limited drops and exclusive content.";
-  const buttonText = asString(s.button_text) || "SUBSCRIBE";
-  const placeholder = asString(s.placeholder) || "YOUR EMAIL";
+    localized(locale, "Early access to limited drops and exclusive content.", "وصول مبكر للإصدارات المحدودة ومحتوى حصري.");
+  const buttonText = asString(s.button_text) || localized(locale, "SUBSCRIBE", "اشترك");
+  const placeholder = asString(s.placeholder) || localized(locale, "YOUR EMAIL", "بريدك الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -54,7 +55,7 @@ const BzNewsletter = ({ instance, sectionId }: SectionRenderProps) => {
             >
               <Check size={16} aria-hidden="true" strokeWidth={3} />
             </motion.span>
-            <span>SUBSCRIBED</span>
+            <span>{localized(locale, "SUBSCRIBED", "تم الاشتراك")}</span>
           </motion.div>
         ) : (
           <form

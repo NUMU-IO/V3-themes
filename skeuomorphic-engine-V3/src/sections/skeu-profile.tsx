@@ -6,6 +6,7 @@ import {
   useOrders,
   useCustomerActions,
   useCustomerAddresses,
+  useLocale,
   type CustomerAddress,
 } from "@numueg/theme-sdk";
 import {
@@ -22,7 +23,7 @@ import {
   Briefcase,
   X,
 } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Skeuomorphic account / profile section.
@@ -41,18 +42,30 @@ import { asString, type SectionRenderProps } from "./_shared";
 
 type Tab = "orders" | "addresses" | "settings";
 
-const STATUS_LABELS: Record<string, string> = {
-  pending: "قيد الانتظار",
-  confirmed: "مؤكد",
-  processing: "قيد المعالجة",
-  shipped: "تم الشحن",
-  delivered: "تم التوصيل",
-  cancelled: "ملغي",
-  refunded: "مسترد",
-};
+function statusLabel(locale: string | undefined, status: string): string {
+  const map: Record<string, [string, string]> = {
+    pending: ["Pending", "قيد الانتظار"],
+    confirmed: ["Confirmed", "مؤكد"],
+    processing: ["Processing", "قيد المعالجة"],
+    shipped: ["Shipped", "تم الشحن"],
+    delivered: ["Delivered", "تم التوصيل"],
+    cancelled: ["Cancelled", "ملغي"],
+    refunded: ["Refunded", "مسترد"],
+  };
+  const pair = map[status];
+  return pair ? localized(locale, pair[0], pair[1]) : status;
+}
 
 const LABEL_ICON: Record<string, typeof Home> = { home: Home, work: Briefcase, other: MapPin };
-const LABEL_NAME: Record<string, string> = { home: "المنزل", work: "العمل", other: "آخر" };
+function labelName(locale: string | undefined, label: string): string {
+  const map: Record<string, [string, string]> = {
+    home: ["Home", "المنزل"],
+    work: ["Work", "العمل"],
+    other: ["Other", "آخر"],
+  };
+  const pair = map[label];
+  return pair ? localized(locale, pair[0], pair[1]) : localized(locale, "Other", "آخر");
+}
 
 const EMPTY_ADDRESS: Partial<CustomerAddress> = {
   first_name: "",
@@ -65,10 +78,11 @@ const EMPTY_ADDRESS: Partial<CustomerAddress> = {
 
 export default function SkeuProfile({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "حسابي";
-  const ordersTitle = asString(s.orders_title) || "طلباتي";
-  const addressesTitle = asString(s.addresses_title) || "عناويني";
-  const settingsTitle = asString(s.settings_title) || "الإعدادات";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "My account", "حسابي");
+  const ordersTitle = asString(s.orders_title) || localized(locale, "My orders", "طلباتي");
+  const addressesTitle = asString(s.addresses_title) || localized(locale, "My addresses", "عناويني");
+  const settingsTitle = asString(s.settings_title) || localized(locale, "Settings", "الإعدادات");
   const showStats = s.show_stats ?? true;
 
   const customer = useCustomer();
@@ -117,16 +131,16 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
             <User size={22} className="text-[var(--vn-muted)] relative z-[1]" />
           </div>
           <p className="vn-heading text-lg text-[var(--vn-ink)] mb-1">
-            سجّل الدخول لعرض حسابك
+            {localized(locale, "Sign in to view your account", "سجّل الدخول لعرض حسابك")}
           </p>
           <p className="text-xs text-[var(--vn-muted)] mb-6">
-            تابع الطلبات وأدِر العناوين والإعدادات
+            {localized(locale, "Track orders and manage your addresses and settings", "تابع الطلبات وأدِر العناوين والإعدادات")}
           </p>
           <Link
             to="/auth?redirect=/profile"
             className="vn-btn vn-btn-filled inline-flex"
           >
-            تسجيل الدخول
+            {localized(locale, "Sign in", "تسجيل الدخول")}
           </Link>
         </div>
       </div>
@@ -209,9 +223,9 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
   };
 
   const tabs: { key: Tab; label: string; icon: typeof Package; count?: number }[] = [
-    { key: "orders", label: "الطلبات", icon: Package, count: orders.length },
-    { key: "addresses", label: "العناوين", icon: MapPin, count: addresses.length },
-    { key: "settings", label: "الإعدادات", icon: Settings },
+    { key: "orders", label: localized(locale, "Orders", "الطلبات"), icon: Package, count: orders.length },
+    { key: "addresses", label: localized(locale, "Addresses", "العناوين"), icon: MapPin, count: addresses.length },
+    { key: "settings", label: localized(locale, "Settings", "الإعدادات"), icon: Settings },
   ];
 
   const inputClass =
@@ -225,7 +239,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 vn-label text-[10px] text-[var(--vn-muted)] mb-8">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            الرئيسية
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <span className="text-[var(--vn-ink)]">{title}</span>
@@ -246,7 +260,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
               <div className="flex gap-4 mb-6 pb-6 border-b border-[var(--vn-border)]">
                 <div>
                   <p className="text-lg font-bold text-[var(--vn-ink)]">{orders.length}</p>
-                  <p className="text-[10px] text-[var(--vn-muted)]">طلبات</p>
+                  <p className="text-[10px] text-[var(--vn-muted)]">{localized(locale, "Orders", "طلبات")}</p>
                 </div>
                 <div>
                   <p className="text-lg font-bold text-[var(--vn-ink)]">
@@ -288,7 +302,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
               className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors"
             >
               <LogOut size={13} />
-              تسجيل الخروج
+              {localized(locale, "Sign out", "تسجيل الخروج")}
             </button>
           </div>
 
@@ -306,15 +320,15 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                   <div className="text-center py-16 skeu-card rounded-xl">
                     <div className="relative z-[1]">
                       <div className="w-10 h-px bg-[var(--vn-border)] mx-auto mb-5" />
-                      <p className="text-sm text-[var(--vn-muted)] mb-1">لا توجد طلبات بعد</p>
+                      <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No orders yet", "لا توجد طلبات بعد")}</p>
                       <p className="text-xs text-[var(--vn-muted)] mb-5">
-                        ستظهر طلباتك هنا بعد أول عملية شراء
+                        {localized(locale, "Your orders will appear here after your first purchase", "ستظهر طلباتك هنا بعد أول عملية شراء")}
                       </p>
                       <Link
                         to="/products"
                         className="text-xs font-bold border-b border-[var(--vn-ink)] pb-0.5 hover:opacity-70 transition-opacity"
                       >
-                        تصفّح المنتجات
+                        {localized(locale, "Browse products", "تصفّح المنتجات")}
                       </Link>
                     </div>
                   </div>
@@ -343,7 +357,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                                     })
                                   : ""}
                                 {order.item_count
-                                  ? ` · ${order.item_count} منتج`
+                                  ? ` · ${order.item_count} ${localized(locale, "items", "منتج")}`
                                   : ""}
                               </span>
                             </div>
@@ -352,7 +366,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                                 {(order.total / 100).toLocaleString("en-US")} ج.م
                               </span>
                               <span className="text-[10px] px-1.5 py-0.5 rounded skeu-chip text-[var(--vn-ink)]/70">
-                                {STATUS_LABELS[order.status] || order.status}
+                                {statusLabel(locale, order.status)}
                               </span>
                             </div>
                           </div>
@@ -376,7 +390,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                       className="flex items-center gap-1.5 text-xs font-bold text-[var(--vn-ink)] hover:opacity-70 transition-opacity"
                     >
                       <Plus size={13} />
-                      إضافة عنوان
+                      {localized(locale, "Add address", "إضافة عنوان")}
                     </button>
                   )}
                 </div>
@@ -386,20 +400,20 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                     <div className="relative z-[1]">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-sm font-bold text-[var(--vn-ink)]">
-                          {editingId ? "تعديل العنوان" : "عنوان جديد"}
+                          {editingId ? localized(locale, "Edit address", "تعديل العنوان") : localized(locale, "New address", "عنوان جديد")}
                         </h3>
                         <button
                           type="button"
                           onClick={closeAddressForm}
                           className="text-[var(--vn-muted)] hover:text-[var(--vn-ink)]"
-                          aria-label="إغلاق"
+                          aria-label={localized(locale, "Close", "إغلاق")}
                         >
                           <X size={16} />
                         </button>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                         <div>
-                          <label className={labelClass}>الاسم الأول</label>
+                          <label className={labelClass}>{localized(locale, "First name", "الاسم الأول")}</label>
                           <input
                             value={form.first_name ?? ""}
                             onChange={(e) => setForm((p) => ({ ...p, first_name: e.target.value }))}
@@ -407,7 +421,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                           />
                         </div>
                         <div>
-                          <label className={labelClass}>اسم العائلة</label>
+                          <label className={labelClass}>{localized(locale, "Last name", "اسم العائلة")}</label>
                           <input
                             value={form.last_name ?? ""}
                             onChange={(e) => setForm((p) => ({ ...p, last_name: e.target.value }))}
@@ -416,17 +430,17 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                         </div>
                       </div>
                       <div className="mb-3">
-                        <label className={labelClass}>العنوان</label>
+                        <label className={labelClass}>{localized(locale, "Address", "العنوان")}</label>
                         <input
                           value={form.address_line1 ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, address_line1: e.target.value }))}
-                          placeholder="الشارع، المبنى، الشقة"
+                          placeholder={localized(locale, "Street, building, apartment", "الشارع، المبنى، الشقة")}
                           className={inputClass}
                         />
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                         <div>
-                          <label className={labelClass}>المدينة</label>
+                          <label className={labelClass}>{localized(locale, "City", "المدينة")}</label>
                           <input
                             value={form.city ?? ""}
                             onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
@@ -434,7 +448,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                           />
                         </div>
                         <div>
-                          <label className={labelClass}>الهاتف</label>
+                          <label className={labelClass}>{localized(locale, "Phone", "الهاتف")}</label>
                           <input
                             value={form.phone ?? ""}
                             onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
@@ -459,7 +473,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                               }
                             >
                               <Icon size={12} />
-                              {LABEL_NAME[l]}
+                              {labelName(locale, l)}
                             </button>
                           );
                         })}
@@ -474,9 +488,9 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                           {savingAddress ? (
                             <Loader2 size={14} className="animate-spin" />
                           ) : editingId ? (
-                            "تحديث"
+                            localized(locale, "Update", "تحديث")
                           ) : (
-                            "حفظ"
+                            localized(locale, "Save", "حفظ")
                           )}
                         </button>
                         <button
@@ -484,7 +498,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                           onClick={closeAddressForm}
                           className="px-5 py-2 text-xs text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors"
                         >
-                          إلغاء
+                          {localized(locale, "Cancel", "إلغاء")}
                         </button>
                       </div>
                     </div>
@@ -499,16 +513,16 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                   <div className="text-center py-16 skeu-card rounded-xl">
                     <div className="relative z-[1]">
                       <div className="w-10 h-px bg-[var(--vn-border)] mx-auto mb-5" />
-                      <p className="text-sm text-[var(--vn-muted)] mb-1">لا توجد عناوين محفوظة</p>
+                      <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No saved addresses", "لا توجد عناوين محفوظة")}</p>
                       <p className="text-xs text-[var(--vn-muted)] mb-5">
-                        أضف عنواناً لتسريع إتمام الطلب
+                        {localized(locale, "Add an address to speed up checkout", "أضف عنواناً لتسريع إتمام الطلب")}
                       </p>
                       <button
                         type="button"
                         onClick={openNewAddress}
                         className="text-xs font-bold border-b border-[var(--vn-ink)] pb-0.5 hover:opacity-70 transition-opacity"
                       >
-                        إضافة عنوان
+                        {localized(locale, "Add address", "إضافة عنوان")}
                       </button>
                     </div>
                   </div>
@@ -526,11 +540,11 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                               <div className="flex items-center gap-2">
                                 <LabelIcon size={13} className="text-[var(--vn-muted)]" />
                                 <span className="text-xs font-bold text-[var(--vn-ink)]">
-                                  {LABEL_NAME[addr.label ?? "other"] || "آخر"}
+                                  {labelName(locale, addr.label ?? "other")}
                                 </span>
                                 {addr.is_default && (
                                   <span className="text-[9px] px-1.5 py-0.5 rounded skeu-chip text-[var(--vn-ink)]/60">
-                                    افتراضي
+                                    {localized(locale, "Default", "افتراضي")}
                                   </span>
                                 )}
                               </div>
@@ -540,13 +554,13 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                                   onClick={() => openEditAddress(addr)}
                                   className="text-[10px] text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors px-1"
                                 >
-                                  تعديل
+                                  {localized(locale, "Edit", "تعديل")}
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => deleteAddress(addr.id)}
                                   className="text-[var(--vn-muted)] hover:text-[var(--vn-sale)] transition-colors px-1"
-                                  aria-label="حذف العنوان"
+                                  aria-label={localized(locale, "Delete address", "حذف العنوان")}
                                 >
                                   <Trash2 size={12} />
                                 </button>
@@ -574,7 +588,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                                 onClick={() => setDefaultAddress(addr.id)}
                                 className="text-[10px] text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors mt-2 border-b border-current pb-px"
                               >
-                                تعيين كافتراضي
+                                {localized(locale, "Set as default", "تعيين كافتراضي")}
                               </button>
                             )}
                           </div>
@@ -595,7 +609,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                     <div className="relative z-[1] space-y-3">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <label className={labelClass}>الاسم الأول</label>
+                          <label className={labelClass}>{localized(locale, "First name", "الاسم الأول")}</label>
                           <input
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
@@ -603,7 +617,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                           />
                         </div>
                         <div>
-                          <label className={labelClass}>اسم العائلة</label>
+                          <label className={labelClass}>{localized(locale, "Last name", "اسم العائلة")}</label>
                           <input
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
@@ -612,7 +626,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                         </div>
                       </div>
                       <div>
-                        <label className={labelClass}>البريد الإلكتروني</label>
+                        <label className={labelClass}>{localized(locale, "Email", "البريد الإلكتروني")}</label>
                         <input
                           value={customer.email}
                           disabled
@@ -621,7 +635,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>الهاتف</label>
+                        <label className={labelClass}>{localized(locale, "Phone", "الهاتف")}</label>
                         <input
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
@@ -636,18 +650,18 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                         disabled={savingProfile}
                         className="vn-btn vn-btn-filled disabled:opacity-50"
                       >
-                        {savingProfile ? <Loader2 size={14} className="animate-spin" /> : "حفظ التغييرات"}
+                        {savingProfile ? <Loader2 size={14} className="animate-spin" /> : localized(locale, "Save changes", "حفظ التغييرات")}
                       </button>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h2 className={headingClass}>تغيير كلمة المرور</h2>
+                  <h2 className={headingClass}>{localized(locale, "Change password", "تغيير كلمة المرور")}</h2>
                   <div className="skeu-card rounded-xl p-5">
                     <div className="relative z-[1] space-y-3">
                       <div>
-                        <label className={labelClass}>كلمة المرور الحالية</label>
+                        <label className={labelClass}>{localized(locale, "Current password", "كلمة المرور الحالية")}</label>
                         <input
                           type="password"
                           value={currentPw}
@@ -656,12 +670,12 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>كلمة المرور الجديدة</label>
+                        <label className={labelClass}>{localized(locale, "New password", "كلمة المرور الجديدة")}</label>
                         <input
                           type="password"
                           value={newPw}
                           onChange={(e) => setNewPw(e.target.value)}
-                          placeholder="8 أحرف على الأقل"
+                          placeholder={localized(locale, "At least 8 characters", "8 أحرف على الأقل")}
                           className={inputClass}
                         />
                       </div>
@@ -671,7 +685,7 @@ export default function SkeuProfile({ instance }: SectionRenderProps) {
                         disabled={changingPw || !currentPw || !newPw}
                         className="vn-btn vn-btn-filled disabled:opacity-50"
                       >
-                        {changingPw ? <Loader2 size={14} className="animate-spin" /> : "تغيير كلمة المرور"}
+                        {changingPw ? <Loader2 size={14} className="animate-spin" /> : localized(locale, "Change password", "تغيير كلمة المرور")}
                       </button>
                     </div>
                   </div>

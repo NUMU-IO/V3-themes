@@ -1,7 +1,7 @@
 "use client";
 
-import { Link, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
-import { asString, asNumber, type SectionRenderProps } from "./_shared";
+import { Link, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
+import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -25,17 +25,22 @@ export default function ByProductGrid({
 }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const { products, loading } = useProducts();
+  const locale = useLocale();
 
-  const title = asString(s.title) || "All drinks";
+  const title = asString(s.title) || localized(locale, "All drinks", "كل المشروبات");
   const subtitle =
     asString(s.subtitle) ||
-    "From the first espresso of the morning to the last slice of basbousa.";
+    localized(
+      locale,
+      "From the first espresso of the morning to the last slice of basbousa.",
+      "من أول إسبريسو الصبح لآخر قطعة بسبوسة.",
+    );
   const colsDesktop = Math.max(1, Math.min(6, asNumber(s.columns_desktop, 4)));
   const colsMobile = Math.max(1, Math.min(3, asNumber(s.columns_mobile, 2)));
   const maxItems = asNumber(s.max_items, 0);
   const emptyState =
     asString(s.empty_state_text) ||
-    "We're brewing fresh — come back in a moment.";
+    localized(locale, "We're brewing fresh — come back in a moment.", "بنحضّر طازة — تعالى كمان شوية.");
 
   const displayed: Product[] =
     maxItems > 0 ? products.slice(0, maxItems) : products;
@@ -91,7 +96,7 @@ export default function ByProductGrid({
           <div
             style={{ textAlign: "center", padding: "3rem 0", color: "rgba(58,36,24,0.6)" }}
           >
-            Loading drinks…
+            {localized(locale, "Loading drinks…", "بنحمّل المشروبات…")}
           </div>
         ) : displayed.length === 0 ? (
           <div

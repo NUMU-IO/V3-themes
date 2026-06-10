@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import { Link, Money, useOrders } from "@numueg/theme-sdk";
+import { Link, Money, useOrders, useLocale } from "@numueg/theme-sdk";
 import { Check, Copy, Package, ArrowLeft, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const TITLE_SHADOW = "0 2px 0 hsl(35 30% 100% / 0.5), 0 -1px 0 hsl(25 20% 50% / 0.1)";
 
@@ -28,11 +28,12 @@ export default function SkeuOrderConfirmationSection({ instance }: SectionRender
   const showTrackOrder = s.show_track_order ?? true;
   const showEmoji = s.show_emoji ?? false;
 
-  const title = asString(s.title) || "تم تأكيد الطلب";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Order confirmed", "تم تأكيد الطلب");
   const subtitle =
     asString(s.subtitle) ||
-    "شكراً لطلبك. سنرسل لك تفاصيل الطلب عبر واتساب.";
-  const continueText = asString(s.continue_shopping_text) || "متابعة التسوق";
+    localized(locale, "Thanks for your order. We'll send the order details over WhatsApp.", "شكراً لطلبك. سنرسل لك تفاصيل الطلب عبر واتساب.");
+  const continueText = asString(s.continue_shopping_text) || localized(locale, "Continue shopping", "متابعة التسوق");
   const continueLink = asString(s.continue_shopping_link) || "/";
 
   const { orders } = useOrders();
@@ -50,7 +51,12 @@ export default function SkeuOrderConfirmationSection({ instance }: SectionRender
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const steps = ["تم الطلب", "قيد المعالجة", "في الطريق", "تم التوصيل"];
+  const steps = [
+    localized(locale, "Ordered", "تم الطلب"),
+    localized(locale, "Processing", "قيد المعالجة"),
+    localized(locale, "On the way", "في الطريق"),
+    localized(locale, "Delivered", "تم التوصيل"),
+  ];
 
   return (
     <div className="bg-background min-h-[60vh] flex items-start justify-center px-4 py-10 sm:px-6 sm:py-14 md:py-16 lg:py-20">
@@ -73,7 +79,7 @@ export default function SkeuOrderConfirmationSection({ instance }: SectionRender
         >
           {/* Title */}
           <span className="vn-eyebrow block mb-2 text-[10px] sm:text-[11px]">
-            تم تأكيد الطلب
+            {localized(locale, "Order confirmed", "تم تأكيد الطلب")}
           </span>
           <h1
             className="vn-heading text-2xl sm:text-3xl md:text-4xl text-[var(--vn-ink)] mb-2 sm:mb-3 leading-tight"
@@ -90,7 +96,7 @@ export default function SkeuOrderConfirmationSection({ instance }: SectionRender
             <div className="relative z-[1] space-y-4 text-sm">
               {/* Order number */}
               <div className="flex justify-between items-center">
-                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">رقم الطلب</span>
+                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">{localized(locale, "Order number", "رقم الطلب")}</span>
                 <div className="flex items-center gap-2">
                   <span
                     className="font-mono text-sm sm:text-base text-primary font-black tracking-wider"
@@ -101,7 +107,7 @@ export default function SkeuOrderConfirmationSection({ instance }: SectionRender
                   <button
                     onClick={handleCopy}
                     className="p-1.5 rounded-md skeu-chip transition-colors active:scale-95"
-                    title="نسخ"
+                    title={localized(locale, "Copy", "نسخ")}
                   >
                     {copied ? (
                       <Check size={14} className="text-primary" />
@@ -117,7 +123,7 @@ export default function SkeuOrderConfirmationSection({ instance }: SectionRender
                 <>
                   <div className="skeu-divider" />
                   <div className="flex justify-between">
-                    <span className="text-xs sm:text-sm text-[var(--vn-muted)]">الإجمالي</span>
+                    <span className="text-xs sm:text-sm text-[var(--vn-muted)]">{localized(locale, "Total", "الإجمالي")}</span>
                     <span className="text-xs sm:text-sm font-bold text-[var(--vn-ink)]">
                       <Money amount={total} currency={currency} />
                     </span>
@@ -128,15 +134,15 @@ export default function SkeuOrderConfirmationSection({ instance }: SectionRender
               {/* Delivery */}
               <div className="skeu-divider" />
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">التوصيل المتوقع</span>
-                <span className="text-xs sm:text-sm font-bold text-[var(--vn-ink)]">٣-٥ أيام عمل</span>
+                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">{localized(locale, "Estimated delivery", "التوصيل المتوقع")}</span>
+                <span className="text-xs sm:text-sm font-bold text-[var(--vn-ink)]">{localized(locale, "3–5 business days", "٣-٥ أيام عمل")}</span>
               </div>
 
               {/* Status */}
               <div className="flex justify-between">
-                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">الحالة</span>
+                <span className="text-xs sm:text-sm text-[var(--vn-muted)]">{localized(locale, "Status", "الحالة")}</span>
                 <span className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-primary">
-                  <Package size={14} /> قيد المعالجة
+                  <Package size={14} /> {localized(locale, "Processing", "قيد المعالجة")}
                 </span>
               </div>
             </div>
@@ -184,21 +190,21 @@ export default function SkeuOrderConfirmationSection({ instance }: SectionRender
               <div className="relative z-[1]">
                 <div className="flex items-center gap-2 mb-2.5 sm:mb-3 vn-eyebrow text-[10px] sm:text-[11px]">
                   <MessageCircle size={16} className="text-whatsapp" />
-                  <span className="text-sm font-bold text-whatsapp">رسالة واتساب</span>
+                  <span className="text-sm font-bold text-whatsapp">{localized(locale, "WhatsApp message", "رسالة واتساب")}</span>
                 </div>
                 <div className="skeu-inset rounded-xl p-3 sm:p-4 text-xs sm:text-sm text-foreground leading-relaxed">
-                  <p>مرحباً! 👋</p>
+                  <p>{localized(locale, "Hello! 👋", "مرحباً! 👋")}</p>
                   <p className="mt-1">
-                    تم استلام طلبك{" "}
-                    <strong className="font-bold text-[var(--vn-ink)]">{orderNumber}</strong> بنجاح.
+                    {localized(locale, "We've received your order", "تم استلام طلبك")}{" "}
+                    <strong className="font-bold text-[var(--vn-ink)]">{orderNumber}</strong> {localized(locale, "successfully.", "بنجاح.")}
                   </p>
                   {typeof total === "number" && total > 0 && (
                     <p className="mt-1">
-                      الإجمالي: <strong><Money amount={total} currency={currency} /></strong>
+                      {localized(locale, "Total:", "الإجمالي:")} <strong><Money amount={total} currency={currency} /></strong>
                     </p>
                   )}
-                  <p className="mt-1">سنوصله خلال ٣-٥ أيام عمل. لأي استفسار، تواصل معنا هنا.</p>
-                  <p className="mt-1">شكراً لتسوقك معنا ❤️</p>
+                  <p className="mt-1">{localized(locale, "We'll deliver it within 3–5 business days. For any questions, reach out to us here.", "سنوصله خلال ٣-٥ أيام عمل. لأي استفسار، تواصل معنا هنا.")}</p>
+                  <p className="mt-1">{localized(locale, "Thanks for shopping with us ❤️", "شكراً لتسوقك معنا ❤️")}</p>
                 </div>
               </div>
             </div>
@@ -211,7 +217,7 @@ export default function SkeuOrderConfirmationSection({ instance }: SectionRender
                 to={`/track?tn=${orderNumber}`}
                 className="vn-btn vn-btn-outline-dark flex-1 inline-flex items-center justify-center gap-2 py-3 sm:py-3.5 text-xs sm:text-sm"
               >
-                <Package size={18} /> تتبّع الطلب
+                <Package size={18} /> {localized(locale, "Track order", "تتبّع الطلب")}
               </Link>
             )}
             <Link

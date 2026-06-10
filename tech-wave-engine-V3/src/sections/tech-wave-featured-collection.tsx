@@ -1,7 +1,7 @@
 "use client";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Tech Wave featured collection — faithful port of the V2 in-tree
@@ -20,10 +20,11 @@ const TechWaveFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products, loading } = useProducts();
   const isLoading = loading;
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "وصل حديثاً ✨";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "New arrivals ✨", "وصل حديثاً ✨");
   const subtitle = asString(s.subtitle);
   const viewAllLink = asString(s.view_all_link) || "/products";
-  const viewAllText = asString(s.view_all_text) || "عرض الكل";
+  const viewAllText = asString(s.view_all_text) || localized(locale, "View all", "عرض الكل");
   const count = asNumber(s.product_count, 4);
   const cols = asNumber(s.columns, 4);
 
@@ -96,6 +97,7 @@ const TechWaveFeaturedCollection = ({ instance }: SectionRenderProps) => {
 /** Inline Tech Wave product card — mirrors the V2 TechWaveProductCard look
  *  (neon-bordered glass card, sale badge, hover glow). */
 function TechWaveProductCard({ product }: { product: Product }) {
+  const locale = useLocale();
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -121,13 +123,13 @@ function TechWaveProductCard({ product }: { product: Product }) {
         )}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-2.5 start-2.5 tw-badge-accent px-2.5 py-1 rounded-lg text-[10px] font-bold">
-            خصم
+            {localized(locale, "Sale", "خصم")}
           </span>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-[hsl(220,40%,5%/0.7)] flex items-center justify-center">
             <span className="tw-chip text-[hsl(var(--foreground))] text-[11px] px-3 py-1.5 rounded-full">
-              نفذت الكمية
+              {localized(locale, "Sold out", "نفذت الكمية")}
             </span>
           </div>
         )}

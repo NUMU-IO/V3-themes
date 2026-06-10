@@ -1,14 +1,18 @@
 "use client";
 
-import { Link, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowUpRight } from "lucide-react";
-import { asImageUrl, asString, demoOrPlaceholder, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, demoOrPlaceholder, localized, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type ImageTransform, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 interface DrinkCard {
   label: string;
   image: string;
   href: string;
+  // Non-destructive focal/zoom/rotation — only set for MERCHANT-configured
+  // drink images (editor `drink` blocks). Undefined for product-derived /
+  // demo images so those render exactly as before.
+  transform?: ImageTransform;
 }
 
 const FALLBACK_DRINKS: DrinkCard[] = [
@@ -48,15 +52,20 @@ export default function ByHero({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const { products } = useProducts();
   const blkCtx = useBlockResolveContext();
+  const locale = useLocale();
 
   const eyebrow = asString(s.eyebrow);
   const headline =
     asString(s.headline) ||
-    "Enjoy Your Coffee with Bon Younes";
+    localized(locale, "Enjoy Your Coffee with Bon Younes", "اشرب قهوتك مع بون يونس");
   const subtitle =
     asString(s.subtitle) ||
-    "Discover the daily roast — beans pulled fresh, milk steamed slow, and every cup poured with care from our Mansoura roastery.";
-  const ctaText = asString(s.cta_text) || "Explore product";
+    localized(
+      locale,
+      "Discover the daily roast — beans pulled fresh, milk steamed slow, and every cup poured with care from our Mansoura roastery.",
+      "اكتشف تحميصة اليوم — بُن طازة، لبن بيتبخّر على مهل، وكل فنجان بيتحضّر بحب من محمصتنا في المنصورة.",
+    );
+  const ctaText = asString(s.cta_text) || localized(locale, "Explore product", "اكتشف المنتجات");
   const ctaLink = asString(s.cta_link) || "/products";
 
   // Pull merchant-configured drink cards first (editor `drink` blocks); if
@@ -67,6 +76,7 @@ export default function ByHero({ instance, sectionId }: SectionRenderProps) {
       label: asString(r.label),
       image: asImageUrl(r.image),
       href: asString(r.href) || "/products",
+      transform: asImageTransform(r.image),
     }))
     // Keep a drink if it has a label OR an image; default a missing image to
     // the neutral placeholder so a real (product-derived or merchant) drink is
@@ -179,6 +189,7 @@ export default function ByHero({ instance, sectionId }: SectionRenderProps) {
                   alt={d.label}
                   loading={i < 5 ? "eager" : "lazy"}
                   decoding="async"
+                  style={applyImageTransform(d.transform, "cover")}
                 />
               </div>
               <p className="by-hero-card-label">{d.label}</p>

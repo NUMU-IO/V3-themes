@@ -4,11 +4,11 @@
  */
 
 import {
-  StrictMode, Suspense, forwardRef, lazy, useImperativeHandle, useState,
+  StrictMode, Suspense, forwardRef, lazy, useImperativeHandle, useMemo, useState,
 } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import {
-  NuMuProvider, Section, useThemeSettings, mountTheme,
+  NuMuProvider, Section, useThemeSettings, mountTheme, useLocale, sanitizeHtml,
   type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
@@ -19,6 +19,7 @@ import {
   selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 import VionneFooter from "./sections/vionne-footer";
+import { DemoContext, PageDataContext, usePageData, type MountPageData } from "./sections/_shared";
 
 interface MountResult {
   cleanup: () => void;
@@ -76,15 +77,61 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const hostTemplate = settings.templates?.[currentTemplate] as MaybeOrderedTemplate | undefined;
   const builtinTemplate = BUILTIN_TEMPLATES[currentTemplate];
   const sections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
-  // Vionne ships no footer *section*, so render one globally on every
-  // template (checkout is platform-owned chrome). Guarantees site chrome at
-  // the bottom of every page without depending on stored customization.
+
+  // CMS content page (/pages/<handle> → template "page"). Vionne ships no
+  // `page` template AND renders global chrome on every route, so the host's
+  // empty-detection backstop can't fire here (the container is non-empty).
+  // Bind the real CMS title + body ourselves (bilingual via title_i18n/
+  // body_i18n), else a content page renders only chrome. Sanitized before
+  // dangerouslySetInnerHTML.
+  const pageCtx = usePageData();
+  const locale = useLocale();
+  const cmsPage =
+    currentTemplate === "page" && pageCtx?.type === "page" ? pageCtx.data?.page : null;
+  const cmsTitle = cmsPage
+    ? cmsPage.title_i18n?.[locale] || cmsPage.title || pageCtx?.title || ""
+    : "";
+  const cmsBody = cmsPage ? cmsPage.body_i18n?.[locale] || cmsPage.body || "" : "";
+  const safeBody = useMemo(() => sanitizeHtml(cmsBody), [cmsBody]);
+
+  // Vionne ships no footer *section*, so render one globally — BUT only when
+  // the route actually has content (sections or the CMS body). On a route
+  // vionne doesn't template (cart / 404 / search), the bundle must render
+  // NOTHING so the host's empty-detection backstop fires (BuiltInCart, themed
+  // 404). Rendering the footer there left the container non-empty → suppressed
+  // the backstop → cart/404 showed only a footer (no cart UI / no 404 message).
+  const hasContent = sections.length > 0 || Boolean(cmsTitle) || Boolean(cmsBody);
   return (
     <div data-vionne-v3-app data-theme="vionne-v3">
       {sections.map(({ id, instance }) => (
         <RenderSection key={id} sectionId={id} instance={instance} />
       ))}
-      {currentTemplate !== "checkout" && <VionneFooter />}
+      {(cmsTitle || cmsBody) && (
+        <section
+          className="vn-cms-page"
+          style={{ maxWidth: 760, margin: "0 auto", padding: "4rem 1.5rem" }}
+        >
+          {cmsTitle && (
+            <h1
+              className="vn-heading"
+              style={{
+                fontSize: "clamp(1.9rem,3.5vw,2.75rem)",
+                margin: "0 0 1.5rem",
+                color: "var(--vn-ink,#1a1a1a)",
+              }}
+            >
+              {cmsTitle}
+            </h1>
+          )}
+          {cmsBody && (
+            <div
+              style={{ lineHeight: 1.75, color: "var(--vn-muted,#444)", fontSize: "1.05rem" }}
+              dangerouslySetInnerHTML={{ __html: safeBody }}
+            />
+          )}
+        </section>
+      )}
+      {hasContent && currentTemplate !== "checkout" && <VionneFooter />}
     </div>
   );
 }
@@ -115,8 +162,12 @@ function pickTemplate(ctx: MountContext): string {
 }
 
 export function mount(el: HTMLElement, ctx: MountContext) {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
+  return mountTheme(el, ctx, ({ currentTemplate, demo, page }) => (
+    <DemoContext.Provider value={demo}>
+      <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
+        <ThemeApp currentTemplate={currentTemplate} />
+      </PageDataContext.Provider>
+    </DemoContext.Provider>
   ));
 }
 
@@ -124,7 +175,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "vionne-v3", name: "Vionne (V3)", version: "0.1.0" },
+  manifest: { id: "vionne-v3", name: "Vionne (V3)", version: "0.4.7" },
   mount,
 };
 export default v3Handle;

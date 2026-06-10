@@ -2,7 +2,7 @@
   "id": "neo-brutalism-v3",
   "name": "Neo Brutalism (V3)",
   "author": "NUMU",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "layout": "single-column",
   "description": "Neo Brutalism (V3) — bold, raw, unapologetic design with thick borders, hard shadows, and neon accents. Ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
@@ -15,12 +15,7 @@
           {
             "type": "nbhero",
             "settings": {
-              "badge_text": "🎉 خصومات تصل لـ ٢٥٪",
-              "headline": "اكتشف أحلى المنتجات بأفضل الأسعار",
-              "subtitle": "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.",
-              "cta_text": "تسوق الآن",
               "cta_link": "/products",
-              "secondary_text": "الملابس الجديدة",
               "secondary_link": "/products?category=clothing",
               "hero_image_url": "",
               "show_trust_strip": true
@@ -29,14 +24,12 @@
           {
             "type": "nbmarquee",
             "settings": {
-              "text": "✦ خصومات حصرية ✦ شحن سريع ✦ منتجات أصلية ✦ جودة مضمونة ✦ الدفع عند الاستلام ✦",
               "repeat_count": 2
             }
           },
           {
             "type": "nbcategories",
             "settings": {
-              "title": "تسوق حسب الفئة",
               "columns_desktop": 5,
               "columns_mobile": 3
             }
@@ -44,57 +37,32 @@
           {
             "type": "nbfeatured-collection",
             "settings": {
-              "title": "وصل حديثاً ✨",
-              "subtitle": "أحدث المنتجات اللي ضفناها",
-              "collection_tag": "new",
               "view_all_link": "/products?tag=new"
             }
           },
           {
             "type": "nbpromo-banner",
             "settings": {
-              "badge_text": "عرض محدود 🔥",
-              "headline": "خصم ٢٥٪ على كل الإكسسوارات",
-              "subtitle": "العرض ساري لنهاية الشهر. متفوتش الفرصة!",
-              "cta_text": "تسوق الإكسسوارات",
               "cta_link": "/products?category=accessories"
             }
           },
           {
             "type": "nbfeatured-collection",
             "settings": {
-              "title": "الأكثر مبيعاً 🔥",
-              "subtitle": "المنتجات اللي الناس بتحبها",
-              "collection_tag": "bestseller",
               "view_all_link": "/products?tag=bestseller"
             }
           },
           {
             "type": "nbtestimonials",
             "settings": {
-              "title": "رأي عملاءنا ⭐",
-              "review_1_name": "سارة أحمد",
-              "review_1_city": "القاهرة",
-              "review_1_text": "المنتجات جودتها ممتازة والتوصيل كان سريع جداً. هطلب تاني أكيد!",
               "review_1_rating": 5,
-              "review_2_name": "محمد عبدالله",
-              "review_2_city": "الإسكندرية",
-              "review_2_text": "أول مرة أطلب أونلاين والتجربة كانت ممتازة. الخامات زي ما في الصور بالظبط.",
               "review_2_rating": 5,
-              "review_3_name": "نورهان خالد",
-              "review_3_city": "المنصورة",
-              "review_3_text": "أسعار حلوة والمقاسات مظبوطة. خدمة العملاء على الواتساب كانت سريعة.",
               "review_3_rating": 4
             }
           },
           {
             "type": "nbnewsletter",
-            "settings": {
-              "title": "اشترك في نشرتنا 📬",
-              "subtitle": "اعرف أول واحد عن العروض والمنتجات الجديدة",
-              "button_text": "اشترك",
-              "placeholder": "البريد الإلكتروني"
-            }
+            "settings": {}
           }
         ]
       },

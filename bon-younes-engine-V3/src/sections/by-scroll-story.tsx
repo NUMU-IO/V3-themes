@@ -1,15 +1,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useResolvedSettings } from "@numueg/theme-sdk";
+import { useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import {
+  applyImageTransform,
+  asImageTransform,
   asImageUrl,
   asString,
   demoOrPlaceholder,
+  localized,
   PLACEHOLDER_IMG,
   resolveBlocks,
   useBlockResolveContext,
   useDemo,
+  type ImageTransform,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -19,37 +23,63 @@ interface StoryPanel {
   binomial: string;
   body: string;
   image: string;
+  // Non-destructive focal/zoom/rotation for the merchant-configured panel
+  // image. Undefined when the merchant set no transform → image unchanged.
+  transform?: ImageTransform;
 }
 
-const FALLBACK_PANELS: StoryPanel[] = [
+// Marketplace-preview-only demo panels. Bilingual via localized() so the
+// "Try theme" preview reads correctly under both en and ar. On a real store
+// (demo=false) these never render — demoOrPlaceholder returns [].
+const FALLBACK_PANELS = (locale: string | undefined): StoryPanel[] => [
   {
-    title: "Espresso",
-    binomial: "the daily ritual",
-    body: "A thirty-second pull through freshly ground beans. Dense, sweet, a thick crema on top — the foundation of everything we serve.",
+    title: localized(locale, "Espresso", "إسبريسو"),
+    binomial: localized(locale, "the daily ritual", "طقس كل يوم"),
+    body: localized(
+      locale,
+      "A thirty-second pull through freshly ground beans. Dense, sweet, a thick crema on top — the foundation of everything we serve.",
+      "تحضير في ثلاثين ثانية من بُن متطحون طازة. تقيل وحلو وفوقه كريمة سميكة — أساس كل حاجة بنقدّمها.",
+    ),
     image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=1600&q=70",
   },
   {
-    title: "Latte",
-    binomial: "milk meets craft",
-    body: "Velvet-steamed whole milk folded into a double espresso. Smooth, balanced, finished with a slow rosetta.",
+    title: localized(locale, "Latte", "لاتيه"),
+    binomial: localized(locale, "milk meets craft", "لبن بيقابل صنعة"),
+    body: localized(
+      locale,
+      "Velvet-steamed whole milk folded into a double espresso. Smooth, balanced, finished with a slow rosetta.",
+      "لبن كامل الدسم متبخّر زي القطيفة فوق دبل إسبريسو. ناعم ومتوازن، وبنزيّنه برسمة روزيتا على مهل.",
+    ),
     image: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=1600&q=70",
   },
   {
-    title: "Iced Coffee",
-    binomial: "long & slow",
-    body: "Twelve hours of cold brew gives us a coffee that's chocolatey, low-acid, and built for Mansoura summers.",
+    title: localized(locale, "Iced Coffee", "قهوة مثلجة"),
+    binomial: localized(locale, "long & slow", "على مهل"),
+    body: localized(
+      locale,
+      "Twelve hours of cold brew gives us a coffee that's chocolatey, low-acid, and built for Mansoura summers.",
+      "اتنعمل كولد برو اتنعشر ساعة، فطلع طعمه شيكولاتة وحموضته خفيفة — معمول لصيف المنصورة.",
+    ),
     image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=1600&q=70",
   },
   {
-    title: "Fresh Juice",
-    binomial: "from the orchard",
-    body: "Cold-pressed mango, orange, sugarcane, and seasonal blends — vitamins in a glass, no syrup, no shortcuts.",
+    title: localized(locale, "Fresh Juice", "عصير طازة"),
+    binomial: localized(locale, "from the orchard", "من البستان"),
+    body: localized(
+      locale,
+      "Cold-pressed mango, orange, sugarcane, and seasonal blends — vitamins in a glass, no syrup, no shortcuts.",
+      "مانجة وبرتقان وقصب وخلطات الموسم، كله معصور على البارد — فيتامينات في كباية، من غير سكر ولا اختصارات.",
+    ),
     image: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?auto=format&fit=crop&w=1600&q=70",
   },
   {
-    title: "Desserts",
-    binomial: "the sweet pair",
-    body: "Baklava, basbousa, brownies and stracciatella cheesecake — every cup deserves a friend on the side.",
+    title: localized(locale, "Desserts", "حلويات"),
+    binomial: localized(locale, "the sweet pair", "التوأم الحلو"),
+    body: localized(
+      locale,
+      "Baklava, basbousa, brownies and stracciatella cheesecake — every cup deserves a friend on the side.",
+      "بقلاوة وبسبوسة وبراوني وتشيز كيك ستراتشيتيلا — كل فنجان يستاهل صاحب جنبه.",
+    ),
     image: "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=1600&q=70",
   },
 ];
@@ -59,9 +89,10 @@ export default function ByScrollStory({
   sectionId,
 }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
+  const locale = useLocale();
 
-  const eyebrow = asString(s.eyebrow) || "the menu, told slowly";
-  const title = asString(s.title) || "Five reasons to come back tomorrow";
+  const eyebrow = asString(s.eyebrow) || localized(locale, "the menu, told slowly", "المنيو، على مهل");
+  const title = asString(s.title) || localized(locale, "Five reasons to come back tomorrow", "خمس أسباب تخلّيك ترجع بكرة");
 
   // Resolve block settings so a panel field bound to a dynamic source
   // (editor "Store → Name", product.title, …) yields its real value instead
@@ -75,13 +106,14 @@ export default function ByScrollStory({
       // A real panel that has text but no image still renders, falling back
       // to the neutral on-brand placeholder rather than being filtered out.
       image: asImageUrl(r.image) || PLACEHOLDER_IMG,
+      transform: asImageTransform(r.image),
     }))
     // Keep a panel that has EITHER a title or an image (previously required
     // both, which dropped text-only or dynamic-title panels to FALLBACK).
     .filter((p) => p.title || p.image);
 
   const demo = useDemo();
-  const panels: StoryPanel[] = raw.length > 0 ? raw : demoOrPlaceholder(demo, FALLBACK_PANELS);
+  const panels: StoryPanel[] = raw.length > 0 ? raw : demoOrPlaceholder(demo, FALLBACK_PANELS(locale));
   const n = panels.length;
 
   const stageRef = useRef<HTMLDivElement | null>(null);
@@ -131,7 +163,7 @@ export default function ByScrollStory({
             className="by-story-card-fallback"
           >
             <figure>
-              <img src={p.image} alt={p.title} loading="lazy" decoding="async" />
+              <img src={p.image} alt={p.title} loading="lazy" decoding="async" style={applyImageTransform(p.transform, "cover")} />
             </figure>
             <header>
               <h3>{p.title}</h3>
@@ -166,6 +198,7 @@ export default function ByScrollStory({
                   alt={p.title}
                   loading={i === 0 ? "eager" : "lazy"}
                   decoding="async"
+                  style={applyImageTransform(p.transform, "cover")}
                 />
               </figure>
             </article>

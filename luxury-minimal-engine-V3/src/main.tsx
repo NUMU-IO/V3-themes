@@ -179,7 +179,7 @@ const v3Handle = {
   manifest: {
     id: "luxury-minimal-v3",
     name: "Luxury Minimal (V3)",
-    version: "0.1.0",
+    version: "0.3.3",
   },
   mount,
 };

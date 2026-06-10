@@ -5,19 +5,23 @@ import {
   Link,
   Money,
   useCart,
+  useLocale,
   useProductOptional,
   useProducts,
   useResolvedSettings,
   useThemeSettings,
 } from "@numueg/theme-sdk";
-import { Coffee, Heart, Minus, Plus, ShoppingBag, Sparkles, Star } from "lucide-react";
-import { asArray, asImageUrl, asNumber, asRecord, asString, demoOrPlaceholder, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type SectionRenderProps } from "./_shared";
+import { Coffee, Heart, Leaf, Minus, Plus, ShieldCheck, ShoppingBag, Sparkles, Star, Truck } from "lucide-react";
+import { applyImageTransform, asArray, asImageTransform, asImageUrl, asNumber, asRecord, asString, demoOrPlaceholder, localized, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type ImageTransform, type SectionRenderProps } from "./_shared";
 
 interface Addon {
   id: string;
   name: string;
   price: number;
   image?: string;
+  // Non-destructive focal/zoom/rotation for the merchant-configured add-on
+  // image. Undefined when none set → image renders unchanged.
+  transform?: ImageTransform;
 }
 
 const FALLBACK_PRODUCT = {
@@ -68,6 +72,7 @@ export default function ByProductDetail({
   const productCtx = useProductOptional();
   const { products } = useProducts();
   const demo = useDemo();
+  const locale = useLocale();
 
   const ctxOptions = productCtx?.options;
   const product = productCtx
@@ -100,15 +105,36 @@ export default function ByProductDetail({
   const cart = useCart();
 
   const recommendedTitle =
-    asString(s.recommended_title) || "Complete your order";
-  const addonsTitle = asString(s.addons_title) || "Pairs well with";
-  const badge1 = asString(s.badge_1_text) || "Signature";
-  const badge2 = asString(s.badge_2_text) || "Best with extra shot";
-  const quantityLabel = asString(s.quantity_label) || "Quantity";
-  const addToCartLabel = asString(s.add_to_cart_label) || "Add to cart";
-  const saveLabel = asString(s.save_label) || "Save for later";
-  const addonsTotalLabel = asString(s.addons_total_label) || "Add-ons total:";
-  const recoCtaLabel = asString(s.reco_cta_label) || "View";
+    asString(s.recommended_title) || localized(locale, "Complete your order", "كمّل طلبك");
+  const addonsTitle = asString(s.addons_title) || localized(locale, "Pairs well with", "يتحلّى مع");
+  const badge1 = asString(s.badge_1_text) || localized(locale, "Signature", "تخصّصنا");
+  const badge2 = asString(s.badge_2_text) || localized(locale, "Best with extra shot", "أحلى بشوت زيادة");
+  const quantityLabel = asString(s.quantity_label) || localized(locale, "Quantity", "الكمية");
+  const addToCartLabel = asString(s.add_to_cart_label) || localized(locale, "Add to cart", "أضف للسلة");
+  const saveLabel = asString(s.save_label) || localized(locale, "Save for later", "احفظه لبعدين");
+  const addonsTotalLabel = asString(s.addons_total_label) || localized(locale, "Add-ons total:", "إجمالي الإضافات:");
+  const recoCtaLabel = asString(s.reco_cta_label) || localized(locale, "View", "شوف");
+
+  // Trust strip — editable labels, bilingual defaults, on-brand for the coffee
+  // house. Always shown (like the other themes' trust rows); a merchant can
+  // re-word each item via its setting. Pairs (label + sub-label) per badge.
+  const trust = [
+    {
+      Icon: Leaf,
+      label: asString(s.trust_1_text) || localized(locale, "Freshly roasted", "محمّص طازة"),
+      sub: asString(s.trust_1_sub) || localized(locale, "Mansoura · weekly", "المنصورة · كل أسبوع"),
+    },
+    {
+      Icon: Truck,
+      label: asString(s.trust_2_text) || localized(locale, "Fast delivery", "توصيل سريع"),
+      sub: asString(s.trust_2_sub) || localized(locale, "Across Egypt", "لكل مصر"),
+    },
+    {
+      Icon: ShieldCheck,
+      label: asString(s.trust_3_text) || localized(locale, "Secure checkout", "دفع آمن"),
+      sub: asString(s.trust_3_sub) || localized(locale, "100% protected", "محمي ١٠٠٪"),
+    },
+  ];
 
   const blkCtx = useBlockResolveContext();
   const configuredAddons: Addon[] = resolveBlocks(instance, "addon", blkCtx)
@@ -117,6 +143,7 @@ export default function ByProductDetail({
       name: asString(r.name),
       price: asNumber(r.price),
       image: asImageUrl(r.image) || undefined,
+      transform: asImageTransform(r.image),
     }))
     .filter((a) => a.id && a.name);
 
@@ -310,6 +337,53 @@ export default function ByProductDetail({
               </button>
             </div>
 
+            {/* Trust strip — reassurance row (freshly roasted / delivery /
+                secure checkout), bilingual + on-brand. */}
+            <div
+              className="by-pdp-trust"
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "1rem",
+                marginTop: "1.25rem",
+                paddingTop: "1.25rem",
+                borderTop: "1px solid rgba(58,36,24,0.12)",
+              }}
+            >
+              {trust.map(({ Icon, label, sub }) => (
+                <div
+                  key={label}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.55rem",
+                    flex: "1 1 30%",
+                    minWidth: 140,
+                  }}
+                >
+                  <Icon
+                    size={18}
+                    style={{ color: "var(--by-caramel, #b07a4a)", flexShrink: 0 }}
+                    aria-hidden="true"
+                  />
+                  <div style={{ lineHeight: 1.25 }}>
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        fontWeight: 600,
+                        color: "var(--by-espresso, #3a2418)",
+                      }}
+                    >
+                      {label}
+                    </div>
+                    <div style={{ fontSize: "0.7rem", color: "rgba(58,36,24,0.6)" }}>
+                      {sub}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             {addons.length > 0 && (
             <div className="by-pdp-addons">
               <p className="by-pdp-addons-title">{addonsTitle}</p>
@@ -319,7 +393,7 @@ export default function ByProductDetail({
                   <div key={a.id} className="by-pdp-addon">
                     <div className="by-pdp-addon-img">
                       {a.image && (
-                        <img src={a.image} alt="" loading="lazy" decoding="async" />
+                        <img src={a.image} alt="" loading="lazy" decoding="async" style={applyImageTransform(a.transform, "cover")} />
                       )}
                     </div>
                     <div className="by-pdp-addon-meta">

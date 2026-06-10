@@ -115,7 +115,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "editorial-v3", name: "Editorial (V3)", version: "0.1.0" },
+  manifest: { id: "editorial-v3", name: "Editorial (V3)", version: "0.3.5" },
   mount,
 };
 export default v3Handle;

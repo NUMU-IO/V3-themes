@@ -1,9 +1,9 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import { Link, useCart, useNavigation, useResolvedSettings, useShop, useThemeSettings } from "@numueg/theme-sdk";
+import { Link, useCart, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings } from "@numueg/theme-sdk";
 import { Menu, Search, ShoppingBag, X } from "lucide-react";
-import { asImageUrl, asString, resolveBlocks, useBlockResolveContext, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, resolveBlocks, useBlockResolveContext, type SectionRenderProps } from "./_shared";
 
 interface NavItem {
   label: string;
@@ -11,11 +11,13 @@ interface NavItem {
   children?: NavItem[];
 }
 
-const DEFAULT_NAV: NavItem[] = [
-  { label: "Products", href: "/products" },
-  { label: "About us", href: "/about" },
-  { label: "Testimonial", href: "/testimonial" },
-  { label: "Contact", href: "/contact" },
+/** Locale-aware default primary nav (used only when neither a merchant menu
+ *  nor `nav_item` blocks are configured). */
+const buildDefaultNav = (locale: string | undefined): NavItem[] => [
+  { label: localized(locale, "Products", "المنتجات"), href: "/products" },
+  { label: localized(locale, "About us", "عننا"), href: "/about" },
+  { label: localized(locale, "Testimonial", "آراء العملاء"), href: "/testimonial" },
+  { label: localized(locale, "Contact", "تواصل معنا"), href: "/contact" },
 ];
 
 /** Map an SDK `useNavigation` item (localized `title` + resolved `url` +
@@ -105,6 +107,7 @@ export default function ByHeader({ instance, sectionId }: SectionRenderProps) {
   const { cart } = useCart();
   const themeSettings = useThemeSettings();
   const blkCtx = useBlockResolveContext();
+  const locale = useLocale();
 
   const brandName =
     asString(s.brand_name) ||
@@ -115,7 +118,7 @@ export default function ByHeader({ instance, sectionId }: SectionRenderProps) {
   const brandTagline =
     asString(s.brand_tagline) ||
     asString(themeSettings.global_settings?.brand_name_ar) ||
-    "Specialty coffee";
+    localized(locale, "Specialty coffee", "قهوة مختصة");
 
   // Single source of truth for the logo: the Theme-Settings global logo
   // (with the store's own logo as the API fallback). There is intentionally
@@ -126,6 +129,10 @@ export default function ByHeader({ instance, sectionId }: SectionRenderProps) {
     asImageUrl(themeSettings.global_settings?.logo_url) ||
     shop?.logo_url ||
     "";
+  // Non-destructive focal/zoom/rotation for the merchant logo. Only present
+  // when the logo comes from the global logo_url AND a transform was saved —
+  // the API-fallback (shop.logo_url) carries none, so it renders unchanged.
+  const logoTransform = asImageTransform(themeSettings.global_settings?.logo_url);
   const monogram = asString(s.brand_monogram) || "BY";
 
   // Phase 2.4 — prefer the merchant-managed menu (Online Store →
@@ -146,7 +153,7 @@ export default function ByHeader({ instance, sectionId }: SectionRenderProps) {
               href: asString(r.href) || "/",
             }))
             .filter((n) => n.label)
-        : DEFAULT_NAV;
+        : buildDefaultNav(locale);
 
   const showSearch = (s.show_search as boolean) !== false;
   const showCart = (s.show_cart as boolean) !== false;
@@ -193,7 +200,7 @@ export default function ByHeader({ instance, sectionId }: SectionRenderProps) {
               src={logoUrl}
               alt=""
               className="by-header-brand-mark"
-              style={{ background: "transparent", objectFit: "cover" }}
+              style={{ background: "transparent", objectFit: "cover", ...applyImageTransform(logoTransform, "cover") }}
               width={36}
               height={36}
             />

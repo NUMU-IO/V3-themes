@@ -271,7 +271,8 @@
 /* ─── Shimmer (lazy media placeholder) ─── */
 
 .vn-shimmer {
-  background: linear-gradient(90deg, #ECE7DB 0%, #F5F1E9 40%, #ECE7DB 80%);
+  background: linear-gradient(90deg, #D6CFBE 0%, #E8E0D4 40%, #D6CFBE 80%);
+  border: 1px solid hsl(var(--vn-border, 40 20% 80%));
   background-size: 200% 100%;
   animation: vn-shimmer 1400ms ease-in-out infinite;
 }

@@ -1,8 +1,8 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Editorial hero — faithful port of V2 themes/editorial/sections/hero/EdHero.tsx.
@@ -10,12 +10,17 @@ import { asString, type SectionRenderProps } from "./_shared";
  */
 export default function EdHero({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
-  const headline = asString(s.headline) || "Discover the latest\nfashion trends";
+  const locale = useLocale();
+  const headline =
+    asString(s.headline) ||
+    localized(locale, "Discover the latest\nfashion trends", "اكتشف أحدث\nصيحات الموضة");
   const subtitle =
-    asString(s.subtitle) || "A curated collection of the finest global brands";
-  const ctaText = asString(s.cta_text) || "Shop the Collection";
+    asString(s.subtitle) ||
+    localized(locale, "A curated collection of the finest global brands", "تشكيلة منتقاة من أرقى الماركات العالمية");
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop the Collection", "تسوّق التشكيلة");
   const ctaLink = asString(s.cta_link) || "/products";
   const heroImage = asString(s.hero_image_url);
+  const heroImageTransform = asImageTransform(s.hero_image_url);
 
   return (
     <section className="relative overflow-hidden bg-[hsl(var(--ed-green))]">
@@ -56,6 +61,7 @@ export default function EdHero({ instance }: SectionRenderProps) {
                 src={heroImage}
                 alt=""
                 className="w-full h-full object-contain"
+                style={applyImageTransform(heroImageTransform, "contain")}
               />
             </motion.div>
           )}

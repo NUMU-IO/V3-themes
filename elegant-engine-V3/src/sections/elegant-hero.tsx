@@ -1,19 +1,27 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const ElegantHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const headline = asString(s.headline) || "اكتشف روائع التصميم الأنيق";
+  const headline =
+    asString(s.headline) ||
+    localized(locale, "Discover Timeless Elegance", "اكتشف روائع التصميم الأنيق");
   const subtitle =
     asString(s.subtitle) ||
-    "تشكيلة فاخرة مختارة بعناية لتناسب ذوقك الرفيع. جودة استثنائية وأناقة لا تُضاهى.";
-  const ctaText = asString(s.cta_text) || "تسوق الآن";
+    localized(
+      locale,
+      "A luxurious edit, hand-picked to suit your refined taste — exceptional quality and unrivalled elegance.",
+      "تشكيلة فاخرة مختارة بعناية لتناسب ذوقك الرفيع. جودة استثنائية وأناقة لا تُضاهى.",
+    );
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
   const heroImage = asString(s.hero_image_url) || undefined;
+  const heroImageTransform = asImageTransform(s.hero_image_url);
 
   return (
     <section className="relative min-h-[70vh] flex items-center overflow-hidden">
@@ -24,6 +32,7 @@ const ElegantHero = ({ instance }: SectionRenderProps) => {
             src={heroImage}
             alt=""
             className="w-full h-full object-contain"
+            style={applyImageTransform(heroImageTransform, "contain")}
           />
           <div className="absolute inset-0 bg-gradient-to-l from-[hsl(30_40%_12%/0.85)] via-[hsl(30_40%_12%/0.7)] to-[hsl(30_40%_12%/0.4)]" />
         </div>

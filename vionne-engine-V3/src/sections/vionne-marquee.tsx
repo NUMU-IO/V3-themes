@@ -1,6 +1,6 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
-import { type SectionRenderProps } from "./_shared";
+import { Link, useLocale } from "@numueg/theme-sdk";
+import { localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Vionne Scrolling Banner section.
@@ -54,6 +54,7 @@ const COLOR_PRESETS: Record<
 };
 
 const VionneMarquee = ({ instance }: SectionRenderProps) => {
+  const locale = useLocale();
   const s = instance.settings ?? {};
 
   // Collect non-empty items 1..6 in their declared order. Empty slots are
@@ -67,7 +68,13 @@ const VionneMarquee = ({ instance }: SectionRenderProps) => {
   // the section never renders as an empty bar (which would silently push
   // the rest of the page up and look broken in the editor preview).
   const items =
-    rawItems.length > 0 ? rawItems : ["NEW SEASON", "FREE SHIPPING", "WORLDWIDE DELIVERY"];
+    rawItems.length > 0
+      ? rawItems
+      : [
+          localized(locale, "NEW SEASON", "تشكيلة الموسم الجديد"),
+          localized(locale, "FREE SHIPPING", "شحن مجاني"),
+          localized(locale, "WORLDWIDE DELIVERY", "توصيل لكل العالم"),
+        ];
 
   const separatorKey = (s.separator as string) ?? "dot";
   const separator = SEPARATORS[separatorKey] ?? "•";

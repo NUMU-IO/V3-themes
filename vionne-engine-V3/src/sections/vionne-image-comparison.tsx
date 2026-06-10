@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useResolvedSettings } from "@numueg/theme-sdk";
-import { asImageUrl, asString, type SectionRenderProps } from "./_shared";
+import { useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 const ASPECT_CLASS: Record<string, string> = {
   "16-9": "aspect-[16/9]",
@@ -12,6 +12,7 @@ const ASPECT_CLASS: Record<string, string> = {
 };
 
 const VionneImageComparison = ({ instance }: SectionRenderProps) => {
+  const locale = useLocale();
   const s = useResolvedSettings(instance);
   const eyebrow = asString(s.eyebrow);
   const title = asString(s.title);
@@ -21,8 +22,10 @@ const VionneImageComparison = ({ instance }: SectionRenderProps) => {
   // (raw `s.before_image` rendered `[object Object]` → looked like the
   // upload "didn't save").
   const beforeImage = asImageUrl(s.before_image);
+  const beforeImageTransform = asImageTransform(s.before_image);
   const beforeLabel = asString(s.before_label);
   const afterImage = asImageUrl(s.after_image);
+  const afterImageTransform = asImageTransform(s.after_image);
   const afterLabel = asString(s.after_label);
   const initialPos = Math.max(5, Math.min(95, Number(s.initial_position ?? 50)));
   const animateToCenter = s.animate_to_center !== false;
@@ -207,26 +210,26 @@ const VionneImageComparison = ({ instance }: SectionRenderProps) => {
               <button
                 type="button"
                 className="group relative flex flex-col items-center justify-center gap-3 bg-[var(--vn-band)] hover:bg-[color-mix(in_srgb,var(--vn-band)_80%,var(--vn-ink)_8%)] transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--vn-ink)] focus-visible:ring-inset"
-                aria-label="Upload Before image"
+                aria-label={localized(locale, "Upload Before image", "ارفعي صورة قبل")}
               >
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="text-[var(--vn-muted)] opacity-60 group-hover:opacity-100 transition-opacity">
                   <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
                   <circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
                   <path d="M21 15l-5-5L5 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                <span className="vn-eyebrow text-[var(--vn-muted)]">Before</span>
+                <span className="vn-eyebrow text-[var(--vn-muted)]">{localized(locale, "Before", "قبل")}</span>
               </button>
               <button
                 type="button"
                 className="group relative flex flex-col items-center justify-center gap-3 bg-[color-mix(in_srgb,var(--vn-band)_85%,var(--vn-ink)_5%)] hover:bg-[color-mix(in_srgb,var(--vn-band)_70%,var(--vn-ink)_12%)] transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--vn-ink)] focus-visible:ring-inset"
-                aria-label="Upload After image"
+                aria-label={localized(locale, "Upload After image", "ارفعي صورة بعد")}
               >
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="text-[var(--vn-muted)] opacity-60 group-hover:opacity-100 transition-opacity">
                   <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
                   <circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" strokeWidth="1.5" />
                   <path d="M21 15l-5-5L5 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                <span className="vn-eyebrow text-[var(--vn-muted)]">After</span>
+                <span className="vn-eyebrow text-[var(--vn-muted)]">{localized(locale, "After", "بعد")}</span>
               </button>
             </div>
 
@@ -265,6 +268,7 @@ const VionneImageComparison = ({ instance }: SectionRenderProps) => {
               src={afterImage}
               alt={afterLabel || ""}
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+              style={applyImageTransform(afterImageTransform, "cover")}
               draggable={false}
             />
           ) : (
@@ -280,6 +284,7 @@ const VionneImageComparison = ({ instance }: SectionRenderProps) => {
                 src={beforeImage}
                 alt={beforeLabel || ""}
                 className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                style={applyImageTransform(beforeImageTransform, "cover")}
                 draggable={false}
               />
             </div>

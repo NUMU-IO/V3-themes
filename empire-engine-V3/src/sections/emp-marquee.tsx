@@ -1,14 +1,15 @@
 "use client";
 
-import { useResolvedSettings } from "@numueg/theme-sdk";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const EmpMarquee = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
+  const locale = useLocale();
   const text =
     asString(s.text) ||
-    "PREMIUM QUALITY • EMPIRE • BOLD DESIGN • EXCLUSIVE DROPS •";
+    localized(locale, "PREMIUM QUALITY • EMPIRE • BOLD DESIGN • EXCLUSIVE DROPS •", "جودة فاخرة • الإمبراطورية • تصميم جريء • إصدارات حصرية •");
   // Clamp to the schema range (1–10) so a stray value can't render hundreds
   // of spans.
   const repeatCount = Math.max(1, Math.min(10, asNumber(s.repeat_count, 2)));

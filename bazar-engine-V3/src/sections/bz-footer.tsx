@@ -3,12 +3,13 @@
 import { useState } from "react";
 import {
   Link,
+  useLocale,
   useResolvedSettings,
   useShop,
   useThemeSettings,
 } from "@numueg/theme-sdk";
 import { Facebook, MessageCircle, Music2, Send, Twitter } from "lucide-react";
-import { asString, readBlocks, type SectionRenderProps } from "./_shared";
+import { asString, localized, readBlocks, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 interface FooterLink {
@@ -21,21 +22,21 @@ interface FooterColumn {
   links: FooterLink[];
 }
 
-const DEFAULT_COLUMNS: FooterColumn[] = [
+const defaultColumns = (locale: string | undefined): FooterColumn[] => [
   {
-    title: "SHOP",
+    title: localized(locale, "SHOP", "تسوّق"),
     links: [
-      { label: "All Products", href: "/products" },
-      { label: "New Arrivals", href: "/products?sort=newest" },
-      { label: "Search", href: "/search" },
+      { label: localized(locale, "All Products", "كل المنتجات"), href: "/products" },
+      { label: localized(locale, "New Arrivals", "وصل حديثًا"), href: "/products?sort=newest" },
+      { label: localized(locale, "Search", "بحث"), href: "/search" },
     ],
   },
   {
-    title: "HELP",
+    title: localized(locale, "HELP", "المساعدة"),
     links: [
-      { label: "Shipping", href: "/shipping" },
-      { label: "Returns", href: "/returns" },
-      { label: "Contact", href: "/contact" },
+      { label: localized(locale, "Shipping", "الشحن"), href: "/shipping" },
+      { label: localized(locale, "Returns", "الإرجاع"), href: "/returns" },
+      { label: localized(locale, "Contact", "تواصل معنا"), href: "/contact" },
     ],
   },
 ];
@@ -82,6 +83,7 @@ export default function BzFooter({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const shop = useShop();
   const themeSettings = useThemeSettings();
+  const locale = useLocale();
 
   const brandName =
     asString(s.brand_name) ||
@@ -89,16 +91,24 @@ export default function BzFooter({ instance, sectionId }: SectionRenderProps) {
     shop?.name ||
     "BAZAR";
 
-  const newsletterTitle = asString(s.newsletter_title) || "JOIN THE BAZAR";
+  const newsletterTitle = asString(s.newsletter_title) || localized(locale, "JOIN THE BAZAR", "انضم لبازار");
   const newsletterCopy =
     asString(s.newsletter_copy) ||
-    "Early access to limited drops, exclusive offers, and the seasonal edit.";
-  const newsletterButton = asString(s.newsletter_button_label) || "SUBSCRIBE";
+    localized(
+      locale,
+      "Early access to limited drops, exclusive offers, and the seasonal edit.",
+      "وصول مبكر للإصدارات المحدودة والعروض الحصرية وتشكيلة الموسم.",
+    );
+  const newsletterButton = asString(s.newsletter_button_label) || localized(locale, "SUBSCRIBE", "اشترك");
   const newsletterButtonSuccess =
-    asString(s.newsletter_button_success) || "SUBSCRIBED";
+    asString(s.newsletter_button_success) || localized(locale, "SUBSCRIBED", "تم الاشتراك");
   const footerText =
     asString(s.footer_text) ||
-    "Handpicked essentials, made in Egypt. Bold design, honest prices.";
+    localized(
+      locale,
+      "Handpicked essentials, made in Egypt. Bold design, honest prices.",
+      "أساسيات مختارة بعناية، صناعة مصرية. تصميم جريء وأسعار صادقة.",
+    );
 
   const configuredColumns: FooterColumn[] = readBlocks(instance, "column")
     .map((r) => {
@@ -113,7 +123,7 @@ export default function BzFooter({ instance, sectionId }: SectionRenderProps) {
     .filter((c) => c.title && c.links.length > 0);
 
   const columns =
-    configuredColumns.length > 0 ? configuredColumns : DEFAULT_COLUMNS;
+    configuredColumns.length > 0 ? configuredColumns : defaultColumns(locale);
 
   const socialLinks =
     (shop?.social_links as Record<string, string> | undefined) ?? {};
@@ -188,13 +198,13 @@ export default function BzFooter({ instance, sectionId }: SectionRenderProps) {
             noValidate
           >
             <label htmlFor="bz-footer-email" className="sr-only">
-              Email address
+              {localized(locale, "Email address", "البريد الإلكتروني")}
             </label>
             <input
               id="bz-footer-email"
               type="email"
               required
-              placeholder="Your email"
+              placeholder={localized(locale, "Your email", "بريدك الإلكتروني")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
@@ -277,10 +287,11 @@ export default function BzFooter({ instance, sectionId }: SectionRenderProps) {
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-3 text-center text-xs opacity-30">
           <p>
-            © {new Date().getFullYear()} {brandName}. All rights reserved.
+            © {new Date().getFullYear()} {brandName}.{" "}
+            {localized(locale, "All rights reserved.", "كل الحقوق محفوظة.")}
           </p>
           <span className="hidden md:inline">·</span>
-          <p>Powered by NUMU</p>
+          <p>{localized(locale, "Powered by NUMU", "مدعوم بواسطة NUMU")}</p>
         </div>
       </div>
     </footer>

@@ -1,9 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Luxury Minimal products-listing (PLP) section.
@@ -21,6 +21,7 @@ export default function LuxProductsPageSection({ instance }: SectionRenderProps)
   const colsDesktop = asNumber(s.columns_desktop, 4);
   const colsMobile = asNumber(s.columns_mobile, 2);
   const showViewToggle = s.show_view_toggle ?? false;
+  const locale = useLocale();
 
   const { products, loading } = useProducts();
 
@@ -79,15 +80,15 @@ export default function LuxProductsPageSection({ instance }: SectionRenderProps)
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-8">
           <Link to="/" className="hover:text-foreground transition-colors">
-            الرئيسية
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <span>/</span>
-          <span className="text-foreground">{category ?? "المتجر"}</span>
+          <span className="text-foreground">{category ?? localized(locale, "Shop", "المتجر")}</span>
         </div>
 
         {/* Title */}
         <h1 className="lux-heading text-2xl md:text-3xl mb-10 text-foreground">
-          {category ?? "جميع المنتجات"}
+          {category ?? localized(locale, "All Products", "جميع المنتجات")}
         </h1>
 
         {/* Search */}
@@ -95,7 +96,7 @@ export default function LuxProductsPageSection({ instance }: SectionRenderProps)
           <Search size={16} className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
-            placeholder="ابحث عن المنتجات"
+            placeholder={localized(locale, "Search products", "ابحث عن المنتجات")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full h-10 pe-9 ps-4 text-xs lux-input"
@@ -126,7 +127,7 @@ export default function LuxProductsPageSection({ instance }: SectionRenderProps)
               data-testid="storefront-products-category"
               data-category-id="all"
             >
-              الكل
+              {localized(locale, "All", "الكل")}
             </button>
             {categories.map((cat) => (
               <button
@@ -146,7 +147,7 @@ export default function LuxProductsPageSection({ instance }: SectionRenderProps)
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-6" data-testid="storefront-products-toolbar">
           <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">
-            {filtered.length} منتج
+            {filtered.length} {localized(locale, "products", "منتج")}
           </span>
           <div className="flex items-center gap-4">
             <select
@@ -156,10 +157,10 @@ export default function LuxProductsPageSection({ instance }: SectionRenderProps)
               className="text-[10px] uppercase tracking-[0.1em] px-3 py-2 lux-input cursor-pointer"
               data-testid="storefront-products-sort"
             >
-              <option value="default">ترتيب حسب</option>
-              <option value="price-asc">السعر: من الأقل</option>
-              <option value="price-desc">السعر: من الأعلى</option>
-              <option value="name">الاسم</option>
+              <option value="default">{localized(locale, "Sort by", "ترتيب حسب")}</option>
+              <option value="price-asc">{localized(locale, "Price: Low to High", "السعر: من الأقل")}</option>
+              <option value="price-desc">{localized(locale, "Price: High to Low", "السعر: من الأعلى")}</option>
+              <option value="name">{localized(locale, "Name", "الاسم")}</option>
             </select>
             {showViewToggle && (
               <div className="flex items-center gap-1">
@@ -200,8 +201,8 @@ export default function LuxProductsPageSection({ instance }: SectionRenderProps)
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-12 h-px bg-border mx-auto mb-6" />
-            <p className="text-sm mb-2 text-foreground">لا توجد نتائج</p>
-            <p className="text-xs text-muted-foreground">حاول تعديل البحث أو الفلتر</p>
+            <p className="text-sm mb-2 text-foreground">{localized(locale, "No results", "لا توجد نتائج")}</p>
+            <p className="text-xs text-muted-foreground">{localized(locale, "Try adjusting your search or filter", "حاول تعديل البحث أو الفلتر")}</p>
           </div>
         ) : (
           <motion.div
@@ -222,7 +223,7 @@ export default function LuxProductsPageSection({ instance }: SectionRenderProps)
             <AnimatePresence>
               {filtered.map((product) => (
                 <motion.div key={product.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <ProductCard product={product} list={viewMode === "list"} />
+                  <ProductCard product={product} list={viewMode === "list"} locale={locale} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -234,7 +235,7 @@ export default function LuxProductsPageSection({ instance }: SectionRenderProps)
 }
 
 /** Inline luxury-minimal product card. */
-function ProductCard({ product, list }: { product: Product; list?: boolean }) {
+function ProductCard({ product, list, locale }: { product: Product; list?: boolean; locale?: string }) {
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -275,13 +276,13 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         )}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-3 start-3 text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 bg-foreground text-background">
-            تخفيض
+            {localized(locale, "Sale", "تخفيض")}
           </span>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-white/65 flex items-center justify-center">
             <span className="text-[10px] uppercase tracking-[0.2em] text-foreground bg-white px-3 py-1.5 border border-border">
-              نفذت الكمية
+              {localized(locale, "Sold out", "نفذت الكمية")}
             </span>
           </div>
         )}

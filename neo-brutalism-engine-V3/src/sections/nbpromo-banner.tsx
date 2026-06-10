@@ -1,16 +1,18 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const NBPromoBanner = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const badge = asString(s.badge_text, "عرض محدود 🔥");
-  const headline = asString(s.headline, "خصم ٢٥٪ على كل الإكسسوارات");
-  const subtitle = asString(s.subtitle, "العرض ساري لنهاية الشهر. متفوتش الفرصة!");
-  const ctaText = asString(s.cta_text, "تسوق الإكسسوارات");
+  const locale = useLocale();
+  const badge = asString(s.badge_text) || localized(locale, "Limited offer 🔥", "عرض محدود 🔥");
+  const headline = asString(s.headline) || localized(locale, "25% off all accessories", "خصم ٢٥٪ على كل الإكسسوارات");
+  const subtitle = asString(s.subtitle) || localized(locale, "Offer runs until the end of the month. Don't miss out!", "العرض ساري لنهاية الشهر. متفوتش الفرصة!");
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop accessories", "تسوق الإكسسوارات");
   const ctaLink = asString(s.cta_link, "/products?category=accessories");
   const imageUrl = s.image_url as string | undefined;
+  const imageTransform = asImageTransform(s.image_url);
   const diagonalText = s.diagonal_text as string | undefined;
 
   return (
@@ -43,6 +45,7 @@ const NBPromoBanner = ({ instance }: SectionRenderProps) => {
                   src={imageUrl}
                   alt=""
                   className="w-full h-full object-cover"
+                  style={applyImageTransform(imageTransform, "cover")}
                 />
               </div>
             )}

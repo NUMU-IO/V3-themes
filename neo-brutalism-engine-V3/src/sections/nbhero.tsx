@@ -1,25 +1,31 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const NBHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const badge = asString(s.badge_text, "🎉 خصومات تصل لـ ٢٥٪");
-  const headline = asString(s.headline, "اكتشف أحلى المنتجات بأفضل الأسعار");
-  const subtitle = asString(
-    s.subtitle,
+  const locale = useLocale();
+  const badge = asString(s.badge_text) || localized(locale, "🎉 Up to 25% off", "🎉 خصومات تصل لـ ٢٥٪");
+  const headline = asString(s.headline) || localized(locale, "Discover the best products at the best prices", "اكتشف أحلى المنتجات بأفضل الأسعار");
+  const subtitle = asString(s.subtitle) || localized(
+    locale,
+    "A curated selection of clothing and accessories, delivered across Egypt. High quality at fair prices.",
     "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.",
   );
-  const ctaText = asString(s.cta_text, "تسوق الآن");
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop now", "تسوق الآن");
   const ctaLink = asString(s.cta_link, "/products");
-  const secondaryText = asString(s.secondary_text, "الملابس الجديدة");
+  const secondaryText = asString(s.secondary_text) || localized(locale, "New clothing", "الملابس الجديدة");
   const secondaryLink = asString(s.secondary_link, "/products?category=clothing");
   const img1 = s.hero_image_url as string | undefined;
   const img2 = s.hero_image_2 as string | undefined;
   const img3 = s.hero_image_3 as string | undefined;
   const img4 = s.hero_image_4 as string | undefined;
+  const img1Transform = asImageTransform(s.hero_image_url);
+  const img2Transform = asImageTransform(s.hero_image_2);
+  const img3Transform = asImageTransform(s.hero_image_3);
+  const img4Transform = asImageTransform(s.hero_image_4);
 
   return (
     <section className="py-12 md:py-20">
@@ -71,6 +77,7 @@ const NBHero = ({ instance }: SectionRenderProps) => {
                   src={img1}
                   alt=""
                   className="w-full h-full object-contain"
+                  style={applyImageTransform(img1Transform, "contain")}
                 />
               </div>
             ) : (img1 || img2 || img3 || img4) ? (
@@ -82,6 +89,7 @@ const NBHero = ({ instance }: SectionRenderProps) => {
                         src={img1}
                         alt=""
                         className="w-full h-full object-contain"
+                        style={applyImageTransform(img1Transform, "contain")}
                       />
                     </div>
                   )}
@@ -91,6 +99,7 @@ const NBHero = ({ instance }: SectionRenderProps) => {
                         src={img2}
                         alt=""
                         className="w-full h-full object-contain"
+                        style={applyImageTransform(img2Transform, "contain")}
                       />
                     </div>
                   )}
@@ -102,6 +111,7 @@ const NBHero = ({ instance }: SectionRenderProps) => {
                         src={img3}
                         alt=""
                         className="w-full h-full object-contain"
+                        style={applyImageTransform(img3Transform, "contain")}
                       />
                     </div>
                   )}
@@ -111,6 +121,7 @@ const NBHero = ({ instance }: SectionRenderProps) => {
                         src={img4}
                         alt=""
                         className="w-full h-full object-contain"
+                        style={applyImageTransform(img4Transform, "contain")}
                       />
                     </div>
                   )}

@@ -1,12 +1,13 @@
 "use client";
-import { Link, useCollections } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 const RsCategories = ({ instance }: SectionRenderProps) => {
   const { collections } = useCollections();
+  const locale = useLocale();
   const s = instance.settings ?? {};
-  const label = asString(s.label, "CATEGORIES");
-  const title = asString(s.title, "Shop by category");
+  const label = asString(s.label) || localized(locale, "CATEGORIES", "الأقسام");
+  const title = asString(s.title) || localized(locale, "Shop by category", "تسوّق حسب القسم");
 
   if (collections.length === 0) return null;
 

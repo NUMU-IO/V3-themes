@@ -2,7 +2,19 @@
   "type": "rs-marquee",
   "name": "Scrolling Banner (Rabbitsocks)",
   "settings": [
-    { "type": "header", "content": "Motion" },
-    { "id": "repeat", "type": "range", "label": "Repeat count", "label_ar": "عدد التكرار", "default": 3, "min": 1, "max": 6, "step": 1 }
+    {
+      "type": "header",
+      "content": "Motion"
+    },
+    {
+      "id": "repeat",
+      "type": "range",
+      "label": "Repeat count",
+      "label_ar": "عدد التكرار",
+      "default": 3,
+      "min": 1,
+      "max": 6,
+      "step": 1
+    }
   ]
 }

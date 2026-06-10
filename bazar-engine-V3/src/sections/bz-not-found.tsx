@@ -1,8 +1,8 @@
 "use client";
 
-import { Link, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ShoppingBag } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -15,12 +15,13 @@ export default function BzNotFound({
   sectionId,
 }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
+  const locale = useLocale();
   const status = asString(s.status_label) || "404";
-  const headline = asString(s.headline) || "LOST IN THE BAZAR";
+  const headline = asString(s.headline) || localized(locale, "LOST IN THE BAZAR", "تهت في بازار");
   const subhead =
     asString(s.subhead) ||
-    "The page you're after wandered off. Let's get you back to the good stuff.";
-  const ctaLabel = asString(s.cta_label) || "BACK TO SHOP";
+    localized(locale, "The page you're after wandered off. Let's get you back to the good stuff.", "الصفحة اللي بتدوّر عليها مش موجودة. تعالى نرجّعك للحاجات الحلوة.");
+  const ctaLabel = asString(s.cta_label) || localized(locale, "BACK TO SHOP", "رجوع للتسوّق");
   const ctaHref = asString(s.cta_href) || "/products";
 
   return (

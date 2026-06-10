@@ -117,7 +117,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "kick-game-v3", name: "Kick game (V3)", version: "0.2.0" },
+  manifest: { id: "kick-game-v3", name: "Kick game (V3)", version: "0.3.5" },
   mount,
 };
 export default v3Handle;

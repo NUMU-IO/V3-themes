@@ -1,14 +1,16 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { Link, useLocale } from "@numueg/theme-sdk";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const NBAbout = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const eyebrow = asString(s.eyebrow, "ABOUT US");
-  const headline = asString(s.headline, "Bold. Raw. Unapologetic.");
+  const locale = useLocale();
+  const eyebrow = asString(s.eyebrow) || localized(locale, "ABOUT US", "عن المتجر");
+  const headline = asString(s.headline) || localized(locale, "Bold. Raw. Unapologetic.", "جريء. خام. بلا اعتذار.");
   const quote = asString(s.quote, "");
   const description = asString(s.description, "");
   const image = asString(s.image, "");
+  const imageTransform = asImageTransform(s.image);
 
   const ctaText = asString(s.cta_text, "");
   const ctaLink = asString(s.cta_link, "/products");
@@ -61,7 +63,7 @@ const NBAbout = ({ instance }: SectionRenderProps) => {
           </div>
           {image ? (
             <div className="relative aspect-[4/5] overflow-hidden rounded-lg nb-img-frame bg-muted">
-              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" style={applyImageTransform(imageTransform, "cover")} />
             </div>
           ) : null}
         </div>

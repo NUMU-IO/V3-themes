@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Editorial newsletter — faithful port of V2
@@ -13,10 +14,13 @@ import { asString, type SectionRenderProps } from "./_shared";
  */
 export default function EdNewsletter({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "اشترك في نشرتنا";
-  const subtitle = asString(s.subtitle) || "اعرف أول واحد عن العروض والمنتجات الجديدة";
-  const buttonText = asString(s.button_text) || "اشترك";
-  const placeholder = asString(s.placeholder) || "البريد الإلكتروني";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Subscribe to our newsletter", "اشترك في نشرتنا");
+  const subtitle =
+    asString(s.subtitle) ||
+    localized(locale, "Be the first to hear about new products and exclusive offers", "اعرف أول واحد عن العروض والمنتجات الجديدة");
+  const buttonText = asString(s.button_text) || localized(locale, "Subscribe", "اشترك");
+  const placeholder = asString(s.placeholder) || localized(locale, "Your email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -53,7 +57,7 @@ export default function EdNewsletter({ instance }: SectionRenderProps) {
             onClick={handleSubmit}
             className="px-6 h-12 bg-white text-[hsl(var(--ed-dark))] font-bold text-xs uppercase tracking-[0.15em] hover:bg-white/90 transition-colors"
           >
-            {submitted ? "تم الاشتراك" : buttonText}
+            {submitted ? localized(locale, "Subscribed", "تم الاشتراك") : buttonText}
           </button>
         </div>
       </div>

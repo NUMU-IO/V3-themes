@@ -3,16 +3,49 @@
   "name": "Empire Newsletter",
   "name_ar": "بازار نشرة",
   "settings": [
-    { "type": "text", "id": "title", "label": "Title", "label_ar": "العنوان", "default": "JOIN THE CIRCLE" },
-    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "label_ar": "العنوان الفرعي", "default": "Early access to limited drops and exclusive content." },
-    { "type": "text", "id": "button_text", "label": "Button Text", "label_ar": "نص الزر", "default": "SUBSCRIBE" },
-    { "type": "text", "id": "placeholder", "label": "Input Placeholder", "label_ar": "نص الإدخال", "default": "YOUR EMAIL" }
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "label_ar": "العنوان الفرعي",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "label_ar": "نص الزر",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Input Placeholder",
+      "label_ar": "نص الإدخال",
+      "default": ""
+    }
   ],
   "presets": [
     {
       "name": "Empire Newsletter",
-      "locales": { "en": { "name": "Empire Newsletter" }, "ar": { "name": "بازار نشرة" } },
-      "settings": { "title": "JOIN THE CIRCLE" }
+      "locales": {
+        "en": {
+          "name": "Empire Newsletter"
+        },
+        "ar": {
+          "name": "بازار نشرة"
+        }
+      },
+      "settings": {
+        "title": ""
+      }
     }
   ]
 }

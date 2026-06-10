@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Tech Wave promo banner — faithful port of the V2 in-tree
@@ -17,12 +17,14 @@ import { asString, type SectionRenderProps } from "./_shared";
  */
 const TechWavePromoBanner = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
   const badge = asString(s.badge_text);
-  const headline = asString(s.headline) || "عرض خاص";
-  const subtitle = asString(s.subtitle) || "تسوق أحدث تشكيلاتنا";
-  const ctaText = asString(s.cta_text) || "تسوق الآن";
+  const headline = asString(s.headline) || localized(locale, "Special offer", "عرض خاص");
+  const subtitle = asString(s.subtitle) || localized(locale, "Shop our latest collection", "تسوق أحدث تشكيلاتنا");
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
   const imageUrl = asString(s.image_url);
+  const imageTransform = asImageTransform(s.image_url);
 
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(!imageUrl);
@@ -71,6 +73,7 @@ const TechWavePromoBanner = ({ instance }: SectionRenderProps) => {
                     className={`w-full h-full object-cover transition-opacity duration-300 ${
                       imageLoading ? "opacity-0" : "opacity-100"
                     }`}
+                    style={applyImageTransform(imageTransform, "cover")}
                     onLoad={() => setImageLoading(false)}
                     onError={() => {
                       setImageLoading(false);

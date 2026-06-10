@@ -1,19 +1,25 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const BoutiqueHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const headline = asString(s.headline) || "اكتشفي أناقتك";
+  const headline = asString(s.headline) || localized(locale, "Discover Your Elegance", "اكتشفي أناقتك");
   const subtitle =
     asString(s.subtitle) ||
-    "تشكيلة مميزة من الأزياء والإكسسوارات بتصميم راقٍ وجودة عالية";
-  const ctaText = asString(s.cta_text) || "تسوقي الآن";
+    localized(
+      locale,
+      "A curated edit of fashion and accessories — refined design and beautiful quality.",
+      "تشكيلة مميزة من الأزياء والإكسسوارات بتصميم راقٍ وجودة عالية",
+    );
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوقي الآن");
   const ctaLink = asString(s.cta_link) || "/products";
   const heroImageUrl = asString(s.hero_image_url) || undefined;
+  const heroImageTransform = asImageTransform(s.hero_image_url);
 
   return (
     <section
@@ -69,6 +75,7 @@ const BoutiqueHero = ({ instance }: SectionRenderProps) => {
                   src={heroImageUrl}
                   alt=""
                   className="w-full h-auto object-contain max-h-[65vh]"
+                  style={applyImageTransform(heroImageTransform, "contain")}
                 />
                 {/* Soft overlay tint */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none" />

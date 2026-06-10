@@ -1,6 +1,7 @@
 "use client";
 import { Star } from "lucide-react";
-import { asString, asNumber, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
 
 interface TestimonialReview {
   name: string;
@@ -29,7 +30,8 @@ function getReviewsFromSettings(s: Record<string, unknown>): TestimonialReview[]
 
 const KGTestimonials = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "WHAT THEY SAY";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "WHAT THEY SAY", "آراء العملاء");
   const reviews = getReviewsFromSettings(s);
 
   if (reviews.length === 0) return null;

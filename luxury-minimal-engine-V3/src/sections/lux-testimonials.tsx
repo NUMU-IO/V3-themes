@@ -1,6 +1,7 @@
 "use client";
 import { Star } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Luxury Minimal testimonials — faithful port of the V2 LuxTestimonials
@@ -36,7 +37,8 @@ function getReviewsFromSettings(s: Record<string, unknown>): TestimonialReview[]
 
 export default function LuxTestimonials({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "رأي عملاءنا";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "What Our Clients Say", "رأي عملاءنا");
   const reviews = getReviewsFromSettings(s);
 
   if (reviews.length === 0) return null;

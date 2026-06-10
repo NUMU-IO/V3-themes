@@ -1,16 +1,17 @@
 "use client";
-import { Link, Money, useProducts } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 const ElegantFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
   const isLoading = false;
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
-  const title = asString(s.title) || "وصل حديثاً";
+  const title = asString(s.title) || localized(locale, "New Arrivals", "وصل حديثاً");
   const subtitle = asString(s.subtitle);
-  const viewAllText = asString(s.view_all_text) || "عرض الكل";
+  const viewAllText = asString(s.view_all_text) || localized(locale, "View All", "عرض الكل");
   const viewAllLink = asString(s.view_all_link) || "/products";
   const count = asNumber(s.product_count, 4);
   const cols = asNumber(s.columns, 4);
@@ -83,7 +84,7 @@ const ElegantFeaturedCollection = ({ instance }: SectionRenderProps) => {
         ) : displayProducts.length === 0 ? (
           /* Empty state */
           <p className="text-sm text-muted-foreground text-center py-14">
-            لا توجد منتجات بعد
+            {localized(locale, "No products yet", "لا توجد منتجات بعد")}
           </p>
         ) : (
           /* Product grid */

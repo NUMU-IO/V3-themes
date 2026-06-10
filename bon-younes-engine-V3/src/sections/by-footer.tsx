@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Link, useNavigation, useResolvedSettings, useShop, useThemeSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings } from "@numueg/theme-sdk";
 import {
   Facebook,
   Instagram,
@@ -13,6 +13,7 @@ import {
 import {
   asBool,
   asString,
+  localized,
   resolveBlockNodes,
   useBlockResolveContext,
   type SectionRenderProps,
@@ -40,6 +41,7 @@ export default function ByFooter({ instance, sectionId }: SectionRenderProps) {
   const blkCtx = useBlockResolveContext();
   const shop = useShop();
   const themeSettings = useThemeSettings();
+  const locale = useLocale();
 
   // brand_name keeps a real-store fallback (shop name / global setting) — that's
   // a live value, not baked marketing copy. Every other footer string is empty
@@ -56,9 +58,9 @@ export default function ByFooter({ instance, sectionId }: SectionRenderProps) {
   const showNewsletter = asBool(s.show_newsletter, true);
   const newsletterTitle = asString(s.newsletter_title);
   const newsletterCopy = asString(s.newsletter_copy);
-  const newsletterButton = asString(s.newsletter_button_label) || "Subscribe";
+  const newsletterButton = asString(s.newsletter_button_label) || localized(locale, "Subscribe", "اشترك");
   const newsletterButtonSuccess =
-    asString(s.newsletter_button_success) || "Subscribed";
+    asString(s.newsletter_button_success) || localized(locale, "Subscribed", "تم الاشتراك");
   const copyrightText = asString(s.copyright_text);
   const creditText = asString(s.credit_text);
   const creditLinkLabel = asString(s.credit_link_label);

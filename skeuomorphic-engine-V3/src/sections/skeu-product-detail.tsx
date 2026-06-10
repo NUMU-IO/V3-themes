@@ -7,11 +7,12 @@ import {
   useProductOptional,
   useVariantSelection,
   useRelatedProducts,
+  useLocale,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Skeuomorphic product-detail section.
@@ -39,6 +40,7 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
   const relatedCount = asNumber(s.related_products_count, 4);
 
   const product = useProductOptional();
+  const locale = useLocale();
 
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
@@ -56,15 +58,15 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
     return (
       <div className="bg-background min-h-[50vh] flex items-center justify-center px-4 py-20 text-center">
         <div className="max-w-sm">
-          <span className="vn-eyebrow block mb-3 text-[var(--vn-muted)]">المنتج</span>
+          <span className="vn-eyebrow block mb-3 text-[var(--vn-muted)]">{localized(locale, "Product", "المنتج")}</span>
           <h1 className="vn-heading text-2xl md:text-3xl text-[var(--vn-ink)] mb-3">
-            لا يوجد منتج لعرضه بعد
+            {localized(locale, "No product to show yet", "لا يوجد منتج لعرضه بعد")}
           </h1>
           <p className="text-sm text-[var(--vn-muted)] mb-7 leading-relaxed">
-            افتح منتجاً من المتجر لعرض تفاصيله هنا.
+            {localized(locale, "Open a product from the store to see its details here.", "افتح منتجاً من المتجر لعرض تفاصيله هنا.")}
           </p>
           <Link to="/products" className="vn-btn vn-btn-filled inline-flex">
-            تصفّح المنتجات
+            {localized(locale, "Browse products", "تصفّح المنتجات")}
           </Link>
         </div>
       </div>
@@ -100,11 +102,11 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 vn-label text-[10px] text-[var(--vn-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            الرئيسية
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <Link to="/products" className="hover:text-[var(--vn-ink)] transition-colors">
-            المتجر
+            {localized(locale, "Store", "المتجر")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <span className="text-[var(--vn-ink)] line-clamp-1 normal-case tracking-normal">
@@ -144,7 +146,7 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
                   <button
                     type="button"
                     key={img.id ?? i}
-                    aria-label={`صورة ${i + 1}`}
+                    aria-label={`${localized(locale, "Image", "صورة")} ${i + 1}`}
                     onClick={() => setActiveImage(i)}
                     className={
                       "w-20 h-24 shrink-0 overflow-hidden rounded-lg transition-all skeu-img-frame " +
@@ -189,7 +191,7 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
             {showRating && (
               <div className="flex items-center gap-1 mb-4 text-[var(--vn-muted)]">
                 <span className="text-sm">★★★★★</span>
-                <span className="text-xs">(تقييمات)</span>
+                <span className="text-xs">{localized(locale, "(reviews)", "(تقييمات)")}</span>
               </div>
             )}
 
@@ -227,9 +229,9 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
                 <span className={inStock ? "text-[var(--vn-muted)]" : "text-[var(--vn-sale)]"}>
                   {inStock
                     ? typeof stockQty === "number" && stockQty > 0 && stockQty <= 5
-                      ? `باقي ${stockQty} فقط`
-                      : "متوفر"
-                    : "نفذت الكمية"}
+                      ? localized(locale, `Only ${stockQty} left`, `باقي ${stockQty} فقط`)
+                      : localized(locale, "In stock", "متوفر")
+                    : localized(locale, "Sold out", "نفذت الكمية")}
                 </span>
               </div>
             )}
@@ -256,7 +258,7 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
                           type="button"
                           key={value}
                           onClick={() => vs.select(opt.name, value)}
-                          aria-label={soldOut ? `${value} — نفذت` : value}
+                          aria-label={soldOut ? `${value} — ${localized(locale, "sold out", "نفذت")}` : value}
                           className={
                             "skeu-chip rounded-lg transition-all " +
                             (isColor
@@ -289,7 +291,7 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
               <div className="flex items-center skeu-inset rounded-xl">
                 <button
                   type="button"
-                  aria-label="إنقاص الكمية"
+                  aria-label={localized(locale, "Decrease quantity", "إنقاص الكمية")}
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                   className="p-3 hover:opacity-70 transition-opacity"
                 >
@@ -303,7 +305,7 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
                 </span>
                 <button
                   type="button"
-                  aria-label="زيادة الكمية"
+                  aria-label={localized(locale, "Increase quantity", "زيادة الكمية")}
                   onClick={() => setQuantity((q) => q + 1)}
                   className="p-3 hover:opacity-70 transition-opacity"
                 >
@@ -318,13 +320,13 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
                 className="vn-btn vn-btn-filled flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                 label={
                   <>
-                    <ShoppingBag size={16} /> أضف للسلة
+                    <ShoppingBag size={16} /> {localized(locale, "Add to cart", "أضف للسلة")}
                   </>
                 }
-                loadingLabel="جارٍ الإضافة…"
+                loadingLabel={localized(locale, "Adding…", "جارٍ الإضافة…")}
                 soldOutLabel={
                   <>
-                    <ShoppingBag size={16} /> نفذت الكمية
+                    <ShoppingBag size={16} /> {localized(locale, "Sold out", "نفذت الكمية")}
                   </>
                 }
                 data-testid="storefront-add-to-cart"
@@ -335,9 +337,9 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
             {showGuarantees && (
               <div className="mt-8 pt-6 border-t border-[var(--vn-border)] flex flex-wrap items-center justify-between gap-4">
                 {[
-                  { icon: Truck, label: "شحن سريع", desc: "٣-٥ أيام" },
-                  { icon: RotateCcw, label: "استرجاع سهل", desc: "١٤ يوم" },
-                  { icon: ShieldCheck, label: "أصلي", desc: "١٠٠٪ مضمون" },
+                  { icon: Truck, label: localized(locale, "Fast shipping", "شحن سريع"), desc: localized(locale, "3–5 days", "٣-٥ أيام") },
+                  { icon: RotateCcw, label: localized(locale, "Easy returns", "استرجاع سهل"), desc: localized(locale, "14 days", "١٤ يوم") },
+                  { icon: ShieldCheck, label: localized(locale, "Authentic", "أصلي"), desc: localized(locale, "100% guaranteed", "١٠٠٪ مضمون") },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2 text-[var(--vn-muted)]">
                     <item.icon size={15} className="shrink-0 text-primary" />
@@ -361,7 +363,7 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
             className="mt-16 pt-10 border-t border-[var(--vn-border)]"
             data-testid="storefront-related-products"
           >
-            <h2 className="vn-eyebrow text-[var(--vn-muted)] mb-6">قد يعجبك أيضاً</h2>
+            <h2 className="vn-eyebrow text-[var(--vn-muted)] mb-6">{localized(locale, "You may also like", "قد يعجبك أيضاً")}</h2>
             <div
               className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
               data-testid="storefront-related-products-grid"

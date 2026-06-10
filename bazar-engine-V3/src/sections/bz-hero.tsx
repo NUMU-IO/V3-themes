@@ -1,24 +1,29 @@
 "use client";
 
 import { useRef } from "react";
-import { Link, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
 import {
+  applyImageTransform,
+  asImageTransform,
   asImageUrl,
   asString,
+  localized,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
+  const locale = useLocale();
 
   const letter = asString(s.letter);
-  const headline = asString(s.headline) || "BAZAR DREAMS";
-  const subline = asString(s.subline) || "COME TO LIFE";
+  const headline = asString(s.headline) || localized(locale, "BAZAR DREAMS", "أحلام بازار");
+  const subline = asString(s.subline) || localized(locale, "COME TO LIFE", "بتتحقق");
   const tagline =
-    asString(s.tagline) || "Handpicked summer essentials, made in Egypt.";
-  const ctaText = asString(s.cta_text) || "SHOP NEW ARRIVALS";
+    asString(s.tagline) ||
+    localized(locale, "Handpicked summer essentials, made in Egypt.", "مختارات الصيف الأساسية، صناعة مصرية.");
+  const ctaText = asString(s.cta_text) || localized(locale, "SHOP NEW ARRIVALS", "تسوّق وصل حديثًا");
   const ctaLink = asString(s.cta_link) || "/products";
   const secondaryCtaText = asString(s.secondary_cta_text);
   const secondaryCtaLink = asString(s.secondary_cta_link) || "/collections";
@@ -27,6 +32,11 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
   // the 16:9 crop aspect instead of the default 1:1 square. Falls back to
   // the legacy `image_url` key for any merchant who set it before the rename.
   const imageUrl = asImageUrl(s.hero_image_url) || asImageUrl(s.image_url);
+  // Non-destructive focal/zoom/rotation the merchant set on whichever key
+  // supplied the URL (hero_image_url is primary, image_url is the legacy
+  // fallback). Undefined → image renders exactly as before.
+  const imageTransform =
+    asImageTransform(s.hero_image_url) || asImageTransform(s.image_url);
   const colorScheme = asString(s.color_scheme) || "auto";
 
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -131,6 +141,7 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
               src={imageUrl}
               alt=""
               className="max-h-full max-w-full w-auto h-auto object-contain"
+              style={applyImageTransform(imageTransform, "contain")}
               loading="eager"
             />
           </div>

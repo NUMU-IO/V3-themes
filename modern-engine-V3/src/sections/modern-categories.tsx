@@ -1,7 +1,7 @@
 "use client";
-import { Link, useCollections } from "@numueg/theme-sdk";
+import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { type SectionRenderProps } from "./_shared";
+import { localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Modern categories grid — faithful port of the V2 in-tree ModernCategories
@@ -36,7 +36,8 @@ const cardVariants = {
 const ModernCategories = ({ instance }: SectionRenderProps) => {
   const { collections: categories, loading: isLoading } = useCollections();
   const s = instance.settings ?? {};
-  const title = s.title ?? "تسوق حسب الفئة";
+  const locale = useLocale();
+  const title = s.title ?? localized(locale, "Shop by category", "تسوق حسب الفئة");
   const colsDesktop = Number(s.columns_desktop ?? 4);
   const colsMobile = Number(s.columns_mobile ?? 2);
   const maxItems = Number(s.max_items ?? 0);
@@ -73,7 +74,7 @@ const ModernCategories = ({ instance }: SectionRenderProps) => {
           </div>
         ) : displayCategories.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-muted-foreground text-sm">لا توجد فئات بعد</p>
+            <p className="text-muted-foreground text-sm">{localized(locale, "No categories yet", "لا توجد فئات بعد")}</p>
           </div>
         ) : (
           <motion.div
@@ -107,7 +108,7 @@ const ModernCategories = ({ instance }: SectionRenderProps) => {
                       {cat.name}
                     </span>
                     <span className="text-white/60 text-xs">
-                      {cat.product_count} منتج
+                      {cat.product_count} {localized(locale, "products", "منتج")}
                     </span>
                   </div>
                 </Link>

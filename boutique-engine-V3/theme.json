@@ -2,7 +2,7 @@
   "id": "boutique-v3",
   "name": "Boutique (V3)",
   "author": "NUMU",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "layout": "single-column",
   "description": "Boutique (V3) — vibrant pink/magenta fashion-forward storefront, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
@@ -15,18 +15,12 @@
           {
             "type": "boutique-hero",
             "settings": {
-              "headline": "اكتشفي أناقتك",
-              "subtitle": "تشكيلة مميزة من الأزياء والإكسسوارات بتصميم راقٍ وجودة عالية",
-              "cta_text": "تسوقي الآن",
               "cta_link": "/products"
             }
           },
           {
             "type": "boutique-featured-collection",
             "settings": {
-              "title": "وصل حديثاً ✨",
-              "collection_tag": "new",
-              "view_all_text": "عرض الكل",
               "view_all_link": "/products",
               "product_count": 4,
               "columns": 4
@@ -35,7 +29,6 @@
           {
             "type": "boutique-categories",
             "settings": {
-              "title": "تسوقي حسب الفئة",
               "columns_desktop": 4,
               "columns_mobile": 2,
               "max_items": 0
@@ -44,9 +37,6 @@
           {
             "type": "boutique-featured-collection",
             "settings": {
-              "title": "الأكثر مبيعاً 🔥",
-              "collection_tag": "bestseller",
-              "view_all_text": "عرض الكل",
               "view_all_link": "/products",
               "product_count": 4,
               "columns": 4
@@ -55,39 +45,20 @@
           {
             "type": "boutique-promo-banner",
             "settings": {
-              "badge_text": "عرض خاص",
-              "headline": "خصومات تصل لـ 40%",
-              "subtitle": "شوفي أحدث العروض على تشكيلتنا الجديدة",
-              "cta_text": "شوفي العروض",
               "cta_link": "/products"
             }
           },
           {
             "type": "boutique-testimonials",
             "settings": {
-              "title": "رأي عملاءنا ⭐",
-              "review_1_name": "ليلى",
-              "review_1_city": "القاهرة",
-              "review_1_text": "جودة المنتجات ممتازة والتوصيل كان سريع جداً.",
               "review_1_rating": 5,
-              "review_2_name": "منى",
-              "review_2_city": "الإسكندرية",
-              "review_2_text": "تغليف أنيق وخدمة عملاء راقية، هكرر التجربة أكيد.",
               "review_2_rating": 5,
-              "review_3_name": "سارة",
-              "review_3_city": "الجيزة",
-              "review_3_text": "بالظبط زي ما توقعت. أنصح بيهم بشدة.",
               "review_3_rating": 5
             }
           },
           {
             "type": "boutique-newsletter",
-            "settings": {
-              "title": "انضمي لعائلتنا 💌",
-              "subtitle": "اشتركي واحصلي على خصم 10% على أول طلب",
-              "button_text": "اشتركي",
-              "placeholder": "البريد الإلكتروني"
-            }
+            "settings": {}
           }
         ]
       },

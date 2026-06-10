@@ -3,13 +3,14 @@
 import { useMemo, useState } from "react";
 import {
   Link,
+  useLocale,
   useProducts,
   usePage,
   useResolvedSettings,
   type Product,
 } from "@numueg/theme-sdk";
 import { Search } from "lucide-react";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { EmpProductCard } from "./emp-product-grid";
 
@@ -31,14 +32,15 @@ export default function EmpSearchResults({
   const s = useResolvedSettings(instance);
   const page = usePage();
   const { products } = useProducts();
+  const locale = useLocale();
 
   const placeholderEmpty =
-    asString(s.placeholder_when_no_query) || "SEARCH THE EMPIRE";
+    asString(s.placeholder_when_no_query) || localized(locale, "SEARCH THE EMPIRE", "ابحث في الإمبراطورية");
   const noResultsText =
     asString(s.no_results_text) ||
-    "No matches. Try a different keyword or browse the full edit.";
+    localized(locale, "No matches. Try a different keyword or browse the full edit.", "مفيش نتايج. جرّب كلمة تانية أو تصفّح كل التشكيلة.");
   const searchPlaceholder =
-    asString(s.search_placeholder) || "Search products…";
+    asString(s.search_placeholder) || localized(locale, "Search products…", "ابحث عن المنتجات…");
   const cols = Math.max(1, Math.min(5, asNumber(s.columns_desktop, 4)));
 
   const initialQuery = asString(
@@ -83,7 +85,7 @@ export default function EmpSearchResults({
         <div className="container mx-auto px-4 text-center">
           <h1 className="emp-heading text-2xl sm:text-4xl md:text-5xl text-[var(--emp-amber)]">
             {hasQuery ? (
-              <>RESULTS FOR &ldquo;{query}&rdquo;</>
+              <>{localized(locale, "RESULTS FOR", "نتايج البحث عن")} &ldquo;{query}&rdquo;</>
             ) : (
               <InlineEditable
                 sectionId={sectionId}
@@ -133,7 +135,7 @@ export default function EmpSearchResults({
               to="/products"
               className="emp-btn emp-btn-filled rounded-full text-[11px] mt-6 inline-flex"
             >
-              BROWSE ALL
+              {localized(locale, "BROWSE ALL", "تصفّح الكل")}
             </Link>
           </div>
         ) : hasMatches ? (

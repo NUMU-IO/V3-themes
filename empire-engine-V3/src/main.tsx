@@ -32,7 +32,7 @@ import {
   type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
-import { DemoContext } from "./sections/_shared";
+import { DemoContext, PageDataContext, type MountPageData } from "./sections/_shared";
 import "./theme.css";
 
 /**
@@ -208,9 +208,11 @@ function pickTemplate(ctx: MountContext): string {
 }
 
 export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  return mountTheme(el, ctx, ({ currentTemplate, demo }) => (
+  return mountTheme(el, ctx, ({ currentTemplate, demo, page }) => (
     <DemoContext.Provider value={demo}>
-      <ThemeApp currentTemplate={currentTemplate} />
+      <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
+        <ThemeApp currentTemplate={currentTemplate} />
+      </PageDataContext.Provider>
     </DemoContext.Provider>
   ));
 }
@@ -219,7 +221,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "empire-v3", name: "Empire (V3)", version: "0.1.0" },
+  manifest: { id: "empire-v3", name: "Empire (V3)", version: "0.2.4" },
   mount,
 };
 export default v3Handle;

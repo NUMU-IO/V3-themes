@@ -1,7 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
+import { useLocale } from "@numueg/theme-sdk";
 import { Star, Quote } from "lucide-react";
-import { type SectionRenderProps } from "./_shared";
+import { localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Modern testimonials — faithful port of the V2 in-tree ModernTestimonials
@@ -39,7 +40,8 @@ function getReviewsFromSettings(s: Record<string, unknown>): TestimonialReview[]
 
 const ModernTestimonials = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const title = s.title ?? "رأي عملاءنا";
+  const locale = useLocale();
+  const title = s.title ?? localized(locale, "What our customers say", "رأي عملاءنا");
   const reviews = getReviewsFromSettings(s);
 
   if (reviews.length === 0) return null;

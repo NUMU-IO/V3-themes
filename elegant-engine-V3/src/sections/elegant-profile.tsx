@@ -6,6 +6,7 @@ import {
   useOrders,
   useCustomerActions,
   useCustomerAddresses,
+  useLocale,
   type CustomerAddress,
 } from "@numueg/theme-sdk";
 import {
@@ -22,7 +23,7 @@ import {
   Briefcase,
   X,
 } from "lucide-react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Elegant account / profile section.
@@ -41,18 +42,22 @@ import { asString, type SectionRenderProps } from "./_shared";
 
 type Tab = "orders" | "addresses" | "settings";
 
-const STATUS_LABELS: Record<string, string> = {
-  pending: "Pending",
-  confirmed: "Confirmed",
-  processing: "Processing",
-  shipped: "Shipped",
-  delivered: "Delivered",
-  cancelled: "Cancelled",
-  refunded: "Refunded",
-};
+const statusLabels = (locale: string): Record<string, string> => ({
+  pending: localized(locale, "Pending", "قيد الانتظار"),
+  confirmed: localized(locale, "Confirmed", "مؤكد"),
+  processing: localized(locale, "Processing", "قيد التجهيز"),
+  shipped: localized(locale, "Shipped", "تم الشحن"),
+  delivered: localized(locale, "Delivered", "تم التوصيل"),
+  cancelled: localized(locale, "Cancelled", "ملغي"),
+  refunded: localized(locale, "Refunded", "مسترد"),
+});
 
 const LABEL_ICON: Record<string, typeof Home> = { home: Home, work: Briefcase, other: MapPin };
-const LABEL_NAME: Record<string, string> = { home: "Home", work: "Work", other: "Other" };
+const labelName = (locale: string): Record<string, string> => ({
+  home: localized(locale, "Home", "المنزل"),
+  work: localized(locale, "Work", "العمل"),
+  other: localized(locale, "Other", "آخر"),
+});
 
 const EMPTY_ADDRESS: Partial<CustomerAddress> = {
   first_name: "",
@@ -65,10 +70,13 @@ const EMPTY_ADDRESS: Partial<CustomerAddress> = {
 
 export default function ElegantProfile({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "My account";
-  const ordersTitle = asString(s.orders_title) || "My orders";
-  const addressesTitle = asString(s.addresses_title) || "My addresses";
-  const settingsTitle = asString(s.settings_title) || "Settings";
+  const locale = useLocale();
+  const STATUS_LABELS = statusLabels(locale);
+  const LABEL_NAME = labelName(locale);
+  const title = asString(s.title) || localized(locale, "My account", "حسابي");
+  const ordersTitle = asString(s.orders_title) || localized(locale, "My orders", "طلباتي");
+  const addressesTitle = asString(s.addresses_title) || localized(locale, "My addresses", "عناويني");
+  const settingsTitle = asString(s.settings_title) || localized(locale, "Settings", "الإعدادات");
   const showStats = s.show_stats ?? true;
 
   const customer = useCustomer();
@@ -117,16 +125,16 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
             <User size={22} className="text-[var(--eg-muted)]" />
           </div>
           <p className="eg-heading text-lg text-[var(--eg-ink)] mb-1">
-            Login to view your account
+            {localized(locale, "Login to view your account", "سجّل الدخول لعرض حسابك")}
           </p>
           <p className="text-xs text-[var(--eg-muted)] mb-6">
-            Track orders, manage addresses and settings
+            {localized(locale, "Track orders, manage addresses and settings", "تتبع الطلبات وإدارة العناوين والإعدادات")}
           </p>
           <Link
             to="/auth?redirect=/profile"
             className="eg-btn eg-btn-filled inline-flex"
           >
-            Login
+            {localized(locale, "Login", "تسجيل الدخول")}
           </Link>
         </div>
       </div>
@@ -209,9 +217,9 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
   };
 
   const tabs: { key: Tab; label: string; icon: typeof Package; count?: number }[] = [
-    { key: "orders", label: "Orders", icon: Package, count: orders.length },
-    { key: "addresses", label: "Addresses", icon: MapPin, count: addresses.length },
-    { key: "settings", label: "Settings", icon: Settings },
+    { key: "orders", label: localized(locale, "Orders", "الطلبات"), icon: Package, count: orders.length },
+    { key: "addresses", label: localized(locale, "Addresses", "العناوين"), icon: MapPin, count: addresses.length },
+    { key: "settings", label: localized(locale, "Settings", "الإعدادات"), icon: Settings },
   ];
 
   const inputClass =
@@ -225,7 +233,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 eg-label text-[10px] text-[var(--eg-muted)] mb-8">
           <Link to="/" className="hover:text-[var(--eg-ink)] transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <span className="text-[var(--eg-ink)]">{title}</span>
@@ -246,13 +254,13 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
               <div className="flex gap-4 mb-6 pb-6 border-b border-[var(--eg-border)]">
                 <div>
                   <p className="text-lg font-medium text-[var(--eg-ink)]">{orders.length}</p>
-                  <p className="text-[10px] text-[var(--eg-muted)]">Orders</p>
+                  <p className="text-[10px] text-[var(--eg-muted)]">{localized(locale, "Orders", "طلبات")}</p>
                 </div>
                 <div>
                   <p className="text-lg font-medium text-[var(--eg-ink)]">
                     {totalSpent.toLocaleString("en-US")}
                   </p>
-                  <p className="text-[10px] text-[var(--eg-muted)]">EGP</p>
+                  <p className="text-[10px] text-[var(--eg-muted)]">{localized(locale, "EGP", "ج.م")}</p>
                 </div>
               </div>
             )}
@@ -288,7 +296,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
               className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--eg-muted)] hover:text-[var(--eg-ink)] transition-colors"
             >
               <LogOut size={13} />
-              Logout
+              {localized(locale, "Logout", "تسجيل الخروج")}
             </button>
           </div>
 
@@ -305,15 +313,15 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                 ) : orders.length === 0 ? (
                   <div className="text-center py-16 border border-[var(--eg-border)] rounded-md">
                     <div className="w-10 h-px bg-[var(--eg-border)] mx-auto mb-5" />
-                    <p className="text-sm text-[var(--eg-muted)] mb-1">No orders yet</p>
+                    <p className="text-sm text-[var(--eg-muted)] mb-1">{localized(locale, "No orders yet", "لا توجد طلبات بعد")}</p>
                     <p className="text-xs text-[var(--eg-muted)] mb-5">
-                      Your orders will appear here after your first purchase
+                      {localized(locale, "Your orders will appear here after your first purchase", "ستظهر طلباتك هنا بعد أول عملية شراء")}
                     </p>
                     <Link
                       to="/products"
                       className="text-xs font-medium border-b border-[var(--eg-ink)] pb-0.5 hover:opacity-70 transition-opacity"
                     >
-                      Browse products
+                      {localized(locale, "Browse products", "تصفح المنتجات")}
                     </Link>
                   </div>
                 ) : (
@@ -340,13 +348,17 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                                   })
                                 : ""}
                               {order.item_count
-                                ? ` · ${order.item_count} item${order.item_count > 1 ? "s" : ""}`
+                                ? localized(
+                                    locale,
+                                    ` · ${order.item_count} item${order.item_count > 1 ? "s" : ""}`,
+                                    ` · ${order.item_count} منتج`,
+                                  )
                                 : ""}
                             </span>
                           </div>
                           <div className="text-end">
                             <span className="text-[13px] font-medium text-[var(--eg-ink)] block">
-                              {(order.total / 100).toLocaleString("en-US")} EGP
+                              {(order.total / 100).toLocaleString("en-US")} {localized(locale, "EGP", "ج.م")}
                             </span>
                             <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--eg-band)] text-[var(--eg-ink)]/70">
                               {STATUS_LABELS[order.status] || order.status}
@@ -372,7 +384,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                       className="flex items-center gap-1.5 text-xs font-medium text-[var(--eg-ink)] hover:opacity-70 transition-opacity"
                     >
                       <Plus size={13} />
-                      Add address
+                      {localized(locale, "Add address", "إضافة عنوان")}
                     </button>
                   )}
                 </div>
@@ -381,7 +393,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                   <div className="border border-[var(--eg-border)] rounded-md p-5 mb-5">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-sm font-medium text-[var(--eg-ink)]">
-                        {editingId ? "Edit address" : "New address"}
+                        {editingId ? localized(locale, "Edit address", "تعديل العنوان") : localized(locale, "New address", "عنوان جديد")}
                       </h3>
                       <button
                         type="button"
@@ -394,7 +406,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                       <div>
-                        <label className={labelClass}>First name</label>
+                        <label className={labelClass}>{localized(locale, "First name", "الاسم الأول")}</label>
                         <input
                           value={form.first_name ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, first_name: e.target.value }))}
@@ -402,7 +414,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>Last name</label>
+                        <label className={labelClass}>{localized(locale, "Last name", "اسم العائلة")}</label>
                         <input
                           value={form.last_name ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, last_name: e.target.value }))}
@@ -411,17 +423,17 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                       </div>
                     </div>
                     <div className="mb-3">
-                      <label className={labelClass}>Address</label>
+                      <label className={labelClass}>{localized(locale, "Address", "العنوان")}</label>
                       <input
                         value={form.address_line1 ?? ""}
                         onChange={(e) => setForm((p) => ({ ...p, address_line1: e.target.value }))}
-                        placeholder="Street, building, apt"
+                        placeholder={localized(locale, "Street, building, apt", "الشارع، المبنى، الشقة")}
                         className={inputClass}
                       />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                       <div>
-                        <label className={labelClass}>City</label>
+                        <label className={labelClass}>{localized(locale, "City", "المدينة")}</label>
                         <input
                           value={form.city ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
@@ -429,7 +441,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>Phone</label>
+                        <label className={labelClass}>{localized(locale, "Phone", "الهاتف")}</label>
                         <input
                           value={form.phone ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
@@ -471,9 +483,9 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                         {savingAddress ? (
                           <Loader2 size={14} className="animate-spin" />
                         ) : editingId ? (
-                          "Update"
+                          localized(locale, "Update", "تحديث")
                         ) : (
-                          "Save"
+                          localized(locale, "Save", "حفظ")
                         )}
                       </button>
                       <button
@@ -481,7 +493,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                         onClick={closeAddressForm}
                         className="px-5 py-2 text-xs text-[var(--eg-muted)] hover:text-[var(--eg-ink)] transition-colors"
                       >
-                        Cancel
+                        {localized(locale, "Cancel", "إلغاء")}
                       </button>
                     </div>
                   </div>
@@ -494,16 +506,16 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                 ) : addresses.length === 0 && !showAddressForm ? (
                   <div className="text-center py-16 border border-[var(--eg-border)] rounded-md">
                     <div className="w-10 h-px bg-[var(--eg-border)] mx-auto mb-5" />
-                    <p className="text-sm text-[var(--eg-muted)] mb-1">No saved addresses</p>
+                    <p className="text-sm text-[var(--eg-muted)] mb-1">{localized(locale, "No saved addresses", "لا توجد عناوين محفوظة")}</p>
                     <p className="text-xs text-[var(--eg-muted)] mb-5">
-                      Add an address to speed up checkout
+                      {localized(locale, "Add an address to speed up checkout", "أضف عنواناً لتسريع عملية الدفع")}
                     </p>
                     <button
                       type="button"
                       onClick={openNewAddress}
                       className="text-xs font-medium border-b border-[var(--eg-ink)] pb-0.5 hover:opacity-70 transition-opacity"
                     >
-                      Add address
+                      {localized(locale, "Add address", "إضافة عنوان")}
                     </button>
                   </div>
                 ) : (
@@ -522,11 +534,11 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                             <div className="flex items-center gap-2">
                               <LabelIcon size={13} className="text-[var(--eg-muted)]" />
                               <span className="text-xs font-medium text-[var(--eg-ink)]">
-                                {LABEL_NAME[addr.label ?? "other"] || "Other"}
+                                {LABEL_NAME[addr.label ?? "other"] || localized(locale, "Other", "آخر")}
                               </span>
                               {addr.is_default && (
                                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--eg-band)] text-[var(--eg-ink)]/60">
-                                  Default
+                                  {localized(locale, "Default", "افتراضي")}
                                 </span>
                               )}
                             </div>
@@ -536,7 +548,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                                 onClick={() => openEditAddress(addr)}
                                 className="text-[10px] text-[var(--eg-muted)] hover:text-[var(--eg-ink)] transition-colors px-1"
                               >
-                                Edit
+                                {localized(locale, "Edit", "تعديل")}
                               </button>
                               <button
                                 type="button"
@@ -570,7 +582,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                               onClick={() => setDefaultAddress(addr.id)}
                               className="text-[10px] text-[var(--eg-muted)] hover:text-[var(--eg-ink)] transition-colors mt-2 border-b border-current pb-px"
                             >
-                              Set as default
+                              {localized(locale, "Set as default", "تعيين كافتراضي")}
                             </button>
                           )}
                         </div>
@@ -589,7 +601,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                   <div className="border border-[var(--eg-border)] rounded-md p-5 space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className={labelClass}>First name</label>
+                        <label className={labelClass}>{localized(locale, "First name", "الاسم الأول")}</label>
                         <input
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
@@ -597,7 +609,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>Last name</label>
+                        <label className={labelClass}>{localized(locale, "Last name", "اسم العائلة")}</label>
                         <input
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
@@ -606,7 +618,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                       </div>
                     </div>
                     <div>
-                      <label className={labelClass}>Email</label>
+                      <label className={labelClass}>{localized(locale, "Email", "البريد الإلكتروني")}</label>
                       <input
                         value={customer.email}
                         disabled
@@ -615,7 +627,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>Phone</label>
+                      <label className={labelClass}>{localized(locale, "Phone", "الهاتف")}</label>
                       <input
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -630,16 +642,16 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                       disabled={savingProfile}
                       className="eg-btn eg-btn-filled disabled:opacity-50"
                     >
-                      {savingProfile ? <Loader2 size={14} className="animate-spin" /> : "Save changes"}
+                      {savingProfile ? <Loader2 size={14} className="animate-spin" /> : localized(locale, "Save changes", "حفظ التغييرات")}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <h2 className={headingClass}>Change password</h2>
+                  <h2 className={headingClass}>{localized(locale, "Change password", "تغيير كلمة المرور")}</h2>
                   <div className="border border-[var(--eg-border)] rounded-md p-5 space-y-3">
                     <div>
-                      <label className={labelClass}>Current password</label>
+                      <label className={labelClass}>{localized(locale, "Current password", "كلمة المرور الحالية")}</label>
                       <input
                         type="password"
                         value={currentPw}
@@ -648,12 +660,12 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>New password</label>
+                      <label className={labelClass}>{localized(locale, "New password", "كلمة المرور الجديدة")}</label>
                       <input
                         type="password"
                         value={newPw}
                         onChange={(e) => setNewPw(e.target.value)}
-                        placeholder="Min 8 characters"
+                        placeholder={localized(locale, "Min 8 characters", "8 أحرف على الأقل")}
                         className={inputClass}
                       />
                     </div>
@@ -663,7 +675,7 @@ export default function ElegantProfile({ instance }: SectionRenderProps) {
                       disabled={changingPw || !currentPw || !newPw}
                       className="eg-btn eg-btn-filled disabled:opacity-50"
                     >
-                      {changingPw ? <Loader2 size={14} className="animate-spin" /> : "Change password"}
+                      {changingPw ? <Loader2 size={14} className="animate-spin" /> : localized(locale, "Change password", "تغيير كلمة المرور")}
                     </button>
                   </div>
                 </div>

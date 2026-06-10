@@ -1,8 +1,9 @@
 "use client";
-import { Link, useResolvedSettings } from "@numueg/theme-sdk";
-import { asImageUrl, asString, type SectionRenderProps } from "./_shared";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 const VionneAbout = ({ instance }: SectionRenderProps) => {
+  const locale = useLocale();
   // Resolve dynamic-source bindings (e.g. a CTA bound to "Store → Name")
   // to their real values, THEN coerce every field to a primitive. Reading
   // `instance.settings` raw meant a bound field arrived as an object and
@@ -10,11 +11,12 @@ const VionneAbout = ({ instance }: SectionRenderProps) => {
   // valid as a React child" — which is what tripped the section
   // ErrorBoundary ("vionne-about — Section failed to render").
   const s = useResolvedSettings(instance);
-  const eyebrow = asString(s.eyebrow, "ABOUT VIONNE");
-  const headline = asString(s.headline, "Made for the way you dress");
+  const eyebrow = asString(s.eyebrow) || localized(locale, "ABOUT VIONNE", "عن فيون");
+  const headline = asString(s.headline) || localized(locale, "Made for the way you dress", "مصمَّمة على مزاج لبسك");
   const quote = asString(s.quote);
   const description = asString(s.description);
   const image = asImageUrl(s.image);
+  const imageTransform = asImageTransform(s.image);
 
   const ctaText = asString(s.cta_text);
   const ctaLink = asString(s.cta_link, "/products");
@@ -73,7 +75,7 @@ const VionneAbout = ({ instance }: SectionRenderProps) => {
           </div>
           {image ? (
             <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-muted">
-              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" style={applyImageTransform(imageTransform, "cover")} />
             </div>
           ) : null}
         </div>

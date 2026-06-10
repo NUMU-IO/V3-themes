@@ -1,8 +1,8 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
+import { Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft, Truck, ShieldCheck, CreditCard } from "lucide-react";
-import { asImageUrl, asString, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Tech Wave hero — faithful port of the V2 in-tree
@@ -12,20 +12,29 @@ import { asImageUrl, asString, type SectionRenderProps } from "./_shared";
  */
 const TechWaveHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const badge = asString(s.badge_text) || "\u{1F389} خصومات تصل لـ ٢٥٪";
-  const headline = asString(s.headline) || "اكتشف أحلى المنتجات بأفضل الأسعار";
+  const locale = useLocale();
+  const badge = asString(s.badge_text) || localized(locale, "\u{1F389} Up to 25% off", "\u{1F389} خصومات تصل لـ ٢٥٪");
+  const headline = asString(s.headline) || localized(locale, "Discover the best products at the best prices", "اكتشف أحلى المنتجات بأفضل الأسعار");
   const subtitle =
     asString(s.subtitle) ||
-    "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.";
-  const ctaText = asString(s.cta_text) || "تسوق الآن";
+    localized(
+      locale,
+      "A curated lineup of clothing and accessories delivered across Egypt. Great quality at prices that work for you.",
+      "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.",
+    );
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
-  const secondaryText = asString(s.secondary_text) || "الملابس الجديدة";
+  const secondaryText = asString(s.secondary_text) || localized(locale, "New arrivals", "الملابس الجديدة");
   const secondaryLink = asString(s.secondary_link) || "/products?category=clothing";
   const showTrust = s.show_trust_strip !== false;
   const img1 = asImageUrl(s.hero_image_url);
   const img2 = asImageUrl(s.hero_image_2);
   const img3 = asImageUrl(s.hero_image_3);
   const img4 = asImageUrl(s.hero_image_4);
+  const img1Transform = asImageTransform(s.hero_image_url);
+  const img2Transform = asImageTransform(s.hero_image_2);
+  const img3Transform = asImageTransform(s.hero_image_3);
+  const img4Transform = asImageTransform(s.hero_image_4);
 
   return (
     <>
@@ -80,6 +89,7 @@ const TechWaveHero = ({ instance }: SectionRenderProps) => {
                       src={img1}
                       alt=""
                       className="w-full h-full object-contain"
+                      style={applyImageTransform(img1Transform, "contain")}
                     />
                   </div>
                 )}
@@ -89,6 +99,7 @@ const TechWaveHero = ({ instance }: SectionRenderProps) => {
                       src={img2}
                       alt=""
                       className="w-full h-full object-contain"
+                      style={applyImageTransform(img2Transform, "contain")}
                     />
                   </div>
                 )}
@@ -100,6 +111,7 @@ const TechWaveHero = ({ instance }: SectionRenderProps) => {
                       src={img3}
                       alt=""
                       className="w-full h-full object-contain"
+                      style={applyImageTransform(img3Transform, "contain")}
                     />
                   </div>
                 )}
@@ -109,6 +121,7 @@ const TechWaveHero = ({ instance }: SectionRenderProps) => {
                       src={img4}
                       alt=""
                       className="w-full h-full object-contain"
+                      style={applyImageTransform(img4Transform, "contain")}
                     />
                   </div>
                 )}
@@ -127,9 +140,9 @@ const TechWaveHero = ({ instance }: SectionRenderProps) => {
           <div className="container mx-auto px-4">
             <div className="flex gap-6 overflow-x-auto scrollbar-hide">
               {[
-                { icon: Truck, label: "شحن سريع" },
-                { icon: ShieldCheck, label: "ضمان الجودة" },
-                { icon: CreditCard, label: "دفع آمن" },
+                { icon: Truck, label: localized(locale, "Fast shipping", "شحن سريع") },
+                { icon: ShieldCheck, label: localized(locale, "Quality guarantee", "ضمان الجودة") },
+                { icon: CreditCard, label: localized(locale, "Secure payment", "دفع آمن") },
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-2 shrink-0">
                   <item.icon

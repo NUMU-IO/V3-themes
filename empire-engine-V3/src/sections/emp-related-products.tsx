@@ -2,12 +2,13 @@
 
 import { useMemo } from "react";
 import {
+  useLocale,
   useProductOptional,
   useProducts,
   useResolvedSettings,
   type Product,
 } from "@numueg/theme-sdk";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { EmpProductCard } from "./emp-product-grid";
 
@@ -26,8 +27,9 @@ export default function EmpRelatedProducts({
   const s = useResolvedSettings(instance);
   const { products } = useProducts();
   const current = useProductOptional();
+  const locale = useLocale();
 
-  const title = asString(s.title) || "YOU MAY ALSO LIKE";
+  const title = asString(s.title) || localized(locale, "YOU MAY ALSO LIKE", "ممكن يعجبك كمان");
   const count = Math.max(2, Math.min(8, asNumber(s.count, 4)));
 
   const items: Product[] = useMemo(() => {

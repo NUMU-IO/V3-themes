@@ -1,11 +1,14 @@
 "use client";
 
-import { Link, useResolvedSettings, useShop } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
 import { ShoppingBag } from "lucide-react";
 import {
+  applyImageTransform,
+  asImageTransform,
   asImageUrl,
   asString,
   demoOrPlaceholder,
+  localized,
   useDemo,
   type SectionRenderProps,
 } from "./_shared";
@@ -20,14 +23,16 @@ const EmpPromoBanner = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const demo = useDemo();
   const shop = useShop();
+  const locale = useLocale();
 
   const configuredImage = asImageUrl(s.image_url);
+  const imageTransform = asImageTransform(s.image_url);
   const imageUrl =
     configuredImage || (demo ? FALLBACK_IMAGE.image : "");
   const title = asString(s.title) || "EMPIRE";
-  const subtitle = asString(s.subtitle) || "SEASONAL EDIT";
-  const cardLabel = asString(s.card_label) || "CURATED";
-  const ctaText = asString(s.cta_text) || "SHOP NOW";
+  const subtitle = asString(s.subtitle) || localized(locale, "SEASONAL EDIT", "تشكيلة الموسم");
+  const cardLabel = asString(s.card_label) || localized(locale, "CURATED", "مختارة بعناية");
+  const ctaText = asString(s.cta_text) || localized(locale, "SHOP NOW", "تسوّق دلوقتي");
   const ctaLink = asString(s.cta_link) || "/products";
   // The large card's overline uses the live store name (uppercased) so the
   // editorial banner always reflects the merchant's brand without extra setup.
@@ -48,6 +53,7 @@ const EmpPromoBanner = ({ instance, sectionId }: SectionRenderProps) => {
                 src={imageUrl}
                 alt=""
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                style={applyImageTransform(imageTransform, "cover")}
                 loading="lazy"
               />
             ) : (

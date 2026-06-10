@@ -1,7 +1,7 @@
 "use client";
 
-import { Link, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { Link, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -21,7 +21,8 @@ export default function ByRelatedProducts({
 }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const { products } = useProducts();
-  const title = asString(s.title) || "Pairs well with";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Pairs well with", "يتحلّى مع");
   const count = Math.max(2, Math.min(8, asNumber(s.count, 4)));
 
   const items: Product[] = products.slice(0, count);

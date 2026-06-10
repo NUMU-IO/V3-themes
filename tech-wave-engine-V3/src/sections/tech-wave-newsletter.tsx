@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { asString, type SectionRenderProps } from "./_shared";
+import { useLocale } from "@numueg/theme-sdk";
+import { asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Tech Wave newsletter — faithful port of the V2 in-tree
@@ -14,11 +15,12 @@ import { asString, type SectionRenderProps } from "./_shared";
  */
 const TechWaveNewsletter = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "اشترك في نشرتنا \u{1F4EC}";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Subscribe to our newsletter \u{1F4EC}", "اشترك في نشرتنا \u{1F4EC}");
   const subtitle =
-    asString(s.subtitle) || "اعرف أول واحد عن العروض والمنتجات الجديدة";
-  const buttonText = asString(s.button_text) || "اشترك";
-  const placeholder = asString(s.placeholder) || "البريد الإلكتروني";
+    asString(s.subtitle) || localized(locale, "Be the first to hear about deals and new arrivals", "اعرف أول واحد عن العروض والمنتجات الجديدة");
+  const buttonText = asString(s.button_text) || localized(locale, "Subscribe", "اشترك");
+  const placeholder = asString(s.placeholder) || localized(locale, "Email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -40,7 +42,7 @@ const TechWaveNewsletter = ({ instance }: SectionRenderProps) => {
           </p>
           {submitted ? (
             <p className="text-sm font-bold tw-neon-text py-3">
-              شكراً لاشتراكك! ✨
+              {localized(locale, "Thanks for subscribing! ✨", "شكراً لاشتراكك! ✨")}
             </p>
           ) : (
             <div className="flex gap-2">

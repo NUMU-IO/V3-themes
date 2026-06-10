@@ -7,11 +7,12 @@ import {
   useProductOptional,
   useVariantSelection,
   useRelatedProducts,
+  useLocale,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Luxury Minimal product-detail section.
@@ -36,6 +37,7 @@ export default function LuxProductDetailSection({ instance }: SectionRenderProps
   const showGuarantees = s.show_guarantees ?? true;
   const showRelated = s.show_related_products ?? true;
   const relatedCount = asNumber(s.related_products_count, 4);
+  const locale = useLocale();
 
   const product = useProductOptional();
 
@@ -53,15 +55,15 @@ export default function LuxProductDetailSection({ instance }: SectionRenderProps
     return (
       <div className="bg-background min-h-[50vh] flex items-center justify-center px-4 py-20 text-center">
         <div className="max-w-sm">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-3">المنتج</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-3">{localized(locale, "Product", "المنتج")}</p>
           <h1 className="lux-heading text-2xl md:text-3xl text-foreground mb-3">
-            لا يوجد منتج لعرضه بعد
+            {localized(locale, "No product to show yet", "لا يوجد منتج لعرضه بعد")}
           </h1>
           <p className="text-sm text-muted-foreground mb-7 leading-relaxed">
-            افتح منتجاً من المتجر لعرض تفاصيله هنا.
+            {localized(locale, "Open a product from the shop to see its details here.", "افتح منتجاً من المتجر لعرض تفاصيله هنا.")}
           </p>
           <Link to="/products" className="lux-btn inline-flex">
-            تصفح المنتجات
+            {localized(locale, "Browse products", "تصفح المنتجات")}
           </Link>
         </div>
       </div>
@@ -97,11 +99,11 @@ export default function LuxProductDetailSection({ instance }: SectionRenderProps
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-8">
           <Link to="/" className="hover:text-foreground transition-colors">
-            الرئيسية
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <span>/</span>
           <Link to="/products" className="hover:text-foreground transition-colors">
-            المتجر
+            {localized(locale, "Shop", "المتجر")}
           </Link>
           <span>/</span>
           <span className="text-foreground line-clamp-1 normal-case tracking-normal">
@@ -181,7 +183,7 @@ export default function LuxProductDetailSection({ instance }: SectionRenderProps
             {showRating && (
               <div className="flex items-center gap-1 mb-4 text-muted-foreground">
                 <span className="text-sm">★★★★★</span>
-                <span className="text-xs">(reviews)</span>
+                <span className="text-xs">{localized(locale, "(reviews)", "(التقييمات)")}</span>
               </div>
             )}
 
@@ -216,9 +218,9 @@ export default function LuxProductDetailSection({ instance }: SectionRenderProps
                 <span className={inStock ? "text-muted-foreground" : "text-destructive"}>
                   {inStock
                     ? typeof stockQty === "number" && stockQty > 0 && stockQty <= 5
-                      ? `باقي ${stockQty} فقط`
-                      : "متوفر"
-                    : "نفذت الكمية"}
+                      ? localized(locale, `Only ${stockQty} left`, `باقي ${stockQty} فقط`)
+                      : localized(locale, "In stock", "متوفر")
+                    : localized(locale, "Sold out", "نفذت الكمية")}
                 </span>
               </div>
             )}
@@ -306,13 +308,13 @@ export default function LuxProductDetailSection({ instance }: SectionRenderProps
                 className="flex-1 py-3.5 flex items-center justify-center gap-2 transition-all disabled:opacity-50 lux-btn"
                 label={
                   <>
-                    <ShoppingBag size={16} /> أضف إلى الحقيبة
+                    <ShoppingBag size={16} /> {localized(locale, "Add to bag", "أضف إلى الحقيبة")}
                   </>
                 }
-                loadingLabel="جارٍ الإضافة…"
+                loadingLabel={localized(locale, "Adding…", "جارٍ الإضافة…")}
                 soldOutLabel={
                   <>
-                    <ShoppingBag size={16} /> نفذت الكمية
+                    <ShoppingBag size={16} /> {localized(locale, "Sold out", "نفذت الكمية")}
                   </>
                 }
                 data-testid="storefront-add-to-cart"
@@ -323,9 +325,9 @@ export default function LuxProductDetailSection({ instance }: SectionRenderProps
             {showGuarantees && (
               <div className="mt-8 pt-6 border-t border-border flex flex-wrap items-center justify-between gap-4">
                 {[
-                  { icon: Truck, label: "شحن سريع", desc: "3-5 أيام" },
-                  { icon: RotateCcw, label: "إرجاع سهل", desc: "14 يوم" },
-                  { icon: ShieldCheck, label: "أصلي", desc: "100% مضمون" },
+                  { icon: Truck, label: localized(locale, "Fast Shipping", "شحن سريع"), desc: localized(locale, "3-5 days", "3-5 أيام") },
+                  { icon: RotateCcw, label: localized(locale, "Easy Returns", "إرجاع سهل"), desc: localized(locale, "14 days", "14 يوم") },
+                  { icon: ShieldCheck, label: localized(locale, "Authentic", "أصلي"), desc: localized(locale, "100% Genuine", "100% مضمون") },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2 text-muted-foreground">
                     <item.icon size={15} className="shrink-0" />
@@ -345,7 +347,7 @@ export default function LuxProductDetailSection({ instance }: SectionRenderProps
         {showRelated && related.items.length > 0 && (
           <section className="mt-16 mb-6" data-testid="storefront-related-products">
             <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-8">
-              قد يعجبك أيضاً
+              {localized(locale, "You may also like", "قد يعجبك أيضاً")}
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4" data-testid="storefront-related-products-grid">
               {related.items.map((p) => (

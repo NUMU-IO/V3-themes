@@ -1,28 +1,31 @@
 "use client";
-import { Link, useProducts } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { Link, useProducts, useLocale } from "@numueg/theme-sdk";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const RsPromoBanner = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
+  const locale = useLocale();
   const s = instance.settings ?? {};
 
   // Journal card settings
-  const journalLabel = asString(s.journal_label, "READ THE JOURNAL");
-  const journalTitle = asString(s.journal_title, "Volume IV: The Art of Stillness");
+  const journalLabel = asString(s.journal_label) || localized(locale, "READ THE JOURNAL", "اقرا المجلة");
+  const journalTitle = asString(s.journal_title) || localized(locale, "Volume IV: The Art of Stillness", "العدد الرابع: فن السكون");
   const journalLink = asString(s.journal_link, "/blog");
 
   // Product / editorial settings
-  const editLabel = asString(s.edit_label, "Curated Comfort");
-  const editText = asString(
-    s.edit_text,
+  const editLabel = asString(s.edit_label) || localized(locale, "Curated Comfort", "راحة منتقاة");
+  const editText = asString(s.edit_text) || localized(
+    locale,
     "A collection of objects and garments that define the modern daily ritual.",
+    "مجموعة من القطع والملابس اللي بتعرّف طقوس يومك العصري.",
   );
   const editLink = asString(s.edit_link, "/products");
-  const shopText = asString(s.cta_text, "SHOP NOW");
+  const shopText = asString(s.cta_text) || localized(locale, "SHOP NOW", "تسوّق دلوقتي");
 
   // Use the 5th product image (index 4) as the editorial product.
   const featuredProduct = products[4] ?? products[0];
   const productImage = asString(s.product_image) || featuredProduct?.images?.[0]?.url || "";
+  const productImageTransform = asImageTransform(s.product_image);
 
   return (
     <section className="rs-bento-section px-6 md:px-10 max-w-[1440px] mx-auto">
@@ -55,7 +58,8 @@ const RsPromoBanner = ({ instance }: SectionRenderProps) => {
               <img
                 src={productImage}
                 alt={featuredProduct?.name ?? ""}
-                className="max-h-[260px] w-auto object-contain rs-img-zoom"
+                className={`max-h-[260px] w-auto object-contain ${productImageTransform ? "" : "rs-img-zoom"}`}
+                style={applyImageTransform(productImageTransform, "contain")}
                 loading="lazy"
               />
             ) : (

@@ -5,6 +5,7 @@ import {
   Link,
   Money,
   useCart,
+  useLocale,
   useProductOptional,
   useResolvedSettings,
   useVariantSelection,
@@ -24,6 +25,7 @@ import {
   asNumber,
   asString,
   demoOrPlaceholder,
+  localized,
   PLACEHOLDER_IMG,
   useDemo,
   type SectionRenderProps,
@@ -35,10 +37,10 @@ interface TrustBadge {
   desc: string;
 }
 
-const FALLBACK_BADGES: TrustBadge[] = [
-  { label: "AUTHENTIC", desc: "100% Guaranteed" },
-  { label: "RETURNS", desc: "14 days" },
-  { label: "SHIPPING", desc: "All Egypt" },
+const fallbackBadges = (locale: string | undefined): TrustBadge[] => [
+  { label: localized(locale, "AUTHENTIC", "أصلي"), desc: localized(locale, "100% Guaranteed", "مضمون ١٠٠٪") },
+  { label: localized(locale, "RETURNS", "إرجاع"), desc: localized(locale, "14 days", "خلال ١٤ يوم") },
+  { label: localized(locale, "SHIPPING", "شحن"), desc: localized(locale, "All Egypt", "لكل مصر") },
 ];
 
 // Demo product used ONLY in marketplace preview (no real product context).
@@ -70,25 +72,30 @@ export default function BzProductDetail({
   const productCtx = useProductOptional();
   const { addItem, loading } = useCart();
   const demo = useDemo();
+  const locale = useLocale();
 
   // Editable buy-box labels.
-  const addToCartLabel = asString(s.add_to_cart_label) || "ADD TO CART";
-  const addedLabel = asString(s.added_label) || "ADDED!";
-  const outOfStockLabel = asString(s.out_of_stock_label) || "OUT OF STOCK";
-  const quantityLabel = asString(s.quantity_label) || "QUANTITY";
-  const homeLabel = asString(s.home_label) || "HOME";
-  const shopLabel = asString(s.shop_label) || "SHOP";
-  const inStockLabel = asString(s.in_stock_label) || "IN STOCK";
+  const addToCartLabel = asString(s.add_to_cart_label) || localized(locale, "ADD TO CART", "أضف للسلة");
+  const addedLabel = asString(s.added_label) || localized(locale, "ADDED!", "تمت الإضافة!");
+  const outOfStockLabel = asString(s.out_of_stock_label) || localized(locale, "OUT OF STOCK", "غير متوفر");
+  const quantityLabel = asString(s.quantity_label) || localized(locale, "QUANTITY", "الكمية");
+  const homeLabel = asString(s.home_label) || localized(locale, "HOME", "الرئيسية");
+  const shopLabel = asString(s.shop_label) || localized(locale, "SHOP", "تسوّق");
+  const inStockLabel = asString(s.in_stock_label) || localized(locale, "IN STOCK", "متوفر");
 
   // The product to render. With a real context we use it directly; in the
   // marketplace preview (no context) we synthesise a demo product, and
   // outside demo mode we blank it to neutral placeholders.
   const product = productCtx ?? {
     id: "demo",
-    name: demo ? "Bazar Tote Bag" : "",
+    name: demo ? localized(locale, "Bazar Tote Bag", "شنطة توت بازار") : "",
     slug: "demo",
     description: demo
-      ? "A roomy everyday tote in heavyweight cotton canvas — screen-printed by hand, built to carry the whole souk run."
+      ? localized(
+          locale,
+          "A roomy everyday tote in heavyweight cotton canvas — screen-printed by hand, built to carry the whole souk run.",
+          "شنطة توت واسعة لكل يوم من قماش الكانفاس القطني التقيل — مطبوعة بطباعة شاشة يدوي، معمولة تشيل توضيبة السوق كلها.",
+        )
       : "",
     price: demo ? 350 : 0,
     compare_at_price: demo ? 450 : undefined,
@@ -136,7 +143,7 @@ export default function BzProductDetail({
   const inStock = variant ? variant.is_in_stock : product.in_stock;
 
   const badges =
-    demoOrPlaceholder(true, FALLBACK_BADGES); // labels are static chrome, always shown
+    demoOrPlaceholder(true, fallbackBadges(locale)); // labels are static chrome, always shown
 
   const handleAdd = async () => {
     if (isFallback || addInFlight.current || added || !inStock) return;
@@ -243,7 +250,7 @@ export default function BzProductDetail({
                     <Money amount={activeCompareAt} currency={product.currency} />
                   </span>
                   <span className="bz-label text-[10px] px-2.5 py-1 bg-red-500 text-white rounded-full border-2 border-[var(--bz-dark)] shadow-[2px_2px_0_var(--bz-dark)]">
-                    SAVE {savingsPct}%
+                    {localized(locale, "SAVE", "وفّر")} {savingsPct}%
                   </span>
                 </>
               )}

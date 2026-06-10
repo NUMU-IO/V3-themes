@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useResolvedSettings, useShop } from "@numueg/theme-sdk";
+import { useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
 import {
   Phone,
   MessageCircle,
@@ -11,7 +11,7 @@ import {
   ArrowRight,
   Loader2,
 } from "lucide-react";
-import { asBool, asString, type SectionRenderProps } from "./_shared";
+import { asBool, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -61,6 +61,7 @@ function normalizeInstagram(
 export default function BzContact({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const shop = useShop();
+  const locale = useLocale();
 
   // ── Merchant-configured channels (never invented) ────────────────
   const socials = (shop?.social_links ?? {}) as Record<string, string>;
@@ -80,41 +81,41 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
   const storeName = (shop?.name as string) || "Bazar";
 
   // ── Editable copy ────────────────────────────────────────────────
-  const eyebrow = asString(s.eyebrow) || "WE'D LOVE TO HEAR FROM YOU";
-  const headline = asString(s.headline) || "GET IN TOUCH";
+  const eyebrow = asString(s.eyebrow) || localized(locale, "WE'D LOVE TO HEAR FROM YOU", "يسعدنا نسمع منك");
+  const headline = asString(s.headline) || localized(locale, "GET IN TOUCH", "تواصل معانا");
   const intro =
     asString(s.intro) ||
-    "Questions, collaborations, or just want to say hello — we're always here for you.";
-  const channelsLabel = asString(s.channels_label) || "REACH US THROUGH";
-  const channelsHeadline = asString(s.channels_headline) || "PICK YOUR CHANNEL";
-  const formLabel = asString(s.form_label) || "DROP US A LINE";
-  const formHeadline = asString(s.form_headline) || "SEND A MESSAGE";
-  const nameLabel = asString(s.name_label) || "YOUR NAME";
-  const emailLabel = asString(s.email_label) || "EMAIL";
-  const phoneLabel = asString(s.phone_label) || "PHONE NUMBER";
-  const messageLabel = asString(s.message_label) || "YOUR MESSAGE";
-  const submitText = asString(s.submit_text) || "SEND MESSAGE";
-  const successTitle = asString(s.success_title) || "MESSAGE SENT";
+    localized(locale, "Questions, collaborations, or just want to say hello — we're always here for you.", "أي استفسار أو تعاون أو حتى عايز تسلّم بس — إحنا دايمًا موجودين ليك.");
+  const channelsLabel = asString(s.channels_label) || localized(locale, "REACH US THROUGH", "تواصل معانا عن طريق");
+  const channelsHeadline = asString(s.channels_headline) || localized(locale, "PICK YOUR CHANNEL", "اختار وسيلتك");
+  const formLabel = asString(s.form_label) || localized(locale, "DROP US A LINE", "ابعتلنا رسالة");
+  const formHeadline = asString(s.form_headline) || localized(locale, "SEND A MESSAGE", "ابعت رسالة");
+  const nameLabel = asString(s.name_label) || localized(locale, "YOUR NAME", "اسمك");
+  const emailLabel = asString(s.email_label) || localized(locale, "EMAIL", "البريد الإلكتروني");
+  const phoneLabel = asString(s.phone_label) || localized(locale, "PHONE NUMBER", "رقم التليفون");
+  const messageLabel = asString(s.message_label) || localized(locale, "YOUR MESSAGE", "رسالتك");
+  const submitText = asString(s.submit_text) || localized(locale, "SEND MESSAGE", "ابعت الرسالة");
+  const successTitle = asString(s.success_title) || localized(locale, "MESSAGE SENT", "تم إرسال الرسالة");
   const successMessage =
     asString(s.success_message) ||
-    "Thank you for reaching out. We'll get back to you as soon as possible.";
+    localized(locale, "Thank you for reaching out. We'll get back to you as soon as possible.", "شكرًا لتواصلك معانا. هنرد عليك في أقرب وقت.");
   const showHours = asBool(s.show_hours, true);
-  const hoursLabel = asString(s.hours_label) || "AVAILABILITY";
-  const hoursHeadline = asString(s.hours_headline) || "BUSINESS HOURS";
+  const hoursLabel = asString(s.hours_label) || localized(locale, "AVAILABILITY", "مواعيد العمل");
+  const hoursHeadline = asString(s.hours_headline) || localized(locale, "BUSINESS HOURS", "ساعات العمل");
   const hoursDescription =
     asString(s.hours_description) ||
-    "Our team is available during the hours listed here. For urgent matters, reach out via WhatsApp for the fastest response.";
+    localized(locale, "Our team is available during the hours listed here. For urgent matters, reach out via WhatsApp for the fastest response.", "فريقنا متاح في المواعيد المكتوبة هنا. للأمور العاجلة، تواصل معانا على واتساب لأسرع رد.");
   const hoursNote =
-    asString(s.hours_note) || "Online orders are processed 24/7";
+    asString(s.hours_note) || localized(locale, "Online orders are processed 24/7", "الطلبات الأونلاين بتتنفذ على مدار الساعة");
 
   const hoursRows = [
     {
-      day: asString(s.hours_weekdays_label) || "SATURDAY – THURSDAY",
-      time: asString(s.hours_weekdays_value) || "9 AM – 9 PM",
+      day: asString(s.hours_weekdays_label) || localized(locale, "SATURDAY – THURSDAY", "السبت – الخميس"),
+      time: asString(s.hours_weekdays_value) || localized(locale, "9 AM – 9 PM", "٩ ص – ٩ م"),
     },
     {
-      day: asString(s.hours_friday_label) || "FRIDAY",
-      time: asString(s.hours_friday_value) || "2 PM – 9 PM",
+      day: asString(s.hours_friday_label) || localized(locale, "FRIDAY", "الجمعة"),
+      time: asString(s.hours_friday_value) || localized(locale, "2 PM – 9 PM", "٢ م – ٩ م"),
     },
   ];
 
@@ -178,7 +179,7 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
         <div className="bz-marquee-track" aria-hidden="true">
           {[...Array(6)].map((_, i) => (
             <span key={i} className="bz-heading text-lg sm:text-xl md:text-2xl lg:text-3xl text-[var(--bz-amber)] whitespace-nowrap mx-6 sm:mx-8">
-              REACH OUT • CONNECT • LET&apos;S TALK • {storeName.toUpperCase()} •
+              {localized(locale, "REACH OUT • CONNECT • LET'S TALK •", "تواصل • اتكلم معانا • خلّينا نسمعك •")} {storeName.toUpperCase()} •
             </span>
           ))}
         </div>
@@ -203,9 +204,9 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
                 <div className="w-14 h-14 rounded-full bg-[var(--bz-amber)] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <MessageCircle size={24} className="text-[var(--bz-dark)]" />
                 </div>
-                <h3 className="bz-heading text-lg text-[var(--bz-cream)]">WHATSAPP</h3>
-                <p className="text-sm text-[var(--bz-cream)]/40 mt-2">Quick responses, always</p>
-                <span className="bz-label text-[var(--bz-amber)] mt-3 inline-flex items-center gap-1">CHAT NOW <ArrowRight size={12} className="rtl:-scale-x-100" /></span>
+                <h3 className="bz-heading text-lg text-[var(--bz-cream)]">{localized(locale, "WHATSAPP", "واتساب")}</h3>
+                <p className="text-sm text-[var(--bz-cream)]/40 mt-2">{localized(locale, "Quick responses, always", "ردود سريعة دايمًا")}</p>
+                <span className="bz-label text-[var(--bz-amber)] mt-3 inline-flex items-center gap-1">{localized(locale, "CHAT NOW", "ابدأ المحادثة")} <ArrowRight size={12} className="rtl:-scale-x-100" /></span>
               </a>
             )}
 
@@ -215,9 +216,9 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
                 <div className="w-14 h-14 rounded-full bg-[var(--bz-amber)] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <Phone size={24} className="text-[var(--bz-dark)]" />
                 </div>
-                <h3 className="bz-heading text-lg text-[var(--bz-cream)]">PHONE</h3>
-                <p className="text-sm text-[var(--bz-cream)]/40 mt-2">Give us a ring</p>
-                <span className="bz-label text-[var(--bz-amber)] mt-3 inline-flex items-center gap-1">CALL US <ArrowRight size={12} className="rtl:-scale-x-100" /></span>
+                <h3 className="bz-heading text-lg text-[var(--bz-cream)]">{localized(locale, "PHONE", "تليفون")}</h3>
+                <p className="text-sm text-[var(--bz-cream)]/40 mt-2">{localized(locale, "Give us a ring", "اتصل بينا")}</p>
+                <span className="bz-label text-[var(--bz-amber)] mt-3 inline-flex items-center gap-1">{localized(locale, "CALL US", "اتصل بينا")} <ArrowRight size={12} className="rtl:-scale-x-100" /></span>
               </a>
             )}
 
@@ -227,9 +228,9 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
                 <div className="w-14 h-14 rounded-full bg-[var(--bz-amber)] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <svg viewBox="0 0 24 24" width={24} height={24} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-[var(--bz-dark)]"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
                 </div>
-                <h3 className="bz-heading text-lg text-[var(--bz-cream)]">INSTAGRAM</h3>
-                <p className="text-sm text-[var(--bz-cream)]/40 mt-2">Follow our journey</p>
-                <span className="bz-label text-[var(--bz-amber)] mt-3 inline-flex items-center gap-1">@{instagram} <ArrowRight size={12} className="rtl:-scale-x-100" /></span>
+                <h3 className="bz-heading text-lg text-[var(--bz-cream)]">{localized(locale, "INSTAGRAM", "إنستجرام")}</h3>
+                <p className="text-sm text-[var(--bz-cream)]/40 mt-2">{localized(locale, "Follow our journey", "تابع رحلتنا")}</p>
+                <span className="bz-label text-[var(--bz-amber)] mt-3 inline-flex items-center gap-1" dir="ltr">@{instagram} <ArrowRight size={12} className="rtl:-scale-x-100" /></span>
               </a>
             )}
 
@@ -239,9 +240,9 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
                 <div className="w-14 h-14 rounded-full bg-[var(--bz-amber)] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <Mail size={24} className="text-[var(--bz-dark)]" />
                 </div>
-                <h3 className="bz-heading text-lg text-[var(--bz-cream)]">EMAIL</h3>
-                <p className="text-sm text-[var(--bz-cream)]/40 mt-2">For detailed inquiries</p>
-                <span className="bz-label text-[var(--bz-amber)] mt-3 inline-flex items-center gap-1">WRITE US <ArrowRight size={12} className="rtl:-scale-x-100" /></span>
+                <h3 className="bz-heading text-lg text-[var(--bz-cream)]">{localized(locale, "EMAIL", "البريد الإلكتروني")}</h3>
+                <p className="text-sm text-[var(--bz-cream)]/40 mt-2">{localized(locale, "For detailed inquiries", "للاستفسارات التفصيلية")}</p>
+                <span className="bz-label text-[var(--bz-amber)] mt-3 inline-flex items-center gap-1">{localized(locale, "WRITE US", "راسلنا")} <ArrowRight size={12} className="rtl:-scale-x-100" /></span>
               </a>
             )}
           </div>
@@ -273,11 +274,11 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
               <p className="text-sm text-[var(--bz-gray)] mt-3 max-w-sm mx-auto">{successMessage}</p>
               {whatsappContinueUrl && (
                 <a href={whatsappContinueUrl} target="_blank" rel="noopener noreferrer" className="bz-btn bz-btn-amber mt-6 rounded-full gap-2 inline-flex">
-                  <MessageCircle size={16} /> CONTINUE ON WHATSAPP
+                  <MessageCircle size={16} /> {localized(locale, "CONTINUE ON WHATSAPP", "كمّل على واتساب")}
                 </a>
               )}
               <button type="button" onClick={reset} className="bz-btn mt-4 rounded-full text-[11px] block mx-auto">
-                SEND ANOTHER
+                {localized(locale, "SEND ANOTHER", "ابعت رسالة تانية")}
               </button>
             </div>
           ) : (
@@ -287,7 +288,7 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
                   <InlineEditable sectionId={sectionId} settingKey="name_label" value={nameLabel} />
                 </label>
                 <input type="text" required value={form.name} onChange={(e) => setField("name", e.target.value)}
-                  placeholder="Full name"
+                  placeholder={localized(locale, "Full name", "الاسم بالكامل")}
                   className="w-full h-12 px-5 rounded-xl border-2 border-[var(--bz-dark)]/15 bg-transparent text-base md:text-sm focus:border-[var(--bz-amber)] outline-none transition-colors placeholder:text-[var(--bz-dark)]/30" />
               </div>
               <div>
@@ -311,13 +312,13 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
                   <InlineEditable sectionId={sectionId} settingKey="message_label" value={messageLabel} />
                 </label>
                 <textarea required rows={5} value={form.message} onChange={(e) => setField("message", e.target.value)}
-                  placeholder="Tell us what's on your mind..."
+                  placeholder={localized(locale, "Tell us what's on your mind...", "قولّنا اللي في بالك...")}
                   className="w-full px-5 py-3 rounded-xl border-2 border-[var(--bz-dark)]/15 bg-transparent text-base md:text-sm focus:border-[var(--bz-amber)] outline-none transition-colors resize-none placeholder:text-[var(--bz-dark)]/30" />
               </div>
               <button type="submit" disabled={status === "submitting"} className="bz-btn bz-btn-filled w-full rounded-full py-4 text-[12px] gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
                 {status === "submitting" ? (
                   <>
-                    <Loader2 size={14} className="animate-spin" /> SENDING…
+                    <Loader2 size={14} className="animate-spin" /> {localized(locale, "SENDING…", "جاري الإرسال…")}
                   </>
                 ) : (
                   <>
@@ -354,7 +355,7 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
                 {whatsapp && (
                   <a href={`https://wa.me/${whatsapp.replace(/^\+/, "")}`} target="_blank" rel="noopener noreferrer"
                     className="bz-btn bz-btn-amber mt-8 rounded-full gap-2">
-                    <MessageCircle size={16} /> CHAT ON WHATSAPP
+                    <MessageCircle size={16} /> {localized(locale, "CHAT ON WHATSAPP", "تواصل على واتساب")}
                   </a>
                 )}
               </div>

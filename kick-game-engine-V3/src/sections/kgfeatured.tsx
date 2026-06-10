@@ -1,6 +1,6 @@
 "use client";
-import { Link, Money, useProducts, type Product } from "@numueg/theme-sdk";
-import { asString, asNumber, type SectionRenderProps } from "./_shared";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
+import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Kick Game featured-collection.
@@ -15,9 +15,10 @@ import { asString, asNumber, type SectionRenderProps } from "./_shared";
 const KGFeatured = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
   const s = instance.settings ?? {};
-  const title = asString(s.title) || "BEST-SELLERS";
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "BEST-SELLERS", "الأكثر مبيعاً");
   const viewAllLink = asString(s.view_all_link) || "/products";
-  const viewAllText = asString(s.view_all_text) || "VIEW ALL";
+  const viewAllText = asString(s.view_all_text) || localized(locale, "VIEW ALL", "شوف الكل");
 
   const count = asNumber(s.product_count, 8) || 8;
   const displayed = products.slice(0, count);

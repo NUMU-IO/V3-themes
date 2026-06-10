@@ -1,22 +1,28 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
-import { asString, type SectionRenderProps } from "./_shared";
+import { Link, useLocale } from "@numueg/theme-sdk";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const RsImageWithText = ({ instance }: SectionRenderProps) => {
+  const locale = useLocale();
   const s = instance.settings ?? {};
-  const label = asString(s.label, "THE PHILOSOPHY");
+  const label = asString(s.label) || localized(locale, "THE PHILOSOPHY", "الفلسفة");
   // Support both V2 home variants: (headline + headline_accent + text) and
   // (title + body). Whichever the merchant set wins, falling back to the
   // quiet-luxury default copy.
-  const headline = asString(s.headline) || asString(s.title) || "The luxury of things that";
-  const headlineAccent = asString(s.headline_accent, "last.");
+  const headline = asString(s.headline) || asString(s.title) || localized(locale, "The luxury of things that", "رفاهية الحاجات اللي");
+  const headlineAccent = asString(s.headline_accent) || localized(locale, "last.", "بتفضل.");
   const text =
     asString(s.text) ||
     asString(s.body) ||
-    '"Rabbitsocks was born from a pursuit of the perfect tactile experience. We don\'t chase trends; we refine the invisible details of the daily ritual."';
+    localized(
+      locale,
+      '"Rabbitsocks was born from a pursuit of the perfect tactile experience. We don\'t chase trends; we refine the invisible details of the daily ritual."',
+      '"رابيت سوكس اتولدت من السعي ورا إحساس اللمس المثالي. احنا مبنجريش ورا الموضة؛ احنا بنهذّب تفاصيل طقوس اليوم الخفية."',
+    );
   const ctaText = asString(s.cta_text);
   const ctaLink = asString(s.cta_link) || asString(s.cta_url) || "/products";
   const imageUrl = asString(s.image_url);
+  const imageTransform = asImageTransform(s.image_url);
   const imageAlt = asString(s.image_alt, label);
   // V2 used both "left/right" and "start/end"; treat start/left as image-first.
   const rawPos = asString(s.image_position, "right");
@@ -50,7 +56,8 @@ const RsImageWithText = ({ instance }: SectionRenderProps) => {
         <img
           src={imageUrl}
           alt={imageAlt}
-          className="w-full h-full object-cover rs-img-zoom"
+          className={`w-full h-full object-cover ${imageTransform ? "" : "rs-img-zoom"}`}
+          style={applyImageTransform(imageTransform, "cover")}
           loading="lazy"
         />
       ) : (

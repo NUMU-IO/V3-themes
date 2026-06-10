@@ -3,12 +3,13 @@
 import {
   Link,
   Money,
+  useLocale,
   useProducts,
   useResolvedSettings,
   type Product,
 } from "@numueg/theme-sdk";
 import { ShoppingBag, SlidersHorizontal } from "lucide-react";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /** First image URL for a product, strict-null safe. */
@@ -26,6 +27,7 @@ function firstImage(p: Product): string | null {
  * consistent everywhere.
  */
 export function BzProductCard({ product }: { product: Product }) {
+  const locale = useLocale();
   const slugOrId = product.slug || product.id;
   const image = firstImage(product);
   const price = typeof product.price === "number" ? product.price : 0;
@@ -60,7 +62,7 @@ export function BzProductCard({ product }: { product: Product }) {
         )}
         {hasDiscount && (
           <span className="absolute top-3 end-3 bz-label px-3 py-1 bg-red-500 text-white border-2 border-[var(--bz-dark)] rounded-full text-[10px] shadow-[2px_2px_0_var(--bz-dark)]">
-            SALE
+            {localized(locale, "SALE", "تخفيض")}
           </span>
         )}
       </div>
@@ -98,14 +100,15 @@ export default function BzProductGrid({
 }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const { products, loading } = useProducts();
+  const locale = useLocale();
 
-  const title = asString(s.title) || "SHOP ALL";
-  const subtitle = asString(s.subtitle) || "The full edit, in one place.";
+  const title = asString(s.title) || localized(locale, "SHOP ALL", "تسوّق الكل");
+  const subtitle = asString(s.subtitle) || localized(locale, "The full edit, in one place.", "كل التشكيلة في مكان واحد.");
   const colsDesktop = Math.max(1, Math.min(6, asNumber(s.columns_desktop, 4)));
   const colsMobile = Math.max(1, Math.min(3, asNumber(s.columns_mobile, 2)));
   const maxItems = asNumber(s.max_items, 0);
   const emptyState =
-    asString(s.empty_state_text) || "Nothing here yet — check back soon.";
+    asString(s.empty_state_text) || localized(locale, "Nothing here yet — check back soon.", "لسه مفيش حاجة هنا — ارجع تاني قريب.");
 
   const displayed: Product[] =
     maxItems > 0 ? products.slice(0, maxItems) : products;

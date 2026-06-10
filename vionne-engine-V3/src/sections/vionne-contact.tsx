@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { Link, useShop } from "@numueg/theme-sdk";
+import { Link, useLocale, useShop } from "@numueg/theme-sdk";
 import { ChevronRight, MessageCircle, Phone, Mail, Instagram, Clock } from "lucide-react";
-import { type SectionRenderProps } from "./_shared";
+import { localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Normalise a merchant-provided Instagram value into a { handle, url } pair.
@@ -27,6 +27,7 @@ function normalizeInstagram(raw: string | null | undefined): { handle: string; u
 }
 
 const VionneContact = ({ instance }: SectionRenderProps) => {
+  const locale = useLocale();
   const s = instance.settings ?? {};
   // Pull channels from the merchant-configured contact info (Contact tab in the
   // dashboard → falls back to social_links / footer overrides). Never invent
@@ -59,20 +60,20 @@ const VionneContact = ({ instance }: SectionRenderProps) => {
   );
   const email = contact.email || "";
 
-  const eyebrow = (s.eyebrow as string) ?? "GET IN TOUCH";
-  const title = (s.title as string) ?? "Contact us";
+  const eyebrow = (s.eyebrow as string) || localized(locale, "GET IN TOUCH", "تواصلي معنا");
+  const title = (s.title as string) || localized(locale, "Contact us", "اتصلي بينا");
   const subtitle = (s.subtitle as string) ?? "";
-  const nameLabel = (s.name_label as string) ?? "Name";
-  const phoneLabel = (s.phone_label as string) ?? "Phone number";
-  const messageLabel = (s.message_label as string) ?? "Your message";
-  const submitText = (s.submit_text as string) ?? "Send";
-  const successTitle = (s.success_title as string) ?? "Thanks for reaching out";
-  const successMessage = (s.success_message as string) ?? "We'll get back to you as soon as possible.";
+  const nameLabel = (s.name_label as string) || localized(locale, "Name", "الاسم");
+  const phoneLabel = (s.phone_label as string) || localized(locale, "Phone number", "رقم الموبايل");
+  const messageLabel = (s.message_label as string) || localized(locale, "Your message", "رسالتك");
+  const submitText = (s.submit_text as string) || localized(locale, "Send", "إرسال");
+  const successTitle = (s.success_title as string) || localized(locale, "Thanks for reaching out", "شكرًا لتواصلك معانا");
+  const successMessage = (s.success_message as string) || localized(locale, "We'll get back to you as soon as possible.", "هنرد عليكي في أقرب وقت.");
   const showWorkingHours = s.show_working_hours !== false;
-  const weekdaysLabel = (s.hours_weekdays_label as string) ?? "Saturday – Thursday";
-  const weekdaysValue = (s.hours_weekdays_value as string) ?? "9 AM – 9 PM";
-  const fridayLabel = (s.hours_friday_label as string) ?? "Friday";
-  const fridayValue = (s.hours_friday_value as string) ?? "2 PM – 9 PM";
+  const weekdaysLabel = (s.hours_weekdays_label as string) || localized(locale, "Saturday – Thursday", "السبت – الخميس");
+  const weekdaysValue = (s.hours_weekdays_value as string) || localized(locale, "9 AM – 9 PM", "٩ ص – ٩ م");
+  const fridayLabel = (s.hours_friday_label as string) || localized(locale, "Friday", "الجمعة");
+  const fridayValue = (s.hours_friday_value as string) || localized(locale, "2 PM – 9 PM", "٢ م – ٩ م");
   const showMap = s.show_map === true;
   const mapEmbedUrl = (s.map_embed_url as string) ?? "";
 
@@ -96,7 +97,7 @@ const VionneContact = ({ instance }: SectionRenderProps) => {
   if (phoneDigits) {
     methods.push({
       icon: Phone,
-      label: "Call us",
+      label: localized(locale, "Call us", "اتصلي بينا"),
       value: formatPhoneForDisplay(phoneDigits),
       href: `tel:+${phoneDigits}`,
     });
@@ -118,7 +119,7 @@ const VionneContact = ({ instance }: SectionRenderProps) => {
       <div className="container mx-auto px-4 py-10 md:py-14 max-w-5xl">
         <nav className="flex items-center gap-1.5 text-xs vn-label text-[var(--vn-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ChevronRight size={12} className="rtl:rotate-180" />
           <span className="text-[var(--vn-ink)]">{title}</span>
@@ -196,7 +197,7 @@ const VionneContact = ({ instance }: SectionRenderProps) => {
               <div className="pt-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Clock size={14} className="text-[var(--vn-muted)]" />
-                  <span className="vn-eyebrow text-[10px]">Business hours</span>
+                  <span className="vn-eyebrow text-[10px]">{localized(locale, "Business hours", "مواعيد العمل")}</span>
                 </div>
                 <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 xs:gap-4 text-sm text-[var(--vn-muted)]">
                   <div>

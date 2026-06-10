@@ -4,11 +4,12 @@ import {
   Link,
   Money,
   useCart,
+  useLocale,
   useResolvedSettings,
   type CartItem,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Minus, Plus, ShoppingBag, X } from "lucide-react";
-import { asNumber, asString, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -22,21 +23,22 @@ import { InlineEditable } from "./_inline-editable";
 export default function EmpCart({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const { cart, updateQuantity, removeItem, loading } = useCart();
+  const locale = useLocale();
 
-  const emptyHeadline = asString(s.empty_headline) || "YOUR CART IS EMPTY";
+  const emptyHeadline = asString(s.empty_headline) || localized(locale, "YOUR CART IS EMPTY", "سلتك فاضية");
   const emptySubhead =
     asString(s.empty_subhead) ||
-    "Looks like you haven't added anything yet. Let's fix that.";
-  const emptyCta = asString(s.empty_cta_label) || "CONTINUE SHOPPING";
+    localized(locale, "Looks like you haven't added anything yet. Let's fix that.", "يبدو إنك لسه مضفتش حاجة. تعالى نظبط ده.");
+  const emptyCta = asString(s.empty_cta_label) || localized(locale, "CONTINUE SHOPPING", "كمّل تسوّق");
   const emptyCtaHref = asString(s.empty_cta_href) || "/products";
 
-  const populatedTitle = asString(s.populated_title) || "YOUR CART";
-  const checkoutCta = asString(s.checkout_cta_label) || "CHECKOUT";
-  const continueLabel = asString(s.continue_label) || "CONTINUE SHOPPING";
-  const subtotalLabel = asString(s.subtotal_label) || "SUBTOTAL";
-  const shippingLabel = asString(s.shipping_label) || "SHIPPING";
-  const totalLabel = asString(s.total_label) || "TOTAL";
-  const freeLabel = asString(s.free_label) || "FREE";
+  const populatedTitle = asString(s.populated_title) || localized(locale, "YOUR CART", "سلتك");
+  const checkoutCta = asString(s.checkout_cta_label) || localized(locale, "CHECKOUT", "إتمام الشراء");
+  const continueLabel = asString(s.continue_label) || localized(locale, "CONTINUE SHOPPING", "كمّل تسوّق");
+  const subtotalLabel = asString(s.subtotal_label) || localized(locale, "SUBTOTAL", "الإجمالي الفرعي");
+  const shippingLabel = asString(s.shipping_label) || localized(locale, "SHIPPING", "الشحن");
+  const totalLabel = asString(s.total_label) || localized(locale, "TOTAL", "الإجمالي");
+  const freeLabel = asString(s.free_label) || localized(locale, "FREE", "مجاني");
 
   const shippingFlat = asNumber(s.shipping_flat, 50);
   const freeThreshold = asNumber(s.free_shipping_threshold, 500);
@@ -201,9 +203,9 @@ export default function EmpCart({ instance, sectionId }: SectionRenderProps) {
                 </div>
                 {shippingCost > 0 && remainingForFree > 0 && (
                   <p className="text-xs text-[var(--emp-amber)] font-medium">
-                    Add{" "}
-                    <Money amount={remainingForFree} currency={currency} /> more
-                    for free shipping
+                    {localized(locale, "Add ", "ضيف ")}
+                    <Money amount={remainingForFree} currency={currency} />
+                    {localized(locale, " more for free shipping", " كمان للحصول على شحن مجاني")}
                   </p>
                 )}
                 <div className="flex justify-between pt-3 border-t border-[var(--emp-dark)]/10">

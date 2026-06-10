@@ -7,11 +7,12 @@ import {
   useProductOptional,
   useVariantSelection,
   useRelatedProducts,
+  useLocale,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Boutique product-detail section.
@@ -28,6 +29,7 @@ import { asNumber, type SectionRenderProps } from "./_shared";
  */
 export default function BoutiqueProductDetail({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
+  const locale = useLocale();
 
   const showRating = s.show_rating ?? true;
   const showStock = s.show_stock ?? true;
@@ -53,19 +55,19 @@ export default function BoutiqueProductDetail({ instance }: SectionRenderProps) 
     return (
       <div className="bg-background min-h-[50vh] flex items-center justify-center px-4 py-20 text-center">
         <div className="max-w-sm">
-          <span className="block mb-3 text-xs uppercase tracking-widest text-muted-foreground">Product</span>
+          <span className="block mb-3 text-xs uppercase tracking-widest text-muted-foreground">{localized(locale, "Product", "منتج")}</span>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-            No product to show yet
+            {localized(locale, "No product to show yet", "لا يوجد منتج لعرضه بعد")}
           </h1>
           <p className="text-sm text-muted-foreground mb-7 leading-relaxed">
-            Open a product from the shop to see its details here.
+            {localized(locale, "Open a product from the shop to see its details here.", "افتحي منتجاً من المتجر لعرض تفاصيله هنا.")}
           </p>
           <Link
             to="/products"
             className="inline-flex items-center gap-2 px-7 py-3 rounded-full font-semibold text-sm text-primary-foreground transition-all hover:scale-[1.02]"
             style={{ background: "hsl(var(--primary))" }}
           >
-            Browse products
+            {localized(locale, "Browse products", "تصفّحي المنتجات")}
           </Link>
         </div>
       </div>
@@ -101,11 +103,11 @@ export default function BoutiqueProductDetail({ instance }: SectionRenderProps) 
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground mb-6">
           <Link to="/" className="hover:text-foreground transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowLeft size={10} className="rtl:rotate-180" />
           <Link to="/products" className="hover:text-foreground transition-colors">
-            Shop
+            {localized(locale, "Shop", "المتجر")}
           </Link>
           <ArrowLeft size={10} className="rtl:rotate-180" />
           <span className="text-foreground line-clamp-1 normal-case tracking-normal">
@@ -145,7 +147,7 @@ export default function BoutiqueProductDetail({ instance }: SectionRenderProps) 
                   <button
                     type="button"
                     key={img.id ?? i}
-                    aria-label={`Image ${i + 1}`}
+                    aria-label={`${localized(locale, "Image", "صورة")} ${i + 1}`}
                     onClick={() => setActiveImage(i)}
                     className={
                       "w-20 h-24 shrink-0 overflow-hidden transition-all rounded-lg border-2 " +
@@ -192,7 +194,7 @@ export default function BoutiqueProductDetail({ instance }: SectionRenderProps) 
             {showRating && (
               <div className="flex items-center gap-1 mb-4 text-muted-foreground">
                 <span className="text-sm text-[hsl(var(--warning))]">★★★★★</span>
-                <span className="text-xs">(reviews)</span>
+                <span className="text-xs">{localized(locale, "(reviews)", "(تقييمات)")}</span>
               </div>
             )}
 
@@ -230,9 +232,9 @@ export default function BoutiqueProductDetail({ instance }: SectionRenderProps) 
                 <span className={inStock ? "text-muted-foreground" : "text-destructive"}>
                   {inStock
                     ? typeof stockQty === "number" && stockQty > 0 && stockQty <= 5
-                      ? `Only ${stockQty} left`
-                      : "In stock"
-                    : "Sold out"}
+                      ? localized(locale, `Only ${stockQty} left`, `باقي ${stockQty} فقط`)
+                      : localized(locale, "In stock", "متوفر")
+                    : localized(locale, "Sold out", "نفذت الكمية")}
                 </span>
               </div>
             )}
@@ -327,13 +329,13 @@ export default function BoutiqueProductDetail({ instance }: SectionRenderProps) 
                 style={{ background: "hsl(var(--primary))" }}
                 label={
                   <>
-                    <ShoppingBag size={16} /> Add to bag
+                    <ShoppingBag size={16} /> {localized(locale, "Add to bag", "أضيفي للحقيبة")}
                   </>
                 }
-                loadingLabel="Adding…"
+                loadingLabel={localized(locale, "Adding…", "جاري الإضافة…")}
                 soldOutLabel={
                   <>
-                    <ShoppingBag size={16} /> Sold out
+                    <ShoppingBag size={16} /> {localized(locale, "Sold out", "نفذت الكمية")}
                   </>
                 }
                 data-testid="storefront-add-to-cart"
@@ -344,9 +346,9 @@ export default function BoutiqueProductDetail({ instance }: SectionRenderProps) 
             {showGuarantees && (
               <div className="mt-8 pt-6 border-t border-border flex flex-wrap items-center justify-between gap-4">
                 {[
-                  { icon: Truck, label: "Fast Shipping", desc: "3-5 days" },
-                  { icon: RotateCcw, label: "Easy Returns", desc: "14 days" },
-                  { icon: ShieldCheck, label: "Authentic", desc: "100% Genuine" },
+                  { icon: Truck, label: localized(locale, "Fast Shipping", "شحن سريع"), desc: localized(locale, "3-5 days", "3-5 أيام") },
+                  { icon: RotateCcw, label: localized(locale, "Easy Returns", "إرجاع سهل"), desc: localized(locale, "14 days", "14 يوم") },
+                  { icon: ShieldCheck, label: localized(locale, "Authentic", "أصلي"), desc: localized(locale, "100% Genuine", "100% أصلي") },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2 text-muted-foreground">
                     <item.icon size={15} className="shrink-0 text-primary" />
@@ -370,7 +372,7 @@ export default function BoutiqueProductDetail({ instance }: SectionRenderProps) 
             className="mt-16 pt-10 border-t border-border"
             data-testid="storefront-related-products"
           >
-            <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-6">You may also like</h2>
+            <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-6">{localized(locale, "You may also like", "قد يعجبك أيضاً")}</h2>
             <div
               className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
               data-testid="storefront-related-products-grid"
