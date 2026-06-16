@@ -46,16 +46,16 @@ const EmpRichText = ({ instance }: SectionRenderProps) => {
   if (!cmsTitle && !content) return null;
 
   return (
-    <section className="py-12 md:py-16 lg:py-24 bg-[var(--emp-cream)]">
+    <section className="py-12 md:py-16 lg:py-24 bg-[hsl(var(--background))]">
       <div className="container mx-auto px-4 max-w-3xl">
         {cmsTitle && (
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-[var(--emp-dark)] mb-6 md:mb-8">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight text-foreground mb-6 md:mb-8">
             {cmsTitle}
           </h1>
         )}
         {content && (
           <div
-            className="prose prose-sm sm:prose-base md:prose-lg max-w-none text-[var(--emp-dark)]"
+            className="prose prose-sm sm:prose-base md:prose-lg max-w-none text-foreground"
             dangerouslySetInnerHTML={{ __html: safeHtml }}
           />
         )}

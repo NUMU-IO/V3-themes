@@ -1,7 +1,7 @@
 {
   "type": "emp-cart",
   "name": "Empire Cart",
-  "name_ar": "بازار السلة",
+  "name_ar": "إمباير السلة",
   "limit": 1,
   "settings": [
     {
@@ -120,7 +120,7 @@
           "name": "Empire Cart"
         },
         "ar": {
-          "name": "بازار السلة"
+          "name": "إمباير السلة"
         }
       },
       "settings": {

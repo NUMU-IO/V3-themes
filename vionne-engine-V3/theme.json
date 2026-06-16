@@ -2,9 +2,9 @@
   "id": "vionne-v3",
   "name": "Vionne (V3)",
   "author": "NUMU",
-  "version": "0.4.7",
+  "version": "0.4.9",
   "layout": "single-column",
-  "description": "Vionne (V3) — refined grayscale storefront for modest fashion, ported faithfully from the V2 in-tree theme.",
+  "description": "Vionne (V3) — refined grayscale storefront for modest fashion, ported faithfully from the V2 in-tree theme. Now with an editable Vionne header + footer included across every page.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
@@ -12,6 +12,10 @@
       "home": {
         "name": "Home",
         "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
           {
             "type": "vionne-slideshow",
             "settings": {
@@ -97,6 +101,10 @@
               "full_width": true,
               "show_labels": false
             }
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
           }
         ]
       },
@@ -104,17 +112,29 @@
         "name": "Product",
         "sections": [
           {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
             "type": "vionne-product-detail",
             "settings": {
               "show_related_products": true,
               "related_title": "You may also like"
             }
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
           }
         ]
       },
       "products": {
         "name": "Products",
         "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
           {
             "type": "vionne-products-page",
             "settings": {
@@ -123,6 +143,10 @@
               "columns_desktop": 4,
               "columns_mobile": 2
             }
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
           }
         ]
       },
@@ -130,7 +154,15 @@
         "name": "About",
         "sections": [
           {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
             "type": "vionne-about",
+            "settings": {}
+          },
+          {
+            "type": "vionne-footer",
             "settings": {}
           }
         ]
@@ -139,7 +171,15 @@
         "name": "Contact",
         "sections": [
           {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
             "type": "vionne-contact",
+            "settings": {}
+          },
+          {
+            "type": "vionne-footer",
             "settings": {}
           }
         ]
@@ -148,24 +188,147 @@
         "name": "Profile",
         "sections": [
           {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
             "type": "vionne-profile",
+            "settings": {}
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "account": {
+        "name": "Account",
+        "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
+            "type": "vionne-profile",
+            "settings": {}
+          },
+          {
+            "type": "vionne-footer",
             "settings": {}
           }
         ]
       },
       "cart": {
         "name": "Cart",
-        "sections": []
+        "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
+          }
+        ]
       },
       "checkout": {
         "name": "Checkout",
-        "sections": []
+        "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
+          }
+        ]
       },
       "order-confirmation": {
         "name": "Order confirmation",
         "sections": [
           {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
             "type": "vionne-order-confirmation-section",
+            "settings": {}
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "collection": {
+        "name": "Collection",
+        "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
+            "type": "vionne-products-page",
+            "settings": {
+              "show_view_toggle": true,
+              "show_category_subtitle": true,
+              "columns_desktop": 4,
+              "columns_mobile": 2
+            }
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "search": {
+        "name": "Search",
+        "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
+            "type": "vionne-search-results",
+            "settings": {
+              "columns_desktop": 4,
+              "columns_mobile": 2
+            }
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "page": {
+        "name": "Page",
+        "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "404": {
+        "name": "404 — Not found",
+        "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
+            "type": "vionne-not-found",
+            "settings": {}
+          },
+          {
+            "type": "vionne-footer",
             "settings": {}
           }
         ]

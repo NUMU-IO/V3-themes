@@ -1,0 +1,93 @@
+{
+  "type": "emp-order-confirmation",
+  "name": "Order Confirmation",
+  "name_ar": "تأكيد الطلب",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "label_ar": "النص الفرعي",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "continue_shopping_text",
+      "label": "Continue shopping button text",
+      "label_ar": "نص زر متابعة التسوق",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "continue_shopping_link",
+      "label": "Continue shopping link",
+      "label_ar": "رابط متابعة التسوق",
+      "default": "/products"
+    },
+    {
+      "type": "header",
+      "content": "Display options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_emoji",
+      "label": "Show emoji in title",
+      "label_ar": "إظهار الرمز التعبيري في العنوان",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress",
+      "label": "Show progress tracker",
+      "label_ar": "إظهار شريط التقدم",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_whatsapp",
+      "label": "Show WhatsApp message card",
+      "label_ar": "إظهار بطاقة رسالة واتساب",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_track_order",
+      "label": "Show track order button",
+      "label_ar": "إظهار زر تتبع الطلب",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Order Confirmation",
+      "locales": {
+        "en": {
+          "name": "Order Confirmation"
+        },
+        "ar": {
+          "name": "تأكيد الطلب"
+        }
+      },
+      "settings": {
+        "title": "",
+        "subtitle": "",
+        "show_emoji": false,
+        "show_progress": false,
+        "show_whatsapp": false,
+        "show_track_order": false
+      }
+    }
+  ]
+}

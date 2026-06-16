@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { asString, localized, type SectionRenderProps } from "./_shared";
@@ -9,15 +8,29 @@ import { InlineEditable } from "./_inline-editable";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/**
+ * emp-newsletter — faithful V3 port of V2 EmpNewsletter
+ * (numu-egyptian-bazaar/src/themes/empire/sections/newsletter/EmpNewsletter.tsx).
+ *
+ * A BLACK `py-20` band, centered `max-w-xl`. White `font-black uppercase`
+ * title, muted white subtitle, then a pill form: a translucent rounded-full
+ * email input (`bg-white/10`) beside a WHITE rounded-full submit button.
+ * After submit it swaps to a short thank-you note. NOT the light off-white
+ * newsletter it inherited from the Bazar clone.
+ *
+ * Subscribe is a local confirmation (no API), matching V2.
+ *
+ * Settings: title, subtitle, button_text, placeholder.
+ */
 const EmpNewsletter = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
-  const title = asString(s.title) || localized(locale, "JOIN THE CIRCLE", "انضم لدائرتنا");
+  const title = asString(s.title) || localized(locale, "JOIN OUR NEWSLETTER", "اشترك في نشرتنا");
   const subtitle =
     asString(s.subtitle) ||
-    localized(locale, "Early access to limited drops and exclusive content.", "وصول مبكر للإصدارات المحدودة ومحتوى حصري.");
-  const buttonText = asString(s.button_text) || localized(locale, "SUBSCRIBE", "اشترك");
-  const placeholder = asString(s.placeholder) || localized(locale, "YOUR EMAIL", "بريدك الإلكتروني");
+    localized(locale, "Be the first to know about offers and new products", "اعرف أول واحد عن العروض والمنتجات الجديدة");
+  const buttonText = asString(s.button_text) || localized(locale, "Subscribe", "اشترك");
+  const placeholder = asString(s.placeholder) || localized(locale, "Email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -30,56 +43,60 @@ const EmpNewsletter = ({ instance, sectionId }: SectionRenderProps) => {
   };
 
   return (
-    <section className="py-12 md:py-16 lg:py-24 bg-[var(--emp-cream)]">
-      <div className="container mx-auto px-4 text-center">
-        <h2 className="emp-heading text-2xl sm:text-3xl md:text-4xl text-[var(--emp-dark)] mb-3 md:mb-4">
-          <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
-        </h2>
-        <p className="text-sm md:text-base text-[var(--emp-gray)] mb-6 md:mb-8 max-w-md mx-auto">
-          <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
-        </p>
-        {submitted ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", stiffness: 220, damping: 18 }}
-            role="status"
-            aria-live="polite"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border-2 border-[var(--emp-dark)] bg-[var(--emp-amber)] text-[var(--emp-dark)] emp-label shadow-[3px_3px_0_var(--emp-dark)]"
-          >
-            <motion.span
-              initial={{ scale: 0, rotate: -45 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ delay: 0.1, type: "spring", stiffness: 300, damping: 14 }}
-              className="inline-flex"
+    <section className="py-20 bg-black" data-emp-section={sectionId}>
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-xl mx-auto text-center"
+        >
+          <h2 className="text-white font-black text-2xl md:text-4xl uppercase tracking-tight mb-3">
+            <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
+          </h2>
+          <p className="text-white/40 text-sm mb-8">
+            <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
+          </p>
+
+          {submitted ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              role="status"
+              aria-live="polite"
+              className="py-4"
             >
-              <Check size={16} aria-hidden="true" strokeWidth={3} />
-            </motion.span>
-            <span>{localized(locale, "SUBSCRIBED", "تم الاشتراك")}</span>
-          </motion.div>
-        ) : (
-          <form
-            className="flex flex-col sm:flex-row gap-2 sm:gap-3 max-w-md mx-auto"
-            onSubmit={handleSubmit}
-          >
-            <label htmlFor="emp-newsletter-email" className="sr-only">
-              {placeholder}
-            </label>
-            <input
-              id="emp-newsletter-email"
-              type="email"
-              value={email}
-              onChange={(ev) => setEmail(ev.target.value)}
-              placeholder={placeholder}
-              dir="ltr"
-              autoComplete="email"
-              className="flex-1 px-4 py-3 rounded-full border-2 border-[var(--emp-dark)] bg-white text-[var(--emp-dark)] placeholder:text-[var(--emp-gray)] focus:outline-none focus:ring-2 focus:ring-[var(--emp-amber)]"
-            />
-            <button type="submit" className="emp-btn emp-btn-filled px-6 py-3">
-              {buttonText}
-            </button>
-          </form>
-        )}
+              <p className="text-white font-semibold">
+                {localized(locale, "Thanks for subscribing!", "شكراً لاشتراكك!")}
+              </p>
+              <p className="text-white/40 text-sm mt-1">
+                {localized(locale, "We'll send you the latest offers.", "هنبعتلك أحدث العروض.")}
+              </p>
+            </motion.div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex gap-3 max-w-md mx-auto">
+              <label htmlFor="emp-newsletter-email" className="sr-only">
+                {placeholder}
+              </label>
+              <input
+                id="emp-newsletter-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={placeholder}
+                className="flex-1 h-12 px-5 text-sm bg-white/10 border border-white/20 rounded-full text-white placeholder:text-white/30 focus:border-white/50 focus:outline-none transition-colors"
+                dir="ltr"
+                required
+              />
+              <button
+                type="submit"
+                className="h-12 px-8 bg-white text-black font-semibold text-xs uppercase tracking-wider rounded-full hover:bg-white/90 transition-colors"
+              >
+                {buttonText}
+              </button>
+            </form>
+          )}
+        </motion.div>
       </div>
     </section>
   );

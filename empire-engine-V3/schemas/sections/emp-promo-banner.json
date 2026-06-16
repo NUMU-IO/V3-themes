@@ -1,35 +1,35 @@
 {
   "type": "emp-promo-banner",
-  "name": "Empire Editorial",
-  "name_ar": "بازار تحريري",
+  "name": "Empire Promo Banner",
+  "name_ar": "إمباير بانر ترويجي",
   "settings": [
     {
       "type": "image_picker",
       "id": "image_url",
-      "label": "Large Image",
-      "label_ar": "صورة كبيرة",
-      "aspect_ratio": "4/3",
-      "info": "Big editorial card. Leave empty for a branded fallback."
+      "label": "Image",
+      "label_ar": "الصورة",
+      "aspect_ratio": "1/1",
+      "info": "Square product image shown beside the offer copy."
     },
     {
       "type": "text",
+      "id": "badge_text",
+      "label": "Badge",
+      "label_ar": "الشارة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
       "id": "subtitle",
-      "label": "Large Card Overline",
-      "label_ar": "تسمية البطاقة الكبيرة",
-      "default": ""
-    },
-    {
-      "type": "text",
-      "id": "card_label",
-      "label": "Small Card Label",
-      "label_ar": "تسمية البطاقة الصغيرة",
-      "default": ""
-    },
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Small Card Title",
-      "label_ar": "عنوان البطاقة الصغيرة",
+      "label": "Subtitle",
+      "label_ar": "العنوان الفرعي",
       "default": ""
     },
     {
@@ -49,17 +49,18 @@
   ],
   "presets": [
     {
-      "name": "Empire Editorial",
+      "name": "Empire Promo Banner",
       "locales": {
         "en": {
-          "name": "Empire Editorial"
+          "name": "Empire Promo Banner"
         },
         "ar": {
-          "name": "بازار تحريري"
+          "name": "إمباير بانر ترويجي"
         }
       },
       "settings": {
-        "title": "",
+        "badge_text": "",
+        "headline": "",
         "subtitle": ""
       }
     }

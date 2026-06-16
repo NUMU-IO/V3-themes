@@ -225,7 +225,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "bazar-v3", name: "Bazar (V3)", version: "0.4.4" },
+  manifest: { id: "bazar-v3", name: "Bazar (V3)", version: "0.4.5" },
   mount,
 };
 export default v3Handle;

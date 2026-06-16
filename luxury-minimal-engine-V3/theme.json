@@ -2,9 +2,9 @@
   "id": "luxury-minimal-v3",
   "name": "Luxury Minimal (V3)",
   "author": "NUMU",
-  "version": "0.3.3",
+  "version": "0.5.0",
   "layout": "single-column",
-  "description": "Minimalist luxury fashion theme — ultra-clean typography, refined neutrals, subtle motion. Great for clothing, accessories, and beauty brands that want timeless polish.",
+  "description": "Minimalist luxury fashion theme — ultra-clean typography, refined neutrals, subtle motion. Great for clothing, accessories, and beauty brands that want timeless polish. Now with an editable monochrome header + footer included across every page.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
@@ -12,6 +12,10 @@
       "home": {
         "name": "Home",
         "sections": [
+          {
+            "type": "lux-header",
+            "settings": {}
+          },
           {
             "type": "lux-hero",
             "settings": {
@@ -59,12 +63,20 @@
           {
             "type": "lux-newsletter",
             "settings": {}
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
           }
         ]
       },
       "product": {
         "name": "Product",
         "sections": [
+          {
+            "type": "lux-header",
+            "settings": {}
+          },
           {
             "type": "lux-product-detail-section",
             "settings": {
@@ -74,6 +86,10 @@
               "show_related_products": true,
               "related_products_count": 4
             }
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
           }
         ]
       },
@@ -81,6 +97,10 @@
         "name": "Products",
         "sections": [
           {
+            "type": "lux-header",
+            "settings": {}
+          },
+          {
             "type": "lux-products-page-section",
             "settings": {
               "show_view_toggle": false,
@@ -88,6 +108,10 @@
               "columns_desktop": 4,
               "columns_mobile": 2
             }
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
           }
         ]
       },
@@ -95,6 +119,10 @@
         "name": "Collection",
         "sections": [
           {
+            "type": "lux-header",
+            "settings": {}
+          },
+          {
             "type": "lux-products-page-section",
             "settings": {
               "show_view_toggle": false,
@@ -102,6 +130,10 @@
               "columns_desktop": 4,
               "columns_mobile": 2
             }
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
           }
         ]
       },
@@ -109,24 +141,54 @@
         "name": "Profile",
         "sections": [
           {
+            "type": "lux-header",
+            "settings": {}
+          },
+          {
             "type": "lux-profile-section",
             "settings": {
               "show_stats": true
             }
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
           }
         ]
       },
       "cart": {
         "name": "Cart",
-        "sections": []
+        "sections": [
+          {
+            "type": "lux-header",
+            "settings": {}
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
+          }
+        ]
       },
       "checkout": {
         "name": "Checkout",
-        "sections": []
+        "sections": [
+          {
+            "type": "lux-header",
+            "settings": {}
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
+          }
+        ]
       },
       "order-confirmation": {
         "name": "Order confirmation",
         "sections": [
+          {
+            "type": "lux-header",
+            "settings": {}
+          },
           {
             "type": "lux-order-confirmation-section",
             "settings": {
@@ -135,6 +197,63 @@
               "show_track_order": false,
               "show_emoji": false
             }
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "search": {
+        "name": "Search",
+        "sections": [
+          {
+            "type": "lux-header",
+            "settings": {}
+          },
+          {
+            "type": "lux-search-results",
+            "settings": {
+              "columns_desktop": 4
+            }
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "page": {
+        "name": "Page",
+        "sections": [
+          {
+            "type": "lux-header",
+            "settings": {}
+          },
+          {
+            "type": "lux-rich-text",
+            "settings": {}
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "404": {
+        "name": "404 — Not found",
+        "sections": [
+          {
+            "type": "lux-header",
+            "settings": {}
+          },
+          {
+            "type": "lux-not-found",
+            "settings": {}
+          },
+          {
+            "type": "lux-footer",
+            "settings": {}
           }
         ]
       }

@@ -1,0 +1,63 @@
+{
+  "type": "emp-profile-section",
+  "name": "Empire Account Page",
+  "name_ar": "صفحة الحساب",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Page title",
+      "label_ar": "عنوان الصفحة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "orders_title",
+      "label": "Orders heading",
+      "label_ar": "عنوان الطلبات",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "addresses_title",
+      "label": "Addresses heading",
+      "label_ar": "عنوان العناوين",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "settings_title",
+      "label": "Settings heading",
+      "label_ar": "عنوان الإعدادات",
+      "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stats",
+      "label": "Show account stats",
+      "label_ar": "إظهار إحصائيات الحساب",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Empire Account Page",
+      "locales": {
+        "en": {
+          "name": "Empire Account Page"
+        },
+        "ar": {
+          "name": "صفحة الحساب"
+        }
+      },
+      "settings": {
+        "title": "",
+        "orders_title": "",
+        "addresses_title": "",
+        "settings_title": "",
+        "show_stats": true
+      }
+    }
+  ]
+}

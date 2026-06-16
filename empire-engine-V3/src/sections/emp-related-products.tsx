@@ -49,18 +49,18 @@ export default function EmpRelatedProducts({
 
   return (
     <section
-      className="py-12 md:py-16 bg-[var(--emp-cream)] border-t border-[var(--emp-dark)]/10"
+      className="py-12 md:py-16 bg-[hsl(var(--background))] border-t border-[hsl(var(--border))]"
       data-emp-section={sectionId}
     >
       <div className="container mx-auto px-4">
-        <h2 className="emp-heading text-2xl md:text-3xl text-[var(--emp-dark)] mb-8">
+        <h2 className="text-xl font-black uppercase tracking-tight mb-6">
           <InlineEditable
             sectionId={sectionId}
             settingKey="title"
             value={title}
           />
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
           {items.map((p) => (
             <EmpProductCard key={p.id} product={p} />
           ))}

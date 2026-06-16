@@ -1,27 +1,27 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import {
-  Link,
   useLocale,
   useProducts,
   useResolvedSettings,
   type Product,
 } from "@numueg/theme-sdk";
-import { ShoppingBag } from "lucide-react";
-import { asArray, asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { EmpProductCard } from "./emp-product-grid";
 
 /**
- * emp-featured-collection — the home-page commerce showcase, ported from
- * V2 EmpFeaturedCollection. An eyebrow + heading on the left, a "VIEW
- * ALL" pill on the right, then a card grid. Merchants can hand-pick
- * products (the `product_ids` picker, used in the chosen order) or let
- * it auto-fill from the catalogue. Uses the shared EmpProductCard so it
- * matches the listing/related rails.
+ * emp-featured-collection — faithful V3 port of V2 EmpFeatured
+ * (numu-egyptian-bazaar/src/themes/empire/sections/featured-collection/EmpFeatured.tsx).
  *
- * Settings: title, subtitle, view_all_label, view_all_link,
- * product_ids (manual), product_count, columns.
+ * A white `emp-section`: a big `font-black uppercase` title on the start
+ * side, a row of rounded-full pill TABS on the end side (الأكثر رواجاً /
+ * الأكثر مبيعاً / وصل حديثاً / عرض الكل — active = black fill), then a
+ * HORIZONTAL scrollable product rail (each card `min-w-[240px]`). NOT the
+ * eyebrow-heading-grid layout it inherited from the Bazar clone.
+ *
+ * Settings: title, view_all_link, product_count.
  */
 export default function EmpFeaturedCollection({
   instance,
@@ -31,100 +31,93 @@ export default function EmpFeaturedCollection({
   const { products, loading } = useProducts();
   const locale = useLocale();
 
-  const title = asString(s.title) || localized(locale, "THE COLLECTION", "التشكيلة");
-  const subtitle = asString(s.subtitle) || localized(locale, "SEASONAL EDIT", "تشكيلة الموسم");
-  const viewAllLabel = asString(s.view_all_label) || localized(locale, "VIEW ALL", "عرض الكل");
-  const viewAllLink = asString(s.view_all_link) || "/products";
-  const count = Math.max(2, Math.min(12, asNumber(s.product_count, 8)));
-  const cols = Math.max(2, Math.min(5, asNumber(s.columns, 4)));
+  const title = asString(s.title) || localized(locale, "SHOP", "تسوّق");
+  const count = Math.max(2, Math.min(12, asNumber(s.product_count, 5)));
 
-  // Manual picks: the `product` setting type stores ids (or slugs).
-  const manualIds = asArray<unknown>(s.product_ids).filter(
-    (x): x is string => typeof x === "string" && x.length > 0,
-  );
+  // Pill tabs, copy ported verbatim from V2 (Arabic labels), with English
+  // equivalents for LTR shoppers.
+  const tabs = [
+    { key: "trending", label: localized(locale, "Trending", "الأكثر رواجاً") },
+    { key: "bestseller", label: localized(locale, "Bestsellers", "الأكثر مبيعاً") },
+    { key: "new", label: localized(locale, "New", "وصل حديثاً") },
+    { key: "all", label: localized(locale, "View All", "عرض الكل") },
+  ];
 
-  const picked: Product[] =
-    manualIds.length > 0
-      ? manualIds
-          .map((id) => products.find((p) => p.id === id || p.slug === id))
-          .filter((p): p is Product => Boolean(p))
-      : products;
+  const [activeTab, setActiveTab] = useState("trending");
 
-  const displayProducts = picked.slice(0, count);
+  const filtered = useMemo<Product[]>(() => {
+    let list = [...products];
+    switch (activeTab) {
+      case "new":
+        // Newest-first proxy: reverse catalogue order.
+        list = [...list].reverse();
+        break;
+      case "bestseller":
+        // On-sale items surface first as a best-effort "bestseller" proxy
+        // (the SDK Product has no rating/review fields).
+        list = list.filter(
+          (p) =>
+            typeof p.compare_at_price === "number" && p.compare_at_price > p.price,
+        );
+        break;
+      case "trending":
+      default:
+        break;
+    }
+    // V2 parity: if a filter empties, fall back to the full set.
+    if (list.length === 0) list = products;
+    return list.slice(0, count);
+  }, [products, activeTab, count]);
 
-  // Hide the section entirely once loaded with nothing to show — an empty
-  // commerce rail on the home page reads as broken.
-  if (!loading && displayProducts.length === 0) return null;
-
-  const gridStyle = {
-    "--emp-cols-mobile": 2,
-    "--emp-cols-desktop": cols,
-  } as React.CSSProperties;
-
-  const gridClass =
-    "grid gap-3 sm:gap-4 md:gap-6 grid-cols-[repeat(var(--emp-cols-mobile),minmax(0,1fr))] md:grid-cols-[repeat(var(--emp-cols-desktop),minmax(0,1fr))]";
+  // Don't render an empty rail on the home page (reads as broken).
+  if (!loading && products.length === 0) return null;
 
   return (
-    <section
-      className="py-12 md:py-16 lg:py-24 bg-[var(--emp-cream)]"
-      data-emp-section={sectionId}
-    >
+    <section className="emp-section bg-white" data-emp-section={sectionId}>
       <div className="container mx-auto px-4">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-4 mb-8 md:mb-10">
-          <div>
-            <span className="emp-label text-[var(--emp-amber)]">
-              <InlineEditable
-                sectionId={sectionId}
-                settingKey="subtitle"
-                value={subtitle}
-              />
-            </span>
-            <h2 className="emp-heading text-2xl sm:text-3xl md:text-4xl mt-2 text-[var(--emp-dark)]">
-              <InlineEditable
-                sectionId={sectionId}
-                settingKey="title"
-                value={title}
-              />
-            </h2>
-          </div>
-          <Link
-            to={viewAllLink}
-            className="emp-btn text-[10px] sm:text-[11px] self-start sm:self-auto"
-          >
-            <InlineEditable
-              sectionId={sectionId}
-              settingKey="view_all_label"
-              value={viewAllLabel}
-            />
-          </Link>
-        </div>
-
-        {loading && displayProducts.length === 0 ? (
-          <div className={gridClass} style={gridStyle}>
-            {[...Array(cols)].map((_, i) => (
-              <div
-                key={i}
-                className="rounded-2xl bg-[var(--emp-dark)]/5 aspect-[3/4] animate-pulse"
-              />
+        {/* Title + pill tabs row */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight">
+            <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
+          </h2>
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-5 py-2.5 text-sm font-medium whitespace-nowrap rounded-full border transition-all duration-200 ${
+                  activeTab === tab.key
+                    ? "bg-black text-white border-black"
+                    : "bg-transparent text-foreground border-[hsl(var(--border))] hover:border-foreground"
+                }`}
+              >
+                {tab.label}
+              </button>
             ))}
           </div>
-        ) : displayProducts.length > 0 ? (
-          <div className={gridClass} style={gridStyle}>
-            {displayProducts.map((product) => (
-              <EmpProductCard key={product.id} product={product} />
+        </div>
+
+        {/* Horizontal scrollable product row */}
+        {loading && products.length === 0 ? (
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            {[...Array(count)].map((_, i) => (
+              <div
+                key={i}
+                className="min-w-[240px] md:min-w-[260px] flex-shrink-0 rounded-lg bg-secondary aspect-square animate-pulse"
+              />
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <ShoppingBag
-              size={40}
-              className="mx-auto text-[var(--emp-amber)] mb-4"
-              aria-hidden="true"
-            />
-            <p className="emp-heading text-lg text-[var(--emp-dark)]">{localized(locale, "COMING SOON", "قريبًا")}</p>
-            <p className="text-sm text-[var(--emp-gray)] mt-2">
-              {localized(locale, "Our collection is being prepared.", "تشكيلتنا بتتجهز دلوقتي.")}
-            </p>
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+            {filtered.map((product) => (
+              <div
+                key={product.id}
+                className="min-w-[240px] md:min-w-[260px] flex-shrink-0 snap-start"
+              >
+                <EmpProductCard product={product} />
+              </div>
+            ))}
           </div>
         )}
       </div>

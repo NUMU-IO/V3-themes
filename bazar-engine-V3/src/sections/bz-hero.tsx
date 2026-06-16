@@ -136,12 +136,16 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
         // CSS grid flips visually so the photo lands on the right (where
         // Arabic readers' eyes land first).
         <div className="grid md:grid-cols-2 min-h-[80vh] md:min-h-[88vh]">
-          <div className="relative bg-[var(--bz-cream)] min-h-[40vh] md:min-h-0 flex items-center justify-center overflow-hidden p-4 sm:p-6 md:p-8">
+          <div className="relative bg-[var(--bz-cream)] min-h-[40vh] md:min-h-0 overflow-hidden">
+            {/* Shopify-style framed image: the photo COVERS its column (fills
+                the frame, cropping to the merchant's focal point) instead of
+                letterboxing inside it. `cover` is the default fit; the merchant
+                fine-tunes framing via the editor's Adjust (focal/zoom) modal. */}
             <img
               src={imageUrl}
               alt=""
-              className="max-h-full max-w-full w-auto h-auto object-contain"
-              style={applyImageTransform(imageTransform, "contain")}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={applyImageTransform(imageTransform, "cover")}
               loading="eager"
             />
           </div>

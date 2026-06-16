@@ -5,18 +5,17 @@ import {
   Link,
   useLocale,
   useProducts,
-  usePage,
   useResolvedSettings,
   type Product,
 } from "@numueg/theme-sdk";
 import { Search } from "lucide-react";
-import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, usePageData, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { BzProductCard } from "./bz-product-grid";
 
 /**
  * bz-search-results — body for the `search` template. Seeds the query
- * from `usePage().data.q` (the storefront /search route stashes it),
+ * from `usePageData().data.query` (the storefront /search route stashes it),
  * but also renders a live search box so visitors can refine in place.
  * Results are pre-fetched (`page.data.results`) when available, else a
  * client-side filter over `useProducts()` so the customizer preview
@@ -30,7 +29,7 @@ export default function BzSearchResults({
   sectionId,
 }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
-  const page = usePage();
+  const pageData = usePageData();
   const { products } = useProducts();
   const locale = useLocale();
 
@@ -43,11 +42,12 @@ export default function BzSearchResults({
     asString(s.search_placeholder) || localized(locale, "Search products…", "ابحث عن المنتجات…");
   const cols = Math.max(1, Math.min(5, asNumber(s.columns_desktop, 4)));
 
-  const initialQuery = asString(
-    (page?.data as Record<string, unknown> | undefined)?.q,
-  );
-  const preFetched = (page?.data as { results?: Product[] } | undefined)
-    ?.results;
+  // The storefront /search route stashes the query in `page.data.query`
+  // (with `q` as a defensive alias); usePageData() carries the raw host page
+  // ctx (the SDK's usePage() is a synthesised record without it).
+  const pd = pageData?.data as Record<string, unknown> | undefined;
+  const initialQuery = asString(pd?.query) || asString(pd?.q);
+  const preFetched = (pd as { results?: Product[] } | undefined)?.results;
 
   const [query, setQuery] = useState(initialQuery);
 

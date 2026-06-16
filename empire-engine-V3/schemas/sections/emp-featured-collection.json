@@ -1,7 +1,7 @@
 {
   "type": "emp-featured-collection",
   "name": "Empire Collection",
-  "name_ar": "بازار مجموعة",
+  "name_ar": "إمباير مجموعة",
   "settings": [
     {
       "type": "text",
@@ -11,37 +11,11 @@
       "default": ""
     },
     {
-      "type": "text",
-      "id": "subtitle",
-      "label": "Subtitle / overline",
-      "label_ar": "العنوان الفرعي",
-      "default": ""
-    },
-    {
-      "type": "text",
-      "id": "view_all_label",
-      "label": "View-all button label",
-      "label_ar": "تسمية زر عرض الكل",
-      "default": ""
-    },
-    {
       "type": "url",
       "id": "view_all_link",
-      "label": "View-all button link",
-      "label_ar": "رابط زر عرض الكل",
+      "label": "View-all link",
+      "label_ar": "رابط عرض الكل",
       "default": "/products"
-    },
-    {
-      "type": "header",
-      "content": "Products"
-    },
-    {
-      "type": "product",
-      "id": "product_ids",
-      "label": "Pick products (manual)",
-      "label_ar": "اختيار المنتجات",
-      "default": [],
-      "info": "Pick products to feature in order. Leave empty to auto-fill from the catalogue."
     },
     {
       "type": "range",
@@ -51,17 +25,7 @@
       "min": 2,
       "max": 12,
       "step": 1,
-      "default": 8
-    },
-    {
-      "type": "range",
-      "id": "columns",
-      "label": "Columns (desktop)",
-      "label_ar": "أعمدة (ديسكتوب)",
-      "min": 2,
-      "max": 5,
-      "step": 1,
-      "default": 4
+      "default": 5
     }
   ],
   "presets": [
@@ -72,14 +36,12 @@
           "name": "Empire Collection"
         },
         "ar": {
-          "name": "بازار مجموعة"
+          "name": "إمباير مجموعة"
         }
       },
       "settings": {
         "title": "",
-        "subtitle": "",
-        "product_count": 8,
-        "columns": 4
+        "product_count": 5
       }
     }
   ]

@@ -5,7 +5,6 @@ import { useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import {
   asNumber,
   asString,
-  demoOrPlaceholder,
   localized,
   readBlocks,
   useDemo,
@@ -55,13 +54,18 @@ const BzTestimonials = ({ instance, sectionId }: SectionRenderProps) => {
       rating: clampRating(asNumber(r.rating, 5)),
     }))
     .filter((r) => r.name && r.text);
+  // Configured review blocks win. Otherwise show the curated demo set ONLY in
+  // marketplace preview (demo); on an installed store with no reviews yet we
+  // render nothing rather than blank/placeholderized cards. The merchant adds
+  // `review` blocks to populate it.
   const reviews =
     configured.length > 0
       ? configured
-      : demoOrPlaceholder(demo, fallbackReviews(locale)).map((r) => ({
-          ...r,
-          rating: clampRating(r.rating),
-        }));
+      : demo
+        ? fallbackReviews(locale).map((r) => ({ ...r, rating: clampRating(r.rating) }))
+        : [];
+
+  if (reviews.length === 0) return null;
 
   return (
     <section className="py-12 md:py-16 lg:py-24 bg-[var(--bz-navy)]">

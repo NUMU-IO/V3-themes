@@ -1,87 +1,46 @@
 "use client";
 
-import { useState } from "react";
 import {
   Link,
+  useCollections,
   useLocale,
   useResolvedSettings,
   useShop,
   useThemeSettings,
 } from "@numueg/theme-sdk";
-import { Facebook, MessageCircle, Music2, Send, Twitter } from "lucide-react";
-import { asString, localized, readBlocks, type SectionRenderProps } from "./_shared";
+import { asImageUrl, asString, localized, readBlocks, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 interface FooterLink {
   label: string;
   href: string;
 }
-
 interface FooterColumn {
   title: string;
   links: FooterLink[];
 }
 
-const defaultColumns = (locale: string | undefined): FooterColumn[] => [
-  {
-    title: localized(locale, "SHOP", "تسوّق"),
-    links: [
-      { label: localized(locale, "All Products", "كل المنتجات"), href: "/products" },
-      { label: localized(locale, "New Arrivals", "وصل حديثًا"), href: "/products?sort=newest" },
-      { label: localized(locale, "Search", "بحث"), href: "/search" },
-    ],
-  },
-  {
-    title: localized(locale, "HELP", "المساعدة"),
-    links: [
-      { label: localized(locale, "Shipping", "الشحن"), href: "/shipping" },
-      { label: localized(locale, "Returns", "الإرجاع"), href: "/returns" },
-      { label: localized(locale, "Contact", "تواصل معنا"), href: "/contact" },
-    ],
-  },
-];
-
-/** Inline Instagram glyph (lucide dropped its named export). */
-const InstagramIcon = ({ size = 16 }: { size?: number }) => (
-  <svg
-    viewBox="0 0 24 24"
-    width={size}
-    height={size}
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-  </svg>
-);
-
-const SOCIAL_ICONS: Record<
-  string,
-  ({ size }: { size?: number }) => JSX.Element
-> = {
-  instagram: InstagramIcon,
-  facebook: (p) => <Facebook size={p.size} aria-hidden="true" />,
-  twitter: (p) => <Twitter size={p.size} aria-hidden="true" />,
-  tiktok: (p) => <Music2 size={p.size} aria-hidden="true" />,
-  whatsapp: (p) => <MessageCircle size={p.size} aria-hidden="true" />,
-};
-
 /**
- * emp-footer — Empire's chrome footer. Ported from V2 EmpStoreFooter:
- * dark base with a wave divider on top, a centered newsletter CTA, a
- * brand block + social row, and configurable link columns (from
- * `column` blocks → fall back to Shop / Help defaults). Socials are
- * read from `store.social_links`. The newsletter is a local
- * subscribe-confirmation (no API), matching the other empire sections.
+ * emp-footer — faithful V3 port of V2 EmpStoreFooter
+ * (numu-egyptian-bazaar/src/components/store/empire/EmpStoreFooter.tsx).
+ *
+ * A BLACK footer (`bg-black text-white`). On top, a scrolling pre-footer
+ * MARQUEE ("100% INDEPENDENT" repeated with the logo). Then a 4-column
+ * grid: a brand block (logo / wordmark + blurb + social icons), a SHOP
+ * column (All Products + collections), a HELP column (Contact / Shipping /
+ * Returns), and a bottom bar with the copyright, payment badges, and
+ * "Powered by NUMU". NOT the dark-navy newsletter footer it inherited from
+ * the Bazar clone.
+ *
+ * Socials read from `store.social_links`; columns can be overridden via
+ * `column` blocks (fallback to Shop / Help).
+ *
+ * Settings: brand_name, footer_text, marquee_text.
  */
 export default function EmpFooter({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const shop = useShop();
+  const { collections } = useCollections();
   const themeSettings = useThemeSettings();
   const locale = useLocale();
 
@@ -89,19 +48,14 @@ export default function EmpFooter({ instance, sectionId }: SectionRenderProps) {
     asString(s.brand_name) ||
     asString(themeSettings.global_settings?.brand_name) ||
     shop?.name ||
-    "EMPIRE";
+    "NUMU";
 
-  const newsletterTitle = asString(s.newsletter_title) || localized(locale, "JOIN THE EMPIRE", "انضم للإمبراطورية");
-  const newsletterCopy =
-    asString(s.newsletter_copy) ||
-    localized(
-      locale,
-      "Early access to limited drops, exclusive offers, and the seasonal edit.",
-      "وصول مبكر للإصدارات المحدودة والعروض الحصرية وتشكيلة الموسم.",
-    );
-  const newsletterButton = asString(s.newsletter_button_label) || localized(locale, "SUBSCRIBE", "اشترك");
-  const newsletterButtonSuccess =
-    asString(s.newsletter_button_success) || localized(locale, "SUBSCRIBED", "تم الاشتراك");
+  const logoUrl =
+    asImageUrl(s.logo_url) ||
+    asImageUrl(themeSettings.global_settings?.logo_url) ||
+    shop?.logo_url ||
+    "";
+
   const footerText =
     asString(s.footer_text) ||
     localized(
@@ -109,11 +63,24 @@ export default function EmpFooter({ instance, sectionId }: SectionRenderProps) {
       "Handpicked essentials, made in Egypt. Bold design, honest prices.",
       "أساسيات مختارة بعناية، صناعة مصرية. تصميم جريء وأسعار صادقة.",
     );
+  const marqueeText = asString(s.marquee_text) || localized(locale, "100% INDEPENDENT", "100% مستقل");
 
-  const configuredColumns: FooterColumn[] = readBlocks(instance, "column")
+  // Socials from the live store.
+  const socialEntries = Object.entries(
+    (shop?.social_links as Record<string, string> | undefined) ?? {},
+  )
+    .map(([name, url]) => ({ name, url: asString(url) }))
+    .filter(({ url }) => Boolean(url));
+  const socialOrder = ["instagram", "twitter", "x", "facebook"];
+  const socials = socialEntries.sort(
+    (a, b) => socialOrder.indexOf(a.name.toLowerCase()) - socialOrder.indexOf(b.name.toLowerCase()),
+  );
+
+  // Optional override columns from `column` blocks.
+  const overrideColumns: FooterColumn[] = readBlocks(instance, "column")
     .map((r) => {
       const links: FooterLink[] = [];
-      for (let i = 1; i <= 4; i++) {
+      for (let i = 1; i <= 5; i++) {
         const label = asString(r[`link${i}_label`]);
         const href = asString(r[`link${i}_href`]);
         if (label && href) links.push({ label, href });
@@ -122,178 +89,172 @@ export default function EmpFooter({ instance, sectionId }: SectionRenderProps) {
     })
     .filter((c) => c.title && c.links.length > 0);
 
-  const columns =
-    configuredColumns.length > 0 ? configuredColumns : defaultColumns(locale);
-
-  const socialLinks =
-    (shop?.social_links as Record<string, string> | undefined) ?? {};
-  const socials: Array<{ name: string; url: string }> = Object.entries(
-    socialLinks,
-  )
-    .map(([name, url]) => ({ name, url: asString(url) }))
-    .filter(({ url }) => Boolean(url));
-
-  const formatSocialHref = (name: string, url: string) =>
-    name.toLowerCase() === "whatsapp"
-      ? `https://wa.me/${url.replace(/\D/g, "")}`
-      : url;
-
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-    setSubmitted(true);
-    setEmail("");
+  const ICONS: Record<string, JSX.Element> = {
+    instagram: <InstagramIcon />,
+    twitter: <XIcon />,
+    x: <XIcon />,
+    facebook: <FacebookIcon />,
   };
 
-  return (
-    <footer
-      className="bg-[var(--emp-dark)] text-[var(--emp-cream)] relative overflow-hidden pb-20 md:pb-0"
-      data-emp-section={sectionId}
-    >
-      {/* Wave top divider */}
-      <svg
-        viewBox="0 0 1440 60"
-        className="w-full block -mt-px"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M0,60 C240,0 480,50 720,20 C960,-10 1200,40 1440,15 L1440,60 Z"
-          fill="var(--emp-dark)"
-        />
-      </svg>
+  const formatSocialHref = (name: string, url: string) =>
+    name.toLowerCase() === "whatsapp" ? `https://wa.me/${url.replace(/\D/g, "")}` : url;
 
-      {/* Newsletter */}
-      <div className="container mx-auto px-4 py-12 text-center border-b border-white/10">
-        <h3 className="emp-heading text-2xl md:text-3xl text-[var(--emp-amber)] mb-3">
-          <InlineEditable
-            sectionId={sectionId}
-            settingKey="newsletter_title"
-            value={newsletterTitle}
-          />
-        </h3>
-        <p className="text-sm opacity-60 mb-6 max-w-md mx-auto">
-          <InlineEditable
-            sectionId={sectionId}
-            settingKey="newsletter_copy"
-            value={newsletterCopy}
-            multiline
-          />
-        </p>
-        {submitted ? (
-          <div
-            role="status"
-            aria-live="polite"
-            className="inline-flex items-center justify-center emp-btn emp-btn-amber h-11 px-6 text-[11px]"
-          >
-            {newsletterButtonSuccess}
-          </div>
-        ) : (
-          <form
-            className="flex gap-2 max-w-sm mx-auto"
-            onSubmit={handleSubscribe}
-            noValidate
-          >
-            <label htmlFor="emp-footer-email" className="sr-only">
-              {localized(locale, "Email address", "البريد الإلكتروني")}
-            </label>
-            <input
-              id="emp-footer-email"
-              type="email"
-              required
-              placeholder={localized(locale, "Your email", "بريدك الإلكتروني")}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              dir="ltr"
-              className="flex-1 h-11 px-4 rounded-full bg-white/10 border border-white/20 text-sm placeholder:text-white/30 focus:outline-none focus:border-[var(--emp-amber)] transition-colors"
-            />
-            <button type="submit" className="emp-btn emp-btn-amber h-11 px-6 text-[11px]">
-              {newsletterButton}
-            </button>
-          </form>
-        )}
+  return (
+    <footer className="bg-black text-white" data-emp-section={sectionId}>
+      {/* Pre-footer marquee */}
+      <div className="overflow-hidden py-4 border-b border-white/10">
+        <div className="flex whitespace-nowrap animate-[emp-ticker_30s_linear_infinite]">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <span key={i} className="flex items-center gap-5 mx-5">
+              <span className="text-white font-black text-xl md:text-2xl uppercase tracking-wide">
+                {marqueeText}
+              </span>
+              {logoUrl ? (
+                <img src={logoUrl} alt="" className="h-6 object-contain opacity-60" />
+              ) : (
+                <span className="text-white/40 font-black text-xl">&#9679;</span>
+              )}
+            </span>
+          ))}
+        </div>
       </div>
 
-      {/* Links grid */}
-      <div className="container mx-auto px-4 py-10">
+      {/* Columns */}
+      <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <span className="emp-heading text-xl text-[var(--emp-amber)]">
-              <InlineEditable
-                sectionId={sectionId}
-                settingKey="brand_name"
-                value={brandName}
-              />
-            </span>
-            <p className="text-sm opacity-50 mt-3 leading-relaxed">
-              <InlineEditable
-                sectionId={sectionId}
-                settingKey="footer_text"
-                value={footerText}
-                multiline
-              />
-            </p>
-            {socials.length > 0 && (
-              <div className="flex gap-3 mt-4" aria-label="Social media">
-                {socials.map(({ name, url }) => {
-                  const Icon = SOCIAL_ICONS[name.toLowerCase()] ?? null;
-                  return (
-                    <a
-                      key={name}
-                      href={formatSocialHref(name, url)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={name}
-                      title={name}
-                      className="w-9 h-9 rounded-full bg-[var(--emp-amber)] text-[var(--emp-dark)] flex items-center justify-center hover:opacity-80 transition-opacity"
-                    >
-                      {Icon ? <Icon size={16} /> : <Send size={16} aria-hidden="true" />}
-                    </a>
-                  );
-                })}
-              </div>
+            {logoUrl ? (
+              <img src={logoUrl} alt={brandName} className="h-14 object-contain mb-4" />
+            ) : (
+              <h3 className="text-white font-black text-2xl mb-4 uppercase tracking-wide">
+                <InlineEditable sectionId={sectionId} settingKey="brand_name" value={brandName} />
+              </h3>
             )}
+            <p className="text-[13px] text-white/50 leading-relaxed mb-6">
+              <InlineEditable sectionId={sectionId} settingKey="footer_text" value={footerText} multiline />
+            </p>
+            <div className="flex items-center gap-4">
+              {socials.length > 0 ? (
+                socials.map((soc) => (
+                  <a
+                    key={soc.name}
+                    href={formatSocialHref(soc.name, soc.url)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/50 hover:text-white transition-colors"
+                    aria-label={soc.name}
+                  >
+                    {ICONS[soc.name.toLowerCase()] ?? <InstagramIcon />}
+                  </a>
+                ))
+              ) : (
+                <>
+                  <span className="text-white/30"><InstagramIcon /></span>
+                  <span className="text-white/30"><XIcon /></span>
+                  <span className="text-white/30"><FacebookIcon /></span>
+                </>
+              )}
+            </div>
           </div>
 
-          {/* Columns */}
-          {columns.map((col) => (
-            <div key={col.title}>
-              <h4 className="emp-label text-[var(--emp-amber)] mb-4">
-                {col.title}
-              </h4>
-              <ul className="space-y-2.5">
-                {col.links.map((l) => (
-                  <li key={`${col.title}-${l.label}`}>
-                    <Link
-                      to={l.href}
-                      className="text-sm opacity-60 hover:opacity-100 hover:text-[var(--emp-amber)] transition-all"
-                    >
+          {/* Shop / Help columns (override blocks win) */}
+          {overrideColumns.length > 0 ? (
+            overrideColumns.map((col) => (
+              <div key={col.title}>
+                <h4 className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/60 mb-5">{col.title}</h4>
+                <div className="space-y-3">
+                  {col.links.map((l) => (
+                    <Link key={`${col.title}-${l.label}`} to={l.href} className="block text-[13px] text-white/50 hover:text-white transition-colors">
                       {l.label}
                     </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : (
+            <>
+              <div>
+                <h4 className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/60 mb-5">
+                  {localized(locale, "Shop", "تسوّق")}
+                </h4>
+                <div className="space-y-3">
+                  <Link to="/products" className="block text-[13px] text-white/50 hover:text-white transition-colors">
+                    {localized(locale, "All Products", "كل المنتجات")}
+                  </Link>
+                  {collections.slice(0, 5).map((cat) => (
+                    <Link key={cat.id} to={`/collections/${cat.slug}`} className="block text-[13px] text-white/50 hover:text-white transition-colors">
+                      {cat.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h4 className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/60 mb-5">
+                  {localized(locale, "Help", "المساعدة")}
+                </h4>
+                <div className="space-y-3">
+                  <Link to="/contact" className="block text-[13px] text-white/50 hover:text-white transition-colors">
+                    {localized(locale, "Contact us", "تواصل معنا")}
+                  </Link>
+                  <Link to="/shipping" className="block text-[13px] text-white/50 hover:text-white transition-colors">
+                    {localized(locale, "Shipping", "الشحن")}
+                  </Link>
+                  <Link to="/returns" className="block text-[13px] text-white/50 hover:text-white transition-colors">
+                    {localized(locale, "Returns", "الإرجاع")}
+                  </Link>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       {/* Bottom bar */}
       <div className="border-t border-white/10">
-        <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-center gap-1 md:gap-3 text-center text-xs opacity-30">
-          <p>
-            © {new Date().getFullYear()} {brandName}.{" "}
-            {localized(locale, "All rights reserved.", "كل الحقوق محفوظة.")}
+        <div className="container mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-3">
+          <p className="text-[11px] text-white/30">
+            © {new Date().getFullYear()} {brandName}
           </p>
-          <span className="hidden md:inline">·</span>
-          <p>{localized(locale, "Powered by NUMU", "مدعوم بواسطة NUMU")}</p>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <PaymentBadge>VISA</PaymentBadge>
+              <PaymentBadge>Mastercard</PaymentBadge>
+              <PaymentBadge>InstaPay</PaymentBadge>
+              <PaymentBadge>COD</PaymentBadge>
+            </div>
+            <span className="text-[11px] text-white/30">
+              {localized(locale, "Powered by NUMU", "مدعوم بواسطة NUMU")}
+            </span>
+          </div>
         </div>
       </div>
     </footer>
   );
 }
+
+/* ── Payment badge ── */
+const PaymentBadge = ({ children }: { children: React.ReactNode }) => (
+  <span className="inline-flex items-center justify-center h-7 px-3 bg-white/10 rounded text-[10px] font-bold text-white/60 uppercase tracking-wider">
+    {children}
+  </span>
+);
+
+/* ── Social icons (inline SVGs, ported from V2) ── */
+const InstagramIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="2" width="20" height="20" rx="5" />
+    <circle cx="12" cy="12" r="5" />
+    <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+  </svg>
+);
+const XIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+const FacebookIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+);

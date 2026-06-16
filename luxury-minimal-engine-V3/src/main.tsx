@@ -36,6 +36,7 @@ import {
   selectTemplateSections,
   type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
+import { PageDataContext, type MountPageData } from "./sections/_shared";
 
 interface MountResult {
   cleanup: () => void;
@@ -43,6 +44,9 @@ interface MountResult {
 }
 
 const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+  // Chrome — header / footer (included on every template).
+  "lux-header": lazy(() => import("./sections/lux-header")),
+  "lux-footer": lazy(() => import("./sections/lux-footer")),
   "lux-hero": lazy(() => import("./sections/lux-hero")),
   "lux-featured-collection": lazy(() => import("./sections/lux-featured-collection")),
   "lux-categories": lazy(() => import("./sections/lux-categories")),
@@ -54,6 +58,9 @@ const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
   "lux-products-page-section": lazy(() => import("./sections/lux-products-page-section")),
   "lux-profile-section": lazy(() => import("./sections/lux-profile-section")),
   "lux-order-confirmation-section": lazy(() => import("./sections/lux-order-confirmation-section")),
+  "lux-search-results": lazy(() => import("./sections/lux-search-results")),
+  "lux-not-found": lazy(() => import("./sections/lux-not-found")),
+  "lux-rich-text": lazy(() => import("./sections/lux-rich-text")),
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -167,8 +174,10 @@ function pickTemplate(ctx: MountContext): string {
 }
 
 export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
+  return mountTheme(el, ctx, ({ currentTemplate, page }) => (
+    <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
+      <ThemeApp currentTemplate={currentTemplate} />
+    </PageDataContext.Provider>
   ));
 }
 
@@ -179,7 +188,7 @@ const v3Handle = {
   manifest: {
     id: "luxury-minimal-v3",
     name: "Luxury Minimal (V3)",
-    version: "0.3.3",
+    version: "0.5.0",
   },
   mount,
 };

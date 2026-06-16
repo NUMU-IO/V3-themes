@@ -1,7 +1,7 @@
 {
   "type": "emp-product-grid",
   "name": "Empire Product Grid",
-  "name_ar": "بازار شبكة المنتجات",
+  "name_ar": "إمباير شبكة المنتجات",
   "limit": 1,
   "settings": [
     {
@@ -12,10 +12,17 @@
       "default": ""
     },
     {
-      "type": "textarea",
-      "id": "subtitle",
-      "label": "Subtitle",
-      "label_ar": "العنوان الفرعي",
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search box placeholder",
+      "label_ar": "نص مربع البحث",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "\"All\" filter label",
+      "label_ar": "تسمية فلتر \"الكل\"",
       "default": ""
     },
     {
@@ -65,7 +72,7 @@
           "name": "Empire Product Grid"
         },
         "ar": {
-          "name": "بازار شبكة المنتجات"
+          "name": "إمباير شبكة المنتجات"
         }
       },
       "settings": {

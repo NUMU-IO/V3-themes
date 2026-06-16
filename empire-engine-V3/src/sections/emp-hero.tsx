@@ -1,170 +1,206 @@
 "use client";
 
-import { useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
-  applyImageTransform,
-  asImageTransform,
   asImageUrl,
+  asImageTransform,
+  applyImageTransform,
   asString,
   localized,
+  readBlocks,
+  useDemo,
   type SectionRenderProps,
 } from "./_shared";
-import { InlineEditable } from "./_inline-editable";
+
+/**
+ * emp-hero — faithful V3 port of the V2 Empire hero
+ * (numu-egyptian-bazaar/src/themes/empire/sections/hero/EmpHero.tsx):
+ * a full-screen BLACK image slideshow with an auto-advancing carousel,
+ * a dark bottom gradient, centered-bottom white uppercase headline +
+ * tracked subtitle, a rounded-full white-outline CTA, dot indicators and
+ * prev/next arrows. This is Empire's signature — premium editorial, not the
+ * playful split layout it inherited from the Bazar structural clone.
+ *
+ * Slides come from the merchant's `hero_image_url` plus any `slide` blocks
+ * (image + headline + subtitle). With a single image it renders as a still
+ * hero (chrome hidden). In marketplace-preview (demo) it shows showcase
+ * fallback slides so the theme looks alive before configuration.
+ */
+
+const FALLBACK_SLIDES = [
+  { image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80", title: "DISCOVER THE NEW COLLECTION", sub: "Shop the latest drop" },
+  { image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=80", title: "FEATURED PRODUCTS", sub: "Discover what's new" },
+  { image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80", title: "LATEST ARRIVALS", sub: "Shop the collection" },
+];
+
+interface Slide {
+  image: string;
+  title: string;
+  sub: string;
+  transform?: ReturnType<typeof asImageTransform>;
+}
 
 const EmpHero = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const demo = useDemo();
 
-  const letter = asString(s.letter);
-  const headline = asString(s.headline) || localized(locale, "EMPIRE DREAMS", "أحلام الإمبراطورية");
-  const subline = asString(s.subline) || localized(locale, "COME TO LIFE", "بتتحقق");
-  const tagline =
-    asString(s.tagline) ||
-    localized(locale, "Handpicked summer essentials, made in Egypt.", "مختارات الصيف الأساسية، صناعة مصرية.");
-  const ctaText = asString(s.cta_text) || localized(locale, "SHOP NEW ARRIVALS", "تسوّق وصل حديثًا");
+  const headline = asString(s.headline) || localized(locale, "Discover the New Collection", "اكتشف التشكيلة الجديدة");
+  const subtitle =
+    asString(s.subtitle) || asString(s.subline) || localized(locale, "Shop the latest drop", "تسوّق أحدث وصل");
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوّق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
-  const secondaryCtaText = asString(s.secondary_cta_text);
-  const secondaryCtaLink = asString(s.secondary_cta_link) || "/collections";
-  const trustText = asString(s.trust_text);
-  // Field key includes "hero" so the merchant hub's ImageUploadField picks
-  // the 16:9 crop aspect instead of the default 1:1 square. Falls back to
-  // the legacy `image_url` key for any merchant who set it before the rename.
-  const imageUrl = asImageUrl(s.hero_image_url) || asImageUrl(s.image_url);
-  // Match the URL precedence above: use the transform that belongs to whichever
-  // key actually supplied the rendered image.
-  const imageTransform = asImageUrl(s.hero_image_url)
-    ? asImageTransform(s.hero_image_url)
-    : asImageTransform(s.image_url);
-  const colorScheme = asString(s.color_scheme) || "auto";
+  const heroImage = asImageUrl(s.hero_image_url) || asImageUrl(s.image_url);
+  const heroTransform =
+    asImageTransform(s.hero_image_url) || asImageTransform(s.image_url);
 
-  const sectionRef = useRef<HTMLElement | null>(null);
+  // Extra slides via repeatable `slide` blocks (image / headline / subtitle).
+  const slideBlocks = readBlocks(instance, "slide").map((b) => ({
+    image: asImageUrl(b.image) || asImageUrl(b.image_url),
+    title: asString(b.headline) || headline,
+    sub: asString(b.subtitle) || subtitle,
+    transform: asImageTransform(b.image) || asImageTransform(b.image_url),
+  }));
 
-  // Without a hero image we collapse to a single full-width yellow hero —
-  // the empty cream half + an orphaned wave looked broken. Merchant uploads
-  // an image, the split unlocks.
-  const hasImage = Boolean(imageUrl);
+  // Build the slide set: merchant hero (+ extra blocks). Demo preview falls
+  // back to the showcase slides so the carousel isn't empty pre-config.
+  let slides: Slide[] = [];
+  if (heroImage) slides.push({ image: heroImage, title: headline, sub: subtitle, transform: heroTransform });
+  slides.push(...slideBlocks.filter((b) => b.image));
+  if (slides.length === 0) {
+    slides = demo
+      ? FALLBACK_SLIDES.map((f) => ({ ...f }))
+      : [{ image: "", title: headline, sub: subtitle }];
+  }
 
-  const content = (
-    <div className="max-w-md mx-auto md:mx-0">
-      {letter && (
-        <div className="emp-heading text-[60px] md:text-[80px] lg:text-[100px] text-[var(--emp-dark)] leading-none mb-2 emp-blob inline-block px-4 py-2 bg-[var(--emp-cream)]/80">
-          <InlineEditable
-            sectionId={sectionId}
-            settingKey="letter"
-            value={letter}
-          />
-        </div>
-      )}
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const count = slides.length;
 
-      {/* EMP-1: the hero content sits on the dark `.emp-wavy-bg` (navy→ink),
-          so the dark-ink headline/subline that work on bazar's bright-yellow
-          hero render near-invisible here. Use the off-white cream token (the
-          bg's own default text color) so the store's most prominent text is
-          legible. */}
-      <h1 className="emp-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[var(--emp-cream)] leading-[1.05]">
-        <InlineEditable
-          sectionId={sectionId}
-          settingKey="headline"
-          value={headline}
-        />
-        <br />
-        <span className="text-[var(--emp-cream)]/80">
-          <InlineEditable
-            sectionId={sectionId}
-            settingKey="subline"
-            value={subline}
-          />
-        </span>
-      </h1>
+  const goTo = useCallback((idx: number) => {
+    setDirection(idx > current ? 1 : -1);
+    setCurrent(idx);
+  }, [current]);
+  const next = useCallback(() => {
+    setDirection(1);
+    setCurrent((p) => (p + 1) % count);
+  }, [count]);
+  const prev = useCallback(() => {
+    setDirection(-1);
+    setCurrent((p) => (p - 1 + count) % count);
+  }, [count]);
 
-      {tagline && (
-        <p className="mt-5 text-sm sm:text-base text-[var(--emp-cream)]/75 leading-relaxed max-w-sm">
-          <InlineEditable
-            sectionId={sectionId}
-            settingKey="tagline"
-            value={tagline}
-            multiline
-          />
-        </p>
-      )}
+  useEffect(() => {
+    if (count < 2) return;
+    const t = setInterval(next, 6000);
+    return () => clearInterval(t);
+  }, [next, count]);
 
-      <div className="mt-7 flex flex-wrap items-center gap-3">
-        <Link
-          to={ctaLink}
-          className="emp-btn emp-btn-filled rounded-full px-6 py-3.5 text-[12px] inline-flex items-center gap-2"
-        >
-          <InlineEditable
-            sectionId={sectionId}
-            settingKey="cta_text"
-            value={ctaText}
-          />
-          <ArrowRight size={14} aria-hidden="true" className="rtl:-scale-x-100" />
-        </Link>
-        {secondaryCtaText && (
-          <Link
-            to={secondaryCtaLink}
-            className="emp-btn rounded-full px-6 py-3.5 text-[12px] inline-flex items-center gap-2 border-2 border-[var(--emp-cream)] text-[var(--emp-cream)] hover:bg-[var(--emp-cream)] hover:text-[var(--emp-dark)] transition-colors"
-          >
-            <InlineEditable
-              sectionId={sectionId}
-              settingKey="secondary_cta_text"
-              value={secondaryCtaText}
-            />
-          </Link>
-        )}
-      </div>
+  const slide = slides[Math.min(current, count - 1)];
+  const multi = count > 1;
 
-      {trustText && (
-        <div className="mt-8 pt-6 border-t-2 border-[var(--emp-cream)]/20">
-          <p className="emp-label text-[11px] text-[var(--emp-cream)]/70 tracking-wider">
-            <InlineEditable
-              sectionId={sectionId}
-              settingKey="trust_text"
-              value={trustText}
-            />
-          </p>
-        </div>
-      )}
-    </div>
-  );
+  const variants = {
+    enter: (dir: number) => ({ opacity: 0, scale: 1.05, x: dir > 0 ? 60 : -60 }),
+    center: { opacity: 1, scale: 1, x: 0 },
+    exit: (dir: number) => ({ opacity: 0, scale: 0.98, x: dir > 0 ? -60 : 60 }),
+  };
 
   return (
     <section
-      ref={sectionRef}
-      className="relative overflow-hidden"
-      data-color-scheme={colorScheme}
+      className="relative h-[100vh] min-h-[600px] max-h-[900px] overflow-hidden bg-black"
+      data-emp-section={sectionId}
     >
-      {hasImage ? (
-        // Split layout: image one side, content the other. Under dir="rtl"
-        // CSS grid flips visually so the photo lands on the right (where
-        // Arabic readers' eyes land first).
-        <div className="grid md:grid-cols-2 min-h-[80vh] md:min-h-[88vh]">
-          <div className="relative bg-[var(--emp-cream)] min-h-[40vh] md:min-h-0 flex items-center justify-center overflow-hidden p-4 sm:p-6 md:p-8">
+      <AnimatePresence initial={false} custom={direction} mode="wait">
+        <motion.div
+          key={current}
+          custom={direction}
+          variants={variants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+          className="absolute inset-0"
+        >
+          {slide.image ? (
             <img
-              src={imageUrl}
+              src={slide.image}
               alt=""
-              className="max-h-full max-w-full w-auto h-auto object-contain"
-              style={applyImageTransform(imageTransform, "contain")}
+              className="w-full h-full object-cover"
+              style={applyImageTransform(slide.transform, "cover")}
               loading="eager"
             />
+          ) : (
+            <div className="w-full h-full bg-black" />
+          )}
+          {/* Dark bottom gradient (emp-hero-overlay) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Content — centered at the bottom, V2 Empire signature */}
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-end pb-16 md:pb-24 text-center px-4">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <h1 className="text-white font-black text-4xl md:text-6xl lg:text-7xl uppercase tracking-tight leading-[0.95] mb-3">
+              {slide.title}
+            </h1>
+            <p className="text-white/70 text-sm md:text-base uppercase tracking-widest mb-8">
+              {slide.sub}
+            </p>
+            <Link
+              to={ctaLink}
+              className="inline-block px-10 py-3.5 border-2 border-white text-white text-sm font-semibold uppercase tracking-wider rounded-full hover:bg-white hover:text-black transition-all duration-300"
+            >
+              {ctaText}
+            </Link>
+          </motion.div>
+        </AnimatePresence>
+
+        {multi && (
+          <div className="flex items-center gap-2 mt-10">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Go to slide ${i + 1}`}
+                onClick={() => goTo(i)}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  i === current ? "bg-white scale-110" : "bg-white/40 hover:bg-white/60"
+                }`}
+              />
+            ))}
           </div>
-          <div className="relative emp-wavy-bg flex flex-col justify-center px-6 sm:px-10 md:px-12 lg:px-16 py-12 md:py-16">
-            {content}
-          </div>
-        </div>
-      ) : (
-        // No image yet → centered single-column hero so the page doesn't
-        // ship with a giant empty half-screen.
-        <div className="relative emp-wavy-bg flex flex-col justify-center items-center text-center px-6 sm:px-10 md:px-12 py-20 md:py-28 min-h-[70vh]">
-          <div className="[&_*]:text-center [&_h1]:max-w-2xl [&_p]:max-w-md [&_p]:mx-auto [&_.flex]:justify-center">
-            {content}
-          </div>
-          <svg viewBox="0 0 1440 80" className="absolute bottom-0 left-0 w-full pointer-events-none" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0,80 C300,20 600,60 900,30 C1100,10 1300,50 1440,25 L1440,80 Z" fill="var(--emp-navy)" />
-          </svg>
-        </div>
+        )}
+      </div>
+
+      {multi && (
+        <>
+          <button
+            type="button"
+            onClick={next}
+            aria-label="Next slide"
+            className="absolute end-4 md:end-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+          >
+            <ChevronRight size={28} className="rtl:rotate-180" />
+          </button>
+          <button
+            type="button"
+            onClick={prev}
+            aria-label="Previous slide"
+            className="absolute start-4 md:start-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+          >
+            <ChevronLeft size={28} className="rtl:rotate-180" />
+          </button>
+        </>
       )}
     </section>
   );

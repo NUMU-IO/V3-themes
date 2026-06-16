@@ -1,16 +1,16 @@
 {
   "type": "emp-hero",
   "name": "Empire Hero",
-  "name_ar": "بازار الرئيسي",
+  "name_ar": "إمباير الرئيسي",
   "limit": 1,
   "settings": [
     {
       "type": "text",
       "id": "letter",
-      "label": "Hero Letter",
-      "label_ar": "حرف البانر",
+      "label": "Eyebrow / kicker",
+      "label_ar": "نص علوي",
       "default": "",
-      "info": "Optional oversized initial shown above the headline."
+      "info": "Small uppercase kicker shown above the headline with a hairline rule."
     },
     {
       "type": "text",
@@ -109,7 +109,7 @@
           "name": "Empire Hero"
         },
         "ar": {
-          "name": "بازار الرئيسي"
+          "name": "إمباير الرئيسي"
         }
       },
       "settings": {

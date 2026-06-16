@@ -1,7 +1,7 @@
 {
   "type": "emp-image-with-text",
   "name": "Empire Philosophy",
-  "name_ar": "بازار فلسفة",
+  "name_ar": "إمباير فلسفة",
   "settings": [
     {
       "type": "text",
@@ -81,7 +81,7 @@
           "name": "Empire Philosophy"
         },
         "ar": {
-          "name": "بازار فلسفة"
+          "name": "إمباير فلسفة"
         }
       },
       "settings": {

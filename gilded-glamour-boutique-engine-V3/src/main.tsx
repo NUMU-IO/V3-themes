@@ -17,6 +17,7 @@ import "./theme.css";
 import {
   selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
+import { PageDataContext, type MountPageData } from "./sections/_shared";
 
 interface MountResult {
   cleanup: () => void;
@@ -24,6 +25,9 @@ interface MountResult {
 }
 
 const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+  // Chrome — header / footer (included on every template).
+  "gilded-header": lazy(() => import("./sections/gilded-header")),
+  "gilded-footer": lazy(() => import("./sections/gilded-footer")),
   // Home sections — faithful V2 ports.
   "gilded-hero": lazy(() => import("./sections/gilded-hero")),
   "gilded-categories": lazy(() => import("./sections/gilded-categories")),
@@ -35,6 +39,10 @@ const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
   "gilded-product-detail": lazy(() => import("./sections/gilded-product-detail")),
   "gilded-products-page": lazy(() => import("./sections/gilded-products-page")),
   "gilded-profile": lazy(() => import("./sections/gilded-profile")),
+  // Utility templates — search / content page / 404.
+  "gilded-search-results": lazy(() => import("./sections/gilded-search-results")),
+  "gilded-rich-text": lazy(() => import("./sections/gilded-rich-text")),
+  "gilded-not-found": lazy(() => import("./sections/gilded-not-found")),
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -91,8 +99,10 @@ export interface MountContext {
 }
 
 export function mount(el: HTMLElement, ctx: MountContext) {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
+  return mountTheme(el, ctx, ({ currentTemplate, page }) => (
+    <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
+      <ThemeApp currentTemplate={currentTemplate} />
+    </PageDataContext.Provider>
   ));
 }
 
@@ -117,6 +127,9 @@ if (import.meta.env.DEV && typeof document !== "undefined") {
       : path === "/checkout" ? "checkout"
       : path === "/products" ? "products"
       : path === "/profile" ? "profile"
+      : path === "/search" ? "search"
+      : path === "/404" ? "404"
+      : path.startsWith("/pages/") ? "page"
       : "home";
     mount(rootEl, {
       store: { id: "dev", name: "Gilded glamour boutique (V3)", slug: "gilded-glamour-boutique-v3", currency: "EGP", default_language: "en", use_nextjs_storefront: true },

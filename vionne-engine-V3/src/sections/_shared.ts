@@ -61,8 +61,47 @@ export function asNumber(v: unknown, fallback = 0): number {
   return typeof v === "number" && Number.isFinite(v) ? v : fallback;
 }
 
+export function asBool(v: unknown, fallback = false): boolean {
+  return typeof v === "boolean" ? v : fallback;
+}
+
 export function asArray<T = unknown>(v: unknown): T[] {
   return Array.isArray(v) ? (v as T[]) : [];
+}
+
+interface RawBlock {
+  type?: string;
+  disabled?: boolean;
+  settings?: Record<string, unknown>;
+}
+
+/**
+ * Read a section's blocks of a given type, in editor order, skipping
+ * disabled ones. The customizer's block CRUD writes `instance.blocks` +
+ * `instance.block_order`, so chrome components (header nav, footer columns)
+ * MUST read from there — reading `instance.settings.<list>` silently ignores
+ * everything the merchant adds in the editor. Returns each block's `settings`
+ * bag (use asString / asImageUrl on the fields). Empty array when the section
+ * has no blocks of that type → the caller falls back to its V2 defaults.
+ * (Mirror of gilded / empire _shared.readBlocks.)
+ */
+export function readBlocks(
+  instance: SectionInstance,
+  type: string,
+): Record<string, unknown>[] {
+  const inst = instance as unknown as {
+    blocks?: Record<string, RawBlock>;
+    block_order?: string[];
+  };
+  const blocks = inst.blocks ?? {};
+  const order =
+    inst.block_order && inst.block_order.length > 0
+      ? inst.block_order
+      : Object.keys(blocks);
+  return order
+    .map((id) => blocks[id])
+    .filter((b): b is RawBlock => !!b && b.type === type && !b.disabled)
+    .map((b) => b.settings ?? {});
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "vionne-v3",
-  "version": "0.4.7",
+  "version": "0.4.9",
   "private": true,
   "description": "Vionne (V3) (V3 port)",
   "type": "module",
