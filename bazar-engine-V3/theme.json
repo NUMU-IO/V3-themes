@@ -2,7 +2,7 @@
   "id": "bazar-v3",
   "name": "Bazar (V3)",
   "author": "NUMU",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "layout": "single-column",
   "description": "Bazar (V3) — bold Egyptian streetwear storefront. Amber + navy palette, souk-print product cards, wavy dividers, and a full multipage set (home, listing, product, cart, search, 404).",
   "error_template": "templates/error.html",

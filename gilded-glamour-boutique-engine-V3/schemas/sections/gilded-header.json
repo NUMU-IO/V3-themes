@@ -1,0 +1,137 @@
+{
+  "type": "gilded-header",
+  "name": "Gilded Header",
+  "name_ar": "ترويسة جيلدد",
+  "tag": "header",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand name",
+      "label_ar": "اسم المتجر",
+      "default": "",
+      "info": "Leave empty to use the store name."
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_url",
+      "label": "Logo",
+      "label_ar": "الشعار",
+      "info": "Shown on the left. Falls back to the brand name text."
+    },
+    {
+      "type": "header",
+      "content": "Announcement bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement bar",
+      "label_ar": "إظهار شريط الإعلان",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Announcement text",
+      "label_ar": "نص الإعلان",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search icon",
+      "label_ar": "إظهار أيقونة البحث",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Show cart icon",
+      "label_ar": "إظهار أيقونة السلة",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "nav_item",
+      "name": "Navigation link",
+      "name_ar": "رابط التنقل",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "label_ar": "التسمية"
+        },
+        {
+          "type": "url",
+          "id": "href",
+          "label": "URL",
+          "label_ar": "الرابط"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Gilded Header",
+      "locales": {
+        "en": {
+          "name": "Gilded Header"
+        },
+        "ar": {
+          "name": "ترويسة جيلدد"
+        }
+      },
+      "settings": {
+        "show_announcement": true,
+        "show_search": true,
+        "show_cart": true
+      },
+      "blocks": [
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "HOME",
+            "href": "/"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "SHOP",
+            "href": "/products"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "COLLECTIONS",
+            "href": "/collections"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "ABOUT",
+            "href": "/pages/about"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "CONTACT",
+            "href": "/pages/contact"
+          }
+        }
+      ]
+    }
+  ]
+}

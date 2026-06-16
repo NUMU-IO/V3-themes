@@ -19,7 +19,7 @@
  *  the Vite build. `src/main.tsx` imports `src/theme.css`, which holds
  *  the `@tailwind base/components/utilities` directives plus all the
  *  custom `.emp-*` CSS. Vite's PostCSS step (postcss.config.js +
- *  tailwind.config.js, content-globbing ./src/**/*.{ts,tsx}) compiles
+ *  tailwind.config.js, content-globbing the src tree's .ts/.tsx) compiles
  *  those directives and EMITS dist/theme.css itself. The plugin's
  *  closeBundle only writes the styles.css→dist/theme.css fallback when
  *  no Vite CSS emit already exists (see numu-theme-plugin/src/index.ts

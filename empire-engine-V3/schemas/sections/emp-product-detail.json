@@ -1,7 +1,7 @@
 {
   "type": "emp-product-detail",
   "name": "Empire Product Detail",
-  "name_ar": "بازار تفاصيل المنتج",
+  "name_ar": "إمباير تفاصيل المنتج",
   "limit": 1,
   "settings": [
     {
@@ -70,7 +70,7 @@
           "name": "Empire Product Detail"
         },
         "ar": {
-          "name": "بازار تفاصيل المنتج"
+          "name": "إمباير تفاصيل المنتج"
         }
       },
       "settings": {

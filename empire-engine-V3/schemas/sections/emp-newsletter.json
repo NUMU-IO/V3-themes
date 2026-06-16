@@ -1,7 +1,7 @@
 {
   "type": "emp-newsletter",
   "name": "Empire Newsletter",
-  "name_ar": "بازار نشرة",
+  "name_ar": "إمباير نشرة",
   "settings": [
     {
       "type": "text",
@@ -40,7 +40,7 @@
           "name": "Empire Newsletter"
         },
         "ar": {
-          "name": "بازار نشرة"
+          "name": "إمباير نشرة"
         }
       },
       "settings": {

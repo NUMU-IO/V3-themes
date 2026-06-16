@@ -1,0 +1,36 @@
+{
+  "type": "lux-rich-text",
+  "name": "Rich Text / Page",
+  "name_ar": "نص / صفحة",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": "",
+      "info": "Used only when this section is placed outside a CMS page. On a Page route the page's own title is shown."
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content",
+      "label_ar": "المحتوى",
+      "default": "",
+      "info": "Rich text is sanitized before it renders on the storefront. On a Page route the page body is shown instead."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rich Text / Page",
+      "locales": {
+        "en": { "name": "Rich Text / Page" },
+        "ar": { "name": "نص / صفحة" }
+      },
+      "settings": {
+        "title": "",
+        "content": ""
+      }
+    }
+  ]
+}

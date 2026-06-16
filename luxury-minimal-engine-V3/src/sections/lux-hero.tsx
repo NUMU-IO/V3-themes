@@ -60,13 +60,15 @@ export default function LuxHero({ instance }: SectionRenderProps) {
             transition={{ duration: 1 }}
             className="hidden md:block h-full"
           >
-            <div className="h-full bg-[hsl(var(--lux-gray))]">
+            <div className="relative h-full overflow-hidden bg-[hsl(var(--lux-gray))]">
               {heroImageUrl && (
+                // Shopify-style framed image: COVERS the column (fills the
+                // frame, crops to the focal point) instead of letterboxing.
                 <img
                   src={heroImageUrl}
                   alt=""
-                  className="w-full h-full object-contain"
-                  style={applyImageTransform(heroImageTransform, "contain")}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={applyImageTransform(heroImageTransform, "cover")}
                 />
               )}
             </div>

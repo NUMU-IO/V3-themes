@@ -1,7 +1,7 @@
 {
   "type": "emp-header",
   "name": "Empire Header",
-  "name_ar": "بازار ترويسة",
+  "name_ar": "إمباير ترويسة",
   "limit": 1,
   "settings": [
     {
@@ -86,7 +86,7 @@
           "name": "Empire Header"
         },
         "ar": {
-          "name": "بازار ترويسة"
+          "name": "إمباير ترويسة"
         }
       },
       "settings": {

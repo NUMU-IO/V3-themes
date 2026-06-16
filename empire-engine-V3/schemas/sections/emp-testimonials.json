@@ -1,7 +1,7 @@
 {
   "type": "emp-testimonials",
   "name": "Empire Testimonials",
-  "name_ar": "بازار آراء",
+  "name_ar": "إمباير آراء",
   "limit": 1,
   "settings": [
     {
@@ -61,7 +61,7 @@
           "name": "Empire Testimonials"
         },
         "ar": {
-          "name": "بازار آراء"
+          "name": "إمباير آراء"
         }
       },
       "settings": {

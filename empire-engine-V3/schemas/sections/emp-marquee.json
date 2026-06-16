@@ -1,7 +1,7 @@
 {
   "type": "emp-marquee",
   "name": "Empire Marquee",
-  "name_ar": "بازار شريط متحرك",
+  "name_ar": "إمباير شريط متحرك",
   "settings": [
     {
       "type": "text",
@@ -15,9 +15,9 @@
       "id": "repeat_count",
       "label": "Repeat Count",
       "label_ar": "عدد التكرار",
-      "default": 2,
+      "default": 10,
       "min": 1,
-      "max": 10,
+      "max": 20,
       "step": 1
     }
   ],
@@ -29,12 +29,12 @@
           "name": "Empire Marquee"
         },
         "ar": {
-          "name": "بازار شريط متحرك"
+          "name": "إمباير شريط متحرك"
         }
       },
       "settings": {
         "text": "",
-        "repeat_count": 2
+        "repeat_count": 10
       }
     }
   ]

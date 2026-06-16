@@ -1,7 +1,7 @@
 {
   "type": "emp-not-found",
   "name": "Empire 404",
-  "name_ar": "بازار 404",
+  "name_ar": "إمباير 404",
   "limit": 1,
   "settings": [
     {
@@ -48,7 +48,7 @@
           "name": "Empire 404"
         },
         "ar": {
-          "name": "بازار 404"
+          "name": "إمباير 404"
         }
       },
       "settings": {

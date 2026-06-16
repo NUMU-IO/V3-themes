@@ -1,0 +1,178 @@
+{
+  "type": "vionne-footer",
+  "name": "Vionne Footer",
+  "name_ar": "تذييل فيون",
+  "tag": "footer",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand name",
+      "label_ar": "اسم المتجر",
+      "default": "",
+      "info": "Leave empty to use the store name."
+    },
+    {
+      "type": "textarea",
+      "id": "footer_about_text",
+      "label": "Brand blurb",
+      "label_ar": "نبذة المتجر",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Columns"
+    },
+    {
+      "type": "text",
+      "id": "shop_title",
+      "label": "Shop column title",
+      "label_ar": "عنوان عمود التسوّق",
+      "default": "",
+      "info": "Used for the default Shop column (All products + collections)."
+    },
+    {
+      "type": "text",
+      "id": "help_title",
+      "label": "Help column title",
+      "label_ar": "عنوان عمود المساعدة",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show newsletter signup",
+      "label_ar": "إظهار الاشتراك بالنشرة",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Newsletter title",
+      "label_ar": "عنوان النشرة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "newsletter_subtitle",
+      "label": "Newsletter subtitle",
+      "label_ar": "وصف النشرة",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Bottom bar"
+    },
+    {
+      "type": "text",
+      "id": "payment_methods",
+      "label": "Payment methods",
+      "label_ar": "طرق الدفع",
+      "default": "",
+      "info": "Comma-separated, shown in the bottom bar."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Link column",
+      "name_ar": "عمود روابط",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Column title",
+          "label_ar": "عنوان العمود"
+        },
+        {
+          "type": "text",
+          "id": "link1_label",
+          "label": "Link 1 label",
+          "label_ar": "تسمية الرابط 1"
+        },
+        {
+          "type": "url",
+          "id": "link1_href",
+          "label": "Link 1 URL",
+          "label_ar": "رابط 1"
+        },
+        {
+          "type": "text",
+          "id": "link2_label",
+          "label": "Link 2 label",
+          "label_ar": "تسمية الرابط 2"
+        },
+        {
+          "type": "url",
+          "id": "link2_href",
+          "label": "Link 2 URL",
+          "label_ar": "رابط 2"
+        },
+        {
+          "type": "text",
+          "id": "link3_label",
+          "label": "Link 3 label",
+          "label_ar": "تسمية الرابط 3"
+        },
+        {
+          "type": "url",
+          "id": "link3_href",
+          "label": "Link 3 URL",
+          "label_ar": "رابط 3"
+        },
+        {
+          "type": "text",
+          "id": "link4_label",
+          "label": "Link 4 label",
+          "label_ar": "تسمية الرابط 4"
+        },
+        {
+          "type": "url",
+          "id": "link4_href",
+          "label": "Link 4 URL",
+          "label_ar": "رابط 4"
+        },
+        {
+          "type": "text",
+          "id": "link5_label",
+          "label": "Link 5 label",
+          "label_ar": "تسمية الرابط 5"
+        },
+        {
+          "type": "url",
+          "id": "link5_href",
+          "label": "Link 5 URL",
+          "label_ar": "رابط 5"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Vionne Footer",
+      "locales": {
+        "en": {
+          "name": "Vionne Footer"
+        },
+        "ar": {
+          "name": "تذييل فيون"
+        }
+      },
+      "settings": {
+        "brand_name": "",
+        "footer_about_text": "",
+        "show_newsletter": true,
+        "newsletter_title": "",
+        "newsletter_subtitle": "",
+        "payment_methods": "Visa, Mastercard, Cash on Delivery, Fawry"
+      },
+      "blocks": []
+    }
+  ]
+}

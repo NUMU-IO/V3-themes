@@ -53,8 +53,8 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
             <img
               src={mobileImage}
               alt={headline}
-              className="w-full h-full object-contain"
-              style={applyImageTransform(heroImageMobileTransform, "contain")}
+              className="w-full h-full object-cover"
+              style={applyImageTransform(heroImageMobileTransform, "cover")}
             />
           </div>
         ) : mobileImage ? (
@@ -92,8 +92,8 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
             src={heroImageUrl}
             alt=""
             aria-hidden="true"
-            className="relative w-full h-full object-contain"
-            style={applyImageTransform(heroImageTransform, "contain")}
+            className="relative w-full h-full object-cover"
+            style={applyImageTransform(heroImageTransform, "cover")}
           />
         ) : null}
         <div className="absolute inset-0 bg-foreground/40" />

@@ -18,7 +18,6 @@ import "./theme.css";
 import {
   selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
-import VionneFooter from "./sections/vionne-footer";
 import { DemoContext, PageDataContext, usePageData, type MountPageData } from "./sections/_shared";
 
 interface MountResult {
@@ -27,6 +26,9 @@ interface MountResult {
 }
 
 const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+  // Chrome — header / footer (included first/last on every template).
+  "vionne-header": lazy(() => import("./sections/vionne-header")),
+  "vionne-footer": lazy(() => import("./sections/vionne-footer")),
   "vionne-slideshow": lazy(() => import("./sections/vionne-slideshow")),
   "vionne-featured-collection": lazy(() => import("./sections/vionne-featured-collection")),
   "vionne-marquee": lazy(() => import("./sections/vionne-marquee")),
@@ -41,6 +43,8 @@ const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
   "vionne-product-detail": lazy(() => import("./sections/vionne-product-detail")),
   "vionne-products-page": lazy(() => import("./sections/vionne-products-page")),
   "vionne-profile": lazy(() => import("./sections/vionne-profile")),
+  "vionne-search-results": lazy(() => import("./sections/vionne-search-results")),
+  "vionne-not-found": lazy(() => import("./sections/vionne-not-found")),
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -78,12 +82,10 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const builtinTemplate = BUILTIN_TEMPLATES[currentTemplate];
   const sections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
 
-  // CMS content page (/pages/<handle> → template "page"). Vionne ships no
-  // `page` template AND renders global chrome on every route, so the host's
-  // empty-detection backstop can't fire here (the container is non-empty).
-  // Bind the real CMS title + body ourselves (bilingual via title_i18n/
-  // body_i18n), else a content page renders only chrome. Sanitized before
-  // dangerouslySetInnerHTML.
+  // CMS content page (/pages/<handle> → template "page"). The `page` template
+  // ships only chrome (header + footer), so the body is bound here from the
+  // host page context (bilingual via title_i18n/body_i18n). Sanitized before
+  // dangerouslySetInnerHTML. Null/empty on every other template.
   const pageCtx = usePageData();
   const locale = useLocale();
   const cmsPage =
@@ -94,44 +96,58 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const cmsBody = cmsPage ? cmsPage.body_i18n?.[locale] || cmsPage.body || "" : "";
   const safeBody = useMemo(() => sanitizeHtml(cmsBody), [cmsBody]);
 
-  // Vionne ships no footer *section*, so render one globally — BUT only when
-  // the route actually has content (sections or the CMS body). On a route
-  // vionne doesn't template (cart / 404 / search), the bundle must render
-  // NOTHING so the host's empty-detection backstop fires (BuiltInCart, themed
-  // 404). Rendering the footer there left the container non-empty → suppressed
-  // the backstop → cart/404 showed only a footer (no cart UI / no 404 message).
-  const hasContent = sections.length > 0 || Boolean(cmsTitle) || Boolean(cmsBody);
+  const cmsBlock =
+    cmsTitle || cmsBody ? (
+      <section
+        className="vn-cms-page"
+        style={{ maxWidth: 760, margin: "0 auto", padding: "4rem 1.5rem" }}
+      >
+        {cmsTitle && (
+          <h1
+            className="vn-heading"
+            style={{
+              fontSize: "clamp(1.9rem,3.5vw,2.75rem)",
+              margin: "0 0 1.5rem",
+              color: "var(--vn-ink,#1a1a1a)",
+            }}
+          >
+            {cmsTitle}
+          </h1>
+        )}
+        {cmsBody && (
+          <div
+            style={{ lineHeight: 1.75, color: "var(--vn-muted,#444)", fontSize: "1.05rem" }}
+            dangerouslySetInnerHTML={{ __html: safeBody }}
+          />
+        )}
+      </section>
+    ) : null;
+
+  // Chrome (vionne-header / vionne-footer) is now an editable section included
+  // first + last in every page template (see theme.json), rendered through the
+  // section registry below — NOT globally. So the host content slot (the CMS
+  // page body) must land BEFORE the trailing footer: split off a trailing
+  // `vionne-footer` section and render the CMS body just above it.
+  const trailingFooterIdx =
+    cmsBlock && sections.length > 0 && sections[sections.length - 1].instance.type === "vionne-footer"
+      ? sections.length - 1
+      : -1;
+  const leadingSections = trailingFooterIdx >= 0 ? sections.slice(0, trailingFooterIdx) : sections;
+  const trailingFooter = trailingFooterIdx >= 0 ? sections[trailingFooterIdx] : null;
+
   return (
     <div data-vionne-v3-app data-theme="vionne-v3">
-      {sections.map(({ id, instance }) => (
+      {leadingSections.map(({ id, instance }) => (
         <RenderSection key={id} sectionId={id} instance={instance} />
       ))}
-      {(cmsTitle || cmsBody) && (
-        <section
-          className="vn-cms-page"
-          style={{ maxWidth: 760, margin: "0 auto", padding: "4rem 1.5rem" }}
-        >
-          {cmsTitle && (
-            <h1
-              className="vn-heading"
-              style={{
-                fontSize: "clamp(1.9rem,3.5vw,2.75rem)",
-                margin: "0 0 1.5rem",
-                color: "var(--vn-ink,#1a1a1a)",
-              }}
-            >
-              {cmsTitle}
-            </h1>
-          )}
-          {cmsBody && (
-            <div
-              style={{ lineHeight: 1.75, color: "var(--vn-muted,#444)", fontSize: "1.05rem" }}
-              dangerouslySetInnerHTML={{ __html: safeBody }}
-            />
-          )}
-        </section>
+      {cmsBlock}
+      {trailingFooter && (
+        <RenderSection
+          key={trailingFooter.id}
+          sectionId={trailingFooter.id}
+          instance={trailingFooter.instance}
+        />
       )}
-      {hasContent && currentTemplate !== "checkout" && <VionneFooter />}
     </div>
   );
 }
@@ -175,7 +191,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "vionne-v3", name: "Vionne (V3)", version: "0.4.7" },
+  manifest: { id: "vionne-v3", name: "Vionne (V3)", version: "0.4.9" },
   mount,
 };
 export default v3Handle;
@@ -191,6 +207,10 @@ if (import.meta.env.DEV && typeof document !== "undefined") {
       : path === "/cart" ? "cart"
       : path === "/checkout" ? "checkout"
       : path === "/products" ? "products"
+      : path === "/search" ? "search"
+      : path === "/account" || path === "/profile" ? "account"
+      : path === "/404" ? "404"
+      : path.startsWith("/pages/") ? "page"
       : "home";
     mount(rootEl, {
       store: { id: "dev", name: "Vionne (V3)", slug: "vionne-v3", currency: "EGP", default_language: "en", use_nextjs_storefront: true },

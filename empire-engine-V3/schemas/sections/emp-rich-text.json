@@ -1,7 +1,7 @@
 {
   "type": "emp-rich-text",
   "name": "Empire Rich Text",
-  "name_ar": "بازار نص",
+  "name_ar": "إمباير نص",
   "settings": [
     {
       "type": "richtext",
@@ -20,7 +20,7 @@
           "name": "Empire Rich Text"
         },
         "ar": {
-          "name": "بازار نص"
+          "name": "إمباير نص"
         }
       },
       "settings": {

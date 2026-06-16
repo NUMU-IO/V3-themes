@@ -86,54 +86,56 @@ const EmpAboutSection = ({ instance, sectionId }: SectionRenderProps) => {
     configured.length > 0 ? configured : demoOrPlaceholder(demo, fallbackValues(locale));
 
   return (
-    <div className="bg-[var(--emp-cream)]">
-      {/* HERO */}
-      <section className="relative min-h-[50vh] md:min-h-[60vh] flex flex-col items-center justify-center overflow-hidden emp-wavy-bg py-16 md:py-0">
+    <div className="bg-[hsl(var(--background))]">
+      {/* HERO — flat editorial type composition over the ink panel; no
+          organic blobs, no wavy divider. A faint dot-grid (the hero's accent)
+          sits behind the headline, and a hairline rule closes the panel. */}
+      <section className="relative min-h-[50vh] md:min-h-[60vh] flex flex-col items-center justify-center overflow-hidden bg-black py-16 md:py-0">
         {imageUrl && (
           <img src={imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" style={applyImageTransform(imageTransform, "cover")} />
         )}
         <div className="relative z-10 text-center px-4">
-          <span className="emp-label text-[var(--emp-dark)]/60 tracking-[0.2em] sm:tracking-[0.3em]">
-            <InlineEditable sectionId={sectionId} settingKey="eyebrow" value={eyebrow} />
-          </span>
-          <h1 className="emp-heading text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-[var(--emp-dark)] mt-3 md:mt-4 leading-none">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <span className="h-px w-10 sm:w-16 bg-[hsl(var(--emp-blue))]/45" aria-hidden="true" />
+            <span className="emp-label text-[hsl(var(--emp-blue))] tracking-[0.2em] sm:tracking-[0.3em]">
+              <InlineEditable sectionId={sectionId} settingKey="eyebrow" value={eyebrow} />
+            </span>
+            <span className="h-px w-10 sm:w-16 bg-[hsl(var(--emp-blue))]/45" aria-hidden="true" />
+          </div>
+          <h1 className="font-black uppercase tracking-tight text-3xl sm:text-5xl md:text-7xl lg:text-8xl text-[hsl(var(--background))] mt-3 md:mt-4 leading-none">
             <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
           </h1>
           {quote && (
-            <p className="text-[var(--emp-dark)]/50 mt-3 md:mt-4 text-sm md:text-base max-w-md mx-auto italic">
+            <p className="text-[hsl(var(--background))]/55 mt-3 md:mt-4 text-sm md:text-base max-w-md mx-auto italic">
               &ldquo;
               <InlineEditable sectionId={sectionId} settingKey="quote" value={quote} multiline />
               &rdquo;
             </p>
           )}
         </div>
-        <div aria-hidden="true" className="absolute top-8 md:top-12 start-4 md:start-8 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-[var(--emp-amber)] emp-blob opacity-30" />
-        <div aria-hidden="true" className="absolute bottom-16 md:bottom-24 end-6 md:end-12 w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-[var(--emp-navy)] emp-blob opacity-20" />
-        <svg viewBox="0 0 1440 80" className="absolute bottom-0 w-full" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0,80 C300,20 600,60 900,30 C1100,10 1300,50 1440,25 L1440,80 Z" fill="var(--emp-cream)" />
-        </svg>
+        <div className="h-px w-full bg-[hsl(var(--emp-blue))]/25 absolute bottom-0 start-0" aria-hidden="true" />
       </section>
 
       {/* WHO WE ARE */}
-      <section className="py-12 md:py-16 lg:py-24 bg-[var(--emp-cream)]">
+      <section className="py-12 md:py-16 lg:py-24 bg-[hsl(var(--background))]">
         <div className="container mx-auto px-4 max-w-3xl text-center">
-          <span className="emp-label text-[var(--emp-amber)]">
+          <span className="emp-label text-[hsl(var(--emp-blue))]">
             <InlineEditable sectionId={sectionId} settingKey="who_label" value={whoLabel} />
           </span>
-          <h2 className="emp-heading text-2xl sm:text-3xl md:text-5xl mt-3 md:mt-4 text-[var(--emp-dark)] leading-tight">
+          <h2 className="font-black uppercase tracking-tight text-2xl sm:text-3xl md:text-5xl mt-3 md:mt-4 text-[hsl(var(--foreground))] leading-tight">
             <InlineEditable sectionId={sectionId} settingKey="who_headline" value={whoHeadline} />
           </h2>
-          <p className="text-[var(--emp-dark)]/60 mt-6 md:mt-8 leading-relaxed text-sm md:text-base whitespace-pre-line">
+          <p className="text-[hsl(var(--foreground))]/60 mt-6 md:mt-8 leading-relaxed text-sm md:text-base whitespace-pre-line">
             <InlineEditable sectionId={sectionId} settingKey="description" value={description} multiline />
           </p>
         </div>
       </section>
 
       {/* MARQUEE */}
-      <section className="bg-[var(--emp-navy)] py-5 overflow-hidden" aria-label={marqueeText}>
-        <div className="emp-marquee-track" aria-hidden="true">
+      <section className="bg-[hsl(var(--emp-charcoal))] py-5 overflow-hidden" aria-label={marqueeText}>
+        <div className="flex whitespace-nowrap animate-[emp-ticker_30s_linear_infinite]" aria-hidden="true">
           {[...Array(6)].map((_, i) => (
-            <span key={i} className="emp-heading text-lg sm:text-xl md:text-2xl lg:text-3xl text-[var(--emp-amber)] whitespace-nowrap mx-6 sm:mx-8">
+            <span key={i} className="font-black uppercase tracking-tight text-lg sm:text-xl md:text-2xl lg:text-3xl text-[hsl(var(--emp-blue))] whitespace-nowrap mx-6 sm:mx-8">
               {marqueeText}
             </span>
           ))}
@@ -141,16 +143,14 @@ const EmpAboutSection = ({ instance, sectionId }: SectionRenderProps) => {
       </section>
 
       {/* VALUES */}
-      <section className="relative py-12 md:py-20 lg:py-32 bg-[var(--emp-dark)] overflow-hidden">
-        <svg viewBox="0 0 1440 60" className="absolute top-0 start-0 w-full -mt-px" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0,0 C360,50 720,10 1080,40 C1260,55 1380,20 1440,30 L1440,0 L0,0 Z" fill="var(--emp-navy)" />
-        </svg>
+      <section className="relative py-12 md:py-20 lg:py-32 bg-[hsl(var(--foreground))] overflow-hidden">
+        <div className="h-px w-full bg-[hsl(var(--emp-blue))]/25 absolute top-0 start-0" aria-hidden="true" />
         <div className="container mx-auto px-4">
           <div className="text-center mb-10 md:mb-14">
-            <span className="emp-label text-[var(--emp-amber)]">
+            <span className="emp-label text-[hsl(var(--emp-blue))]">
               <InlineEditable sectionId={sectionId} settingKey="values_label" value={valuesLabel} />
             </span>
-            <h2 className="emp-heading text-2xl sm:text-3xl md:text-5xl text-[var(--emp-cream)] mt-3 md:mt-4">
+            <h2 className="font-black uppercase tracking-tight text-2xl sm:text-3xl md:text-5xl text-[hsl(var(--background))] mt-3 md:mt-4">
               <InlineEditable sectionId={sectionId} settingKey="values_headline" value={valuesHeadline} />
             </h2>
           </div>
@@ -158,36 +158,34 @@ const EmpAboutSection = ({ instance, sectionId }: SectionRenderProps) => {
             {values.map((value, i) => {
               const Icon = iconFor(value.icon);
               return (
-                <div key={`${value.title}-${i}`} className="rounded-2xl md:rounded-3xl border-2 border-[var(--emp-amber)]/20 bg-[var(--emp-navy)] p-5 sm:p-6 md:p-8 text-center hover:border-[var(--emp-amber)] transition-colors duration-300">
-                  <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[var(--emp-amber)]/10 mb-4 md:mb-6">
-                    <Icon size={24} className="text-[var(--emp-amber)]" aria-hidden="true" />
+                <div key={`${value.title}-${i}`} className="rounded-[3px] border border-[hsl(var(--emp-blue))]/20 bg-[hsl(var(--emp-charcoal))] p-5 sm:p-6 md:p-8 text-center hover:border-[hsl(var(--emp-blue))] transition-colors duration-300">
+                  <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-[3px] bg-[hsl(var(--emp-blue))]/10 mb-4 md:mb-6">
+                    <Icon size={24} className="text-[hsl(var(--emp-blue))]" aria-hidden="true" />
                   </div>
-                  <h3 className="emp-heading text-base md:text-lg text-[var(--emp-cream)]">{value.title}</h3>
-                  <p className="text-[var(--emp-cream)]/40 mt-3 md:mt-4 text-xs leading-relaxed">{value.description}</p>
+                  <h3 className="font-black uppercase tracking-tight text-base md:text-lg text-[hsl(var(--background))]">{value.title}</h3>
+                  <p className="text-[hsl(var(--background))]/40 mt-3 md:mt-4 text-xs leading-relaxed">{value.description}</p>
                 </div>
               );
             })}
           </div>
         </div>
-        <svg viewBox="0 0 1440 60" className="absolute bottom-0 start-0 w-full mb-[-1px]" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0,60 C360,10 720,50 1080,20 C1260,5 1380,40 1440,30 L1440,60 L0,60 Z" fill="var(--emp-cream)" />
-        </svg>
+        <div className="h-px w-full bg-[hsl(var(--emp-blue))]/25 absolute bottom-0 start-0" aria-hidden="true" />
       </section>
 
       {/* CTA */}
-      <section className="py-12 md:py-20 lg:py-28 bg-[var(--emp-cream)]">
+      <section className="py-12 md:py-20 lg:py-28 bg-[hsl(var(--background))]">
         <div className="container mx-auto px-4 text-center">
-          <span className="emp-label text-[var(--emp-amber)]">
+          <span className="emp-label text-[hsl(var(--emp-blue))]">
             <InlineEditable sectionId={sectionId} settingKey="cta_label" value={ctaLabel} />
           </span>
-          <h2 className="emp-heading text-2xl sm:text-3xl md:text-5xl text-[var(--emp-dark)] mt-3 md:mt-4 leading-tight">
+          <h2 className="font-black uppercase tracking-tight text-2xl sm:text-3xl md:text-5xl text-[hsl(var(--foreground))] mt-3 md:mt-4 leading-tight">
             <InlineEditable sectionId={sectionId} settingKey="cta_headline" value={ctaHeadline} />
           </h2>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mt-8 md:mt-10 max-w-md sm:max-w-none mx-auto">
-            <Link to={ctaLink} className="emp-btn emp-btn-filled emp-btn-amber rounded-full text-[10px] sm:text-[11px] px-6 sm:px-8 py-3 justify-center">
+            <Link to={ctaLink} className="inline-flex items-center justify-center px-6 sm:px-8 py-3 bg-[hsl(var(--emp-blue))] text-white text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider rounded-full hover:opacity-90 transition-opacity">
               <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
             </Link>
-            <Link to={contactCtaLink} className="emp-btn rounded-full text-[10px] sm:text-[11px] px-6 sm:px-8 py-3 justify-center">
+            <Link to={contactCtaLink} className="inline-flex items-center justify-center px-6 sm:px-8 py-3 bg-black text-white text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider rounded-full hover:bg-black/90 transition-colors">
               <InlineEditable sectionId={sectionId} settingKey="contact_cta_text" value={contactCtaText} />
             </Link>
           </div>

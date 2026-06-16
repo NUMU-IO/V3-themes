@@ -60,7 +60,9 @@ export default function BzOrderConfirmation({
   const { orders } = useOrders();
   const order = orders?.[0];
   const orderNumber = order?.order_number ?? "NUM-000000";
-  const total = order?.total;
+  // order.total is integer CENTS (useOrders doesn't normalize it, unlike
+  // useCart); <Money> expects MAJOR units — divide by 100 to avoid a 100× total.
+  const total = typeof order?.total === "number" ? order.total / 100 : undefined;
   const currency = order?.currency;
 
   const [copied, setCopied] = useState(false);

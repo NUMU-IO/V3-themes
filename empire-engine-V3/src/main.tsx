@@ -48,6 +48,7 @@ interface MountResult {
 const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
   // Home / content sections (Phase 0–2)
   "emp-about-section": lazy(() => import("./sections/emp-about-section")),
+  "emp-categories": lazy(() => import("./sections/emp-categories")),
   "emp-hero": lazy(() => import("./sections/emp-hero")),
   "emp-image-with-text": lazy(() => import("./sections/emp-image-with-text")),
   "emp-marquee": lazy(() => import("./sections/emp-marquee")),
@@ -63,7 +64,9 @@ const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
   "emp-product-detail": lazy(() => import("./sections/emp-product-detail")),
   "emp-related-products": lazy(() => import("./sections/emp-related-products")),
   "emp-cart": lazy(() => import("./sections/emp-cart")),
+  "emp-order-confirmation": lazy(() => import("./sections/emp-order-confirmation")),
   "emp-search-results": lazy(() => import("./sections/emp-search-results")),
+  "emp-profile-section": lazy(() => import("./sections/emp-profile-section")),
   "emp-not-found": lazy(() => import("./sections/emp-not-found")),
 };
 
@@ -221,7 +224,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "empire-v3", name: "Empire (V3)", version: "0.2.4" },
+  manifest: { id: "empire-v3", name: "Empire (V3)", version: "0.3.0" },
   mount,
 };
 export default v3Handle;

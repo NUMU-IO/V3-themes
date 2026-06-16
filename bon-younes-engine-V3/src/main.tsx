@@ -55,9 +55,11 @@ const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
   "by-product-grid": lazy(() => import("./sections/by-product-grid")),
   "by-related-products": lazy(() => import("./sections/by-related-products")),
   "by-cart": lazy(() => import("./sections/by-cart")),
+  "by-order-confirmation": lazy(() => import("./sections/by-order-confirmation")),
   "by-rich-text": lazy(() => import("./sections/by-rich-text")),
   "by-not-found": lazy(() => import("./sections/by-not-found")),
   "by-search-results": lazy(() => import("./sections/by-search-results")),
+  "by-profile-section": lazy(() => import("./sections/by-profile-section")),
 };
 
 function UnknownSection({ type }: { type: string }) {
@@ -354,7 +356,7 @@ const v3Handle = {
   manifest: {
     id: "bon-younes-v3",
     name: "Bon Younes (V3)",
-    version: "0.1.16",
+    version: "0.2.0",
   },
   mount,
 };

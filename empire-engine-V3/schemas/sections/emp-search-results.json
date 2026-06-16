@@ -1,7 +1,7 @@
 {
   "type": "emp-search-results",
   "name": "Empire Search Results",
-  "name_ar": "بازار نتائج البحث",
+  "name_ar": "إمباير نتائج البحث",
   "limit": 1,
   "settings": [
     {
@@ -44,7 +44,7 @@
           "name": "Empire Search Results"
         },
         "ar": {
-          "name": "بازار نتائج البحث"
+          "name": "إمباير نتائج البحث"
         }
       },
       "settings": {

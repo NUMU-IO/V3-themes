@@ -1,7 +1,7 @@
 {
   "type": "emp-about-section",
   "name": "Empire About",
-  "name_ar": "بازار من نحن",
+  "name_ar": "إمباير من نحن",
   "settings": [
     {
       "type": "header",
@@ -208,7 +208,7 @@
           "name": "Empire About"
         },
         "ar": {
-          "name": "بازار من نحن"
+          "name": "إمباير من نحن"
         }
       },
       "settings": {

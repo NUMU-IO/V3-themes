@@ -49,53 +49,51 @@ const EmpImageWithText = ({ instance, sectionId }: SectionRenderProps) => {
   const colorScheme = asString(s.color_scheme) || "dark";
 
   return (
-    <section className="relative py-12 md:py-20 lg:py-32 bg-[var(--emp-dark)] overflow-hidden" data-color-scheme={colorScheme}>
-      <svg viewBox="0 0 1440 60" className="absolute top-0 start-0 w-full -mt-px" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M0,0 C360,50 720,10 1080,40 C1260,55 1380,20 1440,30 L1440,0 L0,0 Z" fill="var(--emp-cream)" />
-      </svg>
+    <section className="relative py-12 md:py-20 lg:py-32 bg-[hsl(var(--foreground))] overflow-hidden" data-color-scheme={colorScheme}>
+      {/* Flat editorial hairline replaces Bazar's wavy SVG divider. */}
+      <div className="h-px w-full bg-[hsl(var(--emp-blue))]/25 absolute top-0 start-0" aria-hidden="true" />
 
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center">
           <div>
-            <span className="emp-label text-[var(--emp-amber)]">
+            <span className="emp-label text-[hsl(var(--emp-blue))]">
               <InlineEditable sectionId={sectionId} settingKey="label" value={label} />
             </span>
-            <h2 className="emp-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-[var(--emp-cream)] mt-3 md:mt-4 leading-tight">
+            <h2 className="font-black uppercase tracking-tight text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-[hsl(var(--background))] mt-3 md:mt-4 leading-tight">
               <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} multiline />
             </h2>
-            <p className="text-[var(--emp-cream)]/60 mt-6 leading-relaxed text-sm md:text-base italic">
+            <p className="text-[hsl(var(--background))]/60 mt-6 leading-relaxed text-sm md:text-base italic">
               &ldquo;
               <InlineEditable sectionId={sectionId} settingKey="quote" value={quote} multiline />
               &rdquo;
             </p>
-            <p className="text-[var(--emp-cream)]/40 mt-4 text-sm leading-relaxed">
+            <p className="text-[hsl(var(--background))]/40 mt-4 text-sm leading-relaxed">
               <InlineEditable sectionId={sectionId} settingKey="body" value={body} multiline />
             </p>
-            <Link to={ctaLink} className="emp-btn emp-btn-amber mt-6 md:mt-8 rounded-full">
+            <Link to={ctaLink} className="inline-flex items-center justify-center px-8 py-3.5 bg-[hsl(var(--emp-blue))] text-white text-xs font-semibold uppercase tracking-wider rounded-full hover:opacity-90 transition-opacity mt-6 md:mt-8">
               <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
             </Link>
           </div>
           {imageUrl ? (
             <div className="relative order-first md:order-none">
-              <div className="rounded-3xl overflow-hidden aspect-[4/5] bg-[var(--emp-navy)]">
+              {/* Sharp editorial frame, hairline accent border — no soft radius, no blob. */}
+              <div className="rounded-[3px] overflow-hidden aspect-[4/5] bg-[hsl(var(--emp-charcoal))] border border-[hsl(var(--emp-blue))]/30">
                 <img
                   src={imageUrl}
                   alt=""
-                  className={`w-full h-full object-cover opacity-80 ${imageTransform ? "" : "emp-img-zoom"}`}
+                  className={`w-full h-full object-cover opacity-80 ${imageTransform ? "" : "emp-product-img"}`}
                   style={applyImageTransform(imageTransform, "cover")}
                   loading="lazy"
                 />
               </div>
-              <div aria-hidden="true" className="absolute -bottom-6 -start-6 w-24 h-24 bg-[var(--emp-amber)] emp-blob opacity-60" />
             </div>
           ) : (
             <div className="relative order-first md:order-none" aria-hidden="true">
-              <div className="rounded-3xl aspect-[4/5] bg-[var(--emp-navy)] flex items-center justify-center">
-                <div className="emp-heading text-[80px] sm:text-[100px] md:text-[120px] text-[var(--emp-amber)]/10 emp-blob inline-block">
-                  B
+              <div className="rounded-[3px] aspect-[4/5] bg-[hsl(var(--emp-charcoal))] border border-[hsl(var(--emp-blue))]/30 flex items-center justify-center">
+                <div className="font-black uppercase tracking-tight text-[80px] sm:text-[100px] md:text-[120px] text-[hsl(var(--emp-blue))]/10 inline-block">
+                  E
                 </div>
               </div>
-              <div className="absolute -bottom-6 -start-6 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-[var(--emp-amber)] emp-blob opacity-60" />
             </div>
           )}
         </div>

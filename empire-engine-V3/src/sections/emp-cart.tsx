@@ -13,12 +13,12 @@ import { asNumber, asString, localized, type SectionRenderProps } from "./_share
 import { InlineEditable } from "./_inline-editable";
 
 /**
- * emp-cart — the cart template body, ported from V2 EmpCartPage. One
- * component handles both the empty state (centered amber bag + CTA) and
- * the populated state (line items with qty steppers + remove, plus a
- * sticky summary card with subtotal / shipping / total and a checkout
- * CTA). Shipping mirrors the storefront rule: flat fee, free over a
- * threshold (both merchant-editable).
+ * emp-cart — the cart template body, in the Empire LIGHT editorial idiom
+ * (off-white page, white line-item cards, black `font-black uppercase`
+ * headings, electric-blue accents). Handles the empty state (centered
+ * black bag + CTA) and the populated state (line items with qty steppers +
+ * remove, plus a sticky summary card). Shipping mirrors the storefront
+ * rule: flat fee, free over a threshold (both merchant-editable).
  */
 export default function EmpCart({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
@@ -51,37 +51,24 @@ export default function EmpCart({ instance, sectionId }: SectionRenderProps) {
   if (isEmpty) {
     return (
       <section
-        className="min-h-[70vh] bg-[var(--emp-cream)] flex items-center justify-center"
+        className="min-h-[70vh] bg-[hsl(var(--background))] flex items-center justify-center"
         data-emp-section={sectionId}
       >
         <div className="text-center px-6 py-16">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[var(--emp-amber)]/15 flex items-center justify-center">
-            <ShoppingBag size={26} className="text-[var(--emp-amber)]" aria-hidden="true" />
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-black flex items-center justify-center">
+            <ShoppingBag size={26} className="text-white" aria-hidden="true" />
           </div>
-          <h1 className="emp-heading text-4xl md:text-5xl text-[var(--emp-dark)] mb-6">
-            <InlineEditable
-              sectionId={sectionId}
-              settingKey="empty_headline"
-              value={emptyHeadline}
-            />
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight mb-6">
+            <InlineEditable sectionId={sectionId} settingKey="empty_headline" value={emptyHeadline} />
           </h1>
-          <p className="text-sm text-[var(--emp-gray)] mb-8 max-w-sm mx-auto">
-            <InlineEditable
-              sectionId={sectionId}
-              settingKey="empty_subhead"
-              value={emptySubhead}
-              multiline
-            />
+          <p className="text-sm text-muted-foreground mb-8 max-w-sm mx-auto">
+            <InlineEditable sectionId={sectionId} settingKey="empty_subhead" value={emptySubhead} multiline />
           </p>
           <Link
             to={emptyCtaHref}
-            className="emp-btn emp-btn-filled inline-flex items-center gap-2 px-8 py-3 text-xs"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-black text-white text-xs font-semibold uppercase tracking-wider rounded-full hover:bg-black/90 transition-colors"
           >
-            <InlineEditable
-              sectionId={sectionId}
-              settingKey="empty_cta_label"
-              value={emptyCta}
-            />
+            <InlineEditable sectionId={sectionId} settingKey="empty_cta_label" value={emptyCta} />
             <ArrowRight size={12} aria-hidden="true" className="rtl:-scale-x-100" />
           </Link>
         </div>
@@ -95,73 +82,56 @@ export default function EmpCart({ instance, sectionId }: SectionRenderProps) {
   const grandTotal = subtotal + shippingCost;
 
   return (
-    <section
-      className="min-h-[70vh] bg-[var(--emp-cream)]"
-      data-emp-section={sectionId}
-    >
+    <section className="min-h-[70vh] bg-[hsl(var(--background))]" data-emp-section={sectionId}>
       <div className="container mx-auto px-4 py-12 md:py-16">
-        <h1 className="emp-heading text-4xl md:text-6xl text-[var(--emp-dark)] mb-8 md:mb-10">
-          <InlineEditable
-            sectionId={sectionId}
-            settingKey="populated_title"
-            value={populatedTitle}
-          />{" "}
-          ({totalItems})
+        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight mb-8 md:mb-10">
+          <InlineEditable sectionId={sectionId} settingKey="populated_title" value={populatedTitle} /> ({totalItems})
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Items */}
           <div className="lg:col-span-2 space-y-4">
             {items.map((it) => (
-              <div
-                key={it.id}
-                className="flex gap-5 p-5 rounded-2xl bg-white/60 border border-[var(--emp-dark)]/10"
-              >
+              <div key={it.id} className="flex gap-5 p-5 rounded-lg bg-white border border-[hsl(var(--border))]">
                 <div className="shrink-0">
                   {it.image_url ? (
                     <img
                       src={it.image_url}
                       alt={it.name}
-                      className="w-28 h-32 sm:w-32 sm:h-40 rounded-xl object-cover bg-[var(--emp-cream)]"
+                      className="w-28 h-32 sm:w-32 sm:h-40 rounded-md object-cover bg-secondary"
                     />
                   ) : (
-                    <div className="w-28 h-32 sm:w-32 sm:h-40 rounded-xl bg-[var(--emp-cream)] flex items-center justify-center">
-                      <ShoppingBag size={28} className="text-[var(--emp-dark)]/20" aria-hidden="true" />
+                    <div className="w-28 h-32 sm:w-32 sm:h-40 rounded-md bg-secondary flex items-center justify-center">
+                      <ShoppingBag size={28} className="text-muted-foreground/30" aria-hidden="true" />
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col">
-                  <h3 className="emp-heading text-lg md:text-xl text-[var(--emp-dark)] truncate">
-                    {it.name}
-                  </h3>
+                  <h3 className="text-lg font-black uppercase tracking-tight truncate">{it.name}</h3>
                   {it.variant_name && (
-                    <p className="emp-label text-[var(--emp-gray)] mt-1.5">
-                      {it.variant_name}
-                    </p>
+                    <p className="emp-label mt-1.5">{it.variant_name}</p>
                   )}
-                  <p className="emp-heading text-lg text-[var(--emp-dark)] mt-2">
+                  <p className="text-lg font-bold mt-2">
                     <Money amount={it.price * it.quantity} currency={currency} />
                   </p>
                   <div className="flex items-end justify-between mt-auto pt-3">
-                    <div className="flex items-center rounded-full border border-[var(--emp-dark)]/15 overflow-hidden">
+                    <div className="flex items-center rounded-full border border-[hsl(var(--border))] overflow-hidden">
                       <button
                         type="button"
                         onClick={() => updateQuantity(it.id, it.quantity - 1)}
                         disabled={loading}
                         aria-label="Decrease quantity"
-                        className="w-9 h-9 flex items-center justify-center text-[var(--emp-dark)]/60 hover:text-[var(--emp-amber)] transition-colors disabled:opacity-40"
+                        className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
                       >
                         <Minus size={14} aria-hidden="true" />
                       </button>
-                      <span className="text-sm font-bold w-8 text-center text-[var(--emp-dark)]">
-                        {it.quantity}
-                      </span>
+                      <span className="text-sm font-bold w-8 text-center">{it.quantity}</span>
                       <button
                         type="button"
                         onClick={() => updateQuantity(it.id, it.quantity + 1)}
                         disabled={loading}
                         aria-label="Increase quantity"
-                        className="w-9 h-9 flex items-center justify-center text-[var(--emp-dark)]/60 hover:text-[var(--emp-amber)] transition-colors disabled:opacity-40"
+                        className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors disabled:opacity-40"
                       >
                         <Plus size={14} aria-hidden="true" />
                       </button>
@@ -171,7 +141,7 @@ export default function EmpCart({ instance, sectionId }: SectionRenderProps) {
                       onClick={() => removeItem(it.id)}
                       disabled={loading}
                       aria-label="Remove item"
-                      className="w-8 h-8 flex items-center justify-center text-[var(--emp-dark)]/40 hover:text-[var(--emp-dark)] transition-colors disabled:opacity-40"
+                      className="w-8 h-8 flex items-center justify-center text-muted-foreground/60 hover:text-foreground transition-colors disabled:opacity-40"
                     >
                       <X size={16} aria-hidden="true" />
                     </button>
@@ -183,60 +153,46 @@ export default function EmpCart({ instance, sectionId }: SectionRenderProps) {
 
           {/* Summary */}
           <div>
-            <div className="sticky top-24 rounded-2xl bg-white p-6 border border-[var(--emp-dark)]/10">
+            <div className="sticky top-24 rounded-lg bg-white p-6 border border-[hsl(var(--border))]">
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between text-[var(--emp-dark)]">
-                  <span className="text-[var(--emp-gray)]">{subtotalLabel}</span>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">{subtotalLabel}</span>
                   <span className="font-bold">
                     <Money amount={subtotal} currency={currency} />
                   </span>
                 </div>
-                <div className="flex justify-between text-[var(--emp-dark)]">
-                  <span className="text-[var(--emp-gray)]">{shippingLabel}</span>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">{shippingLabel}</span>
                   <span className="font-bold">
-                    {shippingCost === 0 ? (
-                      freeLabel
-                    ) : (
-                      <Money amount={shippingCost} currency={currency} />
-                    )}
+                    {shippingCost === 0 ? freeLabel : <Money amount={shippingCost} currency={currency} />}
                   </span>
                 </div>
                 {shippingCost > 0 && remainingForFree > 0 && (
-                  <p className="text-xs text-[var(--emp-amber)] font-medium">
+                  <p className="text-xs text-[hsl(var(--emp-blue))] font-medium">
                     {localized(locale, "Add ", "ضيف ")}
                     <Money amount={remainingForFree} currency={currency} />
                     {localized(locale, " more for free shipping", " كمان للحصول على شحن مجاني")}
                   </p>
                 )}
-                <div className="flex justify-between pt-3 border-t border-[var(--emp-dark)]/10">
-                  <span className="emp-heading text-base text-[var(--emp-dark)]">
-                    {totalLabel}
-                  </span>
-                  <span className="emp-heading text-xl text-[var(--emp-dark)]">
+                <div className="flex justify-between pt-3 border-t border-[hsl(var(--border))]">
+                  <span className="text-base font-black uppercase tracking-tight">{totalLabel}</span>
+                  <span className="text-xl font-black">
                     <Money amount={grandTotal} currency={currency} />
                   </span>
                 </div>
               </div>
               <Link
                 to="/checkout"
-                className="emp-btn emp-btn-filled w-full rounded-full mt-6 py-3.5 text-center text-xs flex items-center justify-center gap-2"
+                className="w-full mt-6 py-3.5 bg-black text-white text-center text-xs font-semibold uppercase tracking-wider rounded-full flex items-center justify-center gap-2 hover:bg-black/90 transition-colors"
               >
-                <InlineEditable
-                  sectionId={sectionId}
-                  settingKey="checkout_cta_label"
-                  value={checkoutCta}
-                />
+                <InlineEditable sectionId={sectionId} settingKey="checkout_cta_label" value={checkoutCta} />
                 <ArrowRight size={12} aria-hidden="true" className="rtl:-scale-x-100" />
               </Link>
               <Link
                 to="/products"
-                className="mt-3 block text-center emp-label text-[var(--emp-dark)]/60 hover:text-[var(--emp-amber)] transition-colors"
+                className="mt-3 block text-center emp-label hover:text-[hsl(var(--emp-blue))] transition-colors"
               >
-                <InlineEditable
-                  sectionId={sectionId}
-                  settingKey="continue_label"
-                  value={continueLabel}
-                />
+                <InlineEditable sectionId={sectionId} settingKey="continue_label" value={continueLabel} />
               </Link>
             </div>
           </div>

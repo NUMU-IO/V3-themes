@@ -1,7 +1,7 @@
 {
   "type": "emp-footer",
   "name": "Empire Footer",
-  "name_ar": "بازار تذييل",
+  "name_ar": "إمباير تذييل",
   "limit": 1,
   "settings": [
     {
@@ -13,6 +13,13 @@
       "info": "Leave empty to use the store name."
     },
     {
+      "type": "image_picker",
+      "id": "logo_url",
+      "label": "Logo",
+      "label_ar": "الشعار",
+      "info": "Falls back to the store logo / brand name."
+    },
+    {
       "type": "textarea",
       "id": "footer_text",
       "label": "Brand blurb",
@@ -20,35 +27,10 @@
       "default": ""
     },
     {
-      "type": "header",
-      "content": "Newsletter"
-    },
-    {
       "type": "text",
-      "id": "newsletter_title",
-      "label": "Newsletter title",
-      "label_ar": "عنوان النشرة",
-      "default": ""
-    },
-    {
-      "type": "textarea",
-      "id": "newsletter_copy",
-      "label": "Newsletter copy",
-      "label_ar": "نص النشرة",
-      "default": ""
-    },
-    {
-      "type": "text",
-      "id": "newsletter_button_label",
-      "label": "Newsletter button",
-      "label_ar": "زر النشرة",
-      "default": ""
-    },
-    {
-      "type": "text",
-      "id": "newsletter_button_success",
-      "label": "Newsletter button (subscribed)",
-      "label_ar": "زر النشرة (مشترك)",
+      "id": "marquee_text",
+      "label": "Pre-footer marquee text",
+      "label_ar": "نص الشريط المتحرك",
       "default": ""
     }
   ],
@@ -124,11 +106,13 @@
           "name": "Empire Footer"
         },
         "ar": {
-          "name": "بازار تذييل"
+          "name": "إمباير تذييل"
         }
       },
       "settings": {
-        "newsletter_title": ""
+        "brand_name": "",
+        "footer_text": "",
+        "marquee_text": ""
       },
       "blocks": [
         {

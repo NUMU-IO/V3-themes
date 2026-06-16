@@ -2,7 +2,7 @@
   "id": "empire-v3",
   "name": "Empire (V3)",
   "author": "NUMU",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "layout": "single-column",
   "description": "Empire (V3) — premium editorial storefront. Monochrome black-on-off-white palette, electric-blue accent, wide expanded display type, frosted-glass header, and a full multipage set (home, listing, product, cart, search, 404).",
   "error_template": "templates/error.html",
@@ -42,11 +42,11 @@
             "settings": {}
           },
           {
-            "type": "emp-featured-collection",
+            "type": "emp-categories",
             "settings": {}
           },
           {
-            "type": "emp-image-with-text",
+            "type": "emp-featured-collection",
             "settings": {}
           },
           {
@@ -54,7 +54,7 @@
             "settings": {}
           },
           {
-            "type": "emp-about-section",
+            "type": "emp-featured-collection",
             "settings": {}
           },
           {
@@ -158,6 +158,28 @@
           }
         ]
       },
+      "order-confirmation": {
+        "name": "Order confirmation",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-order-confirmation",
+            "settings": {
+              "show_emoji": false,
+              "show_progress": false,
+              "show_whatsapp": false,
+              "show_track_order": false
+            }
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      },
       "search": {
         "name": "Search",
         "sections": [
@@ -184,6 +206,23 @@
           },
           {
             "type": "emp-rich-text",
+            "settings": {}
+          },
+          {
+            "type": "emp-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "profile": {
+        "name": "Account",
+        "sections": [
+          {
+            "type": "emp-header",
+            "settings": {}
+          },
+          {
+            "type": "emp-profile-section",
             "settings": {}
           },
           {
