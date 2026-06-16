@@ -2,7 +2,7 @@
   "id": "luxury-minimal-v3",
   "name": "Luxury Minimal (V3)",
   "author": "NUMU",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "layout": "single-column",
   "description": "Minimalist luxury fashion theme — ultra-clean typography, refined neutrals, subtle motion. Great for clothing, accessories, and beauty brands that want timeless polish. Now with an editable monochrome header + footer included across every page.",
   "error_template": "templates/error.html",
