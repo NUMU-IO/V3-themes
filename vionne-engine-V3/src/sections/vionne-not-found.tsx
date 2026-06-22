@@ -1,8 +1,9 @@
 "use client";
 
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
  * vionne-not-found — body for the `404` template, in the Vionne voice: an
@@ -10,8 +11,8 @@ import { asString, localized, type SectionRenderProps } from "./_shared";
  * back to the catalog. Upgrades the host's neutral 404 backstop to a branded
  * one. All copy editable + bilingual.
  */
-export default function VionneNotFound({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
+export default function VionneNotFound({ instance, sectionId }: SectionRenderProps) {
+  const s = useResolvedSettings(instance);
   const locale = useLocale();
 
   const status = asString(s.status_label) || "404";
@@ -36,16 +37,16 @@ export default function VionneNotFound({ instance }: SectionRenderProps) {
         className="text-center max-w-lg"
       >
         <p className="vn-heading text-[88px] sm:text-[140px] md:text-[180px] leading-none text-[var(--vn-ink)]/10 select-none">
-          {status}
+          <InlineEditable sectionId={sectionId} settingKey="status_label" value={status} />
         </p>
         {headline && (
           <h1 className="vn-heading text-2xl md:text-3xl text-[var(--vn-ink)] -mt-6 md:-mt-10">
-            {headline}
+            <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
           </h1>
         )}
         {subhead && (
           <p className="text-sm text-[var(--vn-muted)] leading-relaxed mt-4 max-w-sm mx-auto">
-            {subhead}
+            <InlineEditable sectionId={sectionId} settingKey="subhead" value={subhead} multiline />
           </p>
         )}
         {ctaText && (
@@ -53,7 +54,7 @@ export default function VionneNotFound({ instance }: SectionRenderProps) {
             to={ctaLink}
             className="vn-label inline-block mt-8 text-[var(--vn-ink)] border-b border-[var(--vn-ink)] pb-1 text-xs"
           >
-            {ctaText}
+            <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
           </Link>
         )}
       </motion.div>

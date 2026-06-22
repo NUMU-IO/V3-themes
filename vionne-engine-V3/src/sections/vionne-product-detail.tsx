@@ -6,13 +6,16 @@ import {
   AddToCartButton,
   useLocale,
   useProductOptional,
+  useResolvedSettings,
+  useTranslation,
   useVariantSelection,
   useRelatedProducts,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
  * Vionne product-detail section.
@@ -41,15 +44,36 @@ import { asNumber, localized, type SectionRenderProps } from "./_shared";
  * not-found slug) we render a graceful placeholder card with a "Back to shop"
  * link instead of crashing or showing a blank page.
  */
-export default function VionneProductDetail({ instance }: SectionRenderProps) {
+const GALLERY_ASPECT: Record<string, string> = {
+  "3-4": "aspect-[3/4]",
+  "4-5": "aspect-[4/5]",
+  "1-1": "aspect-square",
+  "4-3": "aspect-[4/3]",
+};
+
+export default function VionneProductDetail({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
-  const s = instance.settings ?? {};
+  const { t } = useTranslation();
+  const s = useResolvedSettings(instance);
 
   const showRating = s.show_rating ?? true;
   const showStock = s.show_stock ?? true;
   const showGuarantees = s.show_guarantees ?? true;
   const showRelated = s.show_related_products ?? true;
+  const showDescription = s.show_description !== false;
   const relatedCount = asNumber(s.related_products_count, 4);
+  const relatedTitle =
+    asString(s.related_title) || localized(locale, "You may also like", "ممكن يعجبك كمان");
+  const galleryAspectClass =
+    GALLERY_ASPECT[asString(s.gallery_aspect, "3-4")] ?? GALLERY_ASPECT["3-4"];
+  // Trust guarantees — V2 copy as bilingual defaults, now each editable
+  // (label + detail) instead of hardcoded in the markup. Icons stay fixed
+  // per slot (shipping / returns / authentic).
+  const guarantees = [
+    { icon: Truck, key: "guarantee_1", label: asString(s.guarantee_1_label) || localized(locale, "Fast Shipping", "شحن سريع"), desc: asString(s.guarantee_1_desc) || localized(locale, "3-5 days", "٣-٥ أيام") },
+    { icon: RotateCcw, key: "guarantee_2", label: asString(s.guarantee_2_label) || localized(locale, "Easy Returns", "إرجاع سهل"), desc: asString(s.guarantee_2_desc) || localized(locale, "14 days", "١٤ يوم") },
+    { icon: ShieldCheck, key: "guarantee_3", label: asString(s.guarantee_3_label) || localized(locale, "Authentic", "أصلي"), desc: asString(s.guarantee_3_desc) || localized(locale, "100% Genuine", "أصلي ١٠٠٪") },
+  ];
 
   const product = useProductOptional();
 
@@ -120,11 +144,13 @@ export default function VionneProductDetail({ instance }: SectionRenderProps) {
 
   return (
     <div className="bg-background" data-testid="storefront-product-detail">
-      <div className="container mx-auto px-4 py-6 md:py-10">
+      {/* Extra mobile bottom padding clears the sticky add-to-cart bar (which
+          sits above the dock); md restores the normal rhythm (no sticky bar). */}
+      <div className="container mx-auto px-4 pt-6 pb-16 md:py-10">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 vn-label text-[10px] text-[var(--vn-muted)] mb-6">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            {localized(locale, "Home", "الرئيسية")}
+            {t("nav.home", localized(locale, "Home", "الرئيسية"))}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <Link to="/products" className="hover:text-[var(--vn-ink)] transition-colors">
@@ -143,7 +169,7 @@ export default function VionneProductDetail({ instance }: SectionRenderProps) {
               key={activeImage}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="relative overflow-hidden bg-[var(--vn-band)] aspect-[3/4] mb-3"
+              className={`relative overflow-hidden bg-[var(--vn-band)] ${galleryAspectClass} mb-3`}
               data-testid="storefront-product-detail-main-image"
             >
               {mainImage ? (
@@ -232,7 +258,7 @@ export default function VionneProductDetail({ instance }: SectionRenderProps) {
             </div>
 
             {/* Description */}
-            {product.description && (
+            {showDescription && product.description && (
               <p
                 className="text-sm text-[var(--vn-muted)] leading-relaxed mb-8"
                 data-testid="storefront-product-detail-description"
@@ -372,19 +398,17 @@ export default function VionneProductDetail({ instance }: SectionRenderProps) {
             {/* Trust guarantees */}
             {showGuarantees && (
               <div className="mt-8 pt-6 border-t border-[var(--vn-border)] flex flex-wrap items-center justify-between gap-4">
-                {[
-                  { icon: Truck, label: localized(locale, "Fast Shipping", "شحن سريع"), desc: localized(locale, "3-5 days", "٣-٥ أيام") },
-                  { icon: RotateCcw, label: localized(locale, "Easy Returns", "إرجاع سهل"), desc: localized(locale, "14 days", "١٤ يوم") },
-                  { icon: ShieldCheck, label: localized(locale, "Authentic", "أصلي"), desc: localized(locale, "100% Genuine", "أصلي ١٠٠٪") },
-                ].map((item) => (
-                  <div key={item.label} className="flex items-center gap-2 text-[var(--vn-muted)]">
+                {guarantees.map((item) => (
+                  <div key={item.key} className="flex items-center gap-2 text-[var(--vn-muted)]">
                     <item.icon size={15} className="shrink-0" />
                     <div>
                       <span className="text-[11px] font-medium text-[var(--vn-ink)]/80">
-                        {item.label}
+                        <InlineEditable sectionId={sectionId} settingKey={`${item.key}_label`} value={item.label} />
                       </span>
                       <span className="text-[10px] text-[var(--vn-muted)] mx-1">·</span>
-                      <span className="text-[10px] text-[var(--vn-muted)]">{item.desc}</span>
+                      <span className="text-[10px] text-[var(--vn-muted)]">
+                        <InlineEditable sectionId={sectionId} settingKey={`${item.key}_desc`} value={item.desc} />
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -399,7 +423,9 @@ export default function VionneProductDetail({ instance }: SectionRenderProps) {
             className="mt-16 pt-10 border-t border-[var(--vn-border)]"
             data-testid="storefront-related-products"
           >
-            <h2 className="vn-eyebrow text-[var(--vn-muted)] mb-6">{localized(locale, "You may also like", "ممكن يعجبك كمان")}</h2>
+            <h2 className="vn-eyebrow text-[var(--vn-muted)] mb-6">
+              <InlineEditable sectionId={sectionId} settingKey="related_title" value={relatedTitle} />
+            </h2>
             <div
               className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
               data-testid="storefront-related-products-grid"
@@ -446,6 +472,35 @@ export default function VionneProductDetail({ instance }: SectionRenderProps) {
             </div>
           </section>
         )}
+      </div>
+
+      {/* Mobile sticky add-to-cart bar. md:hidden, and offset upward by the
+          header's bottom-dock height so the two never stack (the dock is
+          hidden ≥768px). Mirrors the selected variant + quantity. */}
+      <div
+        className="md:hidden fixed inset-x-0 z-30 bg-[var(--vn-white)] border-t border-[var(--vn-border)] px-4 py-2.5 flex items-center gap-3"
+        style={{ bottom: "calc(64px + env(safe-area-inset-bottom))" }}
+        data-testid="storefront-pdp-sticky-bar"
+      >
+        <div className="min-w-0 flex-1">
+          <p className="text-xs text-[var(--vn-ink)] font-medium truncate">{product.name}</p>
+          <p className="text-sm font-semibold text-[var(--vn-ink)]">
+            <Money amount={variantPrice} currency={product.currency} />
+          </p>
+        </div>
+        <AddToCartButton
+          product={product}
+          variant={selectedVariant ?? undefined}
+          quantity={quantity}
+          className="vn-btn vn-btn-filled shrink-0 px-5 disabled:opacity-50 disabled:cursor-not-allowed"
+          label={
+            <>
+              <ShoppingBag size={16} /> {localized(locale, "Add", "أضيفي")}
+            </>
+          }
+          loadingLabel={localized(locale, "Adding…", "بنضيف…")}
+          soldOutLabel={localized(locale, "Sold out", "خلص المخزون")}
+        />
       </div>
     </div>
   );

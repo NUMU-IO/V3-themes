@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, useDemo, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 const HEIGHT_DESKTOP: Record<string, string> = {
   small: "min-h-[400px] md:min-h-[450px]",
@@ -11,6 +12,9 @@ const HEIGHT_DESKTOP: Record<string, string> = {
 };
 
 interface Slide {
+  /** 1-based slide number (real slides only) → maps inline-edits to
+   *  `slide_<n>_*` settings. Undefined for demo slides (not editable). */
+  n?: number;
   image: string;
   imageTransform?: ImageTransform;
   headline: string;
@@ -52,7 +56,7 @@ const DEMO_SLIDES = (locale: string | undefined): Slide[] => [
   },
 ];
 
-const VionneSlideshow = ({ instance }: SectionRenderProps) => {
+const VionneSlideshow = ({ instance, sectionId }: SectionRenderProps) => {
   const locale = useLocale();
   const s = useResolvedSettings(instance);
   const autoplay = s.autoplay !== false;
@@ -72,6 +76,7 @@ const VionneSlideshow = ({ instance }: SectionRenderProps) => {
     const headline = asString(s[`slide_${i}_headline`]);
     if (!image && !headline) continue;
     built.push({
+      n: i,
       image,
       imageTransform,
       headline,
@@ -166,17 +171,21 @@ const VionneSlideshow = ({ instance }: SectionRenderProps) => {
               }`}
             >
               {sl.headline && (
-                <h2
-                  className="vn-heading text-white text-3xl md:text-5xl lg:text-6xl"
-                >
-                  {sl.headline}
+                <h2 className="vn-heading text-white text-3xl md:text-5xl lg:text-6xl">
+                  {sl.n ? (
+                    <InlineEditable sectionId={sectionId} settingKey={`slide_${sl.n}_headline`} value={sl.headline} />
+                  ) : (
+                    sl.headline
+                  )}
                 </h2>
               )}
               {sl.subtitle && (
-                <p
-                  className="text-white/85 text-sm md:text-base mt-3 max-w-xl"
-                >
-                  {sl.subtitle}
+                <p className="text-white/85 text-sm md:text-base mt-3 max-w-xl">
+                  {sl.n ? (
+                    <InlineEditable sectionId={sectionId} settingKey={`slide_${sl.n}_subtitle`} value={sl.subtitle} />
+                  ) : (
+                    sl.subtitle
+                  )}
                 </p>
               )}
               {sl.ctaText && (
@@ -184,7 +193,11 @@ const VionneSlideshow = ({ instance }: SectionRenderProps) => {
                   to={sl.ctaLink || "/products"}
                   className="vn-btn vn-btn-outline-light mt-6"
                 >
-                  {sl.ctaText}
+                  {sl.n ? (
+                    <InlineEditable sectionId={sectionId} settingKey={`slide_${sl.n}_cta_text`} value={sl.ctaText} />
+                  ) : (
+                    sl.ctaText
+                  )}
                 </Link>
               )}
             </div>

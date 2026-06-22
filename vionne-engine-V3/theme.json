@@ -226,6 +226,10 @@
             "settings": {}
           },
           {
+            "type": "vionne-cart",
+            "settings": {}
+          },
+          {
             "type": "vionne-footer",
             "settings": {}
           }

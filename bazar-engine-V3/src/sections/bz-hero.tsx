@@ -17,7 +17,15 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
 
-  const letter = asString(s.letter);
+  // Drop-letter is now bilingual: Arabic stores can set a separate Arabic
+  // glyph (`letter_ar`) — used when the active locale is Arabic, falling back
+  // to the English letter. Inline-edit targets the locale-correct key so a
+  // merchant editing in ar edits `letter_ar`.
+  const isArabic = (locale ?? "").toLowerCase().startsWith("ar");
+  const letterEn = asString(s.letter);
+  const letterAr = asString(s.letter_ar);
+  const letter = isArabic ? letterAr || letterEn : letterEn;
+  const letterKey = isArabic ? "letter_ar" : "letter";
   const headline = asString(s.headline) || localized(locale, "BAZAR DREAMS", "أحلام بازار");
   const subline = asString(s.subline) || localized(locale, "COME TO LIFE", "بتتحقق");
   const tagline =
@@ -38,6 +46,11 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
   const imageTransform =
     asImageTransform(s.hero_image_url) || asImageTransform(s.image_url);
   const colorScheme = asString(s.color_scheme) || "auto";
+  // Decoration toggles (gap #8) — the morphing blob behind the drop-letter and
+  // the SVG wave divider at the hero's base. Default ON so an un-customised
+  // store keeps the exact V2 look; a merchant can switch either off.
+  const showBlob = s.blob_decoration !== false;
+  const showWave = s.show_wave_divider !== false;
 
   const sectionRef = useRef<HTMLElement | null>(null);
 
@@ -49,10 +62,10 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
   const content = (
     <div className="max-w-md mx-auto md:mx-0">
       {letter && (
-        <div className="bz-heading text-[60px] md:text-[80px] lg:text-[100px] text-[var(--bz-dark)] leading-none mb-2 bz-blob inline-block px-4 py-2 bg-[var(--bz-cream)]/80">
+        <div className={`bz-heading text-[60px] md:text-[80px] lg:text-[100px] text-[var(--bz-dark)] leading-none mb-2 ${showBlob ? "bz-blob " : ""}inline-block px-4 py-2 bg-[var(--bz-cream)]/80`}>
           <InlineEditable
             sectionId={sectionId}
-            settingKey="letter"
+            settingKey={letterKey}
             value={letter}
           />
         </div>
@@ -160,9 +173,11 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
           <div className="[&_*]:text-center [&_h1]:max-w-2xl [&_p]:max-w-md [&_p]:mx-auto [&_.flex]:justify-center">
             {content}
           </div>
-          <svg viewBox="0 0 1440 80" className="absolute bottom-0 left-0 w-full pointer-events-none" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0,80 C300,20 600,60 900,30 C1100,10 1300,50 1440,25 L1440,80 Z" fill="var(--bz-navy)" />
-          </svg>
+          {showWave && (
+            <svg viewBox="0 0 1440 80" className="absolute bottom-0 left-0 w-full pointer-events-none" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0,80 C300,20 600,60 900,30 C1100,10 1300,50 1440,25 L1440,80 Z" fill="var(--bz-navy)" />
+            </svg>
+          )}
         </div>
       )}
     </section>

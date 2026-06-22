@@ -40,8 +40,16 @@ export default function BzCart({ instance, sectionId }: SectionRenderProps) {
   const totalLabel = asString(s.total_label) || localized(locale, "TOTAL", "الإجمالي");
   const freeLabel = asString(s.free_label) || localized(locale, "FREE", "مجاني");
 
-  const shippingFlat = asNumber(s.shipping_flat, 50);
-  const freeThreshold = asNumber(s.free_shipping_threshold, 500);
+  // Gap #4 — no fabricated flat shipping fee at the cart. The real rate
+  // depends on the shipping address and the store's zones, which only exist in
+  // the platform checkout; here we show FREE when the merchant's real free-ship
+  // threshold is met, otherwise "calculated at checkout". `free_shipping_threshold`
+  // is the merchant's actual promo (0 = none); the legacy `shipping_flat` literal
+  // is no longer the source of truth.
+  const freeThreshold = asNumber(s.free_shipping_threshold, 0);
+  const shippingCalcLabel =
+    asString(s.shipping_calc_label) ||
+    localized(locale, "Calculated at checkout", "يُحسب عند الدفع");
 
   const items: CartItem[] = cart?.items ?? [];
   const currency = cart?.currency;
@@ -90,9 +98,12 @@ export default function BzCart({ instance, sectionId }: SectionRenderProps) {
   }
 
   const subtotal = cart?.subtotal ?? 0;
-  const shippingCost = subtotal >= freeThreshold ? 0 : shippingFlat;
-  const remainingForFree = Math.max(freeThreshold - subtotal, 0);
-  const grandTotal = subtotal + shippingCost;
+  const freeShipEarned = freeThreshold > 0 && subtotal >= freeThreshold;
+  const remainingForFree =
+    freeThreshold > 0 ? Math.max(freeThreshold - subtotal, 0) : 0;
+  // Shipping is added in the platform checkout (needs an address); the cart
+  // total reflects the items subtotal so we never show a fabricated figure.
+  const grandTotal = subtotal;
 
   return (
     <section
@@ -194,14 +205,16 @@ export default function BzCart({ instance, sectionId }: SectionRenderProps) {
                 <div className="flex justify-between text-[var(--bz-dark)]">
                   <span className="text-[var(--bz-gray)]">{shippingLabel}</span>
                   <span className="font-bold">
-                    {shippingCost === 0 ? (
+                    {freeShipEarned ? (
                       freeLabel
                     ) : (
-                      <Money amount={shippingCost} currency={currency} />
+                      <span className="text-[var(--bz-gray)] font-medium text-xs">
+                        {shippingCalcLabel}
+                      </span>
                     )}
                   </span>
                 </div>
-                {shippingCost > 0 && remainingForFree > 0 && (
+                {!freeShipEarned && remainingForFree > 0 && (
                   <p className="text-xs text-[var(--bz-amber)] font-medium">
                     {localized(locale, "Add ", "ضيف ")}
                     <Money amount={remainingForFree} currency={currency} />

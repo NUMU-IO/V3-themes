@@ -54,8 +54,11 @@ export default function BzSearchResults({
   const matches: Product[] = useMemo(() => {
     const needle = query.trim().toLowerCase();
     if (!needle) {
-      // No active query but the route pre-fetched results → show those.
-      return preFetched && preFetched.length > 0 ? preFetched : [];
+      // No active query → show something useful instead of a blank page:
+      // the route's pre-fetched slice if present, otherwise the full catalog
+      // so search defaults to "browse everything".
+      if (preFetched && preFetched.length > 0) return preFetched;
+      return products;
     }
     return products.filter(
       (p) =>

@@ -68,6 +68,15 @@
       "content": "Navigation"
     },
     {
+      "type": "link_list_picker",
+      "id": "header_menu_handle",
+      "label": "Header menu",
+      "label_ar": "قائمة الهيدر",
+      "default": "main-menu",
+      "info": "Pick a menu from Online Store → Navigation. Links to hidden/unpublished pages drop automatically. Falls back to the links below when the menu is empty.",
+      "info_ar": "اختاري قائمة من متجر إلكتروني ← التنقل. روابط الصفحات المخفية تختفي تلقائيًا."
+    },
+    {
       "type": "text",
       "id": "collections_label",
       "label": "Collections menu label",

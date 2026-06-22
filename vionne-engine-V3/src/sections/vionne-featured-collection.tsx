@@ -1,18 +1,19 @@
 "use client";
-import { Link, Money, useLocale, useProducts } from "@numueg/theme-sdk";
+import { Link, Money, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
-import { localized, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
-const VionneFeaturedCollection = ({ instance }: SectionRenderProps) => {
+const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) => {
   const { products } = useProducts();
   const locale = useLocale();
   const isLoading = false;
-  const s = instance.settings ?? {};
-  const title = s.title ?? localized(locale, "New Arrivals", "وصل حديثًا");
-  const subtitle = s.subtitle ?? "";
-  const tag = s.collection_tag ?? "new";
-  const viewAllText = s.view_all_text ?? localized(locale, "View all", "عرض الكل");
-  const viewAllLink = s.view_all_link ?? "/products";
+  const s = useResolvedSettings(instance);
+  const title = asString(s.title) || localized(locale, "New Arrivals", "وصل حديثًا");
+  const subtitle = asString(s.subtitle);
+  const tag = asString(s.collection_tag) || "new";
+  const viewAllText = asString(s.view_all_text) || localized(locale, "View all", "عرض الكل");
+  const viewAllLink = asString(s.view_all_link) || "/products";
   const count = Number(s.product_count ?? 8);
   const cols = Number(s.columns ?? 4);
   const manualIds = Array.isArray(s.product_ids)
@@ -47,23 +48,19 @@ const VionneFeaturedCollection = ({ instance }: SectionRenderProps) => {
         <div className="flex items-end justify-between mb-6 md:mb-8 gap-4">
           <div>
             {subtitle && (
-              <span
-                className="vn-eyebrow block mb-1.5"
-              >
-                {subtitle}
+              <span className="vn-eyebrow block mb-1.5">
+                <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} />
               </span>
             )}
-            <h2
-              className="vn-heading text-2xl md:text-3xl"
-            >
-              {title}
+            <h2 className="vn-heading text-2xl md:text-3xl">
+              <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
             </h2>
           </div>
           <Link
             to={viewAllLink}
             className="vn-label inline-flex items-center gap-1.5 text-[var(--vn-ink)] hover:opacity-70 transition-opacity shrink-0 pb-2"
           >
-            {viewAllText}
+            <InlineEditable sectionId={sectionId} settingKey="view_all_text" value={viewAllText} />
             <ArrowRight size={14} />
           </Link>
         </div>

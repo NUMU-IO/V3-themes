@@ -45,5 +45,19 @@
       "label_ar": "إظهار إحصائيات الحساب",
       "default": true
     }
+  ],
+  "presets": [
+    {
+      "name": "Account (Vionne)",
+      "locales": {
+        "en": {
+          "name": "Account (Vionne)"
+        },
+        "ar": {
+          "name": "الحساب"
+        }
+      },
+      "settings": {}
+    }
   ]
 }

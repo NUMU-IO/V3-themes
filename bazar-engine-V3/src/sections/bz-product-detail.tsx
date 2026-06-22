@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import {
+  Image,
   Link,
   Money,
   useCart,
@@ -191,16 +192,23 @@ export default function BzProductDetail({
               {images.map((img, i) => (
                 <div
                   key={`${img.url}-${i}`}
+                  ref={(el) => {
+                    imageRefs.current[i] = el as unknown as HTMLImageElement;
+                  }}
                   className="relative bg-white rounded-2xl border-2 border-[var(--bz-dark)] overflow-hidden shadow-[6px_6px_0_var(--bz-dark)]"
                 >
-                  <img
-                    ref={(el) => {
-                      imageRefs.current[i] = el;
-                    }}
+                  {/* Large, uniform product-card image via the SDK <Image> engine
+                      primitive: fixed square frame + object-cover (focal-aware),
+                      responsive srcSet + lazy/eager. Renders identically across
+                      themes and is immune to global img resets. */}
+                  <Image
                     src={img.url}
                     alt={i === 0 ? product.name : `${product.name} — view ${i + 1}`}
                     loading={i === 0 ? "eager" : "lazy"}
-                    className="w-full h-auto object-cover bz-img-zoom"
+                    aspectRatio="1/1"
+                    objectFit="cover"
+                    className="bz-img-zoom"
+                    sizes="(min-width: 768px) 50vw, 100vw"
                   />
                 </div>
               ))}

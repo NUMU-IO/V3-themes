@@ -1,7 +1,7 @@
 {
-  "type": "bz-cart",
-  "name": "Bazar Cart",
-  "name_ar": "بازار السلة",
+  "type": "vionne-cart",
+  "name": "Cart",
+  "name_ar": "السلة",
   "limit": 1,
   "settings": [
     {
@@ -25,15 +25,15 @@
     {
       "type": "text",
       "id": "empty_cta_label",
-      "label": "Empty CTA label",
-      "label_ar": "تسمية زر الفراغ",
+      "label": "Empty / continue CTA label",
+      "label_ar": "تسمية زر المتابعة",
       "default": ""
     },
     {
       "type": "url",
       "id": "empty_cta_href",
-      "label": "Empty CTA URL",
-      "label_ar": "رابط زر الفراغ",
+      "label": "Continue-shopping URL",
+      "label_ar": "رابط متابعة التسوق",
       "default": "/products"
     },
     {
@@ -43,8 +43,8 @@
     {
       "type": "text",
       "id": "populated_title",
-      "label": "Section title",
-      "label_ar": "عنوان القسم",
+      "label": "Cart title",
+      "label_ar": "عنوان السلة",
       "default": ""
     },
     {
@@ -116,14 +116,10 @@
   ],
   "presets": [
     {
-      "name": "Bazar Cart",
+      "name": "Cart",
       "locales": {
-        "en": {
-          "name": "Bazar Cart"
-        },
-        "ar": {
-          "name": "بازار السلة"
-        }
+        "en": { "name": "Cart" },
+        "ar": { "name": "السلة" }
       },
       "settings": {
         "populated_title": ""

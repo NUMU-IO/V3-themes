@@ -7,9 +7,11 @@ import {
   useCollections,
   useCustomer,
   useLocale,
+  useNavigation,
   useResolvedSettings,
   useShop,
   useThemeSettings,
+  useTranslation,
 } from "@numueg/theme-sdk";
 import {
   ChevronDown,
@@ -24,6 +26,7 @@ import {
 import {
   asBool,
   asImageUrl,
+  asNumber,
   asString,
   localized,
   readBlocks,
@@ -66,18 +69,26 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
   const customer = useCustomer();
   const themeSettings = useThemeSettings();
   const locale = useLocale();
+  const { t } = useTranslation();
+  const globals = (themeSettings.global_settings ?? {}) as Record<string, unknown>;
 
   const brandName =
     asString(s.brand_name) ||
-    asString(themeSettings.global_settings?.brand_name) ||
+    asString(globals.brand_name) ||
     shop?.name ||
     "VIONNE";
 
+  // Logo: the W1 global `logo` is the source of truth (one upload drives header
+  // + footer). Legacy per-section `logo_url`, the old global key, and the live
+  // store logo stay as read-compat fallbacks so a store that set a logo before
+  // the W1 hoist still renders unchanged.
   const logoUrl =
+    asImageUrl(globals.logo) ||
     asImageUrl(s.logo_url) ||
-    asImageUrl(themeSettings.global_settings?.logo_url) ||
+    asImageUrl(globals.logo_url) ||
     shop?.logo_url ||
     "";
+  const logoWidth = asNumber(globals.logo_width, 0);
 
   const announcement = asString(s.announcement_text);
   // Default OFF — V2 Vionne ships no header announcement strip (it was
@@ -88,26 +99,37 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
   const showCart = asBool(s.show_cart, true);
   const showAccount = asBool(s.show_account, true);
   const showMobileDock = asBool(s.show_mobile_dock, true);
-  const enableHideOnScroll = asBool(s.enable_hide_on_scroll, true);
+  // Hide-on-scroll: the W1 global wins (theme-wide), falling back to the legacy
+  // per-section setting, default true (V2 parity).
+  const enableHideOnScroll = asBool(
+    globals.enableHideOnScroll,
+    asBool(s.enable_hide_on_scroll, true),
+  );
 
   const collectionsLabel =
-    asString(s.collections_label) || localized(locale, "COLLECTIONS", "التشكيلات");
+    asString(s.collections_label) ||
+    t("nav.collections", localized(locale, "COLLECTIONS", "التشكيلات"));
 
-  // Nav: editor blocks → fall back to the V2 Vionne set (Shop / About / Contact).
+  // Nav source precedence (§5 hide-page → nav): (1) the merchant's platform menu
+  // via useNavigation(handle) — the SDK drops items whose target CMS page is
+  // unpublished/deleted (target_visible:false), so hidden-page links vanish
+  // automatically from the header + drawer; (2) else editor `nav_item` blocks;
+  // (3) else the V2 Vionne default set (Shop / About / Contact).
+  const headerMenuHandle = asString(s.header_menu_handle) || "main-menu";
+  const { items: menuItems } = useNavigation(headerMenuHandle);
   const navBlocks = readBlocks(instance, "nav_item");
   const nav: NavLink[] =
-    navBlocks.length > 0
-      ? navBlocks
-          .map((r) => ({
-            label: asString(r.label),
-            to: asString(r.href) || "/",
-          }))
-          .filter((n) => n.label)
-      : [
-          { label: asString(s.nav_shop_label) || localized(locale, "SHOP", "تسوّقي"), to: "/products" },
-          { label: asString(s.nav_about_label) || localized(locale, "ABOUT", "عن المتجر"), to: "/pages/about" },
-          { label: asString(s.nav_contact_label) || localized(locale, "CONTACT", "تواصلي"), to: "/pages/contact" },
-        ];
+    menuItems.length > 0
+      ? menuItems.map((it) => ({ label: it.title, to: it.url || "/" }))
+      : navBlocks.length > 0
+        ? navBlocks
+            .map((r) => ({ label: asString(r.label), to: asString(r.href) || "/" }))
+            .filter((n) => n.label)
+        : [
+            { label: asString(s.nav_shop_label) || t("nav.shop", localized(locale, "SHOP", "تسوّقي")), to: "/products" },
+            { label: asString(s.nav_about_label) || t("nav.about", localized(locale, "ABOUT", "عن المتجر")), to: "/pages/about" },
+            { label: asString(s.nav_contact_label) || t("nav.contact", localized(locale, "CONTACT", "تواصلي")), to: "/pages/contact" },
+          ];
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -206,7 +228,7 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                       to="/collections"
                       className="block px-4 py-3 vn-label text-[11px] border-b border-[var(--vn-border)] hover:bg-[var(--vn-band)] transition-colors"
                     >
-                      {localized(locale, "All collections", "كل التشكيلات")}
+                      {t("nav.all_collections", localized(locale, "All collections", "كل التشكيلات"))}
                     </Link>
                     {collections.map((cat) => (
                       <Link
@@ -242,7 +264,12 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
             aria-label={brandName}
           >
             {logoUrl ? (
-              <img src={logoUrl} alt={brandName} className="h-7 md:h-8 w-auto inline-block" />
+              <img
+                src={logoUrl}
+                alt={brandName}
+                className={logoWidth ? "inline-block" : "h-7 md:h-8 w-auto inline-block"}
+                style={logoWidth ? { width: logoWidth, height: "auto" } : undefined}
+              />
             ) : (
               <span className="vn-heading text-base md:text-lg tracking-[0.32em] uppercase truncate block">
                 <InlineEditable sectionId={sectionId} settingKey="brand_name" value={brandName} />
@@ -327,7 +354,7 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                     onClick={() => setDrawerOpen(false)}
                     className="text-sm py-1.5 hover:opacity-70"
                   >
-                    {localized(locale, "All collections", "كل التشكيلات")}
+                    {t("nav.all_collections", localized(locale, "All collections", "كل التشكيلات"))}
                   </Link>
                   {collections.map((cat) => (
                     <Link
@@ -352,7 +379,9 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                 className="vn-label flex items-center gap-2 hover:opacity-70"
               >
                 <User size={16} />{" "}
-                {customer ? localized(locale, "Account", "حسابي") : localized(locale, "Sign in", "تسجيل الدخول")}
+                {customer
+                  ? t("nav.account", localized(locale, "Account", "حسابي"))
+                  : t("nav.sign_in", localized(locale, "Sign in", "تسجيل الدخول"))}
               </Link>
             </div>
           )}
@@ -364,23 +393,23 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
         <div className={`vn-dock md:hidden ${dockRevealed && !drawerOpen ? "is-revealed" : ""}`}>
           <button type="button" onClick={() => setDrawerOpen(true)} className="vn-dock-btn">
             <Menu size={18} />
-            {localized(locale, "Menu", "القائمة")}
+            {t("nav.menu", localized(locale, "Menu", "القائمة"))}
           </button>
           <Link to="/" className="vn-dock-btn">
             <Home size={18} />
-            {localized(locale, "Home", "الرئيسية")}
+            {t("nav.home", localized(locale, "Home", "الرئيسية"))}
           </Link>
           <Link to="/search" className="vn-dock-btn">
             <Search size={18} />
-            {localized(locale, "Search", "بحث")}
+            {t("nav.search", localized(locale, "Search", "بحث"))}
           </Link>
           <Link to="/products" className="vn-dock-btn">
             <StoreIcon size={18} />
-            {localized(locale, "Shop", "تسوّقي")}
+            {t("nav.shop", localized(locale, "Shop", "تسوّقي"))}
           </Link>
           <Link to="/cart" className="vn-dock-btn">
             <ShoppingBag size={18} />
-            {localized(locale, "Cart", "السلة")}
+            {t("nav.cart", localized(locale, "Cart", "السلة"))}
             {cartCount > 0 && <span className="vn-dock-badge">{cartCount}</span>}
           </Link>
         </div>

@@ -111,5 +111,21 @@
       "default": "/contact"
     }
   ],
-  "presets": []
+  "presets": [
+    {
+      "name": "About (Vionne)",
+      "locales": {
+        "en": {
+          "name": "About (Vionne)"
+        },
+        "ar": {
+          "name": "عن المتجر"
+        }
+      },
+      "settings": {
+        "cta_link": "/products",
+        "contact_cta_link": "/contact"
+      }
+    }
+  ]
 }

@@ -50,6 +50,27 @@
       "default": 0
     },
     {
+      "type": "header",
+      "content": "Filtering"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show search / category / sort bar",
+      "label_ar": "إظهار شريط البحث والتصفية والترتيب",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "page_size",
+      "label": "Products per page (Load more)",
+      "label_ar": "عدد المنتجات لكل صفحة",
+      "min": 4,
+      "max": 48,
+      "step": 4,
+      "default": 12
+    },
+    {
       "type": "textarea",
       "id": "empty_state_text",
       "label": "Empty state copy",

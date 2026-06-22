@@ -42,6 +42,7 @@ const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
   "vionne-collection-strip": lazy(() => import("./sections/vionne-collection-strip")),
   "vionne-product-detail": lazy(() => import("./sections/vionne-product-detail")),
   "vionne-products-page": lazy(() => import("./sections/vionne-products-page")),
+  "vionne-cart": lazy(() => import("./sections/vionne-cart")),
   "vionne-profile": lazy(() => import("./sections/vionne-profile")),
   "vionne-search-results": lazy(() => import("./sections/vionne-search-results")),
   "vionne-not-found": lazy(() => import("./sections/vionne-not-found")),
@@ -61,7 +62,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   if (!Component) {
     return (
       <Section id={sectionId} type={instance.type} groupId={groupId}>
-        <section style={{ padding: "1rem", border: "1px dashed #ccc", color: "#666" }}>
+        <section style={{ padding: "1rem", border: "1px dashed var(--vn-border)", color: "var(--vn-muted)" }}>
           Unknown section: <strong>{instance.type}</strong>
         </section>
       </Section>
@@ -108,7 +109,7 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
             style={{
               fontSize: "clamp(1.9rem,3.5vw,2.75rem)",
               margin: "0 0 1.5rem",
-              color: "var(--vn-ink,#1a1a1a)",
+              color: "var(--vn-ink)",
             }}
           >
             {cmsTitle}
@@ -116,7 +117,7 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
         )}
         {cmsBody && (
           <div
-            style={{ lineHeight: 1.75, color: "var(--vn-muted,#444)", fontSize: "1.05rem" }}
+            style={{ lineHeight: 1.75, color: "var(--vn-muted)", fontSize: "1.05rem" }}
             dangerouslySetInnerHTML={{ __html: safeBody }}
           />
         )}

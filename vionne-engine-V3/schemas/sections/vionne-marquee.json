@@ -227,5 +227,28 @@
       "label_ar": "رابط اختياري",
       "default": ""
     }
+  ],
+  "presets": [
+    {
+      "name": "Marquee",
+      "locales": {
+        "en": {
+          "name": "Marquee"
+        },
+        "ar": {
+          "name": "شريط متحرك"
+        }
+      },
+      "settings": {
+        "separator": "dot",
+        "size": "sm",
+        "color_scheme": "ink",
+        "direction": "left",
+        "speed_seconds": 30,
+        "pause_on_hover": true,
+        "padding_y": 14,
+        "show_borders": false
+      }
+    }
   ]
 }

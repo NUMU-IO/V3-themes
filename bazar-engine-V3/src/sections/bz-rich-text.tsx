@@ -22,16 +22,37 @@ const BzRichText = ({ instance }: SectionRenderProps) => {
   const locale = useLocale();
   const pageCtx = usePageData();
 
-  // Real CMS page (only on /pages/<handle> — host sets page.type "page").
+  // Pick a per-locale value from a string | {locale: string} field.
+  const localizedField = (v: unknown): string => {
+    if (typeof v === "string") return v;
+    if (v && typeof v === "object") {
+      const o = v as Record<string, string>;
+      return o[locale] || o.en || o.ar || Object.values(o).find(Boolean) || "";
+    }
+    return "";
+  };
+
+  // Real CMS page (/pages/<handle> → host sets page.type "page") OR a legal
+  // policy page (/policies/<handle> → host sets page.type "policy" with
+  // data.policy.{title,body}). Both render through this prose section so the
+  // bazar chrome frames them; otherwise fall back to the section's own setting.
   const cmsPage = pageCtx?.type === "page" ? pageCtx.data?.page : null;
+  const policyData =
+    pageCtx?.type === "policy"
+      ? (pageCtx.data?.policy as { title?: unknown; body?: unknown } | undefined)
+      : null;
   const cmsTitle = cmsPage
     ? cmsPage.title_i18n?.[locale] || cmsPage.title || pageCtx?.title || ""
-    : "";
+    : policyData
+      ? localizedField(policyData.title) || pageCtx?.title || ""
+      : "";
   const cmsBody = cmsPage
     ? cmsPage.body_i18n?.[locale] || cmsPage.body || ""
-    : "";
+    : policyData
+      ? localizedField(policyData.body)
+      : "";
 
-  // CMS body wins; generic placements fall back to the section's own setting.
+  // CMS / policy body wins; generic placements fall back to the section's own setting.
   const content = cmsBody || asString(s.content);
 
   // Defence-in-depth: even though merchant content goes through an

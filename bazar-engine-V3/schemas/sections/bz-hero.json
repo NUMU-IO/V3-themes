@@ -14,6 +14,14 @@
     },
     {
       "type": "text",
+      "id": "letter_ar",
+      "label": "Hero Letter (Arabic)",
+      "label_ar": "حرف البانر (عربي)",
+      "default": "",
+      "info": "Optional oversized initial for Arabic; falls back to the English letter."
+    },
+    {
+      "type": "text",
       "id": "headline",
       "label": "Headline",
       "label_ar": "العنوان الرئيسي",
@@ -99,6 +107,20 @@
           "label_ar": "داكن"
         }
       ]
+    },
+    {
+      "type": "checkbox",
+      "id": "blob_decoration",
+      "label": "Show blob shape behind the letter",
+      "label_ar": "إظهار الشكل العضوي خلف الحرف",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wave_divider",
+      "label": "Show wave divider",
+      "label_ar": "إظهار الفاصل المموج",
+      "default": true
     }
   ],
   "presets": [

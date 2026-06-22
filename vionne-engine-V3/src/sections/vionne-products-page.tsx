@@ -1,9 +1,10 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useLocale, useProducts, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
  * Vionne products-listing (PLP) section.
@@ -30,13 +31,21 @@ import { asNumber, localized, type SectionRenderProps } from "./_shared";
  * Empty-safe: zero products → the V2-style empty state (hairline + message),
  * never a blank page; a still-loading list shows shimmer placeholders.
  */
-export default function VionneProductsPage({ instance }: SectionRenderProps) {
+export default function VionneProductsPage({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
-  const s = instance.settings ?? {};
+  const { t } = useTranslation();
+  const s = useResolvedSettings(instance);
 
   const colsDesktop = asNumber(s.columns_desktop, 4);
   const colsMobile = asNumber(s.columns_mobile, 2);
   const showViewToggle = s.show_view_toggle ?? true;
+  const showSubtitle = s.show_category_subtitle !== false;
+  const pageTitle = asString(s.title) || localized(locale, "All products", "كل المنتجات");
+  const subtitle = asString(s.subtitle);
+  const emptyHeading = asString(s.empty_heading) || localized(locale, "No results", "لا توجد نتائج");
+  const emptyText =
+    asString(s.empty_text) ||
+    localized(locale, "Try adjusting your search or filter", "جرّبي تعدّلي البحث أو الفلتر");
 
   const { products, loading } = useProducts();
 
@@ -67,7 +76,7 @@ export default function VionneProductsPage({ instance }: SectionRenderProps) {
         (p) =>
           p.name.toLowerCase().includes(q) ||
           (p.description ?? "").toLowerCase().includes(q) ||
-          (p.tags ?? []).some((t) => t.toLowerCase().includes(q)),
+          (p.tags ?? []).some((tag: string) => tag.toLowerCase().includes(q)),
       );
     }
 
@@ -103,9 +112,19 @@ export default function VionneProductsPage({ instance }: SectionRenderProps) {
           <span className="text-[var(--vn-ink)]">{category ?? localized(locale, "Shop", "المتجر")}</span>
         </div>
 
-        {/* Title */}
+        {/* Subtitle / eyebrow (toggle via show_category_subtitle) */}
+        {showSubtitle && subtitle && (
+          <span className="vn-eyebrow block mb-2">
+            <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} />
+          </span>
+        )}
+        {/* Title — the collection name when filtered, else the editable page title */}
         <h1 className="vn-heading text-2xl md:text-4xl text-[var(--vn-ink)] mb-8">
-          {category ?? localized(locale, "All products", "كل المنتجات")}
+          {category ? (
+            category
+          ) : (
+            <InlineEditable sectionId={sectionId} settingKey="title" value={pageTitle} />
+          )}
         </h1>
 
         {/* Search */}
@@ -244,9 +263,11 @@ export default function VionneProductsPage({ instance }: SectionRenderProps) {
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-12 h-px bg-[var(--vn-border)] mx-auto mb-6" />
-            <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No results", "لا توجد نتائج")}</p>
+            <p className="text-sm text-[var(--vn-muted)] mb-1">
+              <InlineEditable sectionId={sectionId} settingKey="empty_heading" value={emptyHeading} />
+            </p>
             <p className="text-xs text-[var(--vn-muted)]">
-              {localized(locale, "Try adjusting your search or filter", "جرّبي تعدّلي البحث أو الفلتر")}
+              <InlineEditable sectionId={sectionId} settingKey="empty_text" value={emptyText} />
             </p>
           </div>
         ) : (
@@ -288,6 +309,10 @@ export default function VionneProductsPage({ instance }: SectionRenderProps) {
 /** Inline Vionne product card — mirrors VionneProductCard's markup/classes. */
 function ProductCard({ product, list }: { product: Product; list?: boolean }) {
   const locale = useLocale();
+  const { t } = useTranslation();
+  // ENG-1: listing price MUST match the PDP's default-variant precedence
+  // (variants[0].price ?? price) so the grid never shows base-vs-variant
+  // divergence. Keep in lockstep with vionne-product-detail.
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -336,13 +361,13 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         )}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-[var(--vn-sale)] text-white rounded-full text-[10px]">
-            {localized(locale, "Sale", "تخفيض")}
+            {t("common.sale", localized(locale, "Sale", "تخفيض"))}
           </span>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-white/65 flex items-center justify-center">
             <span className="vn-label text-[var(--vn-ink)] text-[11px] bg-white px-3 py-1.5 rounded-full border border-[var(--vn-border)]">
-              {localized(locale, "Sold out", "خلص المخزون")}
+              {t("common.sold_out", localized(locale, "Sold out", "خلص المخزون"))}
             </span>
           </div>
         )}

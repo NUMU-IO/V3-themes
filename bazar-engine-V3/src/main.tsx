@@ -33,6 +33,7 @@ import {
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 import { DemoContext, PageDataContext, type MountPageData } from "./sections/_shared";
+import BzWhatsAppFab from "./sections/_whatsapp-fab";
 import "./theme.css";
 
 /**
@@ -145,11 +146,44 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
     isKnownType,
   );
 
+  // a11y: expose a single <main> landmark. Chrome sections (header/footer)
+  // render their own <header>/<footer> banners, so we keep them OUTSIDE main
+  // (avoids banner/contentinfo nested-in-main warnings) and wrap the body
+  // sections in <main>. bazar templates always order header-first / footer-last
+  // so this preserves visual order.
+  const isHeader = (t: string) => t === "bz-header";
+  const isFooter = (t: string) => t === "bz-footer";
+  const header = sections.filter(({ instance }) => isHeader(instance.type));
+  const footer = sections.filter(({ instance }) => isFooter(instance.type));
+  const body = sections.filter(
+    ({ instance }) => !isHeader(instance.type) && !isFooter(instance.type),
+  );
+
   return (
-    <div data-bazar-v3-app data-theme="bazar">
-      {sections.map(({ id, instance }) => (
+    // pb on mobile clears the fixed bottom tab bar (h-14 + safe-area) so the
+    // footer / page end is never hidden behind it; no padding on md+ where the
+    // tab bar is hidden.
+    <div
+      data-bazar-v3-app
+      data-theme="bazar"
+      className="pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))] md:pb-0"
+    >
+      {/* The separate, editable announcement strip is rendered by bz-header
+          (above its nav), driven by the header's announcement message blocks. */}
+      {header.map(({ id, instance }) => (
         <RenderSection key={id} sectionId={id} instance={instance} />
       ))}
+      <main>
+        {body.map(({ id, instance }) => (
+          <RenderSection key={id} sectionId={id} instance={instance} />
+        ))}
+      </main>
+      {footer.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} />
+      ))}
+      {/* Floating WhatsApp button (real glyph) — renders only when the merchant
+          set a number; raised clear of the mobile tab bar. */}
+      <BzWhatsAppFab />
     </div>
   );
 }
