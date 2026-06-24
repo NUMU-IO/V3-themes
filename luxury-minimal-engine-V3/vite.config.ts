@@ -5,12 +5,14 @@ import { numuTheme } from "@numueg/theme-plugin";
 /**
  * Luxury Minimal V3 build config.
  *
- * Tailwind-in-bundle (mirrors Vionne / bazar): src/main.tsx imports
- * src/theme.css, whose `@tailwind` directives + the ported V2 luxury-minimal
- * utility classes are compiled by Vite's PostCSS step. `cssFileName: "theme"`
- * makes Vite emit the COMPILED stylesheet as dist/theme.css (the exact name the
- * host loads via external_theme.css_url), so the plugin's fallback-copy of
- * styles.css no-ops.
+ * Tailwind-in-bundle (mirrors bazar): src/main.tsx imports src/theme.css,
+ * whose `@tailwind` directives + the ported V2 luxury-minimal utility classes
+ * are compiled by Vite's PostCSS step. `cssFileName: "theme"` makes Vite emit
+ * the COMPILED stylesheet as dist/theme.css (the exact name the host loads via
+ * external_theme.css_url), so the plugin's fallback-copy of styles.css no-ops.
+ *
+ * `federate: false` keeps the self-contained bundle (own React + SDK) the
+ * deployed V3 themes ship — matches the proven bazar pipeline.
  */
 export default defineConfig({
   plugins: [react(), numuTheme({ federate: false }) as unknown as PluginOption],

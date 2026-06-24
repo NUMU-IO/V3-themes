@@ -3,21 +3,22 @@
   "name": "Rich Text / Page",
   "name_ar": "نص / صفحة",
   "settings": [
+    { "type": "header", "content": "Content" },
     {
       "type": "text",
-      "id": "title",
-      "label": "Title",
+      "id": "heading",
+      "label": "Heading",
       "label_ar": "العنوان",
       "default": "",
-      "info": "Used only when this section is placed outside a CMS page. On a Page route the page's own title is shown."
+      "info": "Shown above the body when this section is placed outside a CMS page. On an About / Contact / Page / Policy route the page's own title is shown instead."
     },
     {
       "type": "richtext",
-      "id": "content",
-      "label": "Content",
-      "label_ar": "المحتوى",
+      "id": "body",
+      "label": "Body",
+      "label_ar": "النص",
       "default": "",
-      "info": "Rich text is sanitized before it renders on the storefront. On a Page route the page body is shown instead."
+      "info": "Rich text is sanitized before it renders on the storefront. On a CMS page route the page's authored body is shown instead of this value."
     }
   ],
   "presets": [
@@ -28,8 +29,8 @@
         "ar": { "name": "نص / صفحة" }
       },
       "settings": {
-        "title": "",
-        "content": ""
+        "heading": "",
+        "body": ""
       }
     }
   ]

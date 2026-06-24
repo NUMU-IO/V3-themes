@@ -1,8 +1,9 @@
 "use client";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
-const VionneAbout = ({ instance }: SectionRenderProps) => {
+const VionneAbout = ({ instance, sectionId }: SectionRenderProps) => {
   const locale = useLocale();
   // Resolve dynamic-source bindings (e.g. a CTA bound to "Store → Name")
   // to their real values, THEN coerce every field to a primitive. Reading
@@ -34,17 +35,13 @@ const VionneAbout = ({ instance }: SectionRenderProps) => {
       <div className="container mx-auto px-4 py-14 md:py-20">
         <div className="text-center mb-10 md:mb-14 max-w-3xl mx-auto">
           {eyebrow && (
-            <span
-              className="vn-eyebrow inline-block mb-3"
-            >
-              {eyebrow}
+            <span className="vn-eyebrow inline-block mb-3">
+              <InlineEditable sectionId={sectionId} settingKey="eyebrow" value={eyebrow} />
             </span>
           )}
           {headline && (
-            <h1
-              className="vn-heading text-3xl md:text-5xl"
-            >
-              {headline}
+            <h1 className="vn-heading text-3xl md:text-5xl">
+              <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
             </h1>
           )}
         </div>
@@ -52,10 +49,8 @@ const VionneAbout = ({ instance }: SectionRenderProps) => {
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
           <div className={image ? "" : "md:col-span-2 max-w-2xl mx-auto"}>
             {description && (
-              <p
-                className="text-base md:text-lg text-foreground/85 leading-relaxed"
-              >
-                {description}
+              <p className="text-base md:text-lg text-foreground/85 leading-relaxed">
+                <InlineEditable sectionId={sectionId} settingKey="description" value={description} multiline />
               </p>
             )}
             {(ctaText || contactCtaText) && (

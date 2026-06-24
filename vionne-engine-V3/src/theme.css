@@ -11,16 +11,36 @@
 /* ─── Vionne Theme — Refined grayscale storefront ─── */
 
 [data-vionne-v3-app] {
-  /* Vionne core palette */
-  --vn-white: #FFFFFF;
-  --vn-band: #F4F4F4;
-  --vn-surface-dark: #3A3A3A;
-  --vn-ink: #050505;
-  --vn-border: #DADADA;
-  /* Bumped from #8B8B8B (3.5:1 on white) to #6F6F6F (4.79:1) so secondary
-     text meets WCAG AA. Used by .vn-eyebrow + paragraph muted text. */
-  --vn-muted: #6F6F6F;
-  --vn-sale: #A20000;
+  /* Vionne core palette — bridged to the global-settings tokens the SDK's
+     applyGlobalStyleTokens writes onto the mount root (`--theme-<id>`), with
+     the V2 hex as the fallback so an un-customised store renders byte-identical
+     to today. Editing a Colors global now actually re-paints (before W1 the
+     palette was hardcoded + only 2 pickers existed, both silent no-ops). Same
+     technique as bazar's `--bz-*` bridge, but with Vionne's grayscale + gold. */
+  --vn-white: var(--theme-color_white, #FFFFFF);
+  --vn-band: var(--theme-color_band, #F4F4F4);
+  --vn-surface-dark: var(--theme-color_surface_dark, #3A3A3A);
+  --vn-ink: var(--theme-color_ink, #050505);
+  --vn-border: var(--theme-color_border, #DADADA);
+  /* Default bumped from #8B8B8B (3.5:1 on white) to #6F6F6F (4.79:1) so
+     secondary text meets WCAG AA. Used by .vn-eyebrow + paragraph muted text. */
+  --vn-muted: var(--theme-color_muted, #6F6F6F);
+  --vn-sale: var(--theme-color_sale, #A20000);
+  /* Signature Vionne gold — new global in W1 (V2 lacked it). Additive: no
+     section consumed --vn-accent before, so the default render is unchanged. */
+  --vn-accent: var(--theme-accent_color, #D4AF37);
+
+  /* Fonts: consume the SDK font aliases (`--theme-font-heading/-body`, written
+     by applyGlobalStyleTokens) AND the resolveFontStack output
+     (`--theme-heading_font/-body_font`, written by mountTheme), falling back to
+     the V2 Neue Haas Grotesk stacks. .vn-heading / .vn-eyebrow / .vn-label and
+     the root font-family below already read --heading-font / --body-font, so
+     this is what makes the Typography font pickers re-paint. */
+  --heading-font: var(--theme-font-heading, var(--theme-heading_font, "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif));
+  --body-font: var(--theme-font-body, var(--theme-body_font, "Neue Haas Grotesk Text Pro", "Helvetica Neue", Helvetica, Arial, sans-serif));
+  /* Heading tracking ramp (W1): an additive nudge over the -0.01em default
+     (range stores a bare px number → multiply by 1px; 0 = unchanged). */
+  --vn-heading-tracking: calc(-0.01em + var(--theme-heading_tracking, 0) * 1px);
 
   /* Override the global store-gradient (default is teal/green) so any
      shared component using `.store-gradient` (PromoBanner, AuthPage,
@@ -43,7 +63,9 @@
   --border: 0 0% 86%;
   --input: 0 0% 86%;
   --ring: 0 0% 2%;
-  --radius: 4px;
+  /* Layout radius driven by the Layout global (range stores a bare number, so
+     multiply by 1px; default 4 == V2). Feeds Tailwind borderRadius.lg/md/sm. */
+  --radius: calc(var(--theme-radius, 4) * 1px);
 
   /* Hero / band tokens */
   --hero-bg: 0 0% 96%;
@@ -73,6 +95,9 @@
   --sidebar-border: 0 0% 86%;
   --sidebar-ring: 0 0% 2%;
 
+  /* Base text size ramp (W1): default 16px == browser default, so unchanged
+     out-of-box. em-based children scale from here. */
+  font-size: calc(var(--theme-base_font_size, 16) * 1px);
   font-family: var(--body-font, "Neue Haas Grotesk Text Pro"), "Helvetica Neue", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -88,7 +113,7 @@
 .vn-heading {
   font-family: var(--heading-font, "Neue Haas Grotesk Display Pro"), "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: var(--vn-heading-tracking, -0.01em);
   line-height: 1.05;
 }
 

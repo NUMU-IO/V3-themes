@@ -3,121 +3,83 @@
   "name": "Testimonials",
   "name_ar": "آراء العملاء",
   "settings": [
-    {
-      "type": "header",
-      "content": "Content"
-    },
+    { "type": "header", "content": "Heading" },
     {
       "id": "title",
       "type": "text",
-      "label": "Section Title",
-      "label_ar": "عنوان القسم",
-      "default": ""
-    },
+      "label": "Eyebrow title",
+      "label_ar": "العنوان العلوي",
+      "default": "",
+      "info": "Small uppercase label centered above the reviews. Leave empty to use the default."
+    }
+  ],
+  "blocks": [
     {
-      "type": "header",
-      "content": "Review 1"
-    },
+      "type": "review",
+      "name": "Review",
+      "name_ar": "رأي",
+      "settings": [
+        {
+          "id": "text",
+          "type": "textarea",
+          "label": "Review text",
+          "label_ar": "نص الرأي",
+          "default": ""
+        },
+        {
+          "id": "name",
+          "type": "text",
+          "label": "Reviewer name",
+          "label_ar": "اسم العميل",
+          "default": ""
+        },
+        {
+          "id": "city",
+          "type": "text",
+          "label": "City",
+          "label_ar": "المدينة",
+          "default": "",
+          "info": "Optional. Shown below the reviewer's name."
+        },
+        {
+          "id": "rating",
+          "type": "range",
+          "label": "Star rating",
+          "label_ar": "عدد النجوم",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "unit": "★",
+          "default": 5
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
     {
-      "id": "review_1_name",
-      "type": "text",
-      "label": "Reviewer 1 Name",
-      "label_ar": "اسم المراجع ١",
-      "default": ""
-    },
-    {
-      "id": "review_1_city",
-      "type": "text",
-      "label": "Reviewer 1 City",
-      "label_ar": "مدينة المراجع ١",
-      "default": ""
-    },
-    {
-      "id": "review_1_text",
-      "type": "textarea",
-      "label": "Review 1 Text",
-      "label_ar": "نص التقييم ١",
-      "default": ""
-    },
-    {
-      "id": "review_1_rating",
-      "type": "range",
-      "label": "Review 1 Rating",
-      "label_ar": "تقييم ١",
-      "default": 5,
-      "min": 1,
-      "max": 5,
-      "step": 1
-    },
-    {
-      "type": "header",
-      "content": "Review 2"
-    },
-    {
-      "id": "review_2_name",
-      "type": "text",
-      "label": "Reviewer 2 Name",
-      "label_ar": "اسم المراجع ٢",
-      "default": ""
-    },
-    {
-      "id": "review_2_city",
-      "type": "text",
-      "label": "Reviewer 2 City",
-      "label_ar": "مدينة المراجع ٢",
-      "default": ""
-    },
-    {
-      "id": "review_2_text",
-      "type": "textarea",
-      "label": "Review 2 Text",
-      "label_ar": "نص التقييم ٢",
-      "default": ""
-    },
-    {
-      "id": "review_2_rating",
-      "type": "range",
-      "label": "Review 2 Rating",
-      "label_ar": "تقييم ٢",
-      "default": 5,
-      "min": 1,
-      "max": 5,
-      "step": 1
-    },
-    {
-      "type": "header",
-      "content": "Review 3"
-    },
-    {
-      "id": "review_3_name",
-      "type": "text",
-      "label": "Reviewer 3 Name",
-      "label_ar": "اسم المراجع ٣",
-      "default": ""
-    },
-    {
-      "id": "review_3_city",
-      "type": "text",
-      "label": "Reviewer 3 City",
-      "label_ar": "مدينة المراجع ٣",
-      "default": ""
-    },
-    {
-      "id": "review_3_text",
-      "type": "textarea",
-      "label": "Review 3 Text",
-      "label_ar": "نص التقييم ٣",
-      "default": ""
-    },
-    {
-      "id": "review_3_rating",
-      "type": "range",
-      "label": "Review 3 Rating",
-      "label_ar": "تقييم ٣",
-      "default": 5,
-      "min": 1,
-      "max": 5,
-      "step": 1
+      "name": "Testimonials",
+      "locales": {
+        "en": { "name": "Testimonials" },
+        "ar": { "name": "آراء العملاء" }
+      },
+      "settings": {
+        "title": ""
+      },
+      "blocks": [
+        {
+          "type": "review",
+          "settings": { "text": "", "name": "", "city": "", "rating": 5 }
+        },
+        {
+          "type": "review",
+          "settings": { "text": "", "name": "", "city": "", "rating": 5 }
+        },
+        {
+          "type": "review",
+          "settings": { "text": "", "name": "", "city": "", "rating": 5 }
+        }
+      ]
     }
   ]
 }

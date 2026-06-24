@@ -128,5 +128,21 @@
       "label": "Item 4 link",
       "default": ""
     }
+  ],
+  "presets": [
+    {
+      "name": "Collection Strip",
+      "locales": {
+        "en": {
+          "name": "Collection Strip"
+        },
+        "ar": {
+          "name": "شريط التشكيلات"
+        }
+      },
+      "settings": {
+        "layout": "image-row"
+      }
+    }
   ]
 }

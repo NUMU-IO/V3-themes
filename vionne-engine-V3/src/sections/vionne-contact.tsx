@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
-import { Link, useLocale, useShop } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
 import { ChevronRight, MessageCircle, Phone, Mail, Instagram, Clock } from "lucide-react";
 import { localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
  * Normalise a merchant-provided Instagram value into a { handle, url } pair.
@@ -26,9 +27,9 @@ function normalizeInstagram(raw: string | null | undefined): { handle: string; u
   return { handle, url: handle ? `https://instagram.com/${handle}` : "" };
 }
 
-const VionneContact = ({ instance }: SectionRenderProps) => {
+const VionneContact = ({ instance, sectionId }: SectionRenderProps) => {
   const locale = useLocale();
-  const s = instance.settings ?? {};
+  const s = useResolvedSettings(instance);
   // Pull channels from the merchant-configured contact info (Contact tab in the
   // dashboard → falls back to social_links / footer overrides). Never invent
   // placeholder numbers, emails, or handles — if a merchant didn't configure a
@@ -125,9 +126,9 @@ const VionneContact = ({ instance }: SectionRenderProps) => {
           <span className="text-[var(--vn-ink)]">{title}</span>
         </nav>
 
-        {eyebrow && <span className="vn-eyebrow block mb-2">{eyebrow}</span>}
-        <h1 className="vn-heading text-3xl md:text-4xl mb-3">{title}</h1>
-        {subtitle && <p className="text-sm md:text-base text-[var(--vn-muted)] mb-8 md:mb-10 max-w-xl">{subtitle}</p>}
+        {eyebrow && <span className="vn-eyebrow block mb-2"><InlineEditable sectionId={sectionId} settingKey="eyebrow" value={eyebrow} /></span>}
+        <h1 className="vn-heading text-3xl md:text-4xl mb-3"><InlineEditable sectionId={sectionId} settingKey="title" value={title} /></h1>
+        {subtitle && <p className="text-sm md:text-base text-[var(--vn-muted)] mb-8 md:mb-10 max-w-xl"><InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline /></p>}
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 mt-8 md:mt-12">
           {/* Form */}

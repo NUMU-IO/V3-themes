@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 const ASPECT_CLASS: Record<string, string> = {
   "16-9": "aspect-[16/9]",
@@ -11,7 +12,7 @@ const ASPECT_CLASS: Record<string, string> = {
   "2-3": "aspect-[2/3]",
 };
 
-const VionneImageComparison = ({ instance }: SectionRenderProps) => {
+const VionneImageComparison = ({ instance, sectionId }: SectionRenderProps) => {
   const locale = useLocale();
   const s = useResolvedSettings(instance);
   const eyebrow = asString(s.eyebrow);
@@ -175,24 +176,18 @@ const VionneImageComparison = ({ instance }: SectionRenderProps) => {
       {showHeader && (
         <div className="container mx-auto px-4 pt-12 md:pt-16 pb-8 md:pb-10 text-center max-w-2xl">
           {eyebrow && (
-            <span
-              className="vn-eyebrow block mb-2"
-            >
-              {eyebrow}
+            <span className="vn-eyebrow block mb-2">
+              <InlineEditable sectionId={sectionId} settingKey="eyebrow" value={eyebrow} />
             </span>
           )}
           {title && (
-            <h2
-              className="vn-heading text-2xl md:text-4xl"
-            >
-              {title}
+            <h2 className="vn-heading text-2xl md:text-4xl">
+              <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
             </h2>
           )}
           {subtitle && (
-            <p
-              className="text-sm md:text-base text-[var(--vn-muted)] mt-2"
-            >
-              {subtitle}
+            <p className="text-sm md:text-base text-[var(--vn-muted)] mt-2">
+              <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
             </p>
           )}
         </div>

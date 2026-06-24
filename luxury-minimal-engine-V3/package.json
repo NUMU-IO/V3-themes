@@ -1,8 +1,8 @@
 {
   "name": "luxury-minimal-v3",
-  "version": "0.5.0",
+  "version": "0.6.1",
   "private": true,
-  "description": "Luxury minimal (V3) (V3 port)",
+  "description": "Luxury Minimal (V3) — faithful V3 port of the V2 luxury-minimal theme",
   "type": "module",
   "scripts": {
     "dev": "vite",

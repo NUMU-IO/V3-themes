@@ -1,5 +1,5 @@
 "use client";
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { localized, type SectionRenderProps } from "./_shared";
 
 /**
@@ -55,7 +55,10 @@ const COLOR_PRESETS: Record<
 
 const VionneMarquee = ({ instance }: SectionRenderProps) => {
   const locale = useLocale();
-  const s = instance.settings ?? {};
+  // useResolvedSettings (not raw instance.settings) so editor edits + dynamic
+  // sources reflect live. Marquee items scroll in a duplicated track, so they
+  // stay panel-edited (item_1..6) rather than canvas inline-edit.
+  const s = useResolvedSettings(instance);
 
   // Collect non-empty items 1..6 in their declared order. Empty slots are
   // skipped — the merchant can leave them blank without breaking the loop.

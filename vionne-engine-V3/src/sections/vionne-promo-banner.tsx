@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
-export default function PromoBanner({ instance }: SectionRenderProps) {
+export default function PromoBanner({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
-  const s = instance.settings ?? {};
+  const s = useResolvedSettings(instance);
   const badge = asString(s.badge_text);
   const headline = asString(s.headline) || localized(locale, "Special Offer", "عرض خاص");
   const subtitle = asString(s.subtitle) || localized(locale, "Shop our latest collection", "اكتشفي أحدث تشكيلة");
@@ -26,16 +27,20 @@ export default function PromoBanner({ instance }: SectionRenderProps) {
             <div className="flex-1 text-center md:text-right">
               {badge && (
                 <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-3">
-                  {badge}
+                  <InlineEditable sectionId={sectionId} settingKey="badge_text" value={badge} />
                 </span>
               )}
-              <h3 className="text-2xl md:text-3xl font-black mb-2 text-foreground">{headline}</h3>
-              <p className="text-muted-foreground text-sm mb-4">{subtitle}</p>
+              <h3 className="text-2xl md:text-3xl font-black mb-2 text-foreground">
+                <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
+              </h3>
+              <p className="text-muted-foreground text-sm mb-4">
+                <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
+              </p>
               <Link
                 to={ctaLink}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl store-gradient text-white font-bold text-sm hover:opacity-90 transition-opacity shadow-md"
               >
-                {ctaText}
+                <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
                 <ArrowLeft size={16} />
               </Link>
             </div>

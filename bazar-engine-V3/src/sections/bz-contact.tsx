@@ -72,9 +72,17 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
     }
     return "";
   };
+  // The store's dedicated contact fields (hub → Store settings, exposed by the
+  // public store serializer) win, then fall back to the social_links map.
+  const shopContact = shop as unknown as
+    | { contact_email?: string; contact_phone?: string }
+    | undefined;
   const whatsapp = pick("whatsapp", "contact_whatsapp");
-  const phone = pick("phone", "contact_phone") || whatsapp;
-  const email = pick("email", "contact_email");
+  const phone =
+    asString(shopContact?.contact_phone) ||
+    pick("phone", "contact_phone") ||
+    whatsapp;
+  const email = asString(shopContact?.contact_email) || pick("email", "contact_email");
   const ig = normalizeInstagram(pick("instagram", "contact_instagram"));
   const instagram = ig.handle;
   const instagramUrl = ig.url;

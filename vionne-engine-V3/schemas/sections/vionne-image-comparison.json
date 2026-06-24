@@ -129,5 +129,25 @@
         }
       ]
     }
+  ],
+  "presets": [
+    {
+      "name": "Before / After",
+      "locales": {
+        "en": {
+          "name": "Before / After"
+        },
+        "ar": {
+          "name": "قبل / بعد"
+        }
+      },
+      "settings": {
+        "initial_position": 50,
+        "animate_to_center": true,
+        "show_labels": true,
+        "full_width": true,
+        "aspect": "3-4"
+      }
+    }
   ]
 }

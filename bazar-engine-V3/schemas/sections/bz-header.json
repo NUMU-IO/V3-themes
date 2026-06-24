@@ -25,7 +25,7 @@
     },
     {
       "type": "checkbox",
-      "id": "show_announcement",
+      "id": "announcement_enabled",
       "label": "Show announcement bar",
       "label_ar": "إظهار شريط الإعلان",
       "default": true
@@ -35,7 +35,45 @@
       "id": "announcement_text",
       "label": "Announcement text",
       "label_ar": "نص الإعلان",
-      "default": ""
+      "default": "✦ Free shipping on orders over 1000 EGP",
+      "info": "Write anything you like. Add more rotating messages as \"Announcement message\" blocks below."
+    },
+    {
+      "type": "text",
+      "id": "announcement_text_ar",
+      "label": "Announcement text (Arabic)",
+      "label_ar": "نص الإعلان (عربي)",
+      "default": "✦ شحن مجاني للطلبات فوق ١٠٠٠ جنيه"
+    },
+    {
+      "type": "select",
+      "id": "announcement_mode",
+      "label": "Animation",
+      "label_ar": "الحركة",
+      "default": "slide",
+      "options": [
+        {
+          "value": "slide",
+          "label": "Slide (rotate messages)",
+          "label_ar": "تمرير (تبديل الرسائل)"
+        },
+        {
+          "value": "static",
+          "label": "Static (first message only)",
+          "label_ar": "ثابت (الرسالة الأولى فقط)"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "announcement_speed",
+      "label": "Seconds per slide",
+      "label_ar": "ثواني لكل شريحة",
+      "default": 4,
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s"
     },
     {
       "type": "header",
@@ -75,9 +113,34 @@
           "label_ar": "الرابط"
         }
       ]
+    },
+    {
+      "type": "announcement",
+      "name": "Announcement message",
+      "name_ar": "رسالة إعلان",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Message",
+          "label_ar": "النص"
+        },
+        {
+          "type": "text",
+          "id": "text_ar",
+          "label": "Message (Arabic)",
+          "label_ar": "النص (عربي)"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)",
+          "label_ar": "رابط (اختياري)"
+        }
+      ]
     }
   ],
-  "max_blocks": 8,
+  "max_blocks": 16,
   "presets": [
     {
       "name": "Bazar Header",
@@ -90,7 +153,11 @@
         }
       },
       "settings": {
-        "show_announcement": true,
+        "announcement_enabled": true,
+        "announcement_text": "✦ Free shipping on orders over 1000 EGP",
+        "announcement_text_ar": "✦ شحن مجاني للطلبات فوق ١٠٠٠ جنيه",
+        "announcement_mode": "slide",
+        "announcement_speed": 4,
         "show_search": true,
         "show_cart": true
       },

@@ -4,11 +4,12 @@ import { useState } from "react";
 import {
   Link,
   useLocale,
+  useNavigation,
   useResolvedSettings,
   useShop,
   useThemeSettings,
 } from "@numueg/theme-sdk";
-import { Facebook, MessageCircle, Music2, Send, Twitter } from "lucide-react";
+import { Facebook, MessageCircle, Music2, Send, Twitter, Youtube } from "lucide-react";
 import { asString, localized, readBlocks, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
@@ -69,6 +70,7 @@ const SOCIAL_ICONS: Record<
   twitter: (p) => <Twitter size={p.size} aria-hidden="true" />,
   tiktok: (p) => <Music2 size={p.size} aria-hidden="true" />,
   whatsapp: (p) => <MessageCircle size={p.size} aria-hidden="true" />,
+  youtube: (p) => <Youtube size={p.size} aria-hidden="true" />,
 };
 
 /**
@@ -122,13 +124,52 @@ export default function BzFooter({ instance, sectionId }: SectionRenderProps) {
     })
     .filter((c) => c.title && c.links.length > 0);
 
-  const columns =
-    configuredColumns.length > 0 ? configuredColumns : defaultColumns(locale);
+  // §5: when the merchant builds a NESTED `footer` menu (column parents with
+  // child links) in the hub Navigation manager, render those columns — the SDK
+  // has already dropped any link whose target CMS page is hidden, and we prune
+  // columns left empty. A flat footer menu (the default seed) has no children,
+  // so we keep the theme's faithful default columns instead of collapsing them.
+  const footerMenu = useNavigation("footer");
+  const menuColumns: FooterColumn[] = footerMenu.items.some(
+    (i) => (i.children?.length ?? 0) > 0,
+  )
+    ? footerMenu.items
+        .filter((i) => (i.children?.length ?? 0) > 0)
+        .map((i) => ({
+          title: i.title,
+          links: i.children
+            .map((c) => ({ label: c.title, href: c.url || "/" }))
+            .filter((l) => l.label),
+        }))
+        .filter((c) => c.title && c.links.length > 0)
+    : [];
 
-  const socialLinks =
+  const columns =
+    menuColumns.length > 0
+      ? menuColumns
+      : configuredColumns.length > 0
+        ? configuredColumns
+        : defaultColumns(locale);
+
+  // Social links: the W1 Brand→Social globals win; fall back to the store's
+  // `social_links`. `social_x` maps onto the twitter glyph.
+  const gs = (themeSettings.global_settings ?? {}) as Record<string, unknown>;
+  const globalSocials: Record<string, string> = {
+    instagram: asString(gs.social_instagram),
+    facebook: asString(gs.social_facebook),
+    tiktok: asString(gs.social_tiktok),
+    twitter: asString(gs.social_x),
+    whatsapp: asString(gs.social_whatsapp),
+    youtube: asString(gs.social_youtube),
+  };
+  const shopSocials =
     (shop?.social_links as Record<string, string> | undefined) ?? {};
+  const mergedSocials: Record<string, string> = { ...shopSocials };
+  for (const [name, url] of Object.entries(globalSocials)) {
+    if (url) mergedSocials[name] = url;
+  }
   const socials: Array<{ name: string; url: string }> = Object.entries(
-    socialLinks,
+    mergedSocials,
   )
     .map(([name, url]) => ({ name, url: asString(url) }))
     .filter(({ url }) => Boolean(url));
@@ -209,7 +250,10 @@ export default function BzFooter({ instance, sectionId }: SectionRenderProps) {
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
               dir="ltr"
-              className="flex-1 h-11 px-4 rounded-full bg-white/10 border border-white/20 text-sm placeholder:text-white/30 focus:outline-none focus:border-[var(--bz-amber)] transition-colors"
+              // min-w-0 lets flex-1 shrink the input below its intrinsic width
+              // so the SUBSCRIBE button never gets pushed off-screen on narrow
+              // phones (the input otherwise refuses to shrink past ~200px).
+              className="min-w-0 flex-1 h-11 px-4 rounded-full bg-white/10 border border-white/20 text-sm placeholder:text-white/30 focus:outline-none focus:border-[var(--bz-amber)] transition-colors"
             />
             <button type="submit" className="bz-btn bz-btn-amber h-11 px-6 text-[11px]">
               {newsletterButton}

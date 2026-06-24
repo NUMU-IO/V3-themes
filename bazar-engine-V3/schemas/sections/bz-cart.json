@@ -98,18 +98,20 @@
       "content": "Shipping rule"
     },
     {
-      "type": "number",
-      "id": "shipping_flat",
-      "label": "Flat shipping fee",
-      "label_ar": "رسوم الشحن الثابتة",
-      "default": 50
+      "type": "text",
+      "id": "shipping_calc_label",
+      "label": "Shipping placeholder (before checkout)",
+      "label_ar": "نص الشحن (قبل الدفع)",
+      "default": "",
+      "info": "Shown for shipping at the cart; the real rate is calculated in checkout once an address is entered."
     },
     {
       "type": "number",
       "id": "free_shipping_threshold",
-      "label": "Free shipping over",
-      "label_ar": "شحن مجاني فوق",
-      "default": 500
+      "label": "Free shipping over (0 = no promo)",
+      "label_ar": "شحن مجاني فوق (0 = بدون عرض)",
+      "default": 0,
+      "info": "Your real free-shipping threshold. Drives the FREE label + 'add X more' progress hint."
     }
   ],
   "presets": [
@@ -124,9 +126,7 @@
         }
       },
       "settings": {
-        "populated_title": "",
-        "shipping_flat": 50,
-        "free_shipping_threshold": 500
+        "populated_title": ""
       }
     }
   ]

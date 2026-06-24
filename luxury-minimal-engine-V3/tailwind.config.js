@@ -1,15 +1,14 @@
 /**
  * Tailwind config for the Luxury Minimal V3 theme bundle (Tailwind-in-bundle —
- * see Vionne / bazar configs for the full rationale). The luxury-minimal V2
- * sections are authored in Tailwind utility classes (`py-10 md:py-14`,
- * `grid grid-cols-[...]`, `bg-foreground/5`, arbitrary values like
- * `bg-[hsl(var(--lux-gray))]`) + custom `lux-*` classes. src/main.tsx imports
- * src/theme.css; Vite's PostCSS step compiles these into dist/theme.css.
+ * see bazar config for the full rationale). The luxury-minimal V2 sections are
+ * authored in Tailwind utility classes (`py-10 md:py-14`, `grid-cols-[...]`,
+ * `bg-foreground/5`, arbitrary values like `bg-[hsl(var(--lux-gray))]`) + the
+ * custom `lux-*` classes. src/main.tsx imports src/theme.css; Vite's PostCSS
+ * step compiles these into dist/theme.css.
  *
  * The `colors` extend maps shadcn semantic names to the HSL channel vars that
- * src/theme.css (ported from V2 luxury-minimal styles.css) defines, so
- * `bg-background` / `text-foreground` / `bg-muted` etc. from the ported
- * sections resolve.
+ * src/theme.css (ported from V2 luxury-minimal) defines, so `bg-background` /
+ * `text-foreground` / `bg-muted` / `border-border` etc. resolve.
  */
 
 /** @type {import('tailwindcss').Config} */
@@ -71,9 +70,24 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--body-font)", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
-        heading: ["var(--heading-font)", "var(--body-font)", "serif"],
-        body: ["var(--body-font)", "Helvetica Neue", "sans-serif"],
+        sans: [
+          "var(--theme-font-body, var(--theme-body_font, 'Helvetica Neue'))",
+          "Helvetica Neue",
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+        ],
+        heading: [
+          "var(--theme-font-heading, var(--theme-heading_font, 'Helvetica Neue'))",
+          "Helvetica",
+          "Arial",
+          "sans-serif",
+        ],
+        body: [
+          "var(--theme-font-body, var(--theme-body_font, 'Helvetica Neue'))",
+          "Helvetica Neue",
+          "sans-serif",
+        ],
       },
     },
   },

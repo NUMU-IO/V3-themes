@@ -135,5 +135,21 @@
       "default": ""
     }
   ],
-  "presets": []
+  "presets": [
+    {
+      "name": "Contact (Vionne)",
+      "locales": {
+        "en": {
+          "name": "Contact (Vionne)"
+        },
+        "ar": {
+          "name": "تواصل"
+        }
+      },
+      "settings": {
+        "show_working_hours": true,
+        "show_map": false
+      }
+    }
+  ]
 }

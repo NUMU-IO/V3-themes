@@ -302,5 +302,21 @@
       "label_ar": "رابط المنتج",
       "default": ""
     }
+  ],
+  "presets": [
+    {
+      "name": "UGC Reels",
+      "locales": {
+        "en": {
+          "name": "UGC Reels"
+        },
+        "ar": {
+          "name": "ريلز المستخدمين"
+        }
+      },
+      "settings": {
+        "cta_link": "/products"
+      }
+    }
   ]
 }

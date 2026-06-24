@@ -3,50 +3,99 @@
   "name": "Category Grid",
   "name_ar": "شبكة الفئات",
   "settings": [
+    { "type": "header", "content": "Content" },
     {
-      "type": "header",
-      "content": "Content"
-    },
-    {
-      "id": "title",
       "type": "text",
-      "label": "Section Title",
-      "label_ar": "عنوان القسم",
-      "default": ""
+      "id": "title",
+      "label": "Eyebrow title",
+      "label_ar": "العنوان",
+      "default": "",
+      "info": "Small centered uppercase label above the grid. Leave empty for the default."
     },
+    { "type": "header", "content": "Layout" },
     {
-      "type": "header",
-      "content": "Layout"
-    },
-    {
+      "type": "range",
       "id": "columns_desktop",
-      "type": "range",
-      "label": "Columns (Desktop)",
-      "label_ar": "أعمدة (ديسكتوب)",
-      "default": 5,
-      "min": 3,
-      "max": 6,
-      "step": 1
-    },
-    {
-      "id": "columns_mobile",
-      "type": "range",
-      "label": "Columns (Mobile)",
-      "label_ar": "أعمدة (موبايل)",
-      "default": 2,
+      "label": "Columns (desktop)",
+      "label_ar": "الأعمدة (سطح المكتب)",
       "min": 2,
-      "max": 4,
-      "step": 1
+      "max": 6,
+      "step": 1,
+      "default": 5
     },
     {
-      "id": "max_items",
       "type": "range",
-      "label": "Max Categories (0 = all)",
-      "label_ar": "أقصى عدد فئات (0 = الكل)",
-      "default": 0,
+      "id": "columns_mobile",
+      "label": "Columns (mobile)",
+      "label_ar": "الأعمدة (الجوال)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "max_items",
+      "label": "Maximum categories",
+      "label_ar": "الحد الأقصى للفئات",
       "min": 0,
-      "max": 12,
-      "step": 1
+      "max": 20,
+      "step": 1,
+      "default": 0,
+      "info": "0 shows every category."
+    },
+    { "type": "header", "content": "Categories" },
+    {
+      "type": "paragraph",
+      "content": "Leave the blocks empty to auto-fill the grid from your store collections. Add Category blocks below to curate the grid by hand instead."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "name_ar": "فئة",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image_url",
+          "label": "Image",
+          "label_ar": "الصورة",
+          "aspect_ratio": "1/1",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "label_ar": "التسمية",
+          "default": ""
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "label_ar": "الرابط",
+          "default": "/collections"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Category Grid",
+      "locales": {
+        "en": { "name": "Category Grid" },
+        "ar": { "name": "شبكة الفئات" }
+      },
+      "settings": {
+        "title": "",
+        "columns_desktop": 5,
+        "columns_mobile": 2,
+        "max_items": 0
+      },
+      "blocks": []
     }
   ]
 }

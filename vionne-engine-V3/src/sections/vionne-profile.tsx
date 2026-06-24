@@ -5,6 +5,7 @@ import {
   useCustomer,
   useLocale,
   useOrders,
+  useResolvedSettings,
   useCustomerActions,
   useCustomerAddresses,
   type CustomerAddress,
@@ -24,6 +25,7 @@ import {
   X,
 } from "lucide-react";
 import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
  * Vionne account / profile section.
@@ -80,11 +82,11 @@ const EMPTY_ADDRESS: Partial<CustomerAddress> = {
   label: "home",
 };
 
-export default function VionneProfile({ instance }: SectionRenderProps) {
+export default function VionneProfile({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
   const STATUS_LABELS = buildStatusLabels(locale);
   const LABEL_NAME = buildLabelName(locale);
-  const s = instance.settings ?? {};
+  const s = useResolvedSettings(instance);
   const title = asString(s.title) || localized(locale, "My account", "حسابي");
   const ordersTitle = asString(s.orders_title) || localized(locale, "My orders", "طلباتي");
   const addressesTitle = asString(s.addresses_title) || localized(locale, "My addresses", "عناويني");
@@ -317,7 +319,7 @@ export default function VionneProfile({ instance }: SectionRenderProps) {
             {/* ─── Orders ─── */}
             {activeTab === "orders" && (
               <div>
-                <h2 className={headingClass}>{ordersTitle}</h2>
+                <h2 className={headingClass}><InlineEditable sectionId={sectionId} settingKey="orders_title" value={ordersTitle} /></h2>
                 {loadingOrders ? (
                   <div className="flex justify-center py-16">
                     <Loader2 className="h-5 w-5 animate-spin text-[var(--vn-muted)]" />
@@ -388,7 +390,7 @@ export default function VionneProfile({ instance }: SectionRenderProps) {
             {activeTab === "addresses" && (
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className={headingClass + " mb-0"}>{addressesTitle}</h2>
+                  <h2 className={headingClass + " mb-0"}><InlineEditable sectionId={sectionId} settingKey="addresses_title" value={addressesTitle} /></h2>
                   {!showAddressForm && (
                     <button
                       type="button"
@@ -609,7 +611,7 @@ export default function VionneProfile({ instance }: SectionRenderProps) {
             {activeTab === "settings" && (
               <div className="space-y-8">
                 <div>
-                  <h2 className={headingClass}>{settingsTitle}</h2>
+                  <h2 className={headingClass}><InlineEditable sectionId={sectionId} settingKey="settings_title" value={settingsTitle} /></h2>
                   <div className="border border-[var(--vn-border)] rounded-md p-5 space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>

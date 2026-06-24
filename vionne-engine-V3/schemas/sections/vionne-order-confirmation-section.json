@@ -67,5 +67,20 @@
       "default": true
     }
   ],
-  "presets": []
+  "presets": [
+    {
+      "name": "Order Confirmation",
+      "locales": {
+        "en": { "name": "Order Confirmation" },
+        "ar": { "name": "تأكيد الطلب" }
+      },
+      "settings": {
+        "show_emoji": false,
+        "show_progress": true,
+        "show_whatsapp": true,
+        "show_track_order": true,
+        "continue_shopping_link": "/"
+      }
+    }
+  ]
 }

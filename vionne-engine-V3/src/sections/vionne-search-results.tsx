@@ -6,11 +6,13 @@ import {
   Money,
   useLocale,
   useProducts,
+  useResolvedSettings,
   type Product,
 } from "@numueg/theme-sdk";
 import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { asNumber, asString, localized, usePageData, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
  * vionne-search-results — body for the `search` template. Seeds its query from
@@ -20,8 +22,8 @@ import { asNumber, asString, localized, usePageData, type SectionRenderProps } f
  * Without it, vionne's /search rendered blank (the host ships no search
  * backstop). Cards mirror the Vionne product card.
  */
-export default function VionneSearchResults({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
+export default function VionneSearchResults({ instance, sectionId }: SectionRenderProps) {
+  const s = useResolvedSettings(instance);
   const locale = useLocale();
   const { products } = useProducts();
   const pageData = usePageData();
@@ -96,7 +98,9 @@ export default function VionneSearchResults({ instance }: SectionRenderProps) {
         {hasQuery && matches.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-12 h-px bg-[var(--vn-border)] mx-auto mb-6" />
-            <p className="text-sm text-[var(--vn-muted)] max-w-sm mx-auto">{noResultsText}</p>
+            <p className="text-sm text-[var(--vn-muted)] max-w-sm mx-auto">
+              <InlineEditable sectionId={sectionId} settingKey="no_results_text" value={noResultsText} multiline />
+            </p>
             <Link
               to="/products"
               className="vn-label inline-block mt-6 text-[var(--vn-ink)] border-b border-[var(--vn-ink)] pb-0.5 text-xs"

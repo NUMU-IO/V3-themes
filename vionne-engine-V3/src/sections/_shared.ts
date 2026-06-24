@@ -73,6 +73,20 @@ interface RawBlock {
   type?: string;
   disabled?: boolean;
   settings?: Record<string, unknown>;
+  // Nested blocks (blocks-in-blocks) — e.g. a footer `column` block holding
+  // child `link` blocks. The customizer's recursive BlockInstance CRUD writes
+  // these so readBlockNodes can drill down.
+  blocks?: Record<string, RawBlock>;
+  block_order?: string[];
+}
+
+/** A resolved block node: its own settings + (optionally) its nested blocks. */
+export interface BlockNode {
+  type?: string;
+  disabled?: boolean;
+  settings: Record<string, unknown>;
+  blocks?: Record<string, RawBlock>;
+  block_order?: string[];
 }
 
 /**
@@ -102,6 +116,36 @@ export function readBlocks(
     .map((id) => blocks[id])
     .filter((b): b is RawBlock => !!b && b.type === type && !b.disabled)
     .map((b) => b.settings ?? {});
+}
+
+/**
+ * Like readBlocks, but returns the full block NODE (settings + its own nested
+ * blocks/block_order) so callers can recurse. Accepts a SectionInstance OR a
+ * nested block node as the parent — e.g. a footer `column` block whose child
+ * `link` blocks are read with readBlockNodes(column, "link"). Order + disabled
+ * handling matches readBlocks. Empty when the parent has no blocks of `type` →
+ * the caller falls back to its legacy/flat settings or V2 defaults.
+ */
+export function readBlockNodes(parent: unknown, type: string): BlockNode[] {
+  const p = (parent ?? {}) as {
+    blocks?: Record<string, RawBlock>;
+    block_order?: string[];
+  };
+  const blocks = p.blocks ?? {};
+  const order =
+    p.block_order && p.block_order.length > 0
+      ? p.block_order
+      : Object.keys(blocks);
+  return order
+    .map((id) => blocks[id])
+    .filter((b): b is RawBlock => !!b && b.type === type && !b.disabled)
+    .map((b) => ({
+      type: b.type,
+      disabled: b.disabled,
+      settings: b.settings ?? {},
+      blocks: b.blocks,
+      block_order: b.block_order,
+    }));
 }
 
 /**

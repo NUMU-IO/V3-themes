@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
-import { applyImageTransform, asImageTransform, localized, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 interface Item {
+  n: number;
   media: string;
   mediaTransform?: ImageTransform;
   video: string;
@@ -14,31 +16,34 @@ interface Item {
   productLink: string;
 }
 
-const VionneUgcCarousel = ({ instance }: SectionRenderProps) => {
+const VionneUgcCarousel = ({ instance, sectionId }: SectionRenderProps) => {
   const locale = useLocale();
-  const s = instance.settings ?? {};
-  const eyebrow = s.eyebrow ?? "";
-  const title = s.title ?? localized(locale, "Tagged by you", "صوّرتونا");
-  const subtitle = s.subtitle ?? "";
-  const ctaText = s.cta_text ?? "";
-  const ctaLink = s.cta_link ?? "/products";
-  const introImage = s.intro_image ?? "";
+  const s = useResolvedSettings(instance);
+  const eyebrow = asString(s.eyebrow);
+  const title = asString(s.title) || localized(locale, "Tagged by you", "صوّرتونا");
+  const subtitle = asString(s.subtitle);
+  const ctaText = asString(s.cta_text);
+  const ctaLink = asString(s.cta_link) || "/products";
+  // asImageUrl (not raw) so a just-uploaded {url,alt} object renders instead
+  // of [object Object] — same fix the slideshow/image-comparison already have.
+  const introImage = asImageUrl(s.intro_image);
   const introImageTransform = asImageTransform(s.intro_image);
-  const badgeText = (s.badge_text as string) ?? localized(locale, "Shop now", "تسوّقي دلوقتي");
+  const badgeText = asString(s.badge_text) || localized(locale, "Shop now", "تسوّقي دلوقتي");
 
   const items: Item[] = [];
   for (let i = 1; i <= 6; i++) {
-    const media = (s[`item_${i}_media`] ?? "") as string;
-    const video = (s[`item_${i}_video`] ?? "") as string;
+    const media = asImageUrl(s[`item_${i}_media`]);
+    const video = asImageUrl(s[`item_${i}_video`]);
     if (!media && !video) continue;
     items.push({
+      n: i,
       media,
       mediaTransform: asImageTransform(s[`item_${i}_media`]),
       video,
-      caption: (s[`item_${i}_caption`] ?? "") as string,
-      productImage: (s[`item_${i}_product_image`] ?? "") as string,
+      caption: asString(s[`item_${i}_caption`]),
+      productImage: asImageUrl(s[`item_${i}_product_image`]),
       productImageTransform: asImageTransform(s[`item_${i}_product_image`]),
-      productLink: (s[`item_${i}_product_link`] ?? "") as string,
+      productLink: asString(s[`item_${i}_product_link`]),
     });
   }
 
@@ -65,19 +70,15 @@ const VionneUgcCarousel = ({ instance }: SectionRenderProps) => {
           <div>
             {eyebrow && (
               <span className="vn-eyebrow block mb-1.5">
-                {eyebrow}
+                <InlineEditable sectionId={sectionId} settingKey="eyebrow" value={eyebrow} />
               </span>
             )}
-            <h2
-              className="vn-heading text-2xl md:text-3xl"
-            >
-              {title}
+            <h2 className="vn-heading text-2xl md:text-3xl">
+              <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
             </h2>
             {subtitle && (
-              <p
-                className="text-sm text-[var(--vn-muted)] mt-1.5"
-              >
-                {subtitle}
+              <p className="text-sm text-[var(--vn-muted)] mt-1.5">
+                <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} />
               </p>
             )}
           </div>
@@ -86,7 +87,7 @@ const VionneUgcCarousel = ({ instance }: SectionRenderProps) => {
               to={ctaLink}
               className="vn-label inline-flex items-center gap-1.5 hover:opacity-70 transition-opacity shrink-0 pb-2"
             >
-              {ctaText}
+              <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
               <ArrowRight size={14} />
             </Link>
           )}
@@ -158,7 +159,7 @@ const VionneUgcCarousel = ({ instance }: SectionRenderProps) => {
 
                 {it.caption && (
                   <span className="absolute top-3 start-3 vn-label px-2.5 py-1 text-[10px] bg-[var(--vn-sale)] text-white rounded-sm">
-                    {it.caption}
+                    <InlineEditable sectionId={sectionId} settingKey={`item_${it.n}_caption`} value={it.caption} />
                   </span>
                 )}
               </div>

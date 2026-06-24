@@ -25,6 +25,13 @@
         "default": ""
       },
       {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon (browser tab icon)",
+        "label_ar": "أيقونة المتصفح",
+        "default": ""
+      },
+      {
         "type": "color",
         "id": "primary_color",
         "label": "Amber (primary)",
@@ -76,9 +83,9 @@
             "label_ar": "بوبينز"
           },
           {
-            "value": "archivo",
-            "label": "Archivo (condensed)",
-            "label_ar": "أرشيفو"
+            "value": "montserrat",
+            "label": "Montserrat (display)",
+            "label_ar": "مونتسيرات"
           }
         ]
       },
@@ -95,11 +102,92 @@
             "label_ar": "إنتر"
           },
           {
-            "value": "system",
-            "label": "System default",
-            "label_ar": "الافتراضي"
+            "value": "montserrat",
+            "label": "Montserrat",
+            "label_ar": "مونتسيرات"
+          },
+          {
+            "value": "cairo",
+            "label": "Cairo (Arabic-first)",
+            "label_ar": "القاهرة"
           }
         ]
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "name_ar": "التخطيط",
+    "settings": [
+      {
+        "type": "range",
+        "id": "corner_radius",
+        "label": "Corner radius",
+        "label_ar": "استدارة الزوايا",
+        "default": 16,
+        "min": 0,
+        "max": 32,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "card_border_width",
+        "label": "Card border width",
+        "label_ar": "سُمك حدود البطاقة",
+        "default": 2,
+        "min": 0,
+        "max": 6,
+        "step": 1,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Social links",
+    "name_ar": "روابط التواصل",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram URL",
+        "label_ar": "رابط إنستجرام",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook URL",
+        "label_ar": "رابط فيسبوك",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "TikTok URL",
+        "label_ar": "رابط تيك توك",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_x",
+        "label": "X (Twitter) URL",
+        "label_ar": "رابط إكس (تويتر)",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_whatsapp",
+        "label": "WhatsApp number or link",
+        "label_ar": "رقم أو رابط واتساب",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_youtube",
+        "label": "YouTube URL",
+        "label_ar": "رابط يوتيوب",
+        "default": ""
       }
     ]
   }

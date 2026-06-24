@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
-import { Link, Money, useLocale, useOrders } from "@numueg/theme-sdk";
+import { Link, Money, useLocale, useOrders, useResolvedSettings } from "@numueg/theme-sdk";
 import { Check, Copy, Package, ArrowLeft, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
  * Vionne order-confirmation section.
@@ -29,9 +30,9 @@ import { asString, localized, type SectionRenderProps } from "./_shared";
  * still render the full static layout with placeholder values and gracefully
  * omit the total — we never crash and never redirect away.
  */
-export default function VionneOrderConfirmationSection({ instance }: SectionRenderProps) {
+export default function VionneOrderConfirmationSection({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
-  const s = instance.settings ?? {};
+  const s = useResolvedSettings(instance);
 
   const showProgress = s.show_progress ?? true;
   const showWhatsApp = s.show_whatsapp ?? true;
@@ -111,10 +112,10 @@ export default function VionneOrderConfirmationSection({ instance }: SectionRend
             {localized(locale, "ORDER CONFIRMED", "تم تأكيد الطلب")}
           </span>
           <h1 className="vn-heading text-2xl sm:text-3xl md:text-4xl text-[var(--vn-ink)] mb-2 sm:mb-3 leading-tight">
-            {title}{showEmoji ? " 🎉" : ""}
+            <InlineEditable sectionId={sectionId} settingKey="title" value={title} />{showEmoji ? " 🎉" : ""}
           </h1>
           <p className="text-sm sm:text-[15px] text-[var(--vn-muted)] mb-7 sm:mb-9 max-w-md mx-auto leading-relaxed">
-            {subtitle}
+            <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
           </p>
 
           {/* Order detail card */}
@@ -254,7 +255,7 @@ export default function VionneOrderConfirmationSection({ instance }: SectionRend
                 "py-3 sm:py-3.5 text-xs sm:text-sm rtl:[&>svg]:rotate-180"
               }
             >
-              {continueText} <ArrowLeft size={14} />
+              <InlineEditable sectionId={sectionId} settingKey="continue_shopping_text" value={continueText} /> <ArrowLeft size={14} />
             </Link>
           </div>
         </motion.div>

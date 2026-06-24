@@ -53,5 +53,21 @@
       "aspect_ratio": "1/1",
       "default": ""
     }
+  ],
+  "presets": [
+    {
+      "name": "Promo Banner",
+      "locales": {
+        "en": {
+          "name": "Promo Banner"
+        },
+        "ar": {
+          "name": "بانر ترويجي"
+        }
+      },
+      "settings": {
+        "cta_link": "/products"
+      }
+    }
   ]
 }

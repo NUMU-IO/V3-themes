@@ -54,10 +54,6 @@
             "settings": {}
           },
           {
-            "type": "bz-about-section",
-            "settings": {}
-          },
-          {
             "type": "bz-testimonials",
             "settings": {}
           },
@@ -177,6 +173,23 @@
       },
       "page": {
         "name": "Page",
+        "sections": [
+          {
+            "type": "bz-header",
+            "settings": {}
+          },
+          {
+            "type": "bz-rich-text",
+            "settings": {}
+          },
+          {
+            "type": "bz-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "policy": {
+        "name": "Policy",
         "sections": [
           {
             "type": "bz-header",

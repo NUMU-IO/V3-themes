@@ -6,6 +6,7 @@ import {
   useCart,
   useCollections,
   useLocale,
+  useNavigation,
   useResolvedSettings,
   useShop,
   useThemeSettings,
@@ -74,18 +75,28 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
   const announcementColor = asString(s.announcement_color);
   const announcementTextColor = asString(s.announcement_text_color);
 
-  // Nav: editor blocks → fall back to the store's collections (V2 lux nav was
-  // category links: `/products?category={id}`; in V3 those are `/collections/{slug}`).
+  // Nav source priority (§5 hide-page → hide-nav-link):
+  //   1. the merchant's `main-menu` (hub Navigation manager) via useNavigation —
+  //      the SDK drops items whose target CMS page is unpublished/deleted, so a
+  //      hidden page's link disappears automatically;
+  //   2. theme `nav_item` blocks (explicit per-theme override);
+  //   3. the store's collections (V2 lux nav was category links — in V3 those
+  //      are `/collections/{slug}`).
+  const mainMenu = useNavigation("main-menu");
   const navBlocks = readBlocks(instance, "nav_item");
   const nav: NavItem[] =
-    navBlocks.length > 0
-      ? navBlocks
-          .map((r) => ({ label: asString(r.label), href: asString(r.href) || "/" }))
+    mainMenu.items.length > 0
+      ? mainMenu.items
+          .map((i) => ({ label: i.title, href: i.url || "/" }))
           .filter((n) => n.label)
-      : collections.map((cat) => ({
-          label: cat.name,
-          href: `/collections/${cat.slug}`,
-        }));
+      : navBlocks.length > 0
+        ? navBlocks
+            .map((r) => ({ label: asString(r.label), href: asString(r.href) || "/" }))
+            .filter((n) => n.label)
+        : collections.map((cat) => ({
+            label: cat.name,
+            href: `/collections/${cat.slug}`,
+          }));
 
   const [menuOpen, setMenuOpen] = useState(false);
   const itemCount = cart?.items?.reduce((n, it) => n + it.quantity, 0) ?? 0;

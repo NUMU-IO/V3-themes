@@ -24,15 +24,26 @@
  */
 :root,
 [data-bazar-v3-app] {
-  /* Core palette */
-  --bz-amber: #FFB300;
+  /* Core palette.
+   *
+   * Each brand colour reads the global-settings token that the SDK's
+   * `applyGlobalStyleTokens` writes onto the mount root (id-based
+   * `--theme-<id>`), falling back to the V2 hex so an un-customised store
+   * renders byte-identical to V2. This is what makes the Brand colour
+   * pickers actually re-paint the storefront — before this the tokens were
+   * hardcoded and the pickers were a silent no-op. */
+  --bz-amber: var(--theme-primary_color, #FFB300);
   --bz-amber-dark: #E6A200;
   --bz-amber-light: #FFCA28;
-  --bz-cream: #FFF5E1;
-  --bz-dark: #0a0a14;
-  --bz-navy: #001f3f;
+  --bz-cream: var(--theme-background_color, #FFF5E1);
+  --bz-dark: var(--theme-text_color, #0a0a14);
+  --bz-navy: var(--theme-accent_color, #001f3f);
   --bz-white: #FFFFFF;
   --bz-gray: #6b7280;
+
+  /* Layout tokens driven by the Layout global-settings group. Ranges store a
+   * bare number, so multiply by 1px; defaults equal the V2 values. */
+  --bz-card-border: calc(var(--theme-card_border_width, 2) * 1px);
 
   /* Tailwind semantic tokens */
   --background: 43 100% 94%;
@@ -49,25 +60,31 @@
   --card-foreground: 240 30% 5%;
   --border: 42 40% 80%;
   --ring: 42 100% 50%;
-  --radius: 16px;
+  --radius: calc(var(--theme-corner_radius, 16) * 1px);
 }
 
 [data-bazar-v3-app] {
-  font-family: var(--body-font, 'Inter'), system-ui, -apple-system, sans-serif;
+  font-family: var(--theme-font-body, var(--theme-body_font, 'Inter')), system-ui, -apple-system, sans-serif;
   color: var(--bz-dark);
   background: var(--bz-cream);
   overflow-x: clip; /* hard guard against horizontal scroll */
   min-height: 100vh;
 }
 
-[data-bazar-v3-app] img {
+/* Responsive-image reset wrapped in :where() so it carries ZERO specificity —
+ * otherwise `[data-bazar-v3-app] img` (0,1,1) beats utility classes like
+ * `.h-full` (0,1,0) and forces `height:auto`, which collapses every
+ * `object-cover` frame (the image renders at its natural height with empty
+ * space below). With :where(), any utility/inline height wins, so framed
+ * cards/galleries fill correctly. */
+:where([data-bazar-v3-app] img) {
   max-width: 100%;
   height: auto;
 }
 
 /* ─── Typography ─── */
 .bz-heading {
-  font-family: var(--heading-font, 'Inter'), system-ui, sans-serif;
+  font-family: var(--theme-font-heading, var(--theme-heading_font, 'Inter')), system-ui, sans-serif;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.02em;
@@ -75,7 +92,7 @@
 }
 
 .bz-label {
-  font-family: var(--body-font, 'Inter'), system-ui, sans-serif;
+  font-family: var(--theme-font-body, var(--theme-body_font, 'Inter')), system-ui, sans-serif;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.15em;
@@ -102,6 +119,21 @@
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* ─── Announcement bar slide ───
+   Each rotation remounts the message node (keyed on the slide index), so this
+   plays on every change: the message slides up + fades in. `static` mode never
+   remounts, so it stays put. */
+.bz-ann-slide {
+  animation: bz-ann-slide-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+@keyframes bz-ann-slide-in {
+  from { opacity: 0; transform: translateY(60%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bz-ann-slide { animation: none; }
 }
 
 /* ─── Marquee ─── */
