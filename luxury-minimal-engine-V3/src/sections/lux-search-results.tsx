@@ -15,6 +15,7 @@ import {
   asString,
   localized,
   usePageData,
+  asImageUrl,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -212,8 +213,8 @@ function ProductCard({
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
   const outOfStock = product.in_stock === false;
-  const primary = product.images?.[0]?.url;
-  const secondary = product.images?.[1]?.url;
+  const primary = asImageUrl(product.images?.[0]);
+  const secondary = asImageUrl(product.images?.[1]);
 
   return (
     <Link

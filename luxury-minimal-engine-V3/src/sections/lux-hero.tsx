@@ -75,7 +75,7 @@ export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="py-16 md:py-20 md:pr-16"
+            className="py-16 md:py-20 md:pl-12 md:pr-16"
           >
             {badgeText && (
               <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6">

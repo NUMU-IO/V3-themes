@@ -19,6 +19,7 @@ import {
   asNumber,
   asString,
   localized,
+  asImageUrl,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -325,7 +326,7 @@ function LuxProductCard({
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
-  const primary = product.images?.[0]?.url;
+  const primary = asImageUrl(product.images?.[0]);
   const href = `/product/${product.slug || product.id}`;
 
   return (

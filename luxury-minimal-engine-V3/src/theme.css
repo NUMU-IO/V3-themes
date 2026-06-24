@@ -110,7 +110,14 @@
 [data-luxury-minimal-v3-app] button {
   font: inherit;
 }
-[data-luxury-minimal-v3-app] a {
+/* Zero-specificity link reset (`:where`) — sets the default link colour to
+   inherit WITHOUT out-ranking component classes. A plain
+   `[data-…-v3-app] a` selector (0,1,1) beats `.lux-btn` / `.lux-nav-link`
+   (0,1,0), which made the solid black CTA render black-on-black text (only
+   visible on hover, when the bg turns transparent). `:where()` carries 0
+   specificity, so `.lux-btn`'s white text + `.lux-nav-link`'s muted colour
+   win again, while bare links still inherit. */
+:where([data-luxury-minimal-v3-app] a) {
   text-decoration: none;
   color: inherit;
 }

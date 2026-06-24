@@ -13,7 +13,7 @@ import {
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ArrowRight, ShoppingCart, Check, Truck, RotateCcw, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
-import { asBool, asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { asBool, asNumber, asString, asImageUrl, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -108,7 +108,7 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
   }
 
   const images = product.images ?? [];
-  const mainImage = images[activeImage]?.url ?? images[0]?.url;
+  const mainImage = asImageUrl(images[activeImage]) || asImageUrl(images[0]);
   const variantPrice =
     vs.variant?.price ?? product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt =
@@ -193,7 +193,7 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
                     }
                     data-testid="storefront-product-detail-thumbnail"
                   >
-                    <img src={img.url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                    <img src={asImageUrl(img)} alt="" className="w-full h-full object-cover" loading="lazy" />
                   </button>
                 ))}
               </div>
@@ -414,9 +414,9 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
                   data-testid="storefront-product-card"
                 >
                   <div className="relative aspect-[3/4] overflow-hidden bg-[hsl(var(--lux-gray))] mb-3">
-                    {p.images?.[0]?.url ? (
+                    {asImageUrl(p.images?.[0]) ? (
                       <img
-                        src={p.images[0].url}
+                        src={asImageUrl(p.images?.[0])}
                         alt={p.name}
                         className="lux-product-image absolute inset-0 w-full h-full object-cover"
                         loading="lazy"
@@ -424,8 +424,8 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
                     ) : (
                       <div className="absolute inset-0 lux-shimmer" />
                     )}
-                    {p.images?.[1]?.url && (
-                      <img src={p.images[1].url} alt="" className="lux-product-image-secondary" loading="lazy" />
+                    {asImageUrl(p.images?.[1]) && (
+                      <img src={asImageUrl(p.images?.[1])} alt="" className="lux-product-image-secondary" loading="lazy" />
                     )}
                   </div>
                   <p className="text-sm text-foreground line-clamp-1 mb-1.5 group-hover:opacity-50 transition-opacity">

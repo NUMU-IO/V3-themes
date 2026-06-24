@@ -9,6 +9,7 @@ import {
   asString,
   localized,
   readBlocks,
+  asImageUrl,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -42,7 +43,15 @@ export default function LuxFeaturedCollection({ instance, sectionId }: SectionRe
   const locale = useLocale();
   const { products } = useProducts();
 
-  const title = asString(s.title) || localized(locale, "New Arrivals", "وصل حديثاً");
+  // Default heading follows `collection_tag` so two featured-collection sections
+  // on the same page (e.g. New Arrivals + Best Sellers) don't render an
+  // identical title. A merchant-entered `title` always wins.
+  const collectionTag = asString(s.collection_tag);
+  const defaultTitle =
+    collectionTag === "bestseller"
+      ? localized(locale, "Best Sellers", "الأكثر مبيعاً")
+      : localized(locale, "New Arrivals", "وصل حديثاً");
+  const title = asString(s.title) || defaultTitle;
   const subtitle = asString(s.subtitle);
   const viewAllLink = asString(s.view_all_link) || "/products";
   const viewAllText = asString(s.view_all_text) || localized(locale, "View All", "عرض الكل");
@@ -117,9 +126,9 @@ export default function LuxFeaturedCollection({ instance, sectionId }: SectionRe
               data-testid="storefront-product-card"
             >
               <div className="relative aspect-[3/4] overflow-hidden bg-[hsl(var(--lux-gray))] mb-3">
-                {product.images?.[0]?.url ? (
+                {asImageUrl(product.images?.[0]) ? (
                   <img
-                    src={product.images[0].url}
+                    src={asImageUrl(product.images?.[0])}
                     alt={product.name}
                     className="lux-product-image absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                     loading="lazy"
@@ -127,9 +136,9 @@ export default function LuxFeaturedCollection({ instance, sectionId }: SectionRe
                 ) : (
                   <div className="absolute inset-0 lux-shimmer" />
                 )}
-                {product.images?.[1]?.url && (
+                {asImageUrl(product.images?.[1]) && (
                   <img
-                    src={product.images[1].url}
+                    src={asImageUrl(product.images?.[1])}
                     alt=""
                     className="lux-product-image-secondary"
                     loading="lazy"
