@@ -1,61 +1,69 @@
 "use client";
 
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
- * lux-not-found — body for the `404` template, in the Luxury Minimal voice:
- * an oversized, hairline-thin "404", a quiet headline + subhead, and a single
- * understated CTA back to the catalog. Keeps a missing page feeling like the
- * brand rather than a server error. All copy is editable + bilingual.
+ * lux-not-found — body for the `404` template, in the Luxury Minimal voice.
+ * Centered, airy column: an oversized hairline-thin "404" lux-heading, a
+ * 10px/0.3em uppercase muted eyebrow, a quiet muted subtext, and a single
+ * solid-black `lux-btn` CTA back home. Sharp edges, mono palette, gold accent
+ * lives in the global tokens. Engine-wired: useResolvedSettings (global tokens
+ * + dynamic sources) + InlineEditable on every text field. All copy bilingual.
  */
-export default function LuxNotFound({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
+export default function LuxNotFound({ instance, sectionId }: SectionRenderProps) {
+  const s = useResolvedSettings(instance);
   const locale = useLocale();
 
-  const status = asString(s.status_label) || "404";
-  const headline =
-    asString(s.headline) || localized(locale, "This page slipped away", "هذه الصفحة غير موجودة");
-  const subhead =
-    asString(s.subhead) ||
+  const heading = asString(s.heading) || localized(locale, "404", "٤٠٤");
+  const eyebrow =
+    asString(s.eyebrow) || localized(locale, "Page not found", "الصفحة غير موجودة");
+  const subtext =
+    asString(s.subtext) ||
     localized(
       locale,
-      "The page you're looking for can't be found. Let's get you back to the collection.",
-      "الصفحة التي تبحث عنها غير متاحة. دعنا نعيدك إلى التشكيلة.",
+      "The page you're looking for can't be found. Let's get you back to the shop.",
+      "الصفحة التي تبحث عنها غير متاحة. دعنا نعيدك إلى المتجر.",
     );
-  const ctaText = asString(s.cta_text) || localized(locale, "Back to shop", "العودة للتسوق");
-  const ctaLink = asString(s.cta_link) || "/products";
+  const ctaText = asString(s.cta_text) || localized(locale, "Back to home", "العودة للرئيسية");
+  const ctaLink = asString(s.cta_link) || "/";
 
   return (
-    <section className="min-h-[70vh] flex items-center justify-center px-4 py-24">
+    <section
+      className="min-h-[60vh] flex items-center justify-center px-4 py-24"
+      data-lux-section={sectionId}
+    >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         className="text-center max-w-lg"
       >
-        <p className="lux-heading text-[88px] sm:text-[140px] md:text-[180px] leading-none text-foreground/10 select-none">
-          {status}
-        </p>
-        {headline && (
-          <h1 className="lux-heading text-2xl md:text-3xl text-foreground -mt-6 md:-mt-10">
-            {headline}
-          </h1>
+        <h1 className="lux-heading text-[88px] sm:text-[140px] md:text-[180px] leading-none text-foreground select-none">
+          <InlineEditable sectionId={sectionId} settingKey="heading" value={heading} />
+        </h1>
+        {eyebrow && (
+          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mt-6">
+            <InlineEditable sectionId={sectionId} settingKey="eyebrow" value={eyebrow} />
+          </p>
         )}
-        {subhead && (
+        {subtext && (
           <p className="text-muted-foreground text-sm leading-relaxed mt-4 max-w-sm mx-auto">
-            {subhead}
+            <InlineEditable
+              sectionId={sectionId}
+              settingKey="subtext"
+              value={subtext}
+              multiline
+            />
           </p>
         )}
         {ctaText && (
-          <Link
-            to={ctaLink}
-            className="inline-flex items-center gap-2 lux-btn mt-8"
-          >
-            <ArrowLeft size={14} />
-            {ctaText}
+          <Link to={ctaLink} className="inline-flex items-center gap-2 lux-btn mt-8">
+            <ArrowLeft size={14} aria-hidden="true" className="rtl:-scale-x-100" />
+            <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
           </Link>
         )}
       </motion.div>

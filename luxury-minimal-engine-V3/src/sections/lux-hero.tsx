@@ -1,37 +1,35 @@
 "use client";
-import { Link } from "@numueg/theme-sdk";
+
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { useLocale } from "@numueg/theme-sdk";
 import {
   applyImageTransform,
   asImageTransform,
+  asImageUrl,
   asString,
   localized,
   type SectionRenderProps,
 } from "./_shared";
-
-/** Read an image-picker value's URL. The editor stores it as a plain URL string
- *  (legacy / no-transform) or as `{ url, alt?, transform }` once a focal/zoom/
- *  rotation is set. asString() can't see the object's url, so resolve it here. */
-function imagePickerUrl(v: unknown): string {
-  if (typeof v === "string") return v;
-  if (v && typeof v === "object" && typeof (v as { url?: unknown }).url === "string") {
-    return (v as { url: string }).url;
-  }
-  return "";
-}
+import { InlineEditable } from "./_inline-editable";
 
 /**
- * Luxury Minimal hero — faithful port of the V2 LuxHero
- * (numu-egyptian-bazaar/src/themes/luxury-minimal/sections/hero/LuxHero.tsx):
- * split 2-col layout, image left / content right, all className strings kept
- * verbatim. Re-plumbed on the V3 SDK `Link`.
+ * lux-hero — faithful V3 port of the V2 LuxHero
+ * (numu-egyptian-bazaar/src/themes/luxury-minimal/sections/hero/LuxHero.tsx).
+ *
+ * Split 2-column layout: an image on the LEFT (hidden on mobile,
+ * `object-contain` over a light-gray frame — matches V2 verbatim), refined
+ * content on the RIGHT — a
+ * 10px/0.3em eyebrow badge, an uppercase wide-tracked `lux-heading`, a muted
+ * subtitle, and a solid-black `lux-btn` CTA with a trailing ArrowLeft. All V2
+ * className strings kept verbatim. Engine-wired: useResolvedSettings (so global
+ * tokens + dynamic sources resolve) and InlineEditable on every text field.
  */
-export default function LuxHero({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
+export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
+  const s = useResolvedSettings(instance);
   const locale = useLocale();
 
+  const badgeText = asString(s.badge_text);
   const headline =
     asString(s.headline) ||
     localized(locale, "Discover the Art of Refined Elegance", "اكتشف فن الأناقة الراقية");
@@ -40,35 +38,33 @@ export default function LuxHero({ instance }: SectionRenderProps) {
     localized(
       locale,
       "A curated edit of clothing and accessories — contemporary design, exceptional quality.",
-      "تشكيلة مميزة من الملابس والإكسسوارات بتصميم عصري وجودة عالية",
+      "تشكيلة مميزة من الملابس والإكسسوارات بتصميم عصري وجودة عالية.",
     );
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
-  const heroImageUrl = imagePickerUrl(s.hero_image_url) || asString(s.hero_image_url);
+  const heroImageUrl = asImageUrl(s.hero_image_url);
   // Non-destructive focal/zoom/rotation. Undefined → image renders unchanged.
   const heroImageTransform = asImageTransform(s.hero_image_url);
-  const badgeText = asString(s.badge_text) || localized(locale, "New Collection", "مجموعة جديدة");
 
   return (
-    <section className="relative">
+    <section className="relative" data-lux-section={sectionId}>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-0 min-h-[70vh] items-center">
-          {/* Left: Image */}
+          {/* Left: Image (object-contain over a light-gray frame — V2 parity) */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
             className="hidden md:block h-full"
           >
-            <div className="relative h-full overflow-hidden bg-[hsl(var(--lux-gray))]">
+            <div className="h-full bg-[hsl(var(--lux-gray))]">
               {heroImageUrl && (
-                // Shopify-style framed image: COVERS the column (fills the
-                // frame, crops to the focal point) instead of letterboxing.
                 <img
                   src={heroImageUrl}
                   alt=""
-                  className="absolute inset-0 w-full h-full object-cover"
-                  style={applyImageTransform(heroImageTransform, "cover")}
+                  className="w-full h-full object-contain"
+                  style={applyImageTransform(heroImageTransform, "contain")}
+                  loading="eager"
                 />
               )}
             </div>
@@ -83,22 +79,24 @@ export default function LuxHero({ instance }: SectionRenderProps) {
           >
             {badgeText && (
               <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6">
-                {badgeText}
+                <InlineEditable sectionId={sectionId} settingKey="badge_text" value={badgeText} />
               </p>
             )}
-            {headline && (
-              <h1 className="lux-heading text-3xl md:text-4xl text-foreground mb-6 leading-relaxed">
-                {headline}
-              </h1>
-            )}
-            {subtitle && (
-              <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-sm">
-                {subtitle}
-              </p>
-            )}
+            <h1 className="lux-heading text-3xl md:text-4xl text-foreground mb-6 leading-relaxed">
+              <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
+            </h1>
+            <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-sm">
+              <InlineEditable
+                sectionId={sectionId}
+                settingKey="subtitle"
+                value={subtitle}
+                multiline
+              />
+            </p>
             {ctaText && (
               <Link to={ctaLink} className="inline-flex items-center gap-2 lux-btn">
-                {ctaText} <ArrowLeft size={14} />
+                <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
+                <ArrowLeft size={14} aria-hidden="true" className="rtl:-scale-x-100" />
               </Link>
             )}
           </motion.div>

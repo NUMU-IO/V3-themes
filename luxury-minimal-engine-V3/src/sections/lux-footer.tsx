@@ -155,7 +155,7 @@ export default function LuxFooter({ instance, sectionId }: SectionRenderProps) {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-10 mb-0 flex flex-col items-center gap-2">
+        <div className="mt-10 mb-6 flex flex-col items-center gap-2">
           <span className="w-full text-center text-[10px] uppercase tracking-[0.2em] opacity-30">
             &copy; {new Date().getFullYear()} {brandName}
           </span>

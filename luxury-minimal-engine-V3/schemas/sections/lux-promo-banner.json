@@ -1,58 +1,73 @@
 {
   "type": "lux-promo-banner",
-  "name": "Promotional Banner",
-  "name_ar": "بانر ترويجي",
+  "name": "Promo Banner",
+  "name_ar": "بانر العرض",
+  "limit": 2,
   "settings": [
+    { "type": "header", "content": "Content" },
     {
-      "type": "header",
-      "content": "Content"
-    },
-    {
+      "type": "text",
       "id": "badge_text",
-      "type": "text",
-      "label": "Badge Text",
+      "label": "Eyebrow / badge",
       "label_ar": "نص الشارة",
-      "default": ""
+      "default": "",
+      "info": "Small uppercase label above the headline (e.g. Limited Offer)."
     },
     {
+      "type": "text",
       "id": "headline",
-      "type": "text",
       "label": "Headline",
-      "label_ar": "العنوان",
+      "label_ar": "العنوان الرئيسي",
       "default": ""
     },
     {
+      "type": "textarea",
       "id": "subtitle",
-      "type": "text",
       "label": "Subtitle",
-      "label_ar": "عنوان فرعي",
+      "label_ar": "العنوان الفرعي",
       "default": ""
     },
+    { "type": "header", "content": "Call to action" },
     {
-      "id": "cta_text",
       "type": "text",
-      "label": "Button Text",
+      "id": "cta_text",
+      "label": "Button text",
       "label_ar": "نص الزر",
       "default": ""
     },
     {
-      "id": "cta_link",
       "type": "url",
-      "label": "Button Link",
+      "id": "cta_link",
+      "label": "Button link",
       "label_ar": "رابط الزر",
-      "default": "/products"
+      "default": "/products?category=accessories"
     },
+    { "type": "header", "content": "Media" },
     {
-      "type": "header",
-      "content": "Media"
-    },
-    {
-      "id": "image_url",
       "type": "image_picker",
-      "label": "Image",
-      "label_ar": "الصورة",
+      "id": "image_url",
+      "label": "Banner image",
+      "label_ar": "صورة البانر",
       "aspect_ratio": "4/3",
+      "info": "Shown on the left (40% width). Falls back to a shopping-bag glyph when empty.",
       "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promo Banner",
+      "locales": {
+        "en": { "name": "Promo Banner" },
+        "ar": { "name": "بانر العرض" }
+      },
+      "settings": {
+        "badge_text": "",
+        "headline": "",
+        "subtitle": "",
+        "cta_text": "",
+        "cta_link": "/products?category=accessories",
+        "image_url": ""
+      }
     }
   ]
 }

@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import {
   Link,
@@ -7,9 +8,11 @@ import {
   useCustomerActions,
   useCustomerAddresses,
   useLocale,
+  useResolvedSettings,
   type CustomerAddress,
 } from "@numueg/theme-sdk";
 import {
+  ArrowRight,
   LogOut,
   User,
   Loader2,
@@ -20,27 +23,40 @@ import {
   Trash2,
   Home,
   Briefcase,
+  Eye,
+  EyeOff,
   X,
 } from "lucide-react";
-import { asString, localized, type SectionRenderProps } from "./_shared";
+import { asBool, asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
- * Luxury Minimal account / profile section.
+ * lux-profile — Luxury Minimal account / profile section.
  *
- * Ported from the proven Vionne V3 profile section (sidebar with avatar +
- * stats + Orders/Addresses/Settings nav + logout; content area with the three
- * tabs — order history, address book CRUD, profile + password forms; logged-out
- * auth guard) and re-skinned to luxury-minimal: sharp edges, uppercase tracked
- * headings, `lux-input` / `lux-btn` controls, hairline borders.
+ * Faithful V3 port of the V2 luxury-minimal profile page, re-plumbed on the V3
+ * SDK. Structure mirrors the bazar V3 exemplar (breadcrumb, sidebar [avatar,
+ * name/email, orders/spent stats, Orders/Addresses/Settings nav, logout], and a
+ * content area with the three tabs — orders list, address book with
+ * add/edit/delete/set-default form, and settings with profile + password forms)
+ * but skinned to luxury-minimal: white canvas, near-black ink, warm gold accent,
+ * SHARP edges (no radius), uppercase wide-tracked headings, hairline 1px borders,
+ * `lux-input` / `lux-btn` / `lux-btn-outline` controls.
  *
- * Data/actions are SDK-native (useCustomer / useOrders / useCustomerAddresses /
- * useCustomerActions). Never blank / never crashes: logged-out → auth guard,
- * logged-in but empty → empty states, loading → spinners.
+ * Data/actions are SDK-native:
+ *  - useCustomer()          → identity (null ⇒ logged-out auth guard)
+ *  - useOrders()            → order history (gated on the customer)
+ *  - useCustomerAddresses() → address book + CRUD mutations
+ *  - useCustomerActions()   → logout + updateProfile + changePassword
+ *
+ * Never blank / never crashes: logged-out renders the auth guard; logged-in but
+ * empty renders the V2 empty states; loading shows spinners. Engine-wired:
+ * useResolvedSettings (global tokens + dynamic sources) and InlineEditable on
+ * the STATIC section headings only — never on live user data.
  */
 
 type Tab = "orders" | "addresses" | "settings";
 
-const statusLabels = (locale: string): Record<string, string> => ({
+const statusLabels = (locale: string | undefined): Record<string, string> => ({
   pending: localized(locale, "Pending", "قيد الانتظار"),
   confirmed: localized(locale, "Confirmed", "مؤكد"),
   processing: localized(locale, "Processing", "قيد التجهيز"),
@@ -50,8 +66,18 @@ const statusLabels = (locale: string): Record<string, string> => ({
   refunded: localized(locale, "Refunded", "مسترد"),
 });
 
+const paymentLabels = (locale: string | undefined): Record<string, string> => ({
+  pending: localized(locale, "Payment pending", "الدفع قيد الانتظار"),
+  paid: localized(locale, "Paid", "مدفوع"),
+  partially_paid: localized(locale, "Partially paid", "مدفوع جزئياً"),
+  refunded: localized(locale, "Refunded", "مسترد"),
+  partially_refunded: localized(locale, "Partially refunded", "مسترد جزئياً"),
+  failed: localized(locale, "Payment failed", "فشل الدفع"),
+  voided: localized(locale, "Voided", "ملغي"),
+});
+
 const LABEL_ICON: Record<string, typeof Home> = { home: Home, work: Briefcase, other: MapPin };
-const labelName = (locale: string): Record<string, string> => ({
+const labelName = (locale: string | undefined): Record<string, string> => ({
   home: localized(locale, "Home", "المنزل"),
   work: localized(locale, "Work", "العمل"),
   other: localized(locale, "Other", "آخر"),
@@ -66,16 +92,18 @@ const EMPTY_ADDRESS: Partial<CustomerAddress> = {
   label: "home",
 };
 
-export default function LuxProfileSection({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
+export default function LuxProfile({ instance, sectionId }: SectionRenderProps) {
+  const s = useResolvedSettings(instance);
   const locale = useLocale();
   const STATUS_LABELS = statusLabels(locale);
+  const PAYMENT_LABELS = paymentLabels(locale);
   const LABEL_NAME = labelName(locale);
   const title = asString(s.title) || localized(locale, "My Account", "حسابي");
   const ordersTitle = asString(s.orders_title) || localized(locale, "My Orders", "طلباتي");
   const addressesTitle = asString(s.addresses_title) || localized(locale, "My Addresses", "عناويني");
   const settingsTitle = asString(s.settings_title) || localized(locale, "Settings", "الإعدادات");
-  const showStats = s.show_stats ?? true;
+  const passwordTitle = asString(s.password_title) || localized(locale, "Change password", "تغيير كلمة المرور");
+  const showStats = asBool(s.show_stats, true);
 
   const customer = useCustomer();
   const { orders, loading: loadingOrders } = useOrders();
@@ -98,6 +126,7 @@ export default function LuxProfileSection({ instance }: SectionRenderProps) {
   const [savingProfile, setSavingProfile] = useState(false);
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
+  const [showPw, setShowPw] = useState(false);
   const [changingPw, setChangingPw] = useState(false);
 
   useEffect(() => {
@@ -114,15 +143,17 @@ export default function LuxProfileSection({ instance }: SectionRenderProps) {
   const [form, setForm] = useState<Partial<CustomerAddress>>(EMPTY_ADDRESS);
   const [savingAddress, setSavingAddress] = useState(false);
 
-  // ── Logged-out auth guard ────────────────────────────────────────
+  // ── Logged-out auth guard (matches V2) ───────────────────────────
   if (!customer) {
     return (
-      <div className="bg-background">
+      <div className="bg-background min-h-[70vh]" data-lux-section={sectionId}>
         <div className="container mx-auto px-4 py-20 text-center">
           <div className="w-14 h-14 border border-border flex items-center justify-center mx-auto mb-5">
-            <User size={22} className="text-muted-foreground" />
+            <User size={22} className="lux-gold" />
           </div>
-          <p className="lux-heading text-lg text-foreground mb-1">{localized(locale, "Sign in to view your account", "سجّل الدخول لعرض حسابك")}</p>
+          <p className="lux-heading text-lg text-foreground mb-1">
+            {localized(locale, "Sign in to view your account", "سجّل الدخول لعرض حسابك")}
+          </p>
           <p className="text-xs text-muted-foreground mb-6">
             {localized(locale, "Track orders and manage addresses and settings", "تتبع الطلبات وإدارة العناوين والإعدادات")}
           </p>
@@ -220,15 +251,17 @@ export default function LuxProfileSection({ instance }: SectionRenderProps) {
   const headingClass = "text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-5";
 
   return (
-    <div className="bg-background" data-testid="storefront-profile">
+    <div className="bg-background min-h-[70vh]" data-lux-section={sectionId} data-testid="storefront-profile">
       <div className="container mx-auto px-4 py-8 md:py-12">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-8">
           <Link to="/" className="hover:text-foreground transition-colors">
             {localized(locale, "Home", "الرئيسية")}
           </Link>
-          <span>/</span>
-          <span className="text-foreground">{title}</span>
+          <ArrowRight size={10} className="rtl:rotate-180" aria-hidden="true" />
+          <span className="text-foreground">
+            <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
+          </span>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
@@ -246,13 +279,13 @@ export default function LuxProfileSection({ instance }: SectionRenderProps) {
               <div className="flex gap-4 mb-6 pb-6 border-b border-border">
                 <div>
                   <p className="text-lg font-medium text-foreground">{orders.length}</p>
-                  <p className="text-[10px] text-muted-foreground">{localized(locale, "Orders", "طلبات")}</p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{localized(locale, "Orders", "طلبات")}</p>
                 </div>
                 <div>
                   <p className="text-lg font-medium text-foreground">
                     {totalSpent.toLocaleString("en-US")}
                   </p>
-                  <p className="text-[10px] text-muted-foreground">{localized(locale, "EGP", "ج.م")}</p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{localized(locale, "EGP", "ج.م")}</p>
                 </div>
               </div>
             )}
@@ -285,9 +318,9 @@ export default function LuxProfileSection({ instance }: SectionRenderProps) {
             <button
               type="button"
               onClick={() => logout()}
-              className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="lux-btn-outline inline-flex items-center gap-2"
             >
-              <LogOut size={13} />
+              <LogOut size={13} aria-hidden="true" />
               {localized(locale, "Sign out", "تسجيل الخروج")}
             </button>
           </div>
@@ -297,7 +330,9 @@ export default function LuxProfileSection({ instance }: SectionRenderProps) {
             {/* ─── Orders ─── */}
             {activeTab === "orders" && (
               <div>
-                <h2 className={headingClass}>{ordersTitle}</h2>
+                <h2 className={headingClass}>
+                  <InlineEditable sectionId={sectionId} settingKey="orders_title" value={ordersTitle} />
+                </h2>
                 {loadingOrders ? (
                   <div className="flex justify-center py-16">
                     <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
@@ -353,6 +388,11 @@ export default function LuxProfileSection({ instance }: SectionRenderProps) {
                             </span>
                           </div>
                         </div>
+                        {order.payment_status && (
+                          <span className="text-[10px] text-muted-foreground">
+                            {PAYMENT_LABELS[order.payment_status] || order.payment_status}
+                          </span>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -364,7 +404,9 @@ export default function LuxProfileSection({ instance }: SectionRenderProps) {
             {activeTab === "addresses" && (
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className={headingClass + " mb-0"}>{addressesTitle}</h2>
+                  <h2 className={headingClass + " mb-0"}>
+                    <InlineEditable sectionId={sectionId} settingKey="addresses_title" value={addressesTitle} />
+                  </h2>
                   {!showAddressForm && (
                     <button
                       type="button"
@@ -585,7 +627,9 @@ export default function LuxProfileSection({ instance }: SectionRenderProps) {
             {activeTab === "settings" && (
               <div className="space-y-8">
                 <div>
-                  <h2 className={headingClass}>{settingsTitle}</h2>
+                  <h2 className={headingClass}>
+                    <InlineEditable sectionId={sectionId} settingKey="settings_title" value={settingsTitle} />
+                  </h2>
                   <div className="border border-border p-5 space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
@@ -636,21 +680,33 @@ export default function LuxProfileSection({ instance }: SectionRenderProps) {
                 </div>
 
                 <div>
-                  <h2 className={headingClass}>{localized(locale, "Change password", "تغيير كلمة المرور")}</h2>
+                  <h2 className={headingClass}>
+                    <InlineEditable sectionId={sectionId} settingKey="password_title" value={passwordTitle} />
+                  </h2>
                   <div className="border border-border p-5 space-y-3">
                     <div>
                       <label className={labelClass}>{localized(locale, "Current password", "كلمة المرور الحالية")}</label>
-                      <input
-                        type="password"
-                        value={currentPw}
-                        onChange={(e) => setCurrentPw(e.target.value)}
-                        className={inputClass}
-                      />
+                      <div className="relative">
+                        <input
+                          type={showPw ? "text" : "password"}
+                          value={currentPw}
+                          onChange={(e) => setCurrentPw(e.target.value)}
+                          className={inputClass + " pe-10"}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPw((v) => !v)}
+                          className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                          aria-label={showPw ? localized(locale, "Hide password", "إخفاء كلمة المرور") : localized(locale, "Show password", "إظهار كلمة المرور")}
+                        >
+                          {showPw ? <EyeOff size={14} /> : <Eye size={14} />}
+                        </button>
+                      </div>
                     </div>
                     <div>
                       <label className={labelClass}>{localized(locale, "New password", "كلمة المرور الجديدة")}</label>
                       <input
-                        type="password"
+                        type={showPw ? "text" : "password"}
                         value={newPw}
                         onChange={(e) => setNewPw(e.target.value)}
                         placeholder={localized(locale, "Min 8 characters", "8 أحرف على الأقل")}
