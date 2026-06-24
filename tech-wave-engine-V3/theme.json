@@ -2,7 +2,7 @@
   "id": "tech-wave-v3",
   "name": "Tech wave (V3)",
   "author": "NUMU",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "layout": "single-column",
   "description": "Tech Wave (V3) — futuristic dark storefront with neon accents and glassmorphism, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",

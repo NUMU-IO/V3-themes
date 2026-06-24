@@ -2,7 +2,7 @@
   "id": "kick-game-v3",
   "name": "Kick game (V3)",
   "author": "NUMU",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "layout": "single-column",
   "description": "Kick Game (V3) — warm minimalist luxury streetwear, dense editorial grid, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
