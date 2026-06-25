@@ -23,10 +23,26 @@ on:
         description: "Theme dir (e.g. luxury-minimal-engine-V3) or 'all'"
         required: false
         default: "all"
+      sdk_version:
+        description: "Pin @numueg/theme-* deps to this version before building (e.g. 0.4.0). Blank = use each theme's pinned version."
+        required: false
+        default: ""
+      commit_bumps:
+        description: "Commit the package.json version bumps back to the repo (only with sdk_version)"
+        type: boolean
+        default: false
+      strict:
+        description: "Fail the whole run if any theme fails to build"
+        type: boolean
+        default: false
   push:
     branches: [main]
     paths:
       - "*-engine-V3/**"
+
+# Needed only for the optional `commit_bumps` push-back step.
+permissions:
+  contents: write
 
 concurrency:
   group: deploy-v3-themes
@@ -48,6 +64,41 @@ jobs:
 
       - name: Install boto3
         run: pip install --quiet boto3
+
+      # When an sdk_version is passed, rewrite every theme's @numueg/theme-*
+      # dependency (deps/devDeps/peerDeps) to that version BEFORE install — a
+      # `^0.4.0` pin will never resolve a freshly-published 0.5.0 on its own.
+      - name: Pin @numueg/theme-* deps to sdk_version
+        if: ${{ github.event.inputs.sdk_version != '' }}
+        env:
+          SDK_VERSION: ${{ github.event.inputs.sdk_version }}
+        run: |
+          node - <<'NODE'
+          const fs = require('fs'), path = require('path');
+          const ver = process.env.SDK_VERSION.replace(/^[\^~]/, '');
+          const range = '^' + ver;
+          let changed = 0;
+          for (const d of fs.readdirSync('.')) {
+            if (!d.endsWith('-engine-V3')) continue;
+            const pj = path.join(d, 'package.json');
+            if (!fs.existsSync(pj)) continue;
+            const j = JSON.parse(fs.readFileSync(pj, 'utf8'));
+            let touched = false;
+            for (const k of ['dependencies', 'devDependencies', 'peerDependencies']) {
+              if (!j[k]) continue;
+              for (const name of Object.keys(j[k])) {
+                if (/^@numueg\/theme-/.test(name) && j[k][name] !== range) {
+                  j[k][name] = range; touched = true;
+                }
+              }
+            }
+            if (touched) {
+              fs.writeFileSync(pj, JSON.stringify(j, null, 2) + '\n');
+              changed++; console.log('pinned ' + d + ' -> @numueg/theme-* ' + range);
+            }
+          }
+          console.log('Updated ' + changed + ' theme(s) to ' + range);
+          NODE
 
       - name: Write R2 creds + SSH key
         env:
@@ -77,6 +128,7 @@ jobs:
           BUNDLE_BASE: ${{ secrets.S3_PUBLIC_URL }}
           DROPLET: ${{ secrets.STAGING_SSH_USER }}@${{ secrets.STAGING_HOST }}
           THEME_INPUT: ${{ github.event.inputs.theme }}
+          STRICT: ${{ github.event.inputs.strict }}
           CONTAINER: numu-api-test
         run: |
           set -u
@@ -89,6 +141,9 @@ jobs:
             echo "::group::$d"
             if ! ( cd "$d" && npm install --no-audit --no-fund && npx numu-theme build ); then
               echo "::error::build failed for $d"; failed="$failed $d"; fail=$((fail+1)); echo "::endgroup::"; continue
+            fi
+            if [ ! -f "$d/theme.json" ] || [ ! -f "$d/dist/theme.js" ]; then
+              echo "::error::missing theme.json or dist/theme.js for $d"; failed="$failed $d"; fail=$((fail+1)); echo "::endgroup::"; continue
             fi
             SLUG=$(node -e "console.log(require('./$d/theme.json').id)")
             VER=$(node -e "console.log(require('./$d/theme.json').version)")
@@ -103,5 +158,23 @@ jobs:
             echo "::endgroup::"
           done
           echo "Deployed $ok theme(s); $fail failed.$failed"
-          # A build failure on one theme shouldn't fail the whole run, but make
-          # it visible. Flip to `exit 1` here if you want a hard gate.
+          if [ "$STRICT" = "true" ] && [ "$fail" -gt 0 ]; then
+            echo "::error::strict mode: $fail theme(s) failed"; exit 1
+          fi
+
+      # Persist the SDK pin back to the repo so the committed pins match what
+      # was deployed. `[skip ci]` keeps the push-trigger from re-running us.
+      - name: Commit version bumps
+        if: ${{ github.event.inputs.sdk_version != '' && github.event.inputs.commit_bumps == 'true' }}
+        env:
+          SDK_VERSION: ${{ github.event.inputs.sdk_version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ./*-engine-V3/package.json
+          if git diff --cached --quiet; then
+            echo "no package.json changes to commit"
+          else
+            git commit -m "chore(themes): pin @numueg/theme-* to $SDK_VERSION [skip ci]"
+            git push
+          fi
