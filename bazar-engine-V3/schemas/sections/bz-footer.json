@@ -2,6 +2,7 @@
   "type": "bz-footer",
   "name": "Bazar Footer",
   "name_ar": "بازار تذييل",
+  "tag": "footer",
   "limit": 1,
   "settings": [
     {

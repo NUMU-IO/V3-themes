@@ -2,6 +2,7 @@
   "type": "bz-header",
   "name": "Bazar Header",
   "name_ar": "بازار ترويسة",
+  "tag": "header",
   "limit": 1,
   "settings": [
     {
