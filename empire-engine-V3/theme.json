@@ -2,7 +2,7 @@
   "id": "empire-v3",
   "name": "Empire (V3)",
   "author": "NUMU",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "layout": "single-column",
   "description": "Empire (V3) — premium editorial storefront. Monochrome black-on-off-white palette, electric-blue accent, wide expanded display type, frosted-glass header, and a full multipage set (home, listing, product, cart, search, 404).",
   "error_template": "templates/error.html",

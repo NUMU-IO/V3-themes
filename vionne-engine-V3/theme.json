@@ -2,13 +2,30 @@
   "id": "vionne-v3",
   "name": "Vionne (V3)",
   "author": "NUMU",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "layout": "single-column",
   "description": "Vionne (V3) — refined grayscale storefront for modest fashion, ported faithfully from the V2 in-tree theme. Now with an editable Vionne header + footer included across every page.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
     "templates": {
+      "404": {
+        "name": "404 — Not found",
+        "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
+            "type": "vionne-not-found",
+            "settings": {}
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
+          }
+        ]
+      },
       "home": {
         "name": "Home",
         "sections": [
@@ -312,23 +329,6 @@
         "sections": [
           {
             "type": "vionne-header",
-            "settings": {}
-          },
-          {
-            "type": "vionne-footer",
-            "settings": {}
-          }
-        ]
-      },
-      "404": {
-        "name": "404 — Not found",
-        "sections": [
-          {
-            "type": "vionne-header",
-            "settings": {}
-          },
-          {
-            "type": "vionne-not-found",
             "settings": {}
           },
           {

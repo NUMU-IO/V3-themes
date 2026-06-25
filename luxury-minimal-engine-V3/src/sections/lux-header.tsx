@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   Link,
+  logoImgStyle,
   useCart,
   useCollections,
   useLocale,
@@ -67,14 +68,15 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
     shop?.logo_url ||
     "";
 
-  // Merchant-chosen logo appearance. `none` keeps the original artwork
-  // (object-contain, no crop); square/rounded/circle/triangle crop the logo
-  // into that shape (object-cover in a 1:1 box). A plain <img> renders the
-  // source as-is, so animated GIF logos keep spinning under every shape.
-  const { className: logoClass, style: logoStyle } = logoImgProps(
-    asString(s.logo_shape) || "none",
-    asString(s.logo_size) || "small",
-  );
+  // Merchant-chosen logo appearance, now an ENGINE-LEVEL feature: shape + size
+  // live in GLOBAL settings and the shaping is computed by the SDK's shared
+  // `logoImgStyle` (inline styles, GIF-safe) so every theme renders it the same
+  // way. `none` keeps the original artwork (theme's own h-7 sizing); the shapes
+  // crop a 1:1 box.
+  const logoShape = asString(themeSettings.global_settings?.logo_shape) || "none";
+  const logoSize = asString(themeSettings.global_settings?.logo_size) || "small";
+  const logoShaped = logoShape !== "none";
+  const logoStyle = logoImgStyle(logoShape, logoSize);
 
   const announcement = asString(s.announcement_text);
   const showAnnouncement = (s.show_announcement as boolean) !== false;
@@ -113,7 +115,12 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
   /* ── Reusable pieces (ported from V2 LuxStoreHeader) ── */
 
   const logoSmall: ReactNode = logoUrl ? (
-    <img src={logoUrl} alt={brandName} className={logoClass} style={logoStyle} />
+    <img
+      src={logoUrl}
+      alt={brandName}
+      className={logoShaped ? undefined : "h-7 object-contain"}
+      style={logoStyle}
+    />
   ) : (
     <span className="lux-heading text-foreground text-lg">
       <InlineEditable sectionId={sectionId} settingKey="brand_name" value={brandName} />
@@ -312,51 +319,4 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
       )}
     </header>
   );
-}
-
-/**
- * Logo <img> className + style for the merchant-chosen shape and size.
- * `none` keeps the original artwork (height-only, object-contain); square /
- * rounded / circle / triangle crop a 1:1 box with object-cover. All class
- * strings are literal so Tailwind's JIT keeps them in the build. Triangle has
- * no Tailwind utility, so it uses an inline clip-path.
- */
-function logoImgProps(
-  shape: string,
-  size: string,
-): { className: string; style?: CSSProperties } {
-  if (shape === "none" || !shape) {
-    const h = size === "large" ? "h-12" : size === "medium" ? "h-9" : "h-7";
-    return { className: `${h} object-contain` };
-  }
-  // Circle and rounded only reveal the inscribed disc, so they read smaller
-  // than a square/triangle at the same box — give them a larger frame so the
-  // logo stays legible.
-  const rounded = shape === "circle" || shape === "rounded";
-  const box = rounded
-    ? size === "large"
-      ? "h-20 w-20"
-      : size === "medium"
-        ? "h-16 w-16"
-        : "h-12 w-12"
-    : size === "large"
-      ? "h-14 w-14"
-      : size === "medium"
-        ? "h-10 w-10"
-        : "h-8 w-8";
-  const base = `${box} object-cover`;
-  switch (shape) {
-    case "circle":
-      return { className: `${base} rounded-full` };
-    case "rounded":
-      return { className: `${base} rounded-lg` };
-    case "triangle":
-      return {
-        className: base,
-        style: { clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)" },
-      };
-    case "square":
-    default:
-      return { className: base };
-  }
 }

@@ -18,34 +18,7 @@
       "id": "logo_url",
       "label": "Logo",
       "label_ar": "الشعار",
-      "info": "Falls back to the brand name text. Animated GIFs are supported (e.g. a spinning logo)."
-    },
-    {
-      "type": "select",
-      "id": "logo_shape",
-      "label": "Logo shape",
-      "label_ar": "شكل الشعار",
-      "default": "none",
-      "info": "Crops the logo into a shape. 'Original' keeps it untouched. Circle/Square/Triangle look best with a square logo.",
-      "options": [
-        { "value": "none", "label": "Original", "label_ar": "الأصلي" },
-        { "value": "square", "label": "Square", "label_ar": "مربع" },
-        { "value": "rounded", "label": "Rounded square", "label_ar": "مربع بزوايا دائرية" },
-        { "value": "circle", "label": "Circle", "label_ar": "دائرة" },
-        { "value": "triangle", "label": "Triangle", "label_ar": "مثلث" }
-      ]
-    },
-    {
-      "type": "select",
-      "id": "logo_size",
-      "label": "Logo size",
-      "label_ar": "حجم الشعار",
-      "default": "small",
-      "options": [
-        { "value": "small", "label": "Small", "label_ar": "صغير" },
-        { "value": "medium", "label": "Medium", "label_ar": "متوسط" },
-        { "value": "large", "label": "Large", "label_ar": "كبير" }
-      ]
+      "info": "Falls back to the brand name text. Animated GIFs are supported (e.g. a spinning logo). Shape & size are in Theme settings → Brand."
     },
     {
       "type": "select",
