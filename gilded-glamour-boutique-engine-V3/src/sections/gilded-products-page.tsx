@@ -1,357 +1,272 @@
 "use client";
+
 import { useMemo, useState } from "react";
-import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
-import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, localized, type SectionRenderProps } from "./_shared";
+import {
+  useCollectionOptional,
+  useCurrentTemplate,
+  useLocale,
+  useProducts,
+  useResolvedSettings,
+  type Product,
+} from "@numueg/theme-sdk";
+import { Search, SlidersHorizontal } from "lucide-react";
+import { motion } from "framer-motion";
+import { asNumber, asString, localized, usePageData, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
+import { GildedProductCard } from "./_product-card";
 
 /**
- * Gilded products-listing (PLP) section.
+ * gilded-products-page — faithful V3 port of the V2 GildedProductsPage
+ * (numu-egyptian-bazaar/src/components/store/gilded-glamour-boutique/GildedProductsPage.tsx)
+ * + its GildedProductCard (shared here via ./_product-card).
  *
- * Faithful port of the proven Vionne V3 products page re-skinned to the
- * Gilded palette via the re-mapped `--vn-*` tokens in theme.css.
+ * Serves BOTH the `products` and `collection` templates. On a collection route
+ * `useCollectionOptional()` returns the active collection (its name → hero
+ * title, its `.products` → the grid source); on the all-products route
+ * `useProducts()` supplies the catalog and the category chips.
  *
- * Data: `useProducts()` returns the SSR-prefetched catalog (the host passes
- * `page.data.products` on the products route). Category chips are derived
- * client-side from `product.category`; search, sort and the grid/list toggle
- * are all client-side, matching V2.
+ * Layout kept VERBATIM from V2:
+ *  - Black hero strip `bg-foreground py-12 md:py-20`, gold Montserrat title
+ *    `text-4xl md:text-6xl font-bold tracking-[0.08em] uppercase`, product-count
+ *    subtitle `text-card/50 tracking-[0.2em] uppercase`.
+ *  - Filters bar `flex flex-wrap items-center gap-3 mb-10`: search input
+ *    (`gld-input h-10 ps-9` + Search icon), category pills (`gld-chip` /
+ *    `gld-chip-active`, `text-[10px] tracking-[0.15em] uppercase px-4 py-2`)
+ *    built from the catalog's product categories, sort select (`gld-input` —
+ *    Newest / Price asc / Price desc).
+ *  - Grid `grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-6` driven by
+ *    `columns_desktop` / `columns_mobile` CSS vars; renders the shared
+ *    GildedProductCard. `gld-shimmer` skeletons while loading; empty state =
+ *    SlidersHorizontal + "No Products Found".
  *
- * Empty-safe: zero products → the empty state (hairline + message), never a
- * blank page; a still-loading list shows shimmer placeholders.
+ * Engine-wired: `useResolvedSettings` (global tokens + dynamic sources + draft
+ * preview), `useLocale` for bilingual defaults, `InlineEditable` on the hero
+ * title. The brand gold reads `--gilded-gold` so the merchant's Accent picker
+ * repaints it. Default colours are byte-identical to V2.
  */
-export default function GildedProductsPage({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
-
-  const colsDesktop = asNumber(s.columns_desktop, 4);
-  const colsMobile = asNumber(s.columns_mobile, 2);
-  const showViewToggle = s.show_view_toggle ?? true;
+export default function GildedProductsPage({ instance, sectionId }: SectionRenderProps) {
+  const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const template = useCurrentTemplate();
+  const isCollection = template === "collection";
 
-  const { products, loading } = useProducts();
+  // On a collection route the host hands us the active collection (name +
+  // its products). `useCollectionOptional()` only resolves when a
+  // CollectionProvider wraps the section; the storefront instead forwards the
+  // resolved collection in the mount page data, so fall back to that so the
+  // hero title shows the real collection name and the grid uses its products.
+  const pageData = usePageData();
+  const collection =
+    useCollectionOptional() ??
+    ((pageData?.data as { collection?: { name?: string; products?: unknown[] } } | undefined)
+      ?.collection ??
+      null);
+  const { products: catalogProducts, loading } = useProducts();
+
+  // Source of products: a collection's own list when present, else the catalog.
+  const collectionProducts = collection?.products as Product[] | undefined;
+  const sourceProducts: Product[] =
+    isCollection && collectionProducts?.length ? collectionProducts : catalogProducts;
+
+  const colsDesktop = Math.max(2, Math.min(5, asNumber(s.columns_desktop, 5)));
+  const colsMobile = Math.max(1, Math.min(3, asNumber(s.columns_mobile, 2)));
+
+  // Optional static title override; otherwise the collection name / "ALL PRODUCTS".
+  const titleOverride = asString(s.title);
+  const heroTitle =
+    titleOverride ||
+    (isCollection && collection?.name) ||
+    localized(locale, "ALL PRODUCTS", "كل المنتجات");
 
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState<string | null>(null);
-  const [sort, setSort] = useState("default");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState("newest");
 
-  // Derive the category chips from the catalog (V2 read them from a categories
-  // endpoint; on the V3 listing route we infer them from product.category).
+  // Category chips only on the all-products page (a collection IS the filter).
   const categories = useMemo(() => {
+    if (isCollection) return [] as string[];
     const seen = new Set<string>();
-    for (const p of products) {
+    for (const p of sourceProducts) {
       if (p.category) seen.add(p.category);
     }
     return Array.from(seen);
-  }, [products]);
+  }, [sourceProducts, isCollection]);
 
   const filtered = useMemo(() => {
-    let list = products.slice();
+    let result = sourceProducts.slice();
 
-    if (category) {
-      list = list.filter((p) => p.category === category);
-    }
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      list = list.filter(
+      result = result.filter(
         (p) =>
           p.name.toLowerCase().includes(q) ||
-          (p.description ?? "").toLowerCase().includes(q) ||
-          (p.tags ?? []).some((t) => t.toLowerCase().includes(q)),
+          (p.description ?? "").toLowerCase().includes(q),
       );
+    }
+    if (!isCollection && selectedCategory) {
+      result = result.filter((p) => p.category === selectedCategory);
     }
 
     const priceOf = (p: Product) => p.variants?.[0]?.price ?? p.price ?? 0;
-    switch (sort) {
-      case "price-asc":
-        list.sort((a, b) => priceOf(a) - priceOf(b));
-        break;
-      case "price-desc":
-        list.sort((a, b) => priceOf(b) - priceOf(a));
-        break;
-      case "name":
-        list.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      default:
-        break;
-    }
-    return list;
-  }, [products, category, search, sort]);
+    if (sortBy === "price-asc") result.sort((a, b) => priceOf(a) - priceOf(b));
+    if (sortBy === "price-desc") result.sort((a, b) => priceOf(b) - priceOf(a));
+    return result;
+  }, [sourceProducts, isCollection, search, selectedCategory, sortBy]);
 
-  const gridCols = `repeat(${viewMode === "list" ? 1 : colsDesktop}, minmax(0,1fr))`;
-  const gridColsMobile = `repeat(${viewMode === "list" ? 1 : colsMobile}, minmax(0,1fr))`;
+  // Grid columns via CSS vars so the merchant's column settings flow through
+  // (mobile = columns_mobile, tablet = min(3,desktop), desktop = columns_desktop).
+  const gridStyle = {
+    ["--cols-mobile" as string]: `repeat(${colsMobile},minmax(0,1fr))`,
+    ["--cols-tablet" as string]: `repeat(${Math.min(3, colsDesktop)},minmax(0,1fr))`,
+    ["--cols-desktop" as string]: `repeat(${colsDesktop},minmax(0,1fr))`,
+  } as React.CSSProperties;
+  const gridClass =
+    "grid gap-2 md:gap-6 -mx-2 md:mx-0 grid-cols-[var(--cols-mobile)] md:grid-cols-[var(--cols-tablet)] lg:grid-cols-[var(--cols-desktop)]";
+
+  const fadeUp = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  };
+
+  const countLabel = `${sourceProducts.length} ${localized(locale, "items", "منتج")}`;
 
   return (
-    <div className="bg-background" data-testid="storefront-products-page">
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 vn-label text-[10px] text-[var(--vn-muted)] mb-6">
-          <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            {localized(locale, "Home", "الرئيسية")}
-          </Link>
-          <ArrowRight size={10} className="rtl:rotate-180" />
-          <span className="text-[var(--vn-ink)]">{category ?? localized(locale, "Shop", "المتجر")}</span>
-        </div>
-
-        {/* Title */}
-        <h1 className="vn-heading text-2xl md:text-4xl text-[var(--vn-ink)] mb-8">
-          {category ?? localized(locale, "All products", "كل المنتجات")}
-        </h1>
-
-        {/* Search */}
-        <div className="relative mb-6 max-w-md">
-          <Search
-            size={16}
-            className="absolute start-0 top-1/2 -translate-y-1/2 text-[var(--vn-muted)]"
-          />
-          <input
-            type="text"
-            placeholder={localized(locale, "Search products", "ابحث عن منتجات")}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-10 ps-7 pe-7 text-sm bg-transparent border-b border-[var(--vn-border)] focus:border-[var(--vn-ink)] focus:outline-none transition-colors placeholder:text-[var(--vn-muted)]"
-            data-testid="storefront-products-search"
-          />
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              aria-label="Clear search"
-              className="absolute end-0 top-1/2 -translate-y-1/2 text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors"
-            >
-              <X size={14} />
-            </button>
-          )}
-        </div>
-
-        {/* Category tabs */}
-        {categories.length > 0 && (
-          <div
-            className="flex gap-6 overflow-x-auto pb-0 mb-6 border-b border-[var(--vn-border)]"
-            data-testid="storefront-products-categories"
-          >
-            <button
-              type="button"
-              onClick={() => setCategory(null)}
-              className={
-                "pb-2 text-sm whitespace-nowrap transition-colors " +
-                (!category
-                  ? "text-[var(--vn-ink)] border-b-2 border-[var(--vn-ink)] font-medium"
-                  : "text-[var(--vn-muted)] hover:text-[var(--vn-ink)]")
-              }
-              data-testid="storefront-products-category"
-              data-category-id="all"
-            >
-              {localized(locale, "All", "الكل")}
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setCategory(cat)}
-                className={
-                  "pb-2 text-sm whitespace-nowrap transition-colors " +
-                  (category === cat
-                    ? "text-[var(--vn-ink)] border-b-2 border-[var(--vn-ink)] font-medium"
-                    : "text-[var(--vn-muted)] hover:text-[var(--vn-ink)]")
-                }
-                data-testid="storefront-products-category"
-                data-category-id={cat}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Toolbar */}
-        <div
-          className="flex items-center justify-between mb-6 py-3 border-b border-[var(--vn-border)]"
-          data-testid="storefront-products-toolbar"
-        >
-          <span className="vn-label text-[10px] text-[var(--vn-muted)]">
-            {filtered.length} {localized(locale, "products", "منتج")}
-          </span>
-          <div className="flex items-center gap-4">
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              aria-label="Sort products"
-              className="text-xs px-2 py-1.5 bg-transparent border-b border-[var(--vn-border)] focus:border-[var(--vn-ink)] focus:outline-none transition-colors cursor-pointer"
-              data-testid="storefront-products-sort"
-            >
-              <option value="default">{localized(locale, "Sort by", "ترتيب حسب")}</option>
-              <option value="price-asc">{localized(locale, "Price: Low", "السعر: من الأقل")}</option>
-              <option value="price-desc">{localized(locale, "Price: High", "السعر: من الأعلى")}</option>
-              <option value="name">{localized(locale, "Name", "الاسم")}</option>
-            </select>
-            {showViewToggle && (
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => setViewMode("grid")}
-                  aria-label="Grid view"
-                  className={
-                    "p-1.5 transition-colors " +
-                    (viewMode === "grid"
-                      ? "text-[var(--vn-ink)]"
-                      : "text-[var(--vn-muted)] hover:text-[var(--vn-ink)]")
-                  }
-                >
-                  <Grid3X3 size={15} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("list")}
-                  aria-label="List view"
-                  className={
-                    "p-1.5 transition-colors " +
-                    (viewMode === "list"
-                      ? "text-[var(--vn-ink)]"
-                      : "text-[var(--vn-muted)] hover:text-[var(--vn-ink)]")
-                  }
-                >
-                  <LayoutList size={15} />
-                </button>
-              </div>
+    <div className="bg-background min-h-screen" data-testid="storefront-products-page">
+      {/* Hero strip */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+        className="bg-foreground py-12 md:py-20"
+      >
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="gld-heading text-4xl md:text-6xl font-bold tracking-[0.08em] uppercase text-[var(--gilded-gold)]">
+            {isCollection && collection?.name ? (
+              heroTitle
+            ) : (
+              <InlineEditable sectionId={sectionId} settingKey="title" value={heroTitle} />
             )}
-          </div>
+          </h1>
+          <p className="text-card/50 text-sm mt-3 tracking-[0.2em] uppercase">{countLabel}</p>
         </div>
+      </motion.div>
 
-        {/* Grid / empty / loading */}
+      <div className="container mx-auto px-4 py-8">
+        {/* Filters Bar */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="flex flex-wrap items-center gap-3 mb-10"
+        >
+          {/* Search */}
+          <div className="relative flex-1 min-w-[200px] max-w-sm">
+            <Search
+              size={16}
+              className="absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={localized(locale, "Search products...", "ابحث عن المنتجات...")}
+              className="gld-input w-full h-10 ps-9 pe-4"
+              data-testid="storefront-products-search"
+            />
+          </div>
+
+          {/* Category pills */}
+          {categories.length > 0 && (
+            <div className="flex gap-2 flex-wrap" data-testid="storefront-products-categories">
+              <button
+                type="button"
+                onClick={() => setSelectedCategory(null)}
+                className={`gld-chip px-4 py-2 ${!selectedCategory ? "gld-chip-active" : ""}`}
+                data-testid="storefront-products-category"
+                data-category-id="all"
+              >
+                {localized(locale, "ALL", "الكل")}
+              </button>
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`gld-chip px-4 py-2 ${selectedCategory === cat ? "gld-chip-active" : ""}`}
+                  data-testid="storefront-products-category"
+                  data-category-id={cat}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Sort */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            aria-label={localized(locale, "Sort products", "ترتيب المنتجات")}
+            className="gld-input h-10 px-4 cursor-pointer"
+            data-testid="storefront-products-sort"
+          >
+            <option value="newest">{localized(locale, "Newest", "الأحدث")}</option>
+            <option value="price-asc">
+              {localized(locale, "Price: Low → High", "السعر: من الأقل")}
+            </option>
+            <option value="price-desc">
+              {localized(locale, "Price: High → Low", "السعر: من الأعلى")}
+            </option>
+          </select>
+        </motion.div>
+
+        {/* Product Grid */}
         {loading ? (
           <div
-            className="grid gap-4 md:gap-5"
-            style={{
-              gridTemplateColumns: gridCols,
-              ["--cols-mobile" as string]: gridColsMobile,
-            }}
+            className={gridClass}
+            style={gridStyle}
+            aria-busy="true"
+            aria-label={localized(locale, "Loading products", "جارٍ تحميل المنتجات")}
           >
             {Array.from({ length: colsDesktop * 2 }).map((_, i) => (
-              <div key={i} className="aspect-[3/4] vn-shimmer rounded" />
+              <div key={i} className="space-y-3">
+                <div className="aspect-[3/4] gld-shimmer" />
+                <div className="h-3 gld-shimmer w-3/4" />
+                <div className="h-3 gld-shimmer w-1/3" />
+              </div>
             ))}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-12 h-px bg-[var(--vn-border)] mx-auto mb-6" />
-            <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No results", "مفيش نتائج")}</p>
-            <p className="text-xs text-[var(--vn-muted)]">
-              {localized(locale, "Try adjusting your search or filter", "جرّب تعدّل البحث أو الفلتر")}
-            </p>
           </div>
         ) : (
           <motion.div
-            layout
-            className="grid gap-4 md:gap-5 grid-cols-[var(--cols-mobile)] sm:grid-cols-[var(--cols-tablet)] md:grid-cols-[var(--cols-desktop)]"
-            style={
-              {
-                ["--cols-mobile" as string]: gridColsMobile,
-                ["--cols-tablet" as string]:
-                  viewMode === "list"
-                    ? "repeat(1,minmax(0,1fr))"
-                    : `repeat(${Math.min(3, colsDesktop)},minmax(0,1fr))`,
-                ["--cols-desktop" as string]: gridCols,
-              } as React.CSSProperties
-            }
+            variants={{
+              visible: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+            }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className={gridClass}
+            style={gridStyle}
             data-testid="storefront-products-grid"
           >
-            <AnimatePresence>
-              {filtered.map((product) => (
-                <motion.div
-                  key={product.id}
-                  layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <ProductCard product={product} list={viewMode === "list"} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {filtered.map((product) => (
+              <GildedProductCard key={product.id} product={product} />
+            ))}
           </motion.div>
         )}
-      </div>
-    </div>
-  );
-}
 
-/** Inline Gilded product card — mirrors the V2 card markup re-skinned via vn-* tokens. */
-function ProductCard({ product, list }: { product: Product; list?: boolean }) {
-  const locale = useLocale();
-  const price = product.variants?.[0]?.price ?? product.price ?? 0;
-  const compareAt = product.compare_at_price;
-  const hasDiscount = typeof compareAt === "number" && compareAt > price;
-  const outOfStock = product.in_stock === false;
-  const primary = product.images?.[0]?.url;
-  const secondary = product.images?.[1]?.url;
-
-  return (
-    <Link
-      to={`/product/${product.slug || product.id}`}
-      className={
-        "vn-product-card group block " +
-        (list ? "sm:flex sm:items-center sm:gap-5" : "")
-      }
-      data-testid="storefront-product-card"
-    >
-      <div
-        className={
-          "relative overflow-hidden bg-[var(--vn-band)] aspect-[3/4] " +
-          (list ? "sm:w-40 sm:shrink-0" : "")
-        }
-      >
-        {primary ? (
-          <img
-            src={primary}
-            alt={product.name}
-            className="vn-product-image absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
-          />
-        ) : (
-          <div className="absolute inset-0 vn-shimmer" />
-        )}
-        {secondary && (
-          <img
-            src={secondary}
-            alt=""
-            className="vn-product-image-secondary"
-            loading="lazy"
-          />
-        )}
-
-        {product.tags?.[0] && !outOfStock && (
-          <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-card/95 text-[var(--vn-ink)] text-[10px]">
-            {product.tags[0]}
-          </span>
-        )}
-        {hasDiscount && !outOfStock && (
-          <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-[var(--vn-sale)] text-white text-[10px]">
-            {localized(locale, "Sale", "تخفيض")}
-          </span>
-        )}
-        {outOfStock && (
-          <div className="absolute inset-0 bg-card/65 flex items-center justify-center">
-            <span className="vn-label text-[var(--vn-ink)] text-[11px] bg-card px-3 py-1.5 border border-[var(--vn-border)]">
-              {localized(locale, "Sold out", "نفدت الكمية")}
-            </span>
+        {!loading && filtered.length === 0 && (
+          <div className="text-center py-20">
+            <SlidersHorizontal size={48} className="mx-auto text-[var(--gilded-gold)] mb-4" />
+            <p className="text-xl font-bold tracking-[0.08em] uppercase text-foreground">
+              {localized(locale, "No Products Found", "لا توجد منتجات")}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              {localized(locale, "Try adjusting your filters", "جرّب تعديل الفلاتر")}
+            </p>
           </div>
         )}
       </div>
-
-      <div className={list ? "mt-3 sm:mt-0 flex-1" : "mt-3 px-1"}>
-        <h3 className="text-sm font-medium text-[var(--vn-ink)] tracking-[0.05em] uppercase line-clamp-1">
-          {product.name}
-        </h3>
-        <div className="flex items-baseline gap-2 mt-1">
-          <span className="text-sm font-semibold text-[var(--vn-ink)]">
-            <Money amount={price} currency={product.currency} />
-          </span>
-          {hasDiscount && (
-            <span className="text-xs text-[var(--vn-muted)] line-through">
-              <Money amount={compareAt} currency={product.currency} />
-            </span>
-          )}
-        </div>
-      </div>
-    </Link>
+    </div>
   );
 }

@@ -5,21 +5,28 @@
   "settings": [
     {
       "type": "header",
-      "content": "Layout"
+      "content": "Heading",
+      "content_ar": "العنوان"
     },
     {
-      "id": "show_view_toggle",
-      "type": "checkbox",
-      "label": "Show grid/list toggle",
-      "label_ar": "إظهار زر تغيير العرض",
-      "default": true
+      "id": "title",
+      "type": "text",
+      "label": "Title override",
+      "label_ar": "تجاوز العنوان",
+      "info": "Leave blank to use the collection name (or “All Products”).",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Layout",
+      "content_ar": "التخطيط"
     },
     {
       "id": "columns_desktop",
       "type": "range",
       "label": "Desktop columns",
-      "label_ar": "أعمدة الديسكتوب",
-      "default": 4,
+      "label_ar": "أعمدة سطح المكتب",
+      "default": 5,
       "min": 2,
       "max": 5,
       "step": 1
@@ -33,6 +40,17 @@
       "min": 1,
       "max": 3,
       "step": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gilded Products Page",
+      "name_ar": "صفحة المنتجات",
+      "settings": {
+        "title": "",
+        "columns_desktop": 5,
+        "columns_mobile": 2
+      }
     }
   ]
 }
