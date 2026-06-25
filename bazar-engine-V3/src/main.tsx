@@ -56,9 +56,13 @@ const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
   "bz-promo-banner": lazy(() => import("./sections/bz-promo-banner")),
   "bz-rich-text": lazy(() => import("./sections/bz-rich-text")),
   "bz-testimonials": lazy(() => import("./sections/bz-testimonials")),
-  // Chrome + commerce sections (Phase 3 — multipage templates)
+  // Chrome + commerce sections (Phase 3 — multipage templates). Header/footer
+  // aliased to the GENERIC "header"/"footer" types too, so chrome delivered via
+  // section_groups (prefixed OR generic type) always resolves.
   "bz-header": lazy(() => import("./sections/bz-header")),
   "bz-footer": lazy(() => import("./sections/bz-footer")),
+  header: lazy(() => import("./sections/bz-header")),
+  footer: lazy(() => import("./sections/bz-footer")),
   "bz-featured-collection": lazy(() => import("./sections/bz-featured-collection")),
   "bz-product-grid": lazy(() => import("./sections/bz-product-grid")),
   "bz-product-detail": lazy(() => import("./sections/bz-product-detail")),
@@ -89,6 +93,7 @@ function UnknownSection({ type }: { type: string }) {
 }
 
 import {
+  resolveSections,
   selectTemplateSections,
   type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
@@ -140,24 +145,49 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   //   2. host customisation has only UNKNOWN sections (theme just got
   //      switched, stale data) → fall back to bundled preset.
   //   3. no host customisation at all → use bundled preset.
-  const sections = selectTemplateSections(
+  const templateSections = selectTemplateSections(
     hostTemplate,
     builtinTemplate,
     isKnownType,
   );
 
-  // a11y: expose a single <main> landmark. Chrome sections (header/footer)
-  // render their own <header>/<footer> banners, so we keep them OUTSIDE main
-  // (avoids banner/contentinfo nested-in-main warnings) and wrap the body
-  // sections in <main>. bazar templates always order header-first / footer-last
-  // so this preserves visual order.
-  const isHeader = (t: string) => t === "bz-header";
-  const isFooter = (t: string) => t === "bz-footer";
-  const header = sections.filter(({ instance }) => isHeader(instance.type));
-  const footer = sections.filter(({ instance }) => isFooter(instance.type));
-  const body = sections.filter(
-    ({ instance }) => !isHeader(instance.type) && !isFooter(instance.type),
+  // Chrome (header/footer) reaches us in TWO possible places: (1) the engine's
+  // section_groups.header / .footer (what the V3 customizer writes), or (2)
+  // inline in the template's section list (the theme.json builtin preset + a
+  // fresh activation seed). Rendering only (2) meant chrome silently vanished
+  // once a saved customization moved header/footer into section_groups or
+  // shipped a body-only template. Read BOTH, prefer section_groups, and
+  // GUARANTEE chrome always renders.
+  const groups = settings.section_groups as
+    | Record<string, MaybeOrderedTemplate>
+    | undefined;
+  const HEADER_TYPES = new Set(["bz-header", "header"]);
+  const FOOTER_TYPES = new Set(["bz-footer", "footer"]);
+  const groupHeader = resolveSections(groups?.header).filter(({ instance }) =>
+    isKnownType(instance.type),
   );
+  const groupFooter = resolveSections(groups?.footer).filter(({ instance }) =>
+    isKnownType(instance.type),
+  );
+
+  // a11y: a single <main> landmark. Chrome renders its own <header>/<footer>
+  // banners OUTSIDE main (avoids banner/contentinfo nested-in-main warnings);
+  // body sections wrap inside it.
+  const inlineHeader = templateSections.filter(({ instance }) =>
+    HEADER_TYPES.has(instance.type),
+  );
+  const inlineFooter = templateSections.filter(({ instance }) =>
+    FOOTER_TYPES.has(instance.type),
+  );
+  const body = templateSections.filter(
+    ({ instance }) =>
+      !HEADER_TYPES.has(instance.type) && !FOOTER_TYPES.has(instance.type),
+  );
+  // Chrome renders ONLY from real editor data (section_groups preferred, else the
+  // in-template header/footer sections). NO synthetic fallback — the preview must
+  // never show chrome that isn't an editable section in the customizer.
+  const header = groupHeader.length > 0 ? groupHeader : inlineHeader;
+  const footer = groupFooter.length > 0 ? groupFooter : inlineFooter;
 
   return (
     // pb on mobile clears the fixed bottom tab bar (h-14 + safe-area) so the

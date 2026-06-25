@@ -50,6 +50,9 @@ export interface MountPageData {
       body_i18n?: Record<string, string> | null;
       seo?: unknown;
     };
+    /** Legal policy page (/policies/<handle>): host sets page.type "policy"
+     *  with data.policy.{title,body}. */
+    policy?: unknown;
   };
 }
 export const PageDataContext = createContext<MountPageData | null>(null);

@@ -1,23 +1,58 @@
 "use client";
-import { useRef } from "react";
-import { Link, useLocale } from "@numueg/theme-sdk";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
-const GildedHero = ({ instance }: SectionRenderProps) => {
-  const s = instance.settings ?? {};
+import { useRef } from "react";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  applyImageTransform,
+  asImageAlt,
+  asImageTransform,
+  asImageUrl,
+  asString,
+  localized,
+  type SectionRenderProps,
+} from "./_shared";
+import { InlineEditable } from "./_inline-editable";
+
+/**
+ * gilded-hero — faithful V3 port of the V2 GildedHero
+ * (numu-egyptian-bazaar/src/themes/gilded-glamour-boutique/sections/hero/GildedHero.tsx).
+ *
+ * Full-screen parallax hero (`md:h-screen min-h-[80vh]`). Optional merchant
+ * image renders `object-contain` (preserve aspect) over the gold→ink gradient
+ * fallback, with a dark `bg-foreground/40` overlay. On mobile, a mobile-specific
+ * image is treated as portrait art (4:5 container); a desktop-only image renders
+ * at natural aspect so wide banners aren't crushed. Centered content: a Montserrat
+ * uppercase wide-tracked H1, an uppercase letter-spaced subtitle, and a gold-fill
+ * CTA that scales on hover. Stagger delays 0.2 / 0.5 / 0.8s, matching V2 verbatim.
+ *
+ * Engine-wired: useResolvedSettings (global tokens + dynamic sources + draft
+ * preview), bilingual defaults via localized(), InlineEditable on every
+ * section-level text field, and non-destructive image transforms.
+ */
+export default function GildedHero({ instance, sectionId }: SectionRenderProps) {
+  const s = useResolvedSettings(instance);
   const locale = useLocale();
 
-  const headline = asString(s.headline) || localized(locale, "THE NEW GILDED", "العصر الذهبي الجديد");
-  const subtitle = asString(s.subtitle) || localized(locale, "Curated Excellence & Timeless Precision", "تشكيلة منتقاة بعناية وإتقان لا يعرف الزمن");
+  const headline =
+    asString(s.headline) || localized(locale, "THE NEW EMPIRE", "الإمبراطورية الجديدة");
+  const subtitle =
+    asString(s.subtitle) ||
+    localized(
+      locale,
+      "Curated Excellence & Timeless Precision",
+      "تميّز منتقى بعناية وإتقان لا يعرف الزمن",
+    );
   const ctaText = asString(s.cta_text) || localized(locale, "Discover Collection", "اكتشف التشكيلة");
   const ctaLink = asString(s.cta_link) || "/products";
-  const heroImageUrl = asString(s.hero_image_url) || undefined;
-  const heroImageUrlMobile = asString(s.hero_image_mobile) || undefined;
+
+  const heroImageUrl = asImageUrl(s.hero_image_url) || undefined;
+  const heroImageUrlMobile = asImageUrl(s.hero_image_mobile) || undefined;
+  const heroImageAlt = asImageAlt(s.hero_image_url) || headline;
   // When the merchant uploads a mobile-specific image, treat it as
-  // intentionally portrait-cropped art and render it cover-fit in a tall
-  // container. When they only have a desktop image, fall back to natural
-  // aspect on mobile so a wide banner isn't crushed/cropped.
+  // intentionally portrait-cropped art and render it in a tall 4:5 container.
+  // When they only have a desktop image, fall back to natural aspect on mobile
+  // so a wide banner isn't crushed/cropped.
   const mobileImage = heroImageUrlMobile || heroImageUrl;
   const hasMobileArt = Boolean(heroImageUrlMobile);
   // Non-destructive image transforms (focal/zoom/rotation). With no saved
@@ -39,12 +74,13 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
   return (
     <section
       ref={ref}
+      data-gilded-section={sectionId}
       className="relative w-full overflow-hidden bg-foreground md:min-h-[80vh] md:h-screen"
     >
       {/* Mobile background.
           - If the merchant uploaded a mobile-specific image, render it
-            cover-fit in a tall portrait container — they've designed art
-            for this aspect, so cropping is what they want.
+            contain-fit in a tall portrait container — they've designed art
+            for this aspect.
           - Otherwise the desktop image renders in-flow at its natural
             aspect, so wide banners aren't cropped or letterboxed. */}
       <div className="relative md:hidden">
@@ -52,17 +88,13 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
           <div className="aspect-[4/5] w-full overflow-hidden">
             <img
               src={mobileImage}
-              alt={headline}
-              className="w-full h-full object-cover"
-              style={applyImageTransform(heroImageMobileTransform, "cover")}
+              alt={heroImageAlt}
+              className="w-full h-full object-contain"
+              style={applyImageTransform(heroImageMobileTransform, "contain")}
             />
           </div>
         ) : mobileImage ? (
-          <img
-            src={mobileImage}
-            alt={headline}
-            className="block w-full h-auto"
-          />
+          <img src={mobileImage} alt={heroImageAlt} className="block w-full h-auto" />
         ) : (
           <div
             className="aspect-[4/5] w-full"
@@ -75,7 +107,7 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
         <div className="absolute inset-0 bg-foreground/40 pointer-events-none" />
       </div>
 
-      {/* Desktop parallax background — full-bleed cover with scroll-linked translate. */}
+      {/* Desktop parallax background — object-contain over the gold→ink gradient. */}
       <motion.div
         style={enableParallax ? { y } : undefined}
         className="hidden md:block absolute inset-0"
@@ -92,8 +124,8 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
             src={heroImageUrl}
             alt=""
             aria-hidden="true"
-            className="relative w-full h-full object-cover"
-            style={applyImageTransform(heroImageTransform, "cover")}
+            className="relative w-full h-full object-contain"
+            style={applyImageTransform(heroImageTransform, "contain")}
           />
         ) : null}
         <div className="absolute inset-0 bg-foreground/40" />
@@ -111,7 +143,7 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
           className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-[0.04em] sm:tracking-[0.08em] text-card uppercase"
           style={{ fontFamily: "'Montserrat', sans-serif" }}
         >
-          {headline}
+          <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -119,7 +151,12 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="mt-4 sm:mt-6 text-[10px] sm:text-sm md:text-base tracking-[0.15em] sm:tracking-[0.3em] uppercase text-card/90 font-light px-2"
         >
-          {subtitle}
+          <InlineEditable
+            sectionId={sectionId}
+            settingKey="subtitle"
+            value={subtitle}
+            multiline
+          />
         </motion.p>
         {ctaText && (
           <motion.div
@@ -130,15 +167,13 @@ const GildedHero = ({ instance }: SectionRenderProps) => {
           >
             <Link
               to={ctaLink}
-              className="inline-block px-6 sm:px-10 py-3 sm:py-4 bg-[hsl(var(--gold))] text-foreground text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase font-semibold hover:scale-[1.04] transition-all duration-200 ease-out"
+              className="inline-block px-6 sm:px-10 py-3 sm:py-4 bg-gold text-foreground text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase font-semibold hover:scale-[1.04] transition-all duration-200 ease-out"
             >
-              {ctaText}
+              <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
             </Link>
           </motion.div>
         )}
       </motion.div>
     </section>
   );
-};
-
-export default GildedHero;
+}

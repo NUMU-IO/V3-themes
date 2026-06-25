@@ -6,20 +6,47 @@
   "settings": [
     {
       "type": "header",
-      "content": "Content"
+      "content": "Layout",
+      "content_ar": "التخطيط"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hero",
+      "label": "Show black hero strip",
+      "label_ar": "إظهار الشريط الأسود العلوي",
+      "info": "The gold-on-black banner above the results.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (desktop)",
+      "label_ar": "الأعمدة (سطح المكتب)",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "unit": "col",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Content",
+      "content_ar": "المحتوى"
     },
     {
       "type": "text",
       "id": "empty_heading",
       "label": "Empty-query heading",
       "label_ar": "عنوان البحث الفارغ",
+      "info": "Shown in the hero strip before a search query is entered. Leave blank to use “SEARCH”.",
       "default": ""
     },
     {
       "type": "text",
       "id": "search_placeholder",
       "label": "Search box placeholder",
-      "label_ar": "نص حقل البحث",
+      "label_ar": "النص التوضيحي لحقل البحث",
+      "info": "Leave blank to use “Search products...”.",
       "default": ""
     },
     {
@@ -27,29 +54,24 @@
       "id": "no_results_text",
       "label": "No-results copy",
       "label_ar": "نص عدم وجود نتائج",
+      "info": "Shown under “No Products Found”. Leave blank to use the default.",
       "default": ""
-    },
-    {
-      "type": "range",
-      "id": "columns_desktop",
-      "label": "Columns (desktop)",
-      "label_ar": "أعمدة (سطح المكتب)",
-      "min": 1,
-      "max": 5,
-      "step": 1,
-      "default": 4
     }
   ],
   "presets": [
     {
       "name": "Search Results",
+      "name_ar": "نتائج البحث",
       "locales": {
         "en": { "name": "Search Results" },
         "ar": { "name": "نتائج البحث" }
       },
       "settings": {
+        "show_hero": true,
+        "columns_desktop": 5,
         "empty_heading": "",
-        "columns_desktop": 4
+        "search_placeholder": "",
+        "no_results_text": ""
       }
     }
   ]

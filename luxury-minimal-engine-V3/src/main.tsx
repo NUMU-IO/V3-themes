@@ -27,6 +27,7 @@ import themeManifest from "../theme.json";
 // luxury-minimal styles into dist/theme.css (see vite.config.ts).
 import "./theme.css";
 import {
+  resolveSections,
   selectTemplateSections,
   type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
@@ -38,9 +39,13 @@ interface MountResult {
 }
 
 const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
-  // Chrome — header / footer (on every template).
+  // Chrome — header / footer (on every template). Aliased to the GENERIC
+  // "header"/"footer" types too, so chrome delivered via section_groups (which
+  // can carry either the theme-prefixed or the generic type) always resolves.
   "lux-header": lazy(() => import("./sections/lux-header")),
   "lux-footer": lazy(() => import("./sections/lux-footer")),
+  header: lazy(() => import("./sections/lux-header")),
+  footer: lazy(() => import("./sections/lux-footer")),
   // Home / content sections.
   "lux-hero": lazy(() => import("./sections/lux-hero")),
   "lux-categories": lazy(() => import("./sections/lux-categories")),
@@ -111,6 +116,9 @@ function RenderSection({
   );
 }
 
+const HEADER_TYPES = new Set(["lux-header", "header"]);
+const FOOTER_TYPES = new Set(["lux-footer", "footer"]);
+
 function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const settings = useThemeSettings();
   const hostTemplate = settings.templates?.[currentTemplate] as
@@ -121,18 +129,50 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   // selectTemplateSections handles: (1) host customisation with known sections,
   // (2) host customisation with only UNKNOWN sections (stale, just-switched
   // theme) → bundled preset, (3) no host customisation → bundled preset.
-  const sections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
-
-  // a11y: expose a single <main> landmark. Chrome sections render their own
-  // <header>/<footer> banners, so we keep them OUTSIDE <main> and wrap the body
-  // sections inside it. Templates always order header-first / footer-last.
-  const isHeader = (t: string) => t === "lux-header";
-  const isFooter = (t: string) => t === "lux-footer";
-  const header = sections.filter(({ instance }) => isHeader(instance.type));
-  const footer = sections.filter(({ instance }) => isFooter(instance.type));
-  const body = sections.filter(
-    ({ instance }) => !isHeader(instance.type) && !isFooter(instance.type),
+  const templateSections = selectTemplateSections(
+    hostTemplate,
+    builtinTemplate,
+    isKnownType,
   );
+
+  // Chrome (header/footer) reaches us in TWO possible places:
+  //   (1) themeSettings.section_groups.header / .footer — the canonical
+  //       Shopify-style home for cross-template chrome (what the V3 customizer
+  //       writes), OR
+  //   (2) inline in the template's own section list (the theme.json builtin
+  //       preset + a fresh activation seed).
+  // Rendering only (2) meant that once a saved customization moved chrome into
+  // section_groups — or shipped a body-only template — the header + footer
+  // silently disappeared. Read BOTH, prefer section_groups, and GUARANTEE chrome
+  // always renders: this theme ships an editable header + footer on every page.
+  const groups = settings.section_groups as
+    | Record<string, MaybeOrderedTemplate>
+    | undefined;
+  const groupHeader = resolveSections(groups?.header).filter(({ instance }) =>
+    isKnownType(instance.type),
+  );
+  const groupFooter = resolveSections(groups?.footer).filter(({ instance }) =>
+    isKnownType(instance.type),
+  );
+
+  const inlineHeader = templateSections.filter(({ instance }) =>
+    HEADER_TYPES.has(instance.type),
+  );
+  const inlineFooter = templateSections.filter(({ instance }) =>
+    FOOTER_TYPES.has(instance.type),
+  );
+  // a11y: a single <main> landmark. Chrome renders its own <header>/<footer>
+  // banners OUTSIDE <main>; body sections wrap inside it.
+  const body = templateSections.filter(
+    ({ instance }) =>
+      !HEADER_TYPES.has(instance.type) && !FOOTER_TYPES.has(instance.type),
+  );
+
+  // Chrome renders ONLY from real editor data (section_groups preferred, else the
+  // in-template header/footer sections). NO synthetic fallback — the preview must
+  // never show chrome that isn't an editable section in the customizer.
+  const header = groupHeader.length > 0 ? groupHeader : inlineHeader;
+  const footer = groupFooter.length > 0 ? groupFooter : inlineFooter;
 
   return (
     <div data-luxury-minimal-v3-app data-theme="luxury-minimal">

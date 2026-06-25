@@ -16,7 +16,7 @@ import themeManifest from "../theme.json";
 // styles into dist/theme.css (see vite.config.ts / tailwind.config.js).
 import "./theme.css";
 import {
-  selectTemplateSections, type MaybeOrderedTemplate,
+  resolveSections, selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 import { DemoContext, PageDataContext, usePageData, type MountPageData } from "./sections/_shared";
 
@@ -26,9 +26,13 @@ interface MountResult {
 }
 
 const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
-  // Chrome — header / footer (included first/last on every template).
+  // Chrome — header / footer (included first/last on every template). Aliased
+  // to the GENERIC "header"/"footer" types too, so chrome delivered via
+  // section_groups (prefixed OR generic type) always resolves.
   "vionne-header": lazy(() => import("./sections/vionne-header")),
   "vionne-footer": lazy(() => import("./sections/vionne-footer")),
+  header: lazy(() => import("./sections/vionne-header")),
+  footer: lazy(() => import("./sections/vionne-footer")),
   "vionne-slideshow": lazy(() => import("./sections/vionne-slideshow")),
   "vionne-featured-collection": lazy(() => import("./sections/vionne-featured-collection")),
   "vionne-marquee": lazy(() => import("./sections/vionne-marquee")),
@@ -81,7 +85,7 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const settings = useThemeSettings();
   const hostTemplate = settings.templates?.[currentTemplate] as MaybeOrderedTemplate | undefined;
   const builtinTemplate = BUILTIN_TEMPLATES[currentTemplate];
-  const sections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
+  const templateSections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
 
   // CMS content page (/pages/<handle> → template "page"). The `page` template
   // ships only chrome (header + footer), so the body is bound here from the
@@ -124,31 +128,52 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
       </section>
     ) : null;
 
-  // Chrome (vionne-header / vionne-footer) is now an editable section included
-  // first + last in every page template (see theme.json), rendered through the
-  // section registry below — NOT globally. So the host content slot (the CMS
-  // page body) must land BEFORE the trailing footer: split off a trailing
-  // `vionne-footer` section and render the CMS body just above it.
-  const trailingFooterIdx =
-    cmsBlock && sections.length > 0 && sections[sections.length - 1].instance.type === "vionne-footer"
-      ? sections.length - 1
-      : -1;
-  const leadingSections = trailingFooterIdx >= 0 ? sections.slice(0, trailingFooterIdx) : sections;
-  const trailingFooter = trailingFooterIdx >= 0 ? sections[trailingFooterIdx] : null;
+  // Chrome (vionne-header / vionne-footer) reaches us either via the engine's
+  // section_groups.header/.footer (what the V3 customizer writes) or inline in
+  // the template's section list (theme.json builtin preset + fresh activation).
+  // Rendering only the inline copy meant chrome silently vanished once a saved
+  // customization moved header/footer into section_groups — or shipped a
+  // body-only template. Read BOTH, prefer section_groups, GUARANTEE chrome, and
+  // keep the CMS page body just above the footer.
+  const HEADER_TYPES = new Set(["vionne-header", "header"]);
+  const FOOTER_TYPES = new Set(["vionne-footer", "footer"]);
+  const groups = settings.section_groups as
+    | Record<string, MaybeOrderedTemplate>
+    | undefined;
+  const groupHeader = resolveSections(groups?.header).filter(({ instance }) =>
+    isKnownType(instance.type),
+  );
+  const groupFooter = resolveSections(groups?.footer).filter(({ instance }) =>
+    isKnownType(instance.type),
+  );
+  const inlineHeader = templateSections.filter(({ instance }) =>
+    HEADER_TYPES.has(instance.type),
+  );
+  const inlineFooter = templateSections.filter(({ instance }) =>
+    FOOTER_TYPES.has(instance.type),
+  );
+  const body = templateSections.filter(
+    ({ instance }) =>
+      !HEADER_TYPES.has(instance.type) && !FOOTER_TYPES.has(instance.type),
+  );
+  // Chrome renders ONLY from real editor data (section_groups preferred, else the
+  // in-template header/footer sections). NO synthetic fallback — the preview must
+  // never show chrome that isn't an editable section in the customizer.
+  const header = groupHeader.length > 0 ? groupHeader : inlineHeader;
+  const footer = groupFooter.length > 0 ? groupFooter : inlineFooter;
 
   return (
     <div data-vionne-v3-app data-theme="vionne-v3">
-      {leadingSections.map(({ id, instance }) => (
+      {header.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} />
+      ))}
+      {body.map(({ id, instance }) => (
         <RenderSection key={id} sectionId={id} instance={instance} />
       ))}
       {cmsBlock}
-      {trailingFooter && (
-        <RenderSection
-          key={trailingFooter.id}
-          sectionId={trailingFooter.id}
-          instance={trailingFooter.instance}
-        />
-      )}
+      {footer.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} />
+      ))}
     </div>
   );
 }

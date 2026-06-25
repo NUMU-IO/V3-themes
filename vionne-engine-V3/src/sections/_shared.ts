@@ -29,6 +29,10 @@ export interface MountPageData {
   handle?: string;
   title?: string;
   data?: {
+    /** Visitor's search query — the storefront /search route stashes it as
+     *  `query`; `q` kept as a defensive alias. */
+    query?: string;
+    q?: string;
     page?: {
       handle?: string;
       title?: string | null;

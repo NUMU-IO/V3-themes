@@ -12,6 +12,19 @@
  * ported sections resolve.
  */
 
+/**
+ * Brand-token color factory: makes a CSS-variable colour opacity-aware so that
+ * Tailwind variant + opacity forms work (`text-gold`, `hover:text-gold`,
+ * `border-gold/40`, `bg-gold/10`). Without registering these in `colors`,
+ * `hover:`/`focus:` variants and `/opacity` modifiers on hand-written helper
+ * classes are silently dropped. `--gilded-gold(-dark)` are global-wired (the
+ * merchant's Accent picker repaints them) so they must read through `var()`.
+ */
+const varColor = (cssVar) => ({ opacityValue } = {}) =>
+  opacityValue === undefined
+    ? `var(${cssVar})`
+    : `color-mix(in srgb, var(${cssVar}) calc(${opacityValue} * 100%), transparent)`;
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./src/**/*.{ts,tsx,js,jsx}", "./index.html"],
@@ -64,6 +77,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Brand palette — registered so variant (hover:/focus:) + opacity
+        // (/40, /10) forms compile. gold/gold-dark are global-wired (Accent
+        // picker repaints); olive/sale/beige are the fixed faithful HSL tokens.
+        gold: varColor("--gilded-gold"),
+        "gold-dark": varColor("--gilded-gold-dark"),
+        olive: "hsl(var(--olive) / <alpha-value>)",
+        sale: "hsl(var(--sale) / <alpha-value>)",
+        beige: "hsl(var(--beige) / <alpha-value>)",
       },
       borderRadius: {
         lg: "var(--radius)",
