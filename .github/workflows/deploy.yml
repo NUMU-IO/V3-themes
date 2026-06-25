@@ -139,7 +139,13 @@ jobs:
             d="${d%/}"
             if [ "$WANT" != "all" ] && [ "$WANT" != "$d" ]; then continue; fi
             echo "::group::$d"
-            if ! ( cd "$d" && npm install --no-audit --no-fund && npx numu-theme build ); then
+            # Themes build with `vite build` (the @numueg/theme-plugin federation
+            # plugin emits the full dist: theme.js/json, sections.json,
+            # settings_schema.json, theme.css, import-map.json). Do NOT use
+            # `npx numu-theme` here — `numu-theme` is the BIN of @numueg/theme-cli
+            # which isn't a theme dependency, so on a clean runner npx tries to
+            # fetch a non-existent `numu-theme` package and 404s.
+            if ! ( cd "$d" && npm install --no-audit --no-fund && npm run build ); then
               echo "::error::build failed for $d"; failed="$failed $d"; fail=$((fail+1)); echo "::endgroup::"; continue
             fi
             if [ ! -f "$d/theme.json" ] || [ ! -f "$d/dist/theme.js" ]; then
