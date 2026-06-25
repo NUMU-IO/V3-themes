@@ -23,6 +23,15 @@ on:
         description: "Theme dir (e.g. luxury-minimal-engine-V3) or 'all'"
         required: false
         default: "all"
+      version_bump:
+        description: "Bump each theme's theme.json version before deploy so a NEW marketplace version appears. 'none' redeploys the current version in place."
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - none
+        default: patch
       sdk_version:
         description: "Pin @numueg/theme-* deps to this version before building (e.g. 0.4.0). Blank = use each theme's pinned version."
         required: false
@@ -64,6 +73,46 @@ jobs:
 
       - name: Install boto3
         run: pip install --quiet boto3
+
+      # Bump each (selected) theme's theme.json version BEFORE building, so the
+      # R2 bundle path and the marketplace seed land on a NEW version string —
+      # otherwise the seed (idempotent by slug+version) just updates the current
+      # version in place and nothing new shows up. The bump is committed back
+      # below so versions stay monotonic across runs. Skipped on the push
+      # trigger (inputs are empty there) and when version_bump = none.
+      - name: Bump theme.json versions
+        if: ${{ github.event.inputs.version_bump != '' && github.event.inputs.version_bump != 'none' }}
+        env:
+          BUMP: ${{ github.event.inputs.version_bump }}
+          THEME_INPUT: ${{ github.event.inputs.theme }}
+        run: |
+          node - <<'NODE'
+          const fs = require('fs'), path = require('path');
+          const bump = process.env.BUMP || 'patch';
+          const want = process.env.THEME_INPUT || 'all';
+          const inc = (v) => {
+            const p = String(v || '0.0.0').split('.').map((n) => parseInt(n, 10) || 0);
+            while (p.length < 3) p.push(0);
+            if (bump === 'major') { p[0]++; p[1] = 0; p[2] = 0; }
+            else if (bump === 'minor') { p[1]++; p[2] = 0; }
+            else { p[2]++; }
+            return p.slice(0, 3).join('.');
+          };
+          let n = 0;
+          for (const d of fs.readdirSync('.')) {
+            if (!d.endsWith('-engine-V3')) continue;
+            if (want !== 'all' && want !== d) continue;
+            const tj = path.join(d, 'theme.json');
+            if (!fs.existsSync(tj)) continue;
+            const j = JSON.parse(fs.readFileSync(tj, 'utf8'));
+            const old = j.version;
+            j.version = inc(j.version);
+            fs.writeFileSync(tj, JSON.stringify(j, null, 2) + '\n');
+            console.log(`bumped ${d}: ${old} -> ${j.version}`);
+            n++;
+          }
+          console.log(`Bumped ${n} theme(s) (${bump}).`);
+          NODE
 
       # When an sdk_version is passed, rewrite every theme's @numueg/theme-*
       # dependency (deps/devDeps/peerDeps) to that version BEFORE install — a
@@ -168,19 +217,20 @@ jobs:
             echo "::error::strict mode: $fail theme(s) failed"; exit 1
           fi
 
-      # Persist the SDK pin back to the repo so the committed pins match what
-      # was deployed. `[skip ci]` keeps the push-trigger from re-running us.
+      # Persist the bumps back to the repo so the next run starts from the new
+      # version (monotonic marketplace versions) and the committed SDK pins
+      # match what was deployed. `[skip ci]` keeps the push-trigger from
+      # re-running us. Runs when we bumped theme.json (version_bump) or when an
+      # sdk_version pin was requested with commit_bumps.
       - name: Commit version bumps
-        if: ${{ github.event.inputs.sdk_version != '' && github.event.inputs.commit_bumps == 'true' }}
-        env:
-          SDK_VERSION: ${{ github.event.inputs.sdk_version }}
+        if: ${{ (github.event.inputs.version_bump != '' && github.event.inputs.version_bump != 'none') || (github.event.inputs.sdk_version != '' && github.event.inputs.commit_bumps == 'true') }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add ./*-engine-V3/package.json
+          git add ./*-engine-V3/theme.json ./*-engine-V3/package.json
           if git diff --cached --quiet; then
-            echo "no package.json changes to commit"
+            echo "no version changes to commit"
           else
-            git commit -m "chore(themes): pin @numueg/theme-* to $SDK_VERSION [skip ci]"
+            git commit -m "chore(themes): version bump from deploy run [skip ci]"
             git push
           fi
