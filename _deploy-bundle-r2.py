@@ -10,12 +10,15 @@ Usage:
   python _deploy-bundle-r2.py <slug> <version> <dist_dir>
 """
 
+import os
 import pathlib
 import sys
 
 import boto3
 
-ENV_PATH = r"C:\Users\PC\Desktop\NUMU\NUMU-api\.env"
+# Path to an env file holding S3_* creds. Override with NUMU_R2_ENV so the
+# script is portable across machines (default keeps the original location).
+ENV_PATH = os.environ.get("NUMU_R2_ENV", r"C:\Users\PC\Desktop\NUMU\NUMU-api\.env")
 
 CONTENT_TYPES = {
     ".js": "text/javascript",

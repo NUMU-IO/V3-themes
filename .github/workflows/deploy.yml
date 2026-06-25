@@ -1,0 +1,107 @@
+name: Deploy V3 themes
+
+# Build each V3 theme, upload its bundle to R2, and register it in BOTH the
+# storefront registry (themes/theme_versions) and the marketplace catalog
+# (marketplace_themes/versions) on the test environment.
+#
+# Registry/marketplace seeding runs the NUMU-api seed scripts inside the
+# `numu-api-test` container on the droplet (the only place with test-DB access),
+# piping each theme's freshly-built dist in over SSH.
+#
+# Required secrets (reuses the same names the NUMU-api / numu-storefront CD
+# workflows already use, so org-level secrets apply without re-adding them):
+#   R2:  S3_ENDPOINT_URL S3_ACCESS_KEY_ID S3_SECRET_ACCESS_KEY
+#        S3_BUCKET_NAME  S3_PUBLIC_URL    S3_REGION
+#   SSH: STAGING_SSH_KEY  STAGING_HOST  STAGING_SSH_USER
+# (The SSH user needs docker access on the droplet to exec the api-test
+# container's seed scripts. Prefer a scoped deploy user over root.)
+
+on:
+  workflow_dispatch:
+    inputs:
+      theme:
+        description: "Theme dir (e.g. luxury-minimal-engine-V3) or 'all'"
+        required: false
+        default: "all"
+  push:
+    branches: [main]
+    paths:
+      - "*-engine-V3/**"
+
+concurrency:
+  group: deploy-v3-themes
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install boto3
+        run: pip install --quiet boto3
+
+      - name: Write R2 creds + SSH key
+        env:
+          R2_ENDPOINT: ${{ secrets.S3_ENDPOINT_URL }}
+          R2_KEY: ${{ secrets.S3_ACCESS_KEY_ID }}
+          R2_SECRET: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
+          R2_PUBLIC: ${{ secrets.S3_PUBLIC_URL }}
+          R2_REGION: ${{ secrets.S3_REGION }}
+          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+        run: |
+          umask 077
+          cat > "$RUNNER_TEMP/r2.env" <<EOF
+          S3_ENDPOINT_URL=$R2_ENDPOINT
+          S3_ACCESS_KEY_ID=$R2_KEY
+          S3_SECRET_ACCESS_KEY=$R2_SECRET
+          S3_BUCKET_NAME=$R2_BUCKET
+          S3_PUBLIC_URL=$R2_PUBLIC
+          S3_REGION=$R2_REGION
+          EOF
+          printf '%s\n' "$SSH_KEY" > "$RUNNER_TEMP/ssh_key"
+          chmod 600 "$RUNNER_TEMP/ssh_key"
+
+      - name: Build, deploy to R2, seed registry + marketplace
+        env:
+          NUMU_R2_ENV: ${{ runner.temp }}/r2.env
+          BUNDLE_BASE: ${{ secrets.S3_PUBLIC_URL }}
+          DROPLET: ${{ secrets.STAGING_SSH_USER }}@${{ secrets.STAGING_HOST }}
+          THEME_INPUT: ${{ github.event.inputs.theme }}
+          CONTAINER: numu-api-test
+        run: |
+          set -u
+          SSH="ssh -i $RUNNER_TEMP/ssh_key -o StrictHostKeyChecking=no -o ConnectTimeout=20"
+          WANT="${THEME_INPUT:-all}"
+          ok=0; fail=0; failed=""
+          for d in *-engine-V3/; do
+            d="${d%/}"
+            if [ "$WANT" != "all" ] && [ "$WANT" != "$d" ]; then continue; fi
+            echo "::group::$d"
+            if ! ( cd "$d" && npm install --no-audit --no-fund && npx numu-theme build ); then
+              echo "::error::build failed for $d"; failed="$failed $d"; fail=$((fail+1)); echo "::endgroup::"; continue
+            fi
+            SLUG=$(node -e "console.log(require('./$d/theme.json').id)")
+            VER=$(node -e "console.log(require('./$d/theme.json').version)")
+            echo "deploying $SLUG@$VER"
+            python _deploy-bundle-r2.py "$SLUG" "$VER" "$d/dist"
+            # Pipe dist into the api-test container, then seed both registries.
+            tar -C "$d/dist" -cf - . | $SSH "$DROPLET" \
+              "docker exec -i $CONTAINER sh -c 'rm -rf /tmp/seed-dist && mkdir -p /tmp/seed-dist && tar -C /tmp/seed-dist -xf -'"
+            $SSH "$DROPLET" "docker exec -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $CONTAINER python scripts/seed_numu_theme.py"
+            $SSH "$DROPLET" "docker exec -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $CONTAINER python scripts/seed_marketplace_theme.py"
+            ok=$((ok+1))
+            echo "::endgroup::"
+          done
+          echo "Deployed $ok theme(s); $fail failed.$failed"
+          # A build failure on one theme shouldn't fail the whole run, but make
+          # it visible. Flip to `exit 1` here if you want a hard gate.
