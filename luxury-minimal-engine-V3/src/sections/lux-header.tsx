@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import {
   Link,
   useCart,
@@ -67,6 +67,15 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
     shop?.logo_url ||
     "";
 
+  // Merchant-chosen logo appearance. `none` keeps the original artwork
+  // (object-contain, no crop); square/rounded/circle/triangle crop the logo
+  // into that shape (object-cover in a 1:1 box). A plain <img> renders the
+  // source as-is, so animated GIF logos keep spinning under every shape.
+  const { className: logoClass, style: logoStyle } = logoImgProps(
+    asString(s.logo_shape) || "none",
+    asString(s.logo_size) || "small",
+  );
+
   const announcement = asString(s.announcement_text);
   const showAnnouncement = (s.show_announcement as boolean) !== false;
   const showSearch = (s.show_search as boolean) !== false;
@@ -104,7 +113,7 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
   /* ── Reusable pieces (ported from V2 LuxStoreHeader) ── */
 
   const logoSmall: ReactNode = logoUrl ? (
-    <img src={logoUrl} alt={brandName} className="h-7 object-contain" />
+    <img src={logoUrl} alt={brandName} className={logoClass} style={logoStyle} />
   ) : (
     <span className="lux-heading text-foreground text-lg">
       <InlineEditable sectionId={sectionId} settingKey="brand_name" value={brandName} />
@@ -197,7 +206,7 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
       case "logo-left":
         return (
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between h-14 border-b border-border">
+            <div className="flex items-center justify-between min-h-[3.5rem] py-2 border-b border-border">
               {actionsGroup}
               {desktopNav}
               <div className="flex items-center gap-3">
@@ -211,10 +220,10 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
       case "stacked":
         return (
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between h-14 border-b border-border relative">
-              {menuButton}
-              <div className="absolute left-1/2 -translate-x-1/2">{logoWithName}</div>
-              {actionsGroup}
+            <div className="grid grid-cols-3 items-center min-h-[3.5rem] border-b border-border">
+              <div className="flex items-center justify-start">{menuButton}</div>
+              <div className="flex items-center justify-center py-2">{logoWithName}</div>
+              <div className="flex items-center justify-end">{actionsGroup}</div>
             </div>
             <div className="hidden md:flex items-center justify-center gap-8 h-10 border-b border-border">
               {nav.map((link, i) => (
@@ -229,7 +238,7 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
       case "logo-right":
         return (
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between h-14 border-b border-border">
+            <div className="flex items-center justify-between min-h-[3.5rem] py-2 border-b border-border">
               <div className="flex items-center gap-3">
                 {menuButton}
                 {logoWithName}
@@ -244,10 +253,13 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
       default:
         return (
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between h-14 border-b border-border relative">
-              {menuButton}
-              <div className="absolute left-1/2 -translate-x-1/2">{logoOnly}</div>
-              {actionsGroup}
+            {/* 3-column grid keeps the logo perfectly centered while letting it
+                sit in normal flow, so a larger circle/rounded logo grows the row
+                (min-height) instead of spilling over the border into the nav. */}
+            <div className="grid grid-cols-3 items-center min-h-[3.5rem] border-b border-border">
+              <div className="flex items-center justify-start">{menuButton}</div>
+              <div className="flex items-center justify-center py-2">{logoOnly}</div>
+              <div className="flex items-center justify-end">{actionsGroup}</div>
             </div>
             {centerNav}
           </div>
@@ -300,4 +312,51 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
       )}
     </header>
   );
+}
+
+/**
+ * Logo <img> className + style for the merchant-chosen shape and size.
+ * `none` keeps the original artwork (height-only, object-contain); square /
+ * rounded / circle / triangle crop a 1:1 box with object-cover. All class
+ * strings are literal so Tailwind's JIT keeps them in the build. Triangle has
+ * no Tailwind utility, so it uses an inline clip-path.
+ */
+function logoImgProps(
+  shape: string,
+  size: string,
+): { className: string; style?: CSSProperties } {
+  if (shape === "none" || !shape) {
+    const h = size === "large" ? "h-12" : size === "medium" ? "h-9" : "h-7";
+    return { className: `${h} object-contain` };
+  }
+  // Circle and rounded only reveal the inscribed disc, so they read smaller
+  // than a square/triangle at the same box — give them a larger frame so the
+  // logo stays legible.
+  const rounded = shape === "circle" || shape === "rounded";
+  const box = rounded
+    ? size === "large"
+      ? "h-20 w-20"
+      : size === "medium"
+        ? "h-16 w-16"
+        : "h-12 w-12"
+    : size === "large"
+      ? "h-14 w-14"
+      : size === "medium"
+        ? "h-10 w-10"
+        : "h-8 w-8";
+  const base = `${box} object-cover`;
+  switch (shape) {
+    case "circle":
+      return { className: `${base} rounded-full` };
+    case "rounded":
+      return { className: `${base} rounded-lg` };
+    case "triangle":
+      return {
+        className: base,
+        style: { clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)" },
+      };
+    case "square":
+    default:
+      return { className: base };
+  }
 }
