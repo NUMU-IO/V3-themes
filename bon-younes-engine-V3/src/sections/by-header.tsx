@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import { Link, useCart, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings } from "@numueg/theme-sdk";
+import { Link, logoImgStyle, useCart, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings } from "@numueg/theme-sdk";
 import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, resolveBlocks, useBlockResolveContext, type SectionRenderProps } from "./_shared";
 
@@ -133,6 +133,15 @@ export default function ByHeader({ instance, sectionId }: SectionRenderProps) {
   // when the logo comes from the global logo_url AND a transform was saved —
   // the API-fallback (shop.logo_url) carries none, so it renders unchanged.
   const logoTransform = asImageTransform(themeSettings.global_settings?.logo_url);
+  // Merchant-chosen logo appearance, now an ENGINE-LEVEL feature: shape + size
+  // live in GLOBAL settings and the shaping is computed by the SDK's shared
+  // `logoImgStyle` (inline styles, GIF-safe) so every theme renders it the same
+  // way. `none` keeps the original artwork (theme's own 36×36 sizing); the
+  // shapes crop a 1:1 box.
+  const logoShape = asString(themeSettings.global_settings?.logo_shape) || "none";
+  const logoSize = asString(themeSettings.global_settings?.logo_size) || "small";
+  const logoShaped = logoShape !== "none";
+  const logoStyle = logoImgStyle(logoShape, logoSize);
   const monogram = asString(s.brand_monogram) || "BY";
 
   // Phase 2.4 — prefer the merchant-managed menu (Online Store →
@@ -196,14 +205,22 @@ export default function ByHeader({ instance, sectionId }: SectionRenderProps) {
 
         <Link to="/" className="by-header-brand" aria-label={brandName}>
           {logoUrl ? (
-            <img
-              src={logoUrl}
-              alt=""
-              className="by-header-brand-mark"
-              style={{ background: "transparent", objectFit: "cover", ...applyImageTransform(logoTransform, "cover") }}
-              width={36}
-              height={36}
-            />
+            logoShaped ? (
+              <img
+                src={logoUrl}
+                alt=""
+                style={logoStyle}
+              />
+            ) : (
+              <img
+                src={logoUrl}
+                alt=""
+                className="by-header-brand-mark"
+                style={{ background: "transparent", objectFit: "cover", ...applyImageTransform(logoTransform, "cover") }}
+                width={36}
+                height={36}
+              />
+            )
           ) : (
             <span className="by-header-brand-mark" aria-hidden="true">
               {monogram}

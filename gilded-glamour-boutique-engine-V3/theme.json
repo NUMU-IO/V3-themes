@@ -2,13 +2,30 @@
   "id": "gilded-glamour-boutique-v3",
   "name": "Gilded glamour boutique (V3)",
   "author": "Saw Saw Atelier",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "layout": "single-column",
   "description": "A bold, gold-accented luxury fashion theme with parallax hero, scroll-fill text animations, and curated vertical layouts. V3 port of the in-tree Gilded Glamour Boutique theme. Now with an editable Gilded header + footer included across every page.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
     "templates": {
+      "404": {
+        "name": "404 — Not found",
+        "sections": [
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-not-found",
+            "settings": {}
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
+        ]
+      },
       "home": {
         "name": "Home",
         "sections": [
@@ -208,23 +225,6 @@
           },
           {
             "type": "gilded-rich-text",
-            "settings": {}
-          },
-          {
-            "type": "gilded-footer",
-            "settings": {}
-          }
-        ]
-      },
-      "404": {
-        "name": "404 — Not found",
-        "sections": [
-          {
-            "type": "gilded-header",
-            "settings": {}
-          },
-          {
-            "type": "gilded-not-found",
             "settings": {}
           },
           {

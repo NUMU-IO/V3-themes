@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Link,
+  logoImgStyle,
   useCart,
   useCollections,
   useCustomer,
@@ -89,6 +90,16 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
     shop?.logo_url ||
     "";
   const logoWidth = asNumber(globals.logo_width, 0);
+
+  // Merchant-chosen logo appearance, now an ENGINE-LEVEL feature: shape + size
+  // live in GLOBAL settings and the shaping is computed by the SDK's shared
+  // `logoImgStyle` (inline styles, GIF-safe) so every theme renders it the same
+  // way. `none` keeps the original artwork (theme's own sizing + logo_width);
+  // the shapes crop a 1:1 box.
+  const logoShape = asString(globals.logo_shape) || "none";
+  const logoSize = asString(globals.logo_size) || "small";
+  const logoShaped = logoShape !== "none";
+  const logoStyle = logoImgStyle(logoShape, logoSize);
 
   const announcement = asString(s.announcement_text);
   // Default OFF — V2 Vionne ships no header announcement strip (it was
@@ -267,8 +278,20 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
               <img
                 src={logoUrl}
                 alt={brandName}
-                className={logoWidth ? "inline-block" : "h-7 md:h-8 w-auto inline-block"}
-                style={logoWidth ? { width: logoWidth, height: "auto" } : undefined}
+                className={
+                  logoShaped
+                    ? "inline-block"
+                    : logoWidth
+                      ? "inline-block"
+                      : "h-7 md:h-8 w-auto inline-block"
+                }
+                style={
+                  logoShaped
+                    ? logoStyle
+                    : logoWidth
+                      ? { width: logoWidth, height: "auto" }
+                      : undefined
+                }
               />
             ) : (
               <span className="vn-heading text-base md:text-lg tracking-[0.32em] uppercase truncate block">

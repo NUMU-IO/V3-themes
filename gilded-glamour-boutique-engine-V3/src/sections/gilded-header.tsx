@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   Link,
+  logoImgStyle,
   useCart,
   useCollections,
   useLocale,
@@ -62,6 +63,11 @@ export default function GildedHeader({ instance, sectionId }: SectionRenderProps
     asImageUrl(themeSettings.global_settings?.logo_url) ||
     shop?.logo_url ||
     "";
+
+  const logoShape = asString(themeSettings.global_settings?.logo_shape) || "none";
+  const logoSize = asString(themeSettings.global_settings?.logo_size) || "small";
+  const logoShaped = logoShape !== "none";
+  const logoStyle = logoImgStyle(logoShape, logoSize);
 
   const announcement = asString(s.announcement_text);
   const showAnnouncement = (s.show_announcement as boolean) !== false;
@@ -125,7 +131,12 @@ export default function GildedHeader({ instance, sectionId }: SectionRenderProps
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3" aria-label={brandName}>
             {logoUrl ? (
-              <img src={logoUrl} alt={brandName} className="h-10 w-auto object-contain" />
+              <img
+                src={logoUrl}
+                alt={brandName}
+                className={logoShaped ? "" : "h-10 w-auto object-contain"}
+                style={logoStyle}
+              />
             ) : (
               <span className="text-lg font-bold tracking-[0.2em] uppercase text-[hsl(var(--gold))]">
                 <InlineEditable sectionId={sectionId} settingKey="brand_name" value={brandName} />

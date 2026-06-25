@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   Link,
+  logoImgStyle,
   useCart,
   useLocale,
   useNavigation,
@@ -82,6 +83,16 @@ export default function BzHeader({ instance, sectionId }: SectionRenderProps) {
     asImageUrl(themeSettings.global_settings?.logo_url) ||
     shop?.logo_url ||
     "";
+
+  // Merchant-chosen logo appearance, now an ENGINE-LEVEL feature: shape + size
+  // live in GLOBAL settings and the shaping is computed by the SDK's shared
+  // `logoImgStyle` (inline styles, GIF-safe) so every theme renders it the same
+  // way. `none` keeps the original artwork (theme's own h-9/h-11 sizing); the
+  // shapes crop a 1:1 box.
+  const logoShape = asString(themeSettings.global_settings?.logo_shape) || "none";
+  const logoSize = asString(themeSettings.global_settings?.logo_size) || "small";
+  const logoShaped = logoShape !== "none";
+  const logoStyle = logoImgStyle(logoShape, logoSize);
 
   const showSearch = (s.show_search as boolean) !== false;
   const showCart = (s.show_cart as boolean) !== false;
@@ -259,7 +270,10 @@ export default function BzHeader({ instance, sectionId }: SectionRenderProps) {
               <img
                 src={logoUrl}
                 alt={brandName}
-                className="h-9 sm:h-11 w-auto max-h-12 object-contain"
+                className={
+                  logoShaped ? "" : "h-9 sm:h-11 w-auto max-h-12 object-contain"
+                }
+                style={logoStyle}
               />
             ) : (
               <span className="bz-heading text-lg sm:text-2xl text-[var(--bz-amber)] truncate">

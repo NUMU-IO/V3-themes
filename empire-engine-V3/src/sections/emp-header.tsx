@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Link,
+  logoImgStyle,
   useCart,
   useCollections,
   useLocale,
@@ -60,6 +61,15 @@ export default function EmpHeader({ instance, sectionId }: SectionRenderProps) {
     asImageUrl(themeSettings.global_settings?.logo_url) ||
     shop?.logo_url ||
     "";
+
+  // Merchant-chosen logo appearance, now an ENGINE-LEVEL feature: shape + size
+  // live in GLOBAL settings and the shaping is computed by the SDK's shared
+  // `logoImgStyle` (inline styles, GIF-safe). `none` keeps the original artwork
+  // (the theme's own h-10 sizing); the shapes crop a 1:1 box.
+  const logoShape = asString(themeSettings.global_settings?.logo_shape) || "none";
+  const logoSize = asString(themeSettings.global_settings?.logo_size) || "small";
+  const logoShaped = logoShape !== "none";
+  const logoStyle = logoImgStyle(logoShape, logoSize);
 
   const announcement = asString(s.announcement_text);
   const showAnnouncement = (s.show_announcement as boolean) !== false;
@@ -209,7 +219,12 @@ export default function EmpHeader({ instance, sectionId }: SectionRenderProps) {
           <div className="absolute left-1/2 -translate-x-1/2">
             <Link to="/" className={`block ${scrolled ? "text-foreground" : "text-white"}`} aria-label={brandName}>
               {logoUrl ? (
-                <img src={logoUrl} alt={brandName} className="h-10 object-contain" />
+                <img
+                  src={logoUrl}
+                  alt={brandName}
+                  className={logoShaped ? undefined : "h-10 object-contain"}
+                  style={logoStyle}
+                />
               ) : (
                 <span className="text-lg font-black uppercase tracking-wider">{brandName}</span>
               )}

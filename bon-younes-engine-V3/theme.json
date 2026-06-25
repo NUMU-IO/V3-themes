@@ -2,13 +2,30 @@
   "id": "bon-younes-v3",
   "name": "Bon Younes (V3)",
   "author": "NUMU",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "layout": "single-column",
   "description": "Mobile-first cafe & coffee storefront for Bon Younes — cream and espresso palette, looping drink strip hero, and a scroll-driven brand story.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
     "templates": {
+      "404": {
+        "name": "404 — Not found",
+        "sections": [
+          {
+            "type": "by-header",
+            "settings": {}
+          },
+          {
+            "type": "by-not-found",
+            "settings": {}
+          },
+          {
+            "type": "by-footer",
+            "settings": {}
+          }
+        ]
+      },
       "home": {
         "name": "Home",
         "sections": [
@@ -186,23 +203,6 @@
           },
           {
             "type": "by-profile-section",
-            "settings": {}
-          },
-          {
-            "type": "by-footer",
-            "settings": {}
-          }
-        ]
-      },
-      "404": {
-        "name": "404 — Not found",
-        "sections": [
-          {
-            "type": "by-header",
-            "settings": {}
-          },
-          {
-            "type": "by-not-found",
             "settings": {}
           },
           {
