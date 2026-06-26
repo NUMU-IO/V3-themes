@@ -1613,6 +1613,12 @@
   cursor: not-allowed;
   text-decoration: line-through;
 }
+.empire-pdp__hint {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: #c0392b;
+}
 .empire-pdp__qtyblock {
   display: flex;
   align-items: center;
