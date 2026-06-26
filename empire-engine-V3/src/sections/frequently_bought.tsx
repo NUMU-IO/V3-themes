@@ -72,9 +72,12 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
   const [pending, setPending] = useState(false);
 
   const currency = product?.currency || shop?.currency;
+  // Coerce to Number — related/catalog endpoints can return `price` as a string,
+  // which would make `sum + p.price` concatenate ("0"+"12"+"110" → 12110)
+  // instead of adding.
   const total = bundle
     .filter((p) => isOn(p.id))
-    .reduce((sum, p) => sum + p.price, 0);
+    .reduce((sum, p) => sum + (Number(p.price) || 0), 0);
 
   if (s.enabled === false) return null;
   if (bundle.length < 2) return null;
@@ -106,7 +109,10 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
 
       <div className="empire-fbt">
         {bundle.map((p, i) => {
-          const image = p.images?.[0];
+          // Tolerate images as ProductImage objects OR raw url strings.
+          const raw = p.images?.[0] as unknown;
+          const imgUrl =
+            typeof raw === "string" ? raw : (raw as { url?: string } | undefined)?.url;
           return (
             <div className="empire-fbt__item" key={p.id}>
               <label className="empire-fbt__card">
@@ -118,13 +124,14 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
                   }
                 />
                 <span className="empire-fbt__thumb">
-                  {image?.url ? (
+                  {imgUrl ? (
                     <img
-                      src={image.url}
-                      alt={image.alt || p.name}
+                      src={imgUrl}
+                      alt={p.name}
                       loading="lazy"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
+                        const el = e.target as HTMLImageElement;
+                        el.style.visibility = "hidden";
                       }}
                     />
                   ) : (
@@ -134,7 +141,7 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
                 <span className="empire-fbt__info">
                   <span className="empire-fbt__name">{p.name}</span>
                   <span className="empire-fbt__price">
-                    {formatMoney(p.price, currency)}
+                    {formatMoney(Number(p.price) || 0, currency)}
                   </span>
                 </span>
               </label>
