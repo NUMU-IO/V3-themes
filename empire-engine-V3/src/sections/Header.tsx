@@ -48,7 +48,8 @@ export default function Header({
   ];
 
   const { cart, updateQuantity, removeItem, loading } = useCart();
-  const { formatMoney } = useLocalization();
+  const { formatMoney, locale, setLocale, availableLocales } =
+    useLocalization();
   const nav = useNavigation(s.menu_handle || "main-menu");
   const { collections } = useCollections({ limit: 6 });
   const currency = useCurrency();
@@ -76,6 +77,18 @@ export default function Header({
       : DEFAULT_LINKS;
 
   const showCurrency = currency.presentment.length > 1;
+
+  // Language toggle. The store advertises locales via `availableLocales`; when
+  // it doesn't, fall back to the Arabic/English pair this store ships with.
+  const isAr = typeof locale === "string" && locale.toLowerCase().startsWith("ar");
+  const localePair =
+    availableLocales.length >= 2 ? availableLocales : ["ar", "en"];
+  const nextLocale =
+    localePair.find((l) =>
+      isAr ? !l.toLowerCase().startsWith("ar") : l.toLowerCase().startsWith("ar"),
+    ) || (isAr ? "en" : "ar");
+  // Label shows the language you'll switch TO, in its own script.
+  const switchLabel = isAr ? "EN" : "ع";
 
   const enterMega = () => {
     clearTimeout(megaTimer.current);
@@ -200,6 +213,16 @@ export default function Header({
 
             {/* Right: actions */}
             <div className="empire-header__actions">
+              <button
+                className="empire-langswitch"
+                type="button"
+                onClick={() => setLocale(nextLocale)}
+                aria-label={isAr ? "Switch to English" : "التبديل إلى العربية"}
+                title={isAr ? "English" : "العربية"}
+              >
+                {switchLabel}
+              </button>
+
               {showCurrency ? (
                 <select
                   className="empire-header__currency"
