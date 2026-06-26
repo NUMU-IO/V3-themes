@@ -1,282 +1,230 @@
-/**
- * Empire (V3) — entry point.
- *
- * Renders sections from `themeSettings.templates.<currentTemplate>`
- * (host-provided) or falls back to the manifest's preset home template.
- * Sections lazy-load so each page only pays for what it shows.
- *
- * Phase 3 adds the full multipage set — chrome (header/footer) plus the
- * commerce templates (products / product / collection / cart / checkout /
- * search / page / 404). `pickTemplate(ctx.page.type)` routes between them;
- * each template's section list lives in theme.json's `presets.templates`.
- */
-
+import type { ComponentType } from "react";
 import {
-  StrictMode,
-  Suspense,
-  forwardRef,
-  lazy,
-  useImperativeHandle,
-  useState,
-} from "react";
-import { createRoot, type Root } from "react-dom/client";
-import {
-  NuMuProvider,
+  defineThemeEntry,
   Section,
-  mountTheme,
-  useThemeSettings,
-  type Cart,
-  type Customer,
-  type SectionInstance,
-  type Store,
+  useDirection,
   type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
-import themeManifest from "../theme.json";
-import { DemoContext, PageDataContext, type MountPageData } from "./sections/_shared";
-import "./theme.css";
+import manifest from "../theme.json";
 
-/**
- * MountResult shape. The published @numueg/theme-sdk@0.1.0 doesn't
- * re-export this type yet, so we declare it inline. Matches the host
- * contract documented in ByotThemeBoundary.tsx on the storefront.
- */
-interface MountResult {
-  cleanup: () => void;
-  applyDraft: (next: ThemeSettingsV3) => void;
-}
+import Header from "./sections/Header";
+import Footer from "./sections/Footer";
+import Hero from "./sections/hero";
+import Marquee from "./sections/marquee";
+import FeaturedCollection from "./sections/featured_collection";
+import Categories from "./sections/categories";
+import PromoBanner from "./sections/promo_banner";
+import Testimonials from "./sections/testimonials";
+import Newsletter from "./sections/newsletter";
+import ProductDetails from "./sections/product_details";
+import SizeChart from "./sections/size_chart";
+import FrequentlyBought from "./sections/frequently_bought";
+import ProductGrid from "./sections/product_grid";
+import CartSummary from "./sections/cart_summary";
+import OrderConfirmation from "./sections/order_confirmation";
+import ImageWithText from "./sections/image_with_text";
+import RichTextSection from "./sections/rich_text";
+import NotFound from "./sections/not_found";
+import SearchResults from "./sections/search_results";
+import Account from "./sections/account";
+import AboutSection from "./sections/about_section";
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
-  // Home / content sections (Phase 0–2)
-  "emp-about-section": lazy(() => import("./sections/emp-about-section")),
-  "emp-categories": lazy(() => import("./sections/emp-categories")),
-  "emp-hero": lazy(() => import("./sections/emp-hero")),
-  "emp-image-with-text": lazy(() => import("./sections/emp-image-with-text")),
-  "emp-marquee": lazy(() => import("./sections/emp-marquee")),
-  "emp-newsletter": lazy(() => import("./sections/emp-newsletter")),
-  "emp-promo-banner": lazy(() => import("./sections/emp-promo-banner")),
-  "emp-rich-text": lazy(() => import("./sections/emp-rich-text")),
-  "emp-testimonials": lazy(() => import("./sections/emp-testimonials")),
-  // Chrome + commerce sections (Phase 3 — multipage templates)
-  "emp-header": lazy(() => import("./sections/emp-header")),
-  "emp-footer": lazy(() => import("./sections/emp-footer")),
-  "emp-featured-collection": lazy(() => import("./sections/emp-featured-collection")),
-  "emp-product-grid": lazy(() => import("./sections/emp-product-grid")),
-  "emp-product-detail": lazy(() => import("./sections/emp-product-detail")),
-  "emp-related-products": lazy(() => import("./sections/emp-related-products")),
-  "emp-cart": lazy(() => import("./sections/emp-cart")),
-  "emp-order-confirmation": lazy(() => import("./sections/emp-order-confirmation")),
-  "emp-search-results": lazy(() => import("./sections/emp-search-results")),
-  "emp-profile-section": lazy(() => import("./sections/emp-profile-section")),
-  "emp-not-found": lazy(() => import("./sections/emp-not-found")),
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
+  header: Header,
+  footer: Footer,
+  hero: Hero,
+  marquee: Marquee,
+  featured_collection: FeaturedCollection,
+  categories: Categories,
+  promo_banner: PromoBanner,
+  testimonials: Testimonials,
+  newsletter: Newsletter,
+  product_details: ProductDetails,
+  size_chart: SizeChart,
+  frequently_bought: FrequentlyBought,
+  product_grid: ProductGrid,
+  cart_summary: CartSummary,
+  order_confirmation: OrderConfirmation,
+  image_with_text: ImageWithText,
+  rich_text: RichTextSection,
+  not_found: NotFound,
+  search_results: SearchResults,
+  account: Account,
+  about_section: AboutSection,
 };
 
-function UnknownSection({ type }: { type: string }) {
-  return (
-    <section
-      style={{
-        padding: "1rem",
-        border: "1px dashed #0099FF",
-        fontFamily: "system-ui",
-        color: "#000000",
-        background: "#EFEEED",
-      }}
-    >
-      Unknown section: <strong>{type}</strong>
-    </section>
-  );
+const isKnown = (type: string) => Boolean(SECTION_REGISTRY[type]);
+
+interface SectionLike {
+  type: string;
+  settings?: Record<string, any>;
+  blocks?: Record<string, any> | any[];
+  block_order?: string[];
+  disabled?: boolean;
+}
+interface GroupLike {
+  sections?: Record<string, SectionLike> | SectionLike[];
+  order?: string[];
 }
 
-import {
-  selectTemplateSections,
-  type MaybeOrderedTemplate,
-} from "./sections/_template-utils";
+// The theme's own default templates/groups, baked into the bundle. The host
+// passes EMPTY templates for a marketplace PREVIEW (before install / before the
+// merchant customizes), expecting the bundle to fall back to these.
+const PRESETS = (manifest as any).presets ?? {};
+const BUILTIN_TEMPLATES: Record<string, GroupLike> = PRESETS.templates ?? {};
+const BUILTIN_GROUPS: Record<string, GroupLike> = PRESETS.section_groups ?? {};
 
-const BUILTIN_TEMPLATES = (
-  themeManifest as unknown as {
-    presets?: { templates?: Record<string, MaybeOrderedTemplate> };
+/** Normalise a section instance so blocks are always `{map}` + `order[]`
+ *  (presets store blocks as an array; resolved host data stores a map). */
+function normaliseInstance(instance: SectionLike): SectionLike {
+  if (Array.isArray(instance.blocks)) {
+    const map: Record<string, any> = {};
+    const order: string[] = [];
+    instance.blocks.forEach((b: any, i: number) => {
+      const id = `${b?.type ?? "block"}-${i}`;
+      map[id] = b;
+      order.push(id);
+    });
+    return { ...instance, blocks: map, block_order: order };
   }
-).presets?.templates ?? {};
+  return instance;
+}
 
-const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
+/** Normalise a template/group (array OR map+order) → ordered instance list. */
+function resolveSections(
+  group: GroupLike | undefined,
+): Array<{ id: string; instance: SectionLike }> {
+  if (!group || !group.sections) return [];
+  if (Array.isArray(group.sections)) {
+    return group.sections.map((instance, idx) => ({
+      id: `${instance.type}-${idx}`,
+      instance: normaliseInstance(instance),
+    }));
+  }
+  const map = group.sections as Record<string, SectionLike>;
+  const order = group.order ?? Object.keys(map);
+  const out: Array<{ id: string; instance: SectionLike }> = [];
+  for (const id of order) {
+    const instance = map[id];
+    if (instance) out.push({ id, instance: normaliseInstance(instance) });
+  }
+  return out;
+}
 
-function RenderSection({
-  instance,
-  sectionId,
-  groupId,
-}: {
-  instance: SectionInstance;
-  sectionId: string;
-  groupId?: string;
-}) {
-  if (instance.disabled) return null;
-  const Component = SECTION_REGISTRY[instance.type];
-  if (!Component) {
+/** Prefer the host's customisation; fall back to bundled presets (preview). */
+function selectSections(
+  host: GroupLike | undefined,
+  builtin: GroupLike | undefined,
+): Array<{ id: string; instance: SectionLike }> {
+  const hostList = resolveSections(host).filter((s) => isKnown(s.instance.type));
+  if (hostList.length > 0) return hostList;
+  return resolveSections(builtin).filter((s) => isKnown(s.instance.type));
+}
+
+function styleVars(global: Record<string, any>): React.CSSProperties {
+  const vars: Record<string, string> = {};
+  if (global.accent_color) vars["--emp-accent"] = global.accent_color;
+  if (global.foreground_color) vars["--emp-fg"] = global.foreground_color;
+  if (global.background_color) vars["--emp-bg"] = global.background_color;
+  if (global.font_family) {
+    const stack = `"${global.font_family}", "Inter", system-ui, sans-serif`;
+    vars["--emp-font-body"] = stack;
+    vars["--emp-font-display"] = stack;
+  }
+  return vars as React.CSSProperties;
+}
+
+function renderList(
+  list: Array<{ id: string; instance: SectionLike }>,
+  keyPrefix: string,
+  groupId?: string,
+  extra?: Record<string, unknown>,
+) {
+  return list.map(({ id, instance }) => {
+    if (instance.disabled) return null;
+    const Component = SECTION_REGISTRY[instance.type];
+    if (!Component) return null;
+    // <Section> emits the data-section-id the customizer's PreviewBridge reads
+    // for click-to-select; passing the id down lets each component wire
+    // <EditableText>/<EditableImage> for inline field editing.
     return (
-      <Section id={sectionId} type={instance.type} groupId={groupId}>
-        <UnknownSection type={instance.type} />
+      <Section
+        key={`${keyPrefix}-${id}`}
+        id={id}
+        type={instance.type}
+        groupId={groupId}
+      >
+        <Component
+          id={id}
+          type={instance.type}
+          settings={instance.settings}
+          blocks={instance.blocks}
+          blockOrder={instance.block_order}
+          {...extra}
+        />
       </Section>
     );
-  }
-  return (
-    <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
-    </Section>
-  );
+  });
 }
 
-function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
-  const settings = useThemeSettings();
-  const hostTemplate = settings.templates?.[currentTemplate] as
-    | MaybeOrderedTemplate
-    | undefined;
-  const builtinTemplate = BUILTIN_TEMPLATES[currentTemplate];
+interface ThemeProps {
+  themeSettings: ThemeSettingsV3;
+  currentTemplate: string;
+}
 
-  // selectTemplateSections handles three cases:
-  //   1. host customisation has known sections → render it (filtered).
-  //   2. host customisation has only UNKNOWN sections (theme just got
-  //      switched, stale data) → fall back to bundled preset.
-  //   3. no host customisation at all → use bundled preset.
-  const sections = selectTemplateSections(
-    hostTemplate,
-    builtinTemplate,
-    isKnownType,
-  );
+export default function Theme({ themeSettings, currentTemplate }: ThemeProps) {
+  const pageType = currentTemplate || "home";
+  const global = themeSettings.global_settings || {};
+  const dir = useDirection();
+
+  const hostTemplates = (themeSettings.templates ?? {}) as Record<
+    string,
+    GroupLike
+  >;
+  const hostTemplate =
+    hostTemplates[pageType] ?? hostTemplates.page ?? hostTemplates.home;
+  const builtinTemplate =
+    BUILTIN_TEMPLATES[pageType] ??
+    BUILTIN_TEMPLATES.page ??
+    BUILTIN_TEMPLATES.home;
+
+  const hostGroups = (themeSettings.section_groups ?? {}) as Record<
+    string,
+    GroupLike
+  >;
+  const headerSections = selectSections(hostGroups.header, BUILTIN_GROUPS.header);
+  const footerSections = selectSections(hostGroups.footer, BUILTIN_GROUPS.footer);
+  const bodySections = selectSections(hostTemplate, builtinTemplate);
+
+  // The header is fixed/overlay; pages that don't open with a full-bleed hero
+  // need top padding so their first section clears it.
+  const firstType = bodySections[0]?.instance.type;
+  const bleedTop = firstType === "hero";
 
   return (
-    <div data-empire-v3-app data-theme="empire">
-      {sections.map(({ id, instance }) => (
-        <RenderSection key={id} sectionId={id} instance={instance} />
-      ))}
+    <div className="empire" dir={dir} style={styleVars(global)}>
+      {renderList(headerSections, "hg", "header", { solidHeader: !bleedTop })}
+      {!bleedTop && headerSections.length > 0 ? (
+        <div className="empire-spacer-top" aria-hidden="true" />
+      ) : null}
+      {bodySections.length > 0 ? (
+        renderList(bodySections, pageType)
+      ) : (
+        <section className="empire-page empire-container">
+          <p className="empire-placeholder">
+            No template configured for "{pageType}".
+          </p>
+        </section>
+      )}
+      {renderList(footerSections, "fg", "footer")}
     </div>
   );
 }
 
-// ── Host contract: mount(el, ctx) returns a MountResult ────────────────────
+// ── Entry: ONE definition → mount (client/hydrate) + createApp (SSR) ────────
+const entry = defineThemeEntry(({ themeSettings, currentTemplate }) => (
+  <Theme themeSettings={themeSettings} currentTemplate={currentTemplate} />
+));
 
-/**
- * The host (numu-storefront ByotThemeBoundary) passes mount context as:
- *   { themeSettings, storeData, page, locale }
- *
- * Older drafts of the contract used { store, currentTemplate, ... }.
- * We accept both shapes and normalise so bundles published to the
- * marketplace stay defensive as the host evolves.
- */
-export interface MountContext {
-  // V3 storefront contract (current host)
-  storeData?: Store;
-  page?: { type?: string; handle?: string; data?: Record<string, unknown> };
-  // Legacy / dev contract
-  store?: Store;
-  currentTemplate?: string;
-  initialCart?: Cart;
-  customer?: Customer | null;
-  // Common to both
-  themeSettings: ThemeSettingsV3;
-  /** Optional explicit demo/marketplace-preview flag from the host. When
-   *  omitted, the bundle infers it from empty templates (preview ships none). */
-  demo?: boolean;
-  locale?: string;
-  translations?: Record<string, string>;
-  [extra: string]: unknown;
-}
-
-interface DraftHandle {
-  applyDraft: (next: ThemeSettingsV3) => void;
-}
-
-/** Normalize the two ctx shapes into one. SDK reads store.currency without
- *  optional chaining and would throw if undefined slipped through. */
-function pickStore(ctx: MountContext): Store {
-  const s = ctx.storeData ?? ctx.store;
-  if (s) return s;
-  return {
-    id: "unknown",
-    name: "Store",
-    slug: "store",
-    currency: "EGP",
-    default_language: "en",
-    use_nextjs_storefront: true,
-  } as Store;
-}
-
-function pickTemplate(ctx: MountContext): string {
-  if (typeof ctx.currentTemplate === "string" && ctx.currentTemplate) {
-    return ctx.currentTemplate;
-  }
-  const pageType = ctx.page?.type;
-  if (typeof pageType === "string" && pageType) return pageType;
-  return "home";
-}
-
-export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  return mountTheme(el, ctx, ({ currentTemplate, demo, page }) => (
-    <DemoContext.Provider value={demo}>
-      <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
-        <ThemeApp currentTemplate={currentTemplate} />
-      </PageDataContext.Provider>
-    </DemoContext.Provider>
-  ));
-}
-
-const v3Handle = {
-  kind: "v3-mount" as const,
-  numu_theme_version: 3 as const,
-  mount_returns: "MountResult" as const,
-  manifest: { id: "empire-v3", name: "Empire (V3)", version: "0.3.0" },
-  mount,
-};
-export default v3Handle;
-
-// ── Dev-only auto-mount ────────────────────────────────────────────────────
-//
-// In production the storefront host calls `mount(el, ctx)`. In `vite dev`
-// nothing calls it, so we'd see an empty page. Bootstrap a minimal context
-// against #root so theme developers can iterate locally with `npm run dev`.
-//
-// We map the URL path → template so clicking links inside the dev preview
-// (a product card → `/products/<id>`, the cart icon → `/cart`, …) swaps the
-// rendered template instead of always remounting `home`.
-function templateFromPath(pathname: string): string {
-  if (pathname.startsWith("/products/") || pathname.startsWith("/product/")) {
-    return "product";
-  }
-  if (pathname === "/products") return "products";
-  if (pathname === "/cart") return "cart";
-  if (pathname === "/checkout") return "checkout";
-  if (pathname === "/search") return "search";
-  if (pathname === "/collections" || pathname.startsWith("/collections/")) {
-    return "collection";
-  }
-  return "home";
-}
-
-if (import.meta.env.DEV && typeof document !== "undefined") {
-  const rootEl = document.getElementById("root");
-  if (rootEl && !rootEl.dataset.numuMounted) {
-    rootEl.dataset.numuMounted = "1";
-    const resolveTemplate = () =>
-      new URLSearchParams(window.location.search).get("template") ??
-      templateFromPath(window.location.pathname);
-    const devCtx: MountContext = {
-      store: {
-        id: "dev-store",
-        name: "Empire",
-        slug: "empire-v3",
-        currency: "EGP",
-        default_language: "en",
-        use_nextjs_storefront: true,
-      },
-      themeSettings: {
-        schema_version: 3,
-        theme_id: "empire-v3",
-        global_settings: {},
-        templates: {},
-        section_groups: {},
-      },
-      currentTemplate: resolveTemplate(),
-    };
-    mount(rootEl, devCtx);
-  }
-}
+export const mount = entry.mount;
+export const createApp = entry.createApp;

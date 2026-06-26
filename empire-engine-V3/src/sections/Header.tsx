@@ -1,0 +1,416 @@
+import { useEffect, useRef, useState } from "react";
+import {
+  useCart,
+  useLocalization,
+  useNavigation,
+  useCollections,
+  useCurrency,
+  EditableText,
+} from "@numueg/theme-sdk";
+import type { EmpSectionProps } from "../lib/section";
+import { useCartOpen, openCart, closeCart } from "../lib/cartUI";
+import { CouponForm } from "../lib/CouponForm";
+
+interface HeaderSettings {
+  brand_name?: string;
+  logo?: string;
+  announcement_text?: string;
+  menu_handle?: string;
+  show_search?: boolean;
+  show_account?: boolean;
+  show_cart?: boolean;
+}
+
+const DEFAULT_LINKS = [
+  { label: "الرئيسية", url: "/" },
+  { label: "المتجر", url: "/products" },
+  { label: "تواصل", url: "/pages/contact" },
+];
+
+export default function Header({
+  id,
+  settings,
+  solidHeader,
+}: EmpSectionProps & { solidHeader?: boolean }) {
+  const s = settings as HeaderSettings;
+  const brand = s.brand_name || "EMPIRE";
+
+  const { cart, updateQuantity, removeItem, loading } = useCart();
+  const { formatMoney } = useLocalization();
+  const nav = useNavigation(s.menu_handle || "main-menu");
+  const { collections } = useCollections({ limit: 6 });
+  const currency = useCurrency();
+  const drawerOpen = useCartOpen();
+
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [megaOpen, setMegaOpen] = useState(false);
+  const megaTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const items = cart?.items ?? [];
+  const count = items.reduce((n, it) => n + it.quantity, 0);
+  const cartCurrency = cart?.currency;
+
+  const links =
+    nav.items.length > 0
+      ? nav.items.map((it) => ({ label: it.title, url: it.url }))
+      : DEFAULT_LINKS;
+
+  const showCurrency = currency.presentment.length > 1;
+
+  const enterMega = () => {
+    clearTimeout(megaTimer.current);
+    setMegaOpen(true);
+  };
+  const leaveMega = () => {
+    megaTimer.current = setTimeout(() => setMegaOpen(false), 180);
+  };
+
+  return (
+    <>
+      <header
+        className={`empire-header${solidHeader || scrolled ? " is-scrolled" : ""}`}
+      >
+        {s.announcement_text ? (
+          <EditableText
+            as="div"
+            className="empire-announce"
+            sectionId={id}
+            settingId="announcement_text"
+            value={s.announcement_text}
+          />
+        ) : null}
+
+        <div className="empire-container">
+          <div className="empire-header__bar">
+            {/* Left: desktop nav + mobile burger */}
+            <nav className="empire-header__nav" aria-label="Primary">
+              {links.map((l, i) => {
+                const isShop = l.url === "/products";
+                if (!isShop) {
+                  return (
+                    <a key={i} href={l.url}>
+                      {l.label}
+                    </a>
+                  );
+                }
+                return (
+                  <div
+                    key={i}
+                    style={{ position: "relative" }}
+                    onMouseEnter={enterMega}
+                    onMouseLeave={leaveMega}
+                  >
+                    <a href={l.url}>{l.label}</a>
+                    {megaOpen && collections.length > 0 ? (
+                      <div
+                        className="empire-mega"
+                        onMouseEnter={enterMega}
+                        onMouseLeave={leaveMega}
+                      >
+                        <div className="empire-mega__col">
+                          <p className="empire-mega__label">{l.label}</p>
+                          <a
+                            className="empire-mega__link empire-mega__link--strong"
+                            href="/products"
+                          >
+                            كل المنتجات
+                          </a>
+                          {collections.slice(0, 5).map((c) => (
+                            <a
+                              key={c.id}
+                              className="empire-mega__link"
+                              href={`/collections/${c.slug}`}
+                            >
+                              {c.name}
+                            </a>
+                          ))}
+                        </div>
+                        <div className="empire-mega__cards">
+                          {collections.slice(0, 3).map((c) => (
+                            <a
+                              key={c.id}
+                              className="empire-mega__card"
+                              href={`/collections/${c.slug}`}
+                            >
+                              <span className="empire-mega__cardmedia">
+                                {c.image_url ? (
+                                  <img src={c.image_url} alt={c.name} />
+                                ) : (
+                                  <span className="empire-cat__placeholder">
+                                    {c.name?.[0] ?? "?"}
+                                  </span>
+                                )}
+                              </span>
+                              <span className="empire-mega__cardname">
+                                {c.name}
+                              </span>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </nav>
+
+            <button
+              className="empire-burger"
+              type="button"
+              aria-label="Menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((v) => !v)}
+            >
+              {menuOpen ? <IconX /> : <IconMenu />}
+            </button>
+
+            {/* Center: logo */}
+            <a className="empire-header__logo" href="/" aria-label={brand}>
+              {s.logo ? (
+                <img src={s.logo} alt={brand} />
+              ) : (
+                <EditableText
+                  as="span"
+                  sectionId={id}
+                  settingId="brand_name"
+                  value={brand}
+                />
+              )}
+            </a>
+
+            {/* Right: actions */}
+            <div className="empire-header__actions">
+              {showCurrency ? (
+                <select
+                  className="empire-header__currency"
+                  aria-label="Currency"
+                  value={currency.selected}
+                  onChange={(e) => currency.setSelected(e.target.value)}
+                >
+                  {currency.presentment.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              ) : null}
+
+              {s.show_search !== false ? (
+                <a className="empire-iconbtn" href="/search" aria-label="بحث">
+                  <IconSearch />
+                </a>
+              ) : null}
+
+              {s.show_account !== false ? (
+                <a className="empire-iconbtn" href="/account" aria-label="الحساب">
+                  <IconUser />
+                </a>
+              ) : null}
+
+              {s.show_cart !== false ? (
+                <button
+                  className="empire-iconbtn"
+                  type="button"
+                  onClick={openCart}
+                  aria-label={`السلة، ${count} عناصر`}
+                >
+                  <IconBag />
+                  <span>{count}</span>
+                </button>
+              ) : null}
+            </div>
+          </div>
+        </div>
+
+        {menuOpen ? (
+          <div className="empire-mobilemenu">
+            {links.map((l, i) => (
+              <a key={i} href={l.url} onClick={() => setMenuOpen(false)}>
+                {l.label}
+              </a>
+            ))}
+            {collections.slice(0, 5).map((c) => (
+              <a
+                key={c.id}
+                href={`/collections/${c.slug}`}
+                onClick={() => setMenuOpen(false)}
+                style={{ paddingInlineStart: "1rem", fontWeight: 400 }}
+              >
+                {c.name}
+              </a>
+            ))}
+          </div>
+        ) : null}
+      </header>
+
+      {/* Cart drawer */}
+      <div
+        className={`empire-drawer${drawerOpen ? " is-open" : ""}`}
+        role="dialog"
+        aria-label="السلة"
+        aria-hidden={!drawerOpen}
+      >
+        <div className="empire-drawer__overlay" onClick={closeCart} />
+        <div className="empire-drawer__panel">
+          <div className="empire-drawer__head">
+            <span className="empire-drawer__title">
+              {count > 0 ? `${count} عنصر في السلة` : "السلة"}
+            </span>
+            <button
+              className="empire-drawer__close"
+              type="button"
+              onClick={closeCart}
+              aria-label="إغلاق"
+            >
+              <IconX />
+            </button>
+          </div>
+
+          <div className="empire-drawer__body">
+            {items.length === 0 ? (
+              <div className="empire-drawer__empty">
+                <p>السلة فاضية</p>
+              </div>
+            ) : (
+              items.map((line) => (
+                <div className="empire-line" key={line.id}>
+                  <div className="empire-line__img">
+                    {line.image_url ? (
+                      <img src={line.image_url} alt={line.name} />
+                    ) : null}
+                  </div>
+                  <div className="empire-line__body">
+                    <div className="empire-line__top">
+                      <div>
+                        <p className="empire-line__name">{line.name}</p>
+                        {line.variant_name ? (
+                          <p className="empire-line__variant">
+                            {line.variant_name}
+                          </p>
+                        ) : null}
+                      </div>
+                      <p>{formatMoney(line.price * line.quantity, cartCurrency)}</p>
+                    </div>
+                    <div className="empire-line__controls">
+                      <div className="empire-qty">
+                        <button
+                          type="button"
+                          aria-label="تقليل"
+                          disabled={loading}
+                          onClick={() =>
+                            updateQuantity(line.id, line.quantity - 1)
+                          }
+                        >
+                          −
+                        </button>
+                        <span>{line.quantity}</span>
+                        <button
+                          type="button"
+                          aria-label="زيادة"
+                          disabled={loading}
+                          onClick={() =>
+                            updateQuantity(line.id, line.quantity + 1)
+                          }
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button
+                        className="empire-line__remove"
+                        type="button"
+                        disabled={loading}
+                        onClick={() => removeItem(line.id)}
+                        aria-label="حذف"
+                      >
+                        <IconX />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {items.length > 0 ? (
+            <div className="empire-drawer__foot">
+              <CouponForm compact />
+              <div className="empire-subtotal">
+                <span>المجموع الفرعي</span>
+                <span>{formatMoney(cart?.subtotal ?? 0, cartCurrency)}</span>
+              </div>
+              {cart?.discount_amount && cart.discount_amount > 0 ? (
+                <div className="empire-subtotal empire-discount">
+                  <span>
+                    الخصم
+                    {cart.discount_code ? ` (${cart.discount_code})` : ""}
+                  </span>
+                  <span>−{formatMoney(cart.discount_amount, cartCurrency)}</span>
+                </div>
+              ) : null}
+              <div className="empire-subtotal empire-total">
+                <span>الإجمالي</span>
+                <span>
+                  {formatMoney(
+                    cart?.total ??
+                      (cart?.subtotal ?? 0) - (cart?.discount_amount ?? 0),
+                    cartCurrency,
+                  )}
+                </span>
+              </div>
+              <a className="empire-btn empire-btn--block" href="/checkout">
+                إتمام الطلب
+              </a>
+              <button
+                className="empire-iconbtn"
+                type="button"
+                style={{ justifyContent: "center" }}
+                onClick={closeCart}
+              >
+                متابعة التسوق
+              </button>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ── Inline icons (no runtime icon dep) ── */
+const IconSearch = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <circle cx="11" cy="11" r="7" />
+    <path d="m21 21-4.35-4.35" />
+  </svg>
+);
+const IconUser = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 21a8 8 0 0 1 16 0" />
+  </svg>
+);
+const IconBag = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+    <path d="M3 6h18" />
+    <path d="M16 10a4 4 0 0 1-8 0" />
+  </svg>
+);
+const IconMenu = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M3 12h18M3 6h18M3 18h18" />
+  </svg>
+);
+const IconX = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M18 6 6 18M6 6l12 12" />
+  </svg>
+);
