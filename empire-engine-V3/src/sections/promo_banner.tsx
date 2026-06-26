@@ -1,6 +1,7 @@
 import { EditableImage } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
+import { useT } from "../lib/i18n";
 
 interface PromoSettings {
   badge_text?: string;
@@ -17,10 +18,11 @@ interface PromoSettings {
  */
 export default function PromoBanner({ id, settings }: EmpSectionProps) {
   const s = settings as PromoSettings;
-  const badge = s.badge_text ?? "عرض محدود";
-  const headline = s.headline ?? "خصم ٢٥٪ على كل الإكسسوارات";
-  const subtitle = s.subtitle ?? "العرض ساري لنهاية الشهر. متفوتش الفرصة!";
-  const ctaText = s.cta_text ?? "تسوق الآن";
+  const t = useT();
+  const badge = s.badge_text ?? t("Limited offer", "عرض محدود");
+  const headline = s.headline ?? t("25% off all accessories", "خصم ٢٥٪ على كل الإكسسوارات");
+  const subtitle = s.subtitle ?? t("Ends this month — don't miss out!", "العرض ساري لنهاية الشهر. متفوتش الفرصة!");
+  const ctaText = s.cta_text ?? t("Shop now", "تسوق الآن");
   const ctaLink = s.cta_link ?? "/products";
 
   return (

@@ -7,6 +7,7 @@ import {
 } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
+import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/ProductCard";
 
 interface FeaturedSettings {
@@ -19,10 +20,16 @@ interface FeaturedSettings {
   tab_new_label?: string;
 }
 
-const TABS: Array<{ key: string; settingId: string; fallback: string; tags: string[] }> = [
-  { key: "trending", settingId: "tab_trending_label", fallback: "الأكثر رواجاً", tags: ["رائج", "trending", "مميز", "featured"] },
-  { key: "bestseller", settingId: "tab_bestseller_label", fallback: "الأكثر مبيعاً", tags: ["مبيع", "bestseller", "best", "الأكثر مبيعاً"] },
-  { key: "new", settingId: "tab_new_label", fallback: "وصل حديثاً", tags: ["جديد", "new", "حديث"] },
+const TABS: Array<{
+  key: string;
+  settingId: keyof FeaturedSettings;
+  en: string;
+  ar: string;
+  tags: string[];
+}> = [
+  { key: "trending", settingId: "tab_trending_label", en: "Trending", ar: "الأكثر رواجاً", tags: ["رائج", "trending", "مميز", "featured"] },
+  { key: "bestseller", settingId: "tab_bestseller_label", en: "Bestsellers", ar: "الأكثر مبيعاً", tags: ["مبيع", "bestseller", "best", "الأكثر مبيعاً"] },
+  { key: "new", settingId: "tab_new_label", en: "New", ar: "وصل حديثاً", tags: ["جديد", "new", "حديث"] },
 ];
 
 /** Filter products for a tab by their `tags` (case-insensitive substring),
@@ -46,7 +53,8 @@ function filterByTab(products: Product[], key: string): Product[] {
  */
 export default function FeaturedCollection({ id, settings }: EmpSectionProps) {
   const s = settings as FeaturedSettings;
-  const title = s.title ?? "المتجر";
+  const tr = useT();
+  const title = s.title ?? tr("Shop", "المتجر");
   const viewAll = s.view_all_link || "/products";
   const max = Math.max(4, Math.min(12, s.max_items ?? 8));
 
@@ -73,19 +81,19 @@ export default function FeaturedCollection({ id, settings }: EmpSectionProps) {
             value={title}
           />
           <div className="empire-tabs">
-            {TABS.map((t) => (
+            {TABS.map((item) => (
               <button
-                key={t.key}
+                key={item.key}
                 type="button"
                 className="empire-chip"
-                aria-pressed={tab === t.key}
-                onClick={() => setTab(t.key)}
+                aria-pressed={tab === item.key}
+                onClick={() => setTab(item.key)}
               >
-                {(s[t.settingId as keyof FeaturedSettings] as string) || t.fallback}
+                {(s[item.settingId] as string) || tr(item.en, item.ar)}
               </button>
             ))}
             <a className="empire-chip" href={viewAll}>
-              {s.view_all_label || "عرض الكل"}
+              {s.view_all_label || tr("View all", "عرض الكل")}
             </a>
           </div>
         </div>

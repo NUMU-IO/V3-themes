@@ -3,6 +3,7 @@ import {
   useState } from "react";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
+import { useT } from "../lib/i18n";
 
 interface HeroSettings {
   headline?: string;
@@ -23,9 +24,10 @@ interface HeroSettings {
  */
 export default function Hero({ id, settings }: EmpSectionProps) {
   const s = settings as HeroSettings;
-  const headline = s.headline ?? "اكتشف التشكيلة الجديدة";
-  const subtitle = s.subtitle ?? "تسوق الآن";
-  const ctaText = s.cta_text ?? "تسوق";
+  const t = useT();
+  const headline = s.headline ?? t("Discover the new collection", "اكتشف التشكيلة الجديدة");
+  const subtitle = s.subtitle ?? t("Shop now", "تسوق الآن");
+  const ctaText = s.cta_text ?? t("Shop", "تسوق");
   const ctaLink = s.cta_link ?? "/products";
 
   const slides = [s.image_1, s.image_2, s.image_3].filter(
