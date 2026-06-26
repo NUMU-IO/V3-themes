@@ -34,7 +34,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const s = settings as PdpSettings;
   const t = useT();
   const product = useProductOptional();
-  const { addItem } = useCart();
+  const { cart, addItem, updateNote } = useCart();
   const { formatMoney } = useLocalization();
   const shop = useShop();
   const chart = useProductSizeChart();
@@ -42,6 +42,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const [activeImg, setActiveImg] = useState(0);
   const [qty, setQty] = useState(1);
   const [pickedId, setPickedId] = useState<string | undefined>(undefined);
+  const [pickedSize, setPickedSize] = useState<string | undefined>(undefined);
   const [sizeOpen, setSizeOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -66,6 +67,20 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const hasOptions = opts.length > 0;
   const hasVariantList = !hasOptions && variants.length > 1;
 
+  // Sizes from the size chart — when a product has no real option axes (the
+  // common case here: one SKU, sizes only described in the chart) we still let
+  // the buyer pick a size, mirroring how the bazaar storefront renders sizes.
+  // The choice is recorded on the cart note (the SDK's add-to-cart carries no
+  // per-line properties and there's a single variant to attach it to).
+  const chartSizes = (chart?.rows ?? [])
+    .map((r) => r.size)
+    .filter((sz): sz is string => Boolean(sz));
+  // A chart can be "enabled" but empty (merchant toggled it on, never filled
+  // it) — only treat it as showable when it actually has rows or an image.
+  const chartHasContent =
+    !!chart && (chartSizes.length > 0 || Boolean(chart.image_url));
+  const needsSize = !hasOptions && !hasVariantList && chartSizes.length > 0;
+
   const { selection, variant, select, availability, isComplete } = variantSel;
   const fallbackVariant = hasOptions
     ? null
@@ -86,8 +101,10 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const purchasable =
     product.in_stock &&
     (activeVariant?.is_in_stock ?? true) &&
-    (hasOptions ? isComplete : true);
+    (hasOptions ? isComplete : true) &&
+    (needsSize ? Boolean(pickedSize) : true);
   const productId = product.id;
+  const productName = product.name;
   const selectedVariantId = activeVariant?.id ?? pickedId;
 
   const href = `/products/${product.slug}`;
@@ -102,6 +119,20 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
     if (pending || !purchasable) return;
     setPending(true);
     try {
+      // Record the chosen size on the cart note so the merchant fulfils the
+      // right size. Replace any prior line for this product (re-adds, qty
+      // changes) so the note stays one line per product.
+      if (needsSize && pickedSize) {
+        const prefix = `• ${productName} — `;
+        const tag = `${prefix}${t("Size", "المقاس")}: `;
+        const prev = cart?.note ?? "";
+        const kept = prev
+          .split("\n")
+          .filter((line) => line && !line.startsWith(prefix))
+          .join("\n");
+        const next = `${kept ? `${kept}\n` : ""}${tag}${pickedSize}`;
+        await updateNote(next);
+      }
       await addItem(productId, selectedVariantId, qty);
       openCart();
     } finally {
@@ -205,7 +236,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
           {opts.map((opt) => (
             <div key={opt.name} className="empire-pdp__optgroup">
               <div className="empire-pdp__opt-head">
-                {chart ? (
+                {chartHasContent ? (
                   <button type="button" className="empire-pdp__sizelink" onClick={() => setSizeOpen(true)}>
                     <SizeIcon /> {t("Size guide", "دليل المقاسات")}
                   </button>
@@ -237,7 +268,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
           {hasVariantList ? (
             <div className="empire-pdp__optgroup">
               <div className="empire-pdp__opt-head">
-                {chart ? (
+                {chartHasContent ? (
                   <button type="button" className="empire-pdp__sizelink" onClick={() => setSizeOpen(true)}>
                     <SizeIcon /> {t("Size guide", "دليل المقاسات")}
                   </button>
@@ -265,7 +296,38 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             </div>
           ) : null}
 
-          {chart && !hasOptions && !hasVariantList ? (
+          {/* Size picker derived from the size chart (no real option axes) */}
+          {needsSize ? (
+            <div className="empire-pdp__optgroup">
+              <div className="empire-pdp__opt-head">
+                <button type="button" className="empire-pdp__sizelink" onClick={() => setSizeOpen(true)}>
+                  <SizeIcon /> {t("Size guide", "دليل المقاسات")}
+                </button>
+                <span className="empire-pdp__opt-label">{t("Size", "المقاس")}</span>
+              </div>
+              <div className="empire-pdp__sizes">
+                {chartSizes.map((sz) => {
+                  const selected = pickedSize === sz;
+                  return (
+                    <button
+                      key={sz}
+                      type="button"
+                      className={`empire-sizebox${selected ? " is-active" : ""}`}
+                      aria-pressed={selected}
+                      onClick={() => setPickedSize(sz)}
+                    >
+                      {sz}
+                    </button>
+                  );
+                })}
+              </div>
+              {!pickedSize ? (
+                <p className="empire-pdp__hint">
+                  {t("Please select a size", "اختر المقاس من فضلك")}
+                </p>
+              ) : null}
+            </div>
+          ) : chartHasContent && !hasOptions && !hasVariantList ? (
             <button
               type="button"
               className="empire-pdp__sizelink empire-pdp__sizelink--standalone"
@@ -301,6 +363,8 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
               "..."
             ) : !product.in_stock ? (
               t("Sold out", "نفذ المخزون")
+            ) : needsSize && !pickedSize ? (
+              t("Select a size", "اختر المقاس")
             ) : (
               <EditableText
                 as="span"
@@ -373,7 +437,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
       ) : null}
 
       {/* Size guide modal */}
-      {sizeOpen && chart ? (
+      {sizeOpen && chartHasContent && chart ? (
         <div className="empire-modal" role="dialog" aria-modal="true" aria-label={t("Size guide", "دليل المقاسات")}>
           <div className="empire-modal__overlay" onClick={() => setSizeOpen(false)} />
           <div className="empire-modal__panel">
