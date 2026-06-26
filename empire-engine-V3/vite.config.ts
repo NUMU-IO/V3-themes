@@ -1,35 +1,16 @@
-import { defineConfig, type PluginOption } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { numuTheme } from "@numueg/theme-plugin";
 
-/**
- * Empire V3 build config.
- *
- * We pin `build.lib` ourselves (rather than letting @numueg/theme-plugin
- * supply its default) for ONE reason: `cssFileName`. The Tailwind decision
- * (see styles.css / src/theme.css) relies on Vite emitting the compiled CSS
- * as `dist/theme.css` — the exact name the host loads via
- * `external_theme.css_url`. Vite's lib mode otherwise names the CSS after
- * the package (`bazar-v3.css`), which the host would never fetch, and the
- * plugin's closeBundle would then copy the thin fallback styles.css over a
- * (correctly absent) theme.css. Setting `cssFileName: "theme"` makes Vite
- * write the COMPILED stylesheet to dist/theme.css directly; the plugin's
- * copy step then no-ops because the file already exists.
- *
- * The entry/format/fileName mirror the plugin's own defaults so federation
- * behaviour is unchanged. `federate: false` keeps the self-contained bundle
- * this theme already shipped.
- */
+// The @numueg/theme-plugin handles all the NUMU-specific glue:
+//   - validates theme.json + settings_schema.json + entry point
+//   - externalizes React + @numueg/theme-sdk (host-provided)
+//   - emits dist/manifest.json + dist/import-map.json after build
+//
+// You don't need to repeat `build.lib` / `build.rollupOptions.external`
+// — the plugin sets sensible defaults when they're omitted.
+
 export default defineConfig({
-  plugins: [react(), numuTheme({ federate: false }) as unknown as PluginOption],
-  build: {
-    lib: {
-      entry: "src/main.tsx",
-      formats: ["es"],
-      fileName: () => "theme.js",
-      cssFileName: "theme",
-    },
-    cssCodeSplit: false,
-  },
+  plugins: [react(), numuTheme()],
   server: { port: 5173 },
 });

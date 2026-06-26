@@ -1,0 +1,153 @@
+import { useMemo, useState } from "react";
+import {
+  useProductOptional,
+  useRelatedProducts,
+  useProducts,
+  usePage,
+  useCart,
+  useLocalization,
+  useShop,
+  EditableText,
+  type Product,
+} from "@numueg/theme-sdk";
+import type { EmpSectionProps } from "../lib/section";
+import { openCart } from "../lib/cartUI";
+
+interface FbtSettings {
+  title?: string;
+  max_items?: number;
+}
+
+/**
+ * Frequently bought together — seeds the bundle with the current product and
+ * appends related items (`useRelatedProducts`, falling back to the page list).
+ * Each row is a togglable checkbox; "أضف الكل" adds every checked product to the
+ * live cart in one pass and pops the drawer. Hidden when fewer than 2 items.
+ */
+export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
+  const s = settings as FbtSettings;
+  const max = Math.max(2, Math.min(4, s.max_items ?? 3));
+
+  const product = useProductOptional();
+  const related = useRelatedProducts(product?.id, { limit: max });
+  const page = usePage();
+  const { addItem } = useCart();
+  const { formatMoney } = useLocalization();
+  const shop = useShop();
+
+  const pageProducts = (page?.data?.products as Product[] | undefined) ?? [];
+  // Last-resort fallback so the bundle still renders on PDP routes that pass
+  // only the single product (no related endpoint data, no product list).
+  const catalog = useProducts({ fetchIfMissing: true });
+
+  const bundle = useMemo(() => {
+    const pool =
+      related.items.length > 0
+        ? related.items
+        : pageProducts.length > 0
+          ? pageProducts
+          : catalog.products;
+    const seen = new Set<string>();
+    const list: Product[] = [];
+    if (product) {
+      list.push(product);
+      seen.add(product.id);
+    }
+    for (const p of pool) {
+      if (list.length >= max) break;
+      if (seen.has(p.id)) continue;
+      seen.add(p.id);
+      list.push(p);
+    }
+    return list;
+  }, [product, related.items, pageProducts, catalog.products, max]);
+
+  const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const isOn = (pid: string) => selected[pid] !== false; // default on
+  const [pending, setPending] = useState(false);
+
+  const currency = product?.currency || shop?.currency;
+  const total = bundle
+    .filter((p) => isOn(p.id))
+    .reduce((sum, p) => sum + p.price, 0);
+
+  if (bundle.length < 2) return null;
+
+  async function addBundle() {
+    if (pending) return;
+    setPending(true);
+    try {
+      for (const p of bundle) {
+        if (!isOn(p.id)) continue;
+        await addItem(p.id, p.variants?.[0]?.id, 1);
+      }
+      openCart();
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <section className="empire-container" style={{ paddingBlock: "2.5rem" }}>
+      <EditableText
+        as="h2"
+        className="empire-heading"
+        sectionId={id}
+        settingId="title"
+        value={s.title ?? "يُشترى عادةً معاً"}
+        style={{ marginBottom: "1.5rem" }}
+      />
+
+      <div className="empire-fbt">
+        {bundle.map((p, i) => {
+          const image = p.images?.[0];
+          return (
+            <div className="empire-fbt__item" key={p.id}>
+              <label className="empire-fbt__card">
+                <input
+                  type="checkbox"
+                  checked={isOn(p.id)}
+                  onChange={(e) =>
+                    setSelected((prev) => ({ ...prev, [p.id]: e.target.checked }))
+                  }
+                />
+                <span className="empire-fbt__thumb">
+                  {image ? (
+                    <img src={image.url} alt={image.alt || p.name} loading="lazy" />
+                  ) : (
+                    <span className="empire-card__placeholder" aria-hidden="true" />
+                  )}
+                </span>
+                <span className="empire-fbt__info">
+                  <span className="empire-fbt__name">{p.name}</span>
+                  <span className="empire-fbt__price">
+                    {formatMoney(p.price, currency)}
+                  </span>
+                </span>
+              </label>
+              {i < bundle.length - 1 ? (
+                <span className="empire-fbt__plus" aria-hidden="true">
+                  +
+                </span>
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="empire-fbt__foot">
+        <p className="empire-fbt__total">
+          الإجمالي: <strong>{formatMoney(total, currency)}</strong>
+        </p>
+        <button
+          className="empire-btn"
+          type="button"
+          disabled={pending || total <= 0}
+          onClick={addBundle}
+        >
+          {pending ? "..." : "أضف الكل للسلة"}
+        </button>
+      </div>
+    </section>
+  );
+}

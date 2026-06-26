@@ -1,134 +1,35 @@
 [
   {
-    "name": "Brand",
-    "name_ar": "العلامة التجارية",
-    "settings": [
-      {
-        "type": "text",
-        "id": "brand_name",
-        "label": "Brand name",
-        "label_ar": "اسم العلامة",
-        "default": ""
-      },
-      {
-        "type": "text",
-        "id": "brand_name_ar",
-        "label": "Brand name (Arabic)",
-        "label_ar": "اسم العلامة (عربي)",
-        "default": ""
-      },
-      {
-        "type": "image_picker",
-        "id": "logo_url",
-        "label": "Logo",
-        "label_ar": "الشعار",
-        "default": ""
-      },
-      {
-        "type": "select",
-        "id": "logo_shape",
-        "label": "Logo shape",
-        "label_ar": "شكل الشعار",
-        "default": "none",
-        "info": "Crops the logo into a shape. 'Original' keeps it untouched. Circle/Square/Triangle look best with a square logo.",
-        "options": [
-          { "value": "none", "label": "Original", "label_ar": "الأصلي" },
-          { "value": "square", "label": "Square", "label_ar": "مربع" },
-          { "value": "rounded", "label": "Rounded square", "label_ar": "مربع بزوايا دائرية" },
-          { "value": "circle", "label": "Circle", "label_ar": "دائرة" },
-          { "value": "triangle", "label": "Triangle", "label_ar": "مثلث" }
-        ]
-      },
-      {
-        "type": "select",
-        "id": "logo_size",
-        "label": "Logo size",
-        "label_ar": "حجم الشعار",
-        "default": "small",
-        "info": "Applies when a logo shape is chosen.",
-        "options": [
-          { "value": "small", "label": "Small", "label_ar": "صغير" },
-          { "value": "medium", "label": "Medium", "label_ar": "متوسط" },
-          { "value": "large", "label": "Large", "label_ar": "كبير" }
-        ]
-      },
-      {
-        "type": "color",
-        "id": "primary_color",
-        "label": "Ink (primary)",
-        "label_ar": "اللون الأساسي",
-        "default": "#1A1A1A"
-      },
-      {
-        "type": "color",
-        "id": "accent_color",
-        "label": "Electric blue accent",
-        "label_ar": "لون التمييز",
-        "default": "#0099FF"
-      },
-      {
-        "type": "color",
-        "id": "background_color",
-        "label": "Off-white background",
-        "label_ar": "لون الخلفية",
-        "default": "#EFEEED"
-      },
-      {
-        "type": "color",
-        "id": "text_color",
-        "label": "Text",
-        "label_ar": "لون النص",
-        "default": "#000000"
-      }
-    ]
+    "type": "color",
+    "id": "accent_color",
+    "label": "Accent Color",
+    "default": "#0099ff",
+    "locales": { "ar": { "label": "لون التمييز" } }
   },
   {
-    "name": "Typography",
-    "name_ar": "الخطوط",
-    "settings": [
-      {
-        "type": "select",
-        "id": "heading_font",
-        "label": "Heading font",
-        "label_ar": "خط العناوين",
-        "default": "archivo",
-        "options": [
-          {
-            "value": "archivo",
-            "label": "Archivo (wide display)",
-            "label_ar": "أرشيفو"
-          },
-          {
-            "value": "inter",
-            "label": "Inter (sans-serif)",
-            "label_ar": "إنتر"
-          },
-          {
-            "value": "poppins",
-            "label": "Poppins (geometric)",
-            "label_ar": "بوبينز"
-          }
-        ]
-      },
-      {
-        "type": "select",
-        "id": "body_font",
-        "label": "Body font",
-        "label_ar": "خط النص",
-        "default": "inter",
-        "options": [
-          {
-            "value": "inter",
-            "label": "Inter (sans-serif)",
-            "label_ar": "إنتر"
-          },
-          {
-            "value": "system",
-            "label": "System default",
-            "label_ar": "الافتراضي"
-          }
-        ]
-      }
-    ]
+    "type": "color",
+    "id": "foreground_color",
+    "label": "Text Color",
+    "default": "#000000",
+    "locales": { "ar": { "label": "لون النص" } }
+  },
+  {
+    "type": "color",
+    "id": "background_color",
+    "label": "Background Color",
+    "default": "#efeeed",
+    "locales": { "ar": { "label": "لون الخلفية" } }
+  },
+  {
+    "type": "select",
+    "id": "font_family",
+    "label": "Font Family",
+    "default": "Cairo",
+    "options": [
+      { "value": "Cairo", "label": "Cairo" },
+      { "value": "Inter", "label": "Inter" },
+      { "value": "Tajawal", "label": "Tajawal" }
+    ],
+    "locales": { "ar": { "label": "الخط" } }
   }
 ]
