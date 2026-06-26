@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import {
+  useMemo,
+  useState } from "react";
 import {
   useProductOptional,
   useRelatedProducts,
@@ -7,15 +9,18 @@ import {
   useCart,
   useLocalization,
   useShop,
-  EditableText,
   type Product,
 } from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { openCart } from "../lib/cartUI";
 
 interface FbtSettings {
   title?: string;
   max_items?: number;
+  /** Merchant on/off switch (belt-and-suspenders alongside the section
+   *  visibility toggle, which the host honours via `instance.disabled`). */
+  enabled?: boolean;
 }
 
 /**
@@ -71,6 +76,7 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
     .filter((p) => isOn(p.id))
     .reduce((sum, p) => sum + p.price, 0);
 
+  if (s.enabled === false) return null;
   if (bundle.length < 2) return null;
 
   async function addBundle() {
@@ -88,14 +94,14 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
   }
 
   return (
-    <section className="empire-container" style={{ paddingBlock: "2.5rem" }}>
+    <section className="empire-container" style={{ paddingBlock: "2rem" }}>
+      <div className="empire-fbt-card">
       <EditableText
         as="h2"
-        className="empire-heading"
+        className="empire-fbt-card__title"
         sectionId={id}
         settingId="title"
         value={s.title ?? "يُشترى عادةً معاً"}
-        style={{ marginBottom: "1.5rem" }}
       />
 
       <div className="empire-fbt">
@@ -147,6 +153,7 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
         >
           {pending ? "..." : "أضف الكل للسلة"}
         </button>
+      </div>
       </div>
     </section>
   );

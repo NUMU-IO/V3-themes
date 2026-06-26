@@ -2,8 +2,8 @@ import {
   useOrder,
   usePage,
   useLocalization,
-  EditableText,
 } from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 
 interface OcSettings {

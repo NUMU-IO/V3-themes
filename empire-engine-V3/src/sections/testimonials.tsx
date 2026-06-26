@@ -1,4 +1,5 @@
-import { EditableText, type BlockInstance } from "@numueg/theme-sdk";
+import { type BlockInstance } from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 
 interface TestimonialsSettings {

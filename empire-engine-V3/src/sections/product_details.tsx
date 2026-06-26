@@ -1,4 +1,5 @@
-import { useState } from "react";
+import {
+  useState } from "react";
 import {
   useProductOptional,
   useVariantSelection,
@@ -6,8 +7,8 @@ import {
   useCart,
   useLocalization,
   useShop,
-  EditableText,
 } from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { ProductCard } from "../lib/ProductCard";
 import { openCart } from "../lib/cartUI";
@@ -87,7 +88,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
 
       <div className="empire-pdp">
         {/* Gallery */}
-        <div>
+        <div className="empire-pdp__gallery">
           <div className="empire-pdp__main-img">
             {mainImage ? (
               <img src={mainImage.url} alt={mainImage.alt || product.name} />

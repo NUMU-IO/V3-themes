@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { EditableText } from "@numueg/theme-sdk";
+import {
+  useState } from "react";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 
 interface NewsletterSettings {

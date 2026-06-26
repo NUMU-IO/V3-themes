@@ -1,5 +1,10 @@
-import { useEffect, useState } from "react";
-import { useShop, useCollections, EditableText } from "@numueg/theme-sdk";
+import {
+  useEffect,
+  useState } from "react";
+import { useShop,
+  useCollections,
+} from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 
 interface FooterSettings {

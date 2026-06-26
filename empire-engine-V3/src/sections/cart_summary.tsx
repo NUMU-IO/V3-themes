@@ -1,4 +1,5 @@
-import { useCart, useLocalization, EditableText } from "@numueg/theme-sdk";
+import { useCart, useLocalization } from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { CouponForm } from "../lib/CouponForm";
 

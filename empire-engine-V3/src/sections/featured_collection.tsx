@@ -1,10 +1,11 @@
-import { useState } from "react";
+import {
+  useState } from "react";
 import {
   usePage,
   useProducts,
-  EditableText,
   type Product,
 } from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { ProductCard } from "../lib/ProductCard";
 

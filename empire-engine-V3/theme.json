@@ -2,7 +2,7 @@
   "id": "empire-v3",
   "name": "Empire (V3)",
   "author": "NUMU",
-  "version": "0.4.0",
+  "version": "0.5.2",
   "layout": "single-column",
   "description": "Premium editorial e-commerce — monochromatic palette, wide uppercase display type, Arabic-first (RTL), content-first design.",
   "error_template": "templates/error.html",
@@ -114,15 +114,15 @@
             }
           },
           {
+            "type": "frequently_bought",
+            "settings": { "enabled": true, "title": "يُشترى عادةً معاً", "max_items": 3 }
+          },
+          {
             "type": "size_chart",
             "settings": {
               "trigger_label": "دليل المقاسات",
               "title": "دليل المقاسات"
             }
-          },
-          {
-            "type": "frequently_bought",
-            "settings": { "title": "يُشترى عادةً معاً", "max_items": 3 }
           }
         ]
       },

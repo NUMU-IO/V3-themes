@@ -1,5 +1,8 @@
-import { useState } from "react";
-import { useProductSizeChart, EditableText } from "@numueg/theme-sdk";
+import {
+  useState } from "react";
+import { useProductSizeChart,
+} from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 
 interface SizeChartSettings {
