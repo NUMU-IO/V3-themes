@@ -1,12 +1,13 @@
-import {
-  useState } from "react";
+import { useState } from "react";
 import {
   useProductOptional,
   useVariantSelection,
   useRelatedProducts,
+  useProductSizeChart,
   useCart,
   useLocalization,
   useShop,
+  defaultVariant,
 } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
@@ -20,11 +21,10 @@ interface PdpSettings {
 }
 
 /**
- * Product detail page — two-column gallery + buy box. Reads the active product
- * from the SDK ProductProvider (the storefront supplies it on
- * `/products/:slug`), drives a Size/Color picker via `useVariantSelection`,
- * adds the resolved variant to the live cart and pops the drawer. A related
- * rail (same-category) renders below when enabled.
+ * Product detail page — gallery + buy box. Drives a Size/Color picker via
+ * `useVariantSelection` when the product declares option axes; falls back to a
+ * flat variant chip list when it only has variants (no axes). Integrates the
+ * size guide (useProductSizeChart) inline, plus quantity + trust strip.
  */
 export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const s = settings as PdpSettings;
@@ -32,9 +32,12 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const { addItem } = useCart();
   const { formatMoney } = useLocalization();
   const shop = useShop();
+  const chart = useProductSizeChart();
   const [pending, setPending] = useState(false);
   const [activeImg, setActiveImg] = useState(0);
   const [qty, setQty] = useState(1);
+  const [pickedId, setPickedId] = useState<string | undefined>(undefined);
+  const [sizeOpen, setSizeOpen] = useState(false);
 
   const variantSel = useVariantSelection(
     product ?? { options: [], variants: [] },
@@ -51,10 +54,26 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
     );
   }
 
+  const opts = product.options ?? [];
+  const variants = product.variants ?? [];
+  const hasOptions = opts.length > 0;
+  const hasVariantList = !hasOptions && variants.length > 1;
+
   const { selection, variant, select, availability, isComplete } = variantSel;
+
+  // When the product has no option axes but multiple variants, use a flat
+  // chip list controlled by `pickedId`; otherwise rely on useVariantSelection.
+  const fallbackVariant = hasOptions
+    ? null
+    : (variants.find((v) => v.id === pickedId) ??
+        defaultVariant(product) ??
+        variants[0] ??
+        null);
+  const activeVariant = hasOptions ? variant : fallbackVariant;
+
   const currency = product.currency || shop?.currency;
-  const activePrice = variant?.price ?? product.price;
-  const compareRaw = variant?.compare_at_price ?? product.compare_at_price;
+  const activePrice = activeVariant?.price ?? product.price;
+  const compareRaw = activeVariant?.compare_at_price ?? product.compare_at_price;
   const compareAt =
     s.show_compare_price !== false && compareRaw && compareRaw > activePrice
       ? compareRaw
@@ -63,19 +82,27 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const images = product.images ?? [];
   const mainImage = images[activeImg] ?? images[0];
   const purchasable =
-    product.in_stock && (variant?.is_in_stock ?? true) && isComplete;
+    product.in_stock &&
+    (activeVariant?.is_in_stock ?? true) &&
+    (hasOptions ? isComplete : true);
   const productId = product.id;
+  const selectedVariantId = activeVariant?.id ?? pickedId;
 
   async function handleAdd() {
     if (pending || !purchasable) return;
     setPending(true);
     try {
-      await addItem(productId, variant?.id, qty);
+      await addItem(productId, selectedVariantId, qty);
       openCart();
     } finally {
       setPending(false);
     }
   }
+
+  const variantLabel = (v: (typeof variants)[number], i: number) =>
+    v.name ||
+    Object.values(v.option_values ?? {}).join(" / ") ||
+    `الخيار ${i + 1}`;
 
   return (
     <section className="empire-container" style={{ paddingBlock: "2.5rem" }}>
@@ -137,9 +164,21 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
 
           <div className="empire-pdp__divider" />
 
-          {(product.options ?? []).map((opt) => (
-            <div key={opt.name} style={{ marginBottom: "1.25rem" }}>
-              <span className="empire-pdp__opt-label">{opt.name}</span>
+          {/* Option-axis picker (Size / Color / …) */}
+          {opts.map((opt) => (
+            <div key={opt.name} className="empire-pdp__optgroup">
+              <div className="empire-pdp__opt-head">
+                <span className="empire-pdp__opt-label">{opt.name}</span>
+                {chart ? (
+                  <button
+                    type="button"
+                    className="empire-pdp__sizelink"
+                    onClick={() => setSizeOpen(true)}
+                  >
+                    دليل المقاسات
+                  </button>
+                ) : null}
+              </div>
               <div className="empire-pdp__opts">
                 {opt.values.map((value) => {
                   const selected = selection[opt.name] === value;
@@ -161,6 +200,53 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             </div>
           ))}
 
+          {/* Flat variant picker when there are variants but no axes */}
+          {hasVariantList ? (
+            <div className="empire-pdp__optgroup">
+              <div className="empire-pdp__opt-head">
+                <span className="empire-pdp__opt-label">الخيار</span>
+                {chart ? (
+                  <button
+                    type="button"
+                    className="empire-pdp__sizelink"
+                    onClick={() => setSizeOpen(true)}
+                  >
+                    دليل المقاسات
+                  </button>
+                ) : null}
+              </div>
+              <div className="empire-pdp__opts">
+                {variants.map((v, i) => {
+                  const isSel = (activeVariant?.id ?? null) === v.id;
+                  const inStock = v.is_in_stock ?? v.in_stock ?? true;
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      className="empire-chip"
+                      aria-pressed={isSel}
+                      disabled={!inStock}
+                      onClick={() => setPickedId(v.id)}
+                    >
+                      {variantLabel(v, i)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+
+          {/* Size guide link when the product has no variant picker to attach it to */}
+          {chart && !hasOptions && !hasVariantList ? (
+            <button
+              type="button"
+              className="empire-pdp__sizelink empire-pdp__sizelink--standalone"
+              onClick={() => setSizeOpen(true)}
+            >
+              دليل المقاسات
+            </button>
+          ) : null}
+
           {/* Quantity + add to cart */}
           <div className="empire-pdp__buy">
             <div className="empire-qty empire-pdp__qty" aria-label="الكمية">
@@ -172,11 +258,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
                 −
               </button>
               <span>{qty}</span>
-              <button
-                type="button"
-                aria-label="زيادة"
-                onClick={() => setQty((q) => q + 1)}
-              >
+              <button type="button" aria-label="زيادة" onClick={() => setQty((q) => q + 1)}>
                 +
               </button>
             </div>
@@ -202,7 +284,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             </button>
           </div>
 
-          {/* Trust / service strip — fills the buy box + reassures */}
+          {/* Trust / service strip */}
           <ul className="empire-pdp__trust">
             <li>
               <TruckIcon />
@@ -229,6 +311,65 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             {related.items.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Size guide modal */}
+      {sizeOpen && chart ? (
+        <div
+          className="empire-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="دليل المقاسات"
+        >
+          <div className="empire-modal__overlay" onClick={() => setSizeOpen(false)} />
+          <div className="empire-modal__panel">
+            <div className="empire-modal__head">
+              <h2 className="empire-modal__title">
+                دليل المقاسات{chart.unit ? ` (${chart.unit})` : ""}
+              </h2>
+              <button
+                className="empire-drawer__close"
+                type="button"
+                onClick={() => setSizeOpen(false)}
+                aria-label="إغلاق"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="empire-modal__body">
+              {chart.image_url ? (
+                <img className="empire-sizeguide__img" src={chart.image_url} alt="" />
+              ) : null}
+              <table className="empire-sizetable">
+                <thead>
+                  <tr>
+                    <th>المقاس</th>
+                    {chart.column_headers.map((h, i) => (
+                      <th key={i}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {chart.rows.map((row, ri) => (
+                    <tr key={ri}>
+                      <th scope="row">{row.size}</th>
+                      {chart.column_headers.map((_, ci) => (
+                        <td key={ci}>{row.values[ci] ?? "—"}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {chart.notes ? (
+                <p className="empire-muted" style={{ fontSize: "0.8125rem", marginTop: "1rem" }}>
+                  {chart.notes}
+                </p>
+              ) : null}
+            </div>
           </div>
         </div>
       ) : null}
