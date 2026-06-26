@@ -118,8 +118,15 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
                   }
                 />
                 <span className="empire-fbt__thumb">
-                  {image ? (
-                    <img src={image.url} alt={image.alt || p.name} loading="lazy" />
+                  {image?.url ? (
+                    <img
+                      src={image.url}
+                      alt={image.alt || p.name}
+                      loading="lazy"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
+                    />
                   ) : (
                     <span className="empire-card__placeholder" aria-hidden="true" />
                   )}
