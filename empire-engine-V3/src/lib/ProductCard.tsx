@@ -52,8 +52,15 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="empire-card">
       <div className="empire-card__media">
         <a href={href} aria-label={product.name}>
-          {image ? (
-            <img src={image.url} alt={image.alt || product.name} loading="lazy" />
+          {image?.url ? (
+            <img
+              src={image.url}
+              alt={image.alt || product.name}
+              loading="lazy"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
           ) : (
             <div className="empire-card__placeholder" aria-hidden="true" />
           )}

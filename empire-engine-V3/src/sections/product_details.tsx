@@ -34,6 +34,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const shop = useShop();
   const [pending, setPending] = useState(false);
   const [activeImg, setActiveImg] = useState(0);
+  const [qty, setQty] = useState(1);
 
   const variantSel = useVariantSelection(
     product ?? { options: [], variants: [] },
@@ -69,7 +70,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
     if (pending || !purchasable) return;
     setPending(true);
     try {
-      await addItem(productId, variant?.id, 1);
+      await addItem(productId, variant?.id, qty);
       openCart();
     } finally {
       setPending(false);
@@ -114,7 +115,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
         </div>
 
         {/* Buy box */}
-        <div>
+        <div className="empire-pdp__info">
           {product.category ? (
             <p className="empire-label" style={{ marginBottom: "0.5rem" }}>
               {product.category}
@@ -134,8 +135,10 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             <p className="empire-pdp__desc">{product.description}</p>
           ) : null}
 
+          <div className="empire-pdp__divider" />
+
           {(product.options ?? []).map((opt) => (
-            <div key={opt.name}>
+            <div key={opt.name} style={{ marginBottom: "1.25rem" }}>
               <span className="empire-pdp__opt-label">{opt.name}</span>
               <div className="empire-pdp__opts">
                 {opt.values.map((value) => {
@@ -158,10 +161,29 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             </div>
           ))}
 
+          {/* Quantity + add to cart */}
           <div className="empire-pdp__buy">
+            <div className="empire-qty empire-pdp__qty" aria-label="الكمية">
+              <button
+                type="button"
+                aria-label="تقليل"
+                onClick={() => setQty((q) => Math.max(1, q - 1))}
+              >
+                −
+              </button>
+              <span>{qty}</span>
+              <button
+                type="button"
+                aria-label="زيادة"
+                onClick={() => setQty((q) => q + 1)}
+              >
+                +
+              </button>
+            </div>
             <button
-              className="empire-btn empire-btn--block"
+              className="empire-btn"
               type="button"
+              style={{ flex: 1 }}
               disabled={!purchasable || pending}
               onClick={handleAdd}
             >
@@ -179,6 +201,22 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
               )}
             </button>
           </div>
+
+          {/* Trust / service strip — fills the buy box + reassures */}
+          <ul className="empire-pdp__trust">
+            <li>
+              <TruckIcon />
+              <span>شحن سريع لكل المحافظات</span>
+            </li>
+            <li>
+              <ReturnIcon />
+              <span>إرجاع سهل خلال ١٤ يوم</span>
+            </li>
+            <li>
+              <LockIcon />
+              <span>دفع آمن 100%</span>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -197,3 +235,19 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
     </section>
   );
 }
+
+const TruckIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M14 18V6H2v12h2" /><path d="M14 9h4l4 4v5h-3" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" />
+  </svg>
+);
+const ReturnIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 7v6h6" /><path d="M3.5 13a9 9 0 1 0 2.3-9.3L3 7" />
+  </svg>
+);
+const LockIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" />
+  </svg>
+);

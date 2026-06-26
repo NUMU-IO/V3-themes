@@ -1457,6 +1457,40 @@
   gap: 0.75rem;
   align-items: stretch;
 }
+/* Constrain the buy column so the CTA isn't an over-wide bar and the empty
+   space under it is filled by the trust strip. */
+.empire-pdp__info {
+  max-width: 30rem;
+}
+.empire-pdp__divider {
+  height: 1px;
+  background: var(--emp-border);
+  margin-block: 1.5rem;
+}
+.empire-pdp__qty {
+  height: auto;
+  align-self: stretch;
+}
+.empire-pdp__trust {
+  list-style: none;
+  margin: 1.75rem 0 0;
+  padding: 1.5rem 0 0;
+  border-top: 1px solid var(--emp-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.empire-pdp__trust li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--emp-muted);
+}
+.empire-pdp__trust svg {
+  color: var(--emp-fg);
+  flex-shrink: 0;
+}
 .empire-breadcrumb {
   display: flex;
   align-items: center;
