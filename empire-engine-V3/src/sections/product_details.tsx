@@ -14,18 +14,21 @@ import type { EmpSectionProps } from "../lib/section";
 import { ProductCard } from "../lib/ProductCard";
 import { openCart } from "../lib/cartUI";
 import { useT } from "../lib/i18n";
+import FrequentlyBought from "./frequently_bought";
 
 interface PdpSettings {
   add_to_cart_label?: string;
   show_compare_price?: boolean;
   show_related?: boolean;
+  show_whatsapp?: boolean;
+  show_fbt?: boolean;
 }
 
 /**
- * Product detail page — gallery + buy box. Drives a Size/Color picker via
- * `useVariantSelection` when the product declares option axes; falls back to a
- * flat variant chip list when it only has variants (no axes). Integrates the
- * size guide (useProductSizeChart) inline, plus quantity + trust strip.
+ * Premium product detail page — gallery + buy box. Variant picker (option axes
+ * or flat variant list), inline size guide, quantity, full-width add-to-cart +
+ * WhatsApp, share row, a trust strip, and the "frequently bought" bundle
+ * embedded directly in the buy column.
  */
 export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const s = settings as PdpSettings;
@@ -40,18 +43,20 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const [qty, setQty] = useState(1);
   const [pickedId, setPickedId] = useState<string | undefined>(undefined);
   const [sizeOpen, setSizeOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const variantSel = useVariantSelection(
     product ?? { options: [], variants: [] },
     { autoSelect: true },
   );
-
   const related = useRelatedProducts(product?.id, { limit: 4 });
 
   if (!product) {
     return (
       <section className="empire-page empire-container">
-        <p className="empire-placeholder">{t("Product not found.", "لم يتم العثور على المنتج.")}</p>
+        <p className="empire-placeholder">
+          {t("Product not found.", "لم يتم العثور على المنتج.")}
+        </p>
       </section>
     );
   }
@@ -62,9 +67,6 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const hasVariantList = !hasOptions && variants.length > 1;
 
   const { selection, variant, select, availability, isComplete } = variantSel;
-
-  // When the product has no option axes but multiple variants, use a flat
-  // chip list controlled by `pickedId`; otherwise rely on useVariantSelection.
   const fallbackVariant = hasOptions
     ? null
     : (variants.find((v) => v.id === pickedId) ??
@@ -74,12 +76,10 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const activeVariant = hasOptions ? variant : fallbackVariant;
 
   const currency = product.currency || shop?.currency;
-  const activePrice = activeVariant?.price ?? product.price;
-  const compareRaw = activeVariant?.compare_at_price ?? product.compare_at_price;
+  const activePrice = Number(activeVariant?.price ?? product.price) || 0;
+  const compareRaw = Number(activeVariant?.compare_at_price ?? product.compare_at_price) || 0;
   const compareAt =
-    s.show_compare_price !== false && compareRaw && compareRaw > activePrice
-      ? compareRaw
-      : null;
+    s.show_compare_price !== false && compareRaw > activePrice ? compareRaw : null;
 
   const images = product.images ?? [];
   const mainImage = images[activeImg] ?? images[0];
@@ -89,6 +89,14 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
     (hasOptions ? isComplete : true);
   const productId = product.id;
   const selectedVariantId = activeVariant?.id ?? pickedId;
+
+  const href = `/products/${product.slug}`;
+  const shareUrl = shop?.formatUrl ? shop.formatUrl(href) : href;
+  const enc = encodeURIComponent(shareUrl);
+  const waNumber = ((shop?.social_links?.whatsapp as string) || "").replace(/\D/g, "");
+  const waHref = waNumber
+    ? `https://wa.me/${waNumber}?text=${encodeURIComponent(`${product.name} — ${shareUrl}`)}`
+    : `https://wa.me/?text=${encodeURIComponent(`${product.name} — ${shareUrl}`)}`;
 
   async function handleAdd() {
     if (pending || !purchasable) return;
@@ -101,10 +109,27 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
     }
   }
 
+  function copyLink() {
+    try {
+      navigator.clipboard?.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* ignore */
+    }
+  }
+
   const variantLabel = (v: (typeof variants)[number], i: number) =>
     v.name ||
     Object.values(v.option_values ?? {}).join(" / ") ||
     `${t("Option", "الخيار")} ${i + 1}`;
+
+  const shares = [
+    { name: "telegram", href: `https://t.me/share/url?url=${enc}`, icon: <IconTelegram /> },
+    { name: "x", href: `https://twitter.com/intent/tweet?url=${enc}`, icon: <IconX /> },
+    { name: "facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${enc}`, icon: <IconFacebook /> },
+    { name: "whatsapp", href: `https://wa.me/?text=${enc}`, icon: <IconWhatsApp /> },
+  ];
 
   return (
     <section className="empire-container" style={{ paddingBlock: "2.5rem" }}>
@@ -120,6 +145,11 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
         {/* Gallery */}
         <div className="empire-pdp__gallery">
           <div className="empire-pdp__main-img">
+            {compareAt ? (
+              <span className="empire-badge empire-badge--blue" style={{ insetInlineStart: "auto" }}>
+                -{Math.round((1 - activePrice / compareAt) * 100)}%
+              </span>
+            ) : null}
             {mainImage ? (
               <img src={mainImage.url} alt={mainImage.alt || product.name} />
             ) : (
@@ -134,7 +164,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
                   type="button"
                   className={`empire-pdp__thumb${i === activeImg ? " is-active" : ""}`}
                   onClick={() => setActiveImg(i)}
-                  aria-label={`صورة ${i + 1}`}
+                  aria-label={`${t("Image", "صورة")} ${i + 1}`}
                 >
                   <img src={img.url} alt={img.alt || ""} />
                 </button>
@@ -151,14 +181,19 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             </p>
           ) : null}
           <h1 className="empire-pdp__title">{product.name}</h1>
-          <p className="empire-pdp__price">
-            {formatMoney(activePrice, currency)}
-            {compareAt ? (
-              <span className="empire-card__compare">
-                {formatMoney(compareAt, currency)}
-              </span>
-            ) : null}
-          </p>
+
+          <div className="empire-pdp__pricerow">
+            <p className="empire-pdp__price">
+              {compareAt ? (
+                <span className="empire-card__compare">{formatMoney(compareAt, currency)}</span>
+              ) : null}
+              {formatMoney(activePrice, currency)}
+            </p>
+            <span className={`empire-pdp__stock${product.in_stock ? " is-in" : " is-out"}`}>
+              {product.in_stock ? t("In stock", "متوفر") : t("Out of stock", "نفذ المخزون")}
+              <span className="empire-pdp__dot" aria-hidden />
+            </span>
+          </div>
 
           {product.description ? (
             <p className="empire-pdp__desc">{product.description}</p>
@@ -166,22 +201,18 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
 
           <div className="empire-pdp__divider" />
 
-          {/* Option-axis picker (Size / Color / …) */}
+          {/* Option-axis picker */}
           {opts.map((opt) => (
             <div key={opt.name} className="empire-pdp__optgroup">
               <div className="empire-pdp__opt-head">
-                <span className="empire-pdp__opt-label">{opt.name}</span>
                 {chart ? (
-                  <button
-                    type="button"
-                    className="empire-pdp__sizelink"
-                    onClick={() => setSizeOpen(true)}
-                  >
-                    {t("Size guide", "دليل المقاسات")}
+                  <button type="button" className="empire-pdp__sizelink" onClick={() => setSizeOpen(true)}>
+                    <SizeIcon /> {t("Size guide", "دليل المقاسات")}
                   </button>
-                ) : null}
+                ) : <span />}
+                <span className="empire-pdp__opt-label">{opt.name}</span>
               </div>
-              <div className="empire-pdp__opts">
+              <div className="empire-pdp__sizes">
                 {opt.values.map((value) => {
                   const selected = selection[opt.name] === value;
                   const reachable = availability[opt.name]?.has(value) ?? true;
@@ -189,7 +220,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
                     <button
                       key={value}
                       type="button"
-                      className="empire-chip"
+                      className={`empire-sizebox${selected ? " is-active" : ""}`}
                       aria-pressed={selected}
                       disabled={!reachable && !selected}
                       onClick={() => select(opt.name, value)}
@@ -202,22 +233,18 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             </div>
           ))}
 
-          {/* Flat variant picker when there are variants but no axes */}
+          {/* Flat variant picker */}
           {hasVariantList ? (
             <div className="empire-pdp__optgroup">
               <div className="empire-pdp__opt-head">
-                <span className="empire-pdp__opt-label">{t("Option", "الخيار")}</span>
                 {chart ? (
-                  <button
-                    type="button"
-                    className="empire-pdp__sizelink"
-                    onClick={() => setSizeOpen(true)}
-                  >
-                    {t("Size guide", "دليل المقاسات")}
+                  <button type="button" className="empire-pdp__sizelink" onClick={() => setSizeOpen(true)}>
+                    <SizeIcon /> {t("Size guide", "دليل المقاسات")}
                   </button>
-                ) : null}
+                ) : <span />}
+                <span className="empire-pdp__opt-label">{t("Option", "الخيار")}</span>
               </div>
-              <div className="empire-pdp__opts">
+              <div className="empire-pdp__sizes">
                 {variants.map((v, i) => {
                   const isSel = (activeVariant?.id ?? null) === v.id;
                   const inStock = v.is_in_stock ?? v.in_stock ?? true;
@@ -225,7 +252,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
                     <button
                       key={v.id}
                       type="button"
-                      className="empire-chip"
+                      className={`empire-sizebox${isSel ? " is-active" : ""}`}
                       aria-pressed={isSel}
                       disabled={!inStock}
                       onClick={() => setPickedId(v.id)}
@@ -238,69 +265,97 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             </div>
           ) : null}
 
-          {/* Size guide link when the product has no variant picker to attach it to */}
           {chart && !hasOptions && !hasVariantList ? (
             <button
               type="button"
               className="empire-pdp__sizelink empire-pdp__sizelink--standalone"
               onClick={() => setSizeOpen(true)}
             >
-              {t("Size guide", "دليل المقاسات")}
+              <SizeIcon /> {t("Size guide", "دليل المقاسات")}
             </button>
           ) : null}
 
-          {/* Quantity + add to cart */}
-          <div className="empire-pdp__buy">
-            <div className="empire-qty empire-pdp__qty" aria-label="الكمية">
-              <button
-                type="button"
-                aria-label="تقليل"
-                onClick={() => setQty((q) => Math.max(1, q - 1))}
-              >
+          {/* Quantity */}
+          <div className="empire-pdp__qtyblock">
+            <span className="empire-pdp__opt-label">{t("Quantity", "الكمية")}</span>
+            <div className="empire-qty empire-pdp__qty" aria-label={t("Quantity", "الكمية")}>
+              <button type="button" aria-label={t("Decrease", "تقليل")} onClick={() => setQty((q) => Math.max(1, q - 1))}>
                 −
               </button>
               <span>{qty}</span>
-              <button type="button" aria-label="زيادة" onClick={() => setQty((q) => q + 1)}>
+              <button type="button" aria-label={t("Increase", "زيادة")} onClick={() => setQty((q) => q + 1)}>
                 +
               </button>
             </div>
-            <button
-              className="empire-btn"
-              type="button"
-              style={{ flex: 1 }}
-              disabled={!purchasable || pending}
-              onClick={handleAdd}
-            >
-              {pending ? (
-                "..."
-              ) : !product.in_stock ? (
-                t("Sold out", "نفذ المخزون")
-              ) : (
-                <EditableText
-                  as="span"
-                  sectionId={id}
-                  settingId="add_to_cart_label"
-                  value={s.add_to_cart_label || t("Add to cart", "أضف إلى السلة")}
-                />
-              )}
-            </button>
           </div>
 
-          {/* Trust / service strip */}
+          {/* CTAs */}
+          <button
+            className="empire-btn empire-btn--block"
+            type="button"
+            style={{ marginTop: "1.25rem" }}
+            disabled={!purchasable || pending}
+            onClick={handleAdd}
+          >
+            {pending ? (
+              "..."
+            ) : !product.in_stock ? (
+              t("Sold out", "نفذ المخزون")
+            ) : (
+              <EditableText
+                as="span"
+                sectionId={id}
+                settingId="add_to_cart_label"
+                value={s.add_to_cart_label || t("Add to cart", "أضف إلى السلة")}
+              />
+            )}
+          </button>
+          {s.show_whatsapp !== false ? (
+            <a className="empire-btn-outline empire-btn--block" href={waHref} target="_blank" rel="noopener noreferrer" style={{ marginTop: "0.625rem" }}>
+              {t("Ask via WhatsApp", "اسأل عبر واتساب")} <IconWhatsApp />
+            </a>
+          ) : null}
+
+          {/* Share */}
+          <div className="empire-pdp__share">
+            <button type="button" className="empire-pdp__sharebtn" onClick={copyLink} aria-label={t("Copy link", "نسخ الرابط")}>
+              {copied ? <IconCheck /> : <IconLink />}
+            </button>
+            {shares.map((sh) => (
+              <a key={sh.name} className="empire-pdp__sharebtn" href={sh.href} target="_blank" rel="noopener noreferrer" aria-label={sh.name}>
+                {sh.icon}
+              </a>
+            ))}
+          </div>
+
+          {/* Trust row */}
           <ul className="empire-pdp__trust">
             <li>
               <TruckIcon />
-              <span>{t("Fast nationwide shipping", "شحن سريع لكل المحافظات")}</span>
+              <span className="empire-pdp__trust-main">{t("Fast shipping", "شحن سريع")}</span>
+              <span className="empire-pdp__trust-sub">{t("All Egypt", "كل مصر")}</span>
             </li>
             <li>
               <ReturnIcon />
-              <span>{t("Easy 14-day returns", "إرجاع سهل خلال ١٤ يوم")}</span>
+              <span className="empire-pdp__trust-main">{t("Returns", "إرجاع")}</span>
+              <span className="empire-pdp__trust-sub">{t("14 days", "خلال ١٤ يوم")}</span>
             </li>
             <li>
               <LockIcon />
-              <span>{t("100% secure payment", "دفع آمن 100%")}</span>
+              <span className="empire-pdp__trust-main">{t("Authentic", "أصلي")}</span>
+              <span className="empire-pdp__trust-sub">{t("100% guaranteed", "مضمون 100%")}</span>
             </li>
           </ul>
+
+          {/* Frequently bought — embedded in the buy column */}
+          {s.show_fbt !== false ? (
+            <div className="empire-pdp__fbt">
+              <FrequentlyBought
+                id="fbt-pdp"
+                settings={{ enabled: true, embedded: true, max_items: 3, title: t("Frequently bought together", "يُشترى عادةً معاً") }}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -319,33 +374,21 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
 
       {/* Size guide modal */}
       {sizeOpen && chart ? (
-        <div
-          className="empire-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-label="دليل المقاسات"
-        >
+        <div className="empire-modal" role="dialog" aria-modal="true" aria-label={t("Size guide", "دليل المقاسات")}>
           <div className="empire-modal__overlay" onClick={() => setSizeOpen(false)} />
           <div className="empire-modal__panel">
             <div className="empire-modal__head">
               <h2 className="empire-modal__title">
                 {t("Size guide", "دليل المقاسات")}{chart.unit ? ` (${chart.unit})` : ""}
               </h2>
-              <button
-                className="empire-drawer__close"
-                type="button"
-                onClick={() => setSizeOpen(false)}
-                aria-label="إغلاق"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <button className="empire-drawer__close" type="button" onClick={() => setSizeOpen(false)} aria-label={t("Close", "إغلاق")}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
                   <path d="M18 6 6 18M6 6l12 12" />
                 </svg>
               </button>
             </div>
             <div className="empire-modal__body">
-              {chart.image_url ? (
-                <img className="empire-sizeguide__img" src={chart.image_url} alt="" />
-              ) : null}
+              {chart.image_url ? <img className="empire-sizeguide__img" src={chart.image_url} alt="" /> : null}
               <table className="empire-sizetable">
                 <thead>
                   <tr>
@@ -367,9 +410,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
                 </tbody>
               </table>
               {chart.notes ? (
-                <p className="empire-muted" style={{ fontSize: "0.8125rem", marginTop: "1rem" }}>
-                  {chart.notes}
-                </p>
+                <p className="empire-muted" style={{ fontSize: "0.8125rem", marginTop: "1rem" }}>{chart.notes}</p>
               ) : null}
             </div>
           </div>
@@ -379,18 +420,34 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   );
 }
 
+/* ── Icons ── */
+const SizeIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M3 7h18v10H3z" /><path d="M7 7v3M11 7v5M15 7v3M19 7v5" /></svg>
+);
 const TruckIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M14 18V6H2v12h2" /><path d="M14 9h4l4 4v5h-3" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" />
-  </svg>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M14 18V6H2v12h2" /><path d="M14 9h4l4 4v5h-3" /><circle cx="7" cy="18" r="2" /><circle cx="17" cy="18" r="2" /></svg>
 );
 const ReturnIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M3 7v6h6" /><path d="M3.5 13a9 9 0 1 0 2.3-9.3L3 7" />
-  </svg>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M3 7v6h6" /><path d="M3.5 13a9 9 0 1 0 2.3-9.3L3 7" /></svg>
 );
 const LockIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" />
-  </svg>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="m9 12 2 2 4-4" /></svg>
+);
+const IconLink = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+);
+const IconCheck = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M20 6 9 17l-5-5" /></svg>
+);
+const IconTelegram = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M21.94 4.3 18.6 20.04c-.25 1.11-.91 1.39-1.85.86l-5.1-3.76-2.46 2.37c-.27.27-.5.5-1.03.5l.37-5.2L18.99 6.1c.41-.37-.09-.57-.64-.2L6.04 13.8l-5.03-1.57c-1.09-.34-1.11-1.09.23-1.61l19.65-7.57c.91-.34 1.7.2 1.41 1.45z" /></svg>
+);
+const IconX = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+);
+const IconFacebook = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
+);
+const IconWhatsApp = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.04zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.017-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.71.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" /></svg>
 );

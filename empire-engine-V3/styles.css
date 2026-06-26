@@ -969,11 +969,8 @@
     transform: translateX(-50%);
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .empire-marquee__track {
-    animation: none;
-  }
-}
+/* The ticker is a deliberate brand element — keep it scrolling even when the
+   OS requests reduced motion (merchant explicitly wants it always running). */
 
 /* ===== HERO ===== */
 .empire-hero {
@@ -1484,7 +1481,40 @@
 /* Constrain the buy column so the CTA isn't an over-wide bar and the empty
    space under it is filled by the trust strip. */
 .empire-pdp__info {
-  max-width: 30rem;
+  max-width: 34rem;
+}
+.empire-pdp__pricerow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.empire-pdp__price {
+  flex-direction: row-reverse;
+  gap: 0.625rem;
+}
+.empire-pdp__stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--emp-muted);
+}
+.empire-pdp__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--emp-gray);
+}
+.empire-pdp__stock.is-in .empire-pdp__dot {
+  background: #1faa59;
+}
+.empire-pdp__stock.is-out {
+  color: var(--emp-gray);
 }
 .empire-pdp__divider {
   height: 1px;
@@ -1492,7 +1522,7 @@
   margin-block: 1.5rem;
 }
 .empire-pdp__optgroup {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 .empire-pdp__opt-head {
   display: flex;
@@ -1501,44 +1531,135 @@
   gap: 1rem;
   margin-bottom: 0.75rem;
 }
+.empire-pdp__opt-label {
+  margin-bottom: 0 !important;
+}
 .empire-pdp__sizelink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
+  color: var(--emp-fg);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.empire-pdp__sizelink:hover {
   color: var(--emp-accent);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 2px;
 }
 .empire-pdp__sizelink--standalone {
-  display: inline-block;
   margin-bottom: 1.25rem;
 }
-.empire-pdp__qty {
-  height: auto;
-  align-self: stretch;
+/* Square size boxes (premium, structured) */
+.empire-pdp__sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
+.empire-sizebox {
+  min-width: 3rem;
+  height: 3rem;
+  padding-inline: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--emp-border);
+  border-radius: var(--emp-radius);
+  background: var(--emp-card);
+  color: var(--emp-fg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.empire-sizebox:hover {
+  border-color: var(--emp-fg);
+}
+.empire-sizebox.is-active {
+  background: var(--emp-black);
+  color: var(--emp-white);
+  border-color: var(--emp-black);
+}
+.empire-sizebox:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+.empire-pdp__qtyblock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+}
+.empire-pdp__qty {
+  height: 2.75rem;
+}
+/* Share row */
+.empire-pdp__share {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+.empire-pdp__sharebtn {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--emp-border);
+  border-radius: 999px;
+  background: var(--emp-card);
+  color: var(--emp-fg);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.empire-pdp__sharebtn:hover {
+  border-color: var(--emp-fg);
+  transform: translateY(-1px);
+}
+/* Trust row — horizontal 3-column */
 .empire-pdp__trust {
   list-style: none;
   margin: 1.75rem 0 0;
   padding: 1.5rem 0 0;
   border-top: 1px solid var(--emp-border);
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
 }
 .empire-pdp__trust li {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 0.8125rem;
-  color: var(--emp-muted);
+  text-align: center;
+  gap: 0.375rem;
 }
 .empire-pdp__trust svg {
   color: var(--emp-fg);
-  flex-shrink: 0;
+}
+.empire-pdp__trust-main {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--emp-fg);
+}
+.empire-pdp__trust-sub {
+  font-size: 0.6875rem;
+  color: var(--emp-muted);
+}
+/* Embedded FBT inside the buy column */
+.empire-pdp__fbt {
+  margin-top: 2rem;
+}
+.empire-pdp__fbt .empire-fbt-card {
+  max-width: none;
 }
 .empire-breadcrumb {
   display: flex;

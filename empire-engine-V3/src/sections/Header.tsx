@@ -8,6 +8,7 @@ import {
   useNavigation,
   useCollections,
   useCurrency,
+  useShop,
 } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
@@ -32,7 +33,14 @@ export default function Header({
 }: EmpSectionProps & { solidHeader?: boolean }) {
   const s = settings as HeaderSettings;
   const t = useT();
-  const brand = s.brand_name || "EMPIRE";
+  const shop = useShop();
+  // The merchant rarely overrides the brand, and the theme's placeholder
+  // ("EMPIRE") gets baked into the store's saved customization on activation.
+  // Treat that placeholder as "unset" so the real store name always wins.
+  const brand =
+    s.brand_name && s.brand_name !== "EMPIRE"
+      ? s.brand_name
+      : shop?.name || s.brand_name || "EMPIRE";
   const DEFAULT_LINKS = [
     { label: t("Home", "الرئيسية"), url: "/" },
     { label: t("Shop", "المتجر"), url: "/products" },

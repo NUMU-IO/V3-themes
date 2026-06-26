@@ -3,7 +3,7 @@
   "name": "Footer",
   "locales": { "ar": { "name": "التذييل" } },
   "settings": [
-    { "type": "text", "id": "brand_name", "label": "Brand name", "default": "EMPIRE", "locales": { "ar": { "label": "اسم العلامة" } } },
+    { "type": "text", "id": "brand_name", "label": "Brand name (blank = store name)", "default": "", "locales": { "ar": { "label": "اسم العلامة (فارغ = اسم المتجر)" } } },
     { "type": "textarea", "id": "description", "label": "Description", "default": "متجر مستقل يقدّم تشكيلة مختارة بعناية.", "locales": { "ar": { "label": "الوصف" } } },
     { "type": "text", "id": "ticker_text", "label": "Ticker text", "default": "100% مستقل", "locales": { "ar": { "label": "نص الشريط المتحرك" } } },
     { "type": "url", "id": "instagram", "label": "Instagram URL", "locales": { "ar": { "label": "رابط إنستغرام" } } },

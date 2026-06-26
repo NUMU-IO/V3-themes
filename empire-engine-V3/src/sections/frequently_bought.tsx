@@ -21,6 +21,9 @@ interface FbtSettings {
   /** Merchant on/off switch (belt-and-suspenders alongside the section
    *  visibility toggle, which the host honours via `instance.disabled`). */
   enabled?: boolean;
+  /** When true, render only the card (no full-width section wrapper) so it can
+   *  sit inside the PDP buy column. */
+  embedded?: boolean;
 }
 
 /**
@@ -96,9 +99,8 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
     }
   }
 
-  return (
-    <section className="empire-container" style={{ paddingBlock: "2rem" }}>
-      <div className="empire-fbt-card">
+  const card = (
+    <div className="empire-fbt-card">
       <EditableText
         as="h2"
         className="empire-fbt-card__title"
@@ -168,7 +170,13 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
           {pending ? "..." : "أضف الكل للسلة"}
         </button>
       </div>
-      </div>
+    </div>
+  );
+
+  if (s.embedded) return card;
+  return (
+    <section className="empire-container" style={{ paddingBlock: "2rem" }}>
+      {card}
     </section>
   );
 }

@@ -23,7 +23,12 @@ export default function Footer({ id, settings }: EmpSectionProps) {
   const t = useT();
   const shop = useShop();
   const { collections } = useCollections({ limit: 5 });
-  const brand = s.brand_name || shop?.name || "EMPIRE";
+  // Prefer the real store name; the theme placeholder ("EMPIRE") is treated as
+  // unset so it never overrides the store name baked in at activation.
+  const brand =
+    s.brand_name && s.brand_name !== "EMPIRE"
+      ? s.brand_name
+      : shop?.name || s.brand_name || "EMPIRE";
   const ticker = s.ticker_text || "100% مستقل";
 
   // Year is computed client-side to keep the SSR render path deterministic.
