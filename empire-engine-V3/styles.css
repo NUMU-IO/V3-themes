@@ -463,6 +463,30 @@
   padding: 0.25rem 0.5rem;
   cursor: pointer;
 }
+.empire-langswitch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  color: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.empire-langswitch:hover {
+  opacity: 1;
+  background: var(--emp-black);
+  color: var(--emp-white);
+  border-color: var(--emp-black);
+}
 .empire-burger {
   display: inline-flex;
   padding: 0.5rem;

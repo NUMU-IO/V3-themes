@@ -83,6 +83,11 @@ export default function FrequentlyBought({ id, settings }: EmpSectionProps) {
     .reduce((sum, p) => sum + (Number(p.price) || 0), 0);
 
   if (s.enabled === false) return null;
+  // On a product page the PDP buy-box embeds its own FBT (`embedded`), so a
+  // standalone section here would be a duplicate. Step aside when a product is
+  // in context and we're not the embedded instance. (Off-PDP, `product` is
+  // null and the standalone "you might also like" use still renders.)
+  if (!s.embedded && product) return null;
   if (bundle.length < 2) return null;
 
   async function addBundle() {
