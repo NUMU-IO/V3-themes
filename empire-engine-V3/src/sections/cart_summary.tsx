@@ -2,6 +2,7 @@ import { useCart, useLocalization } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { CouponForm } from "../lib/CouponForm";
+import { useT } from "../lib/i18n";
 
 interface CartSettings {
   title?: string;
@@ -14,6 +15,7 @@ interface CartSettings {
 /** Full-page cart (`/cart`) — mirrors the drawer with more room. */
 export default function CartSummary({ id, settings }: EmpSectionProps) {
   const s = settings as CartSettings;
+  const t = useT();
   const { cart, updateQuantity, removeItem, loading } = useCart();
   const { formatMoney } = useLocalization();
 
@@ -111,7 +113,7 @@ export default function CartSummary({ id, settings }: EmpSectionProps) {
                   disabled={loading}
                   onClick={() => removeItem(line.id)}
                 >
-                  حذف
+                  {t("Remove", "حذف")}
                 </button>
               </div>
             </div>
@@ -122,19 +124,20 @@ export default function CartSummary({ id, settings }: EmpSectionProps) {
       <div className="empire-cart__totals">
         <CouponForm />
         <div className="empire-subtotal">
-          <span>المجموع الفرعي</span>
+          <span>{t("Subtotal", "المجموع الفرعي")}</span>
           <span>{formatMoney(cart?.subtotal ?? 0, currency)}</span>
         </div>
         {cart?.discount_amount && cart.discount_amount > 0 ? (
           <div className="empire-subtotal empire-discount">
             <span>
-              الخصم{cart.discount_code ? ` (${cart.discount_code})` : ""}
+              {t("Discount", "الخصم")}
+              {cart.discount_code ? ` (${cart.discount_code})` : ""}
             </span>
             <span>−{formatMoney(cart.discount_amount, currency)}</span>
           </div>
         ) : null}
         <div className="empire-subtotal empire-total">
-          <span>الإجمالي</span>
+          <span>{t("Total", "الإجمالي")}</span>
           <span>
             {formatMoney(
               cart?.total ??

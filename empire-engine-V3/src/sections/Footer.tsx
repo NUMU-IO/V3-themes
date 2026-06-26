@@ -6,6 +6,7 @@ import { useShop,
 } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
+import { useT } from "../lib/i18n";
 
 interface FooterSettings {
   brand_name?: string;
@@ -19,6 +20,7 @@ interface FooterSettings {
 
 export default function Footer({ id, settings }: EmpSectionProps) {
   const s = settings as FooterSettings;
+  const t = useT();
   const shop = useShop();
   const { collections } = useCollections({ limit: 5 });
   const brand = s.brand_name || shop?.name || "EMPIRE";
@@ -97,9 +99,9 @@ export default function Footer({ id, settings }: EmpSectionProps) {
 
           {/* Shop links */}
           <div>
-            <p className="empire-footer__heading">المتجر</p>
+            <p className="empire-footer__heading">{t("Shop", "المتجر")}</p>
             <div className="empire-footer__links">
-              <a href="/products">كل المنتجات</a>
+              <a href="/products">{t("All products", "كل المنتجات")}</a>
               {collections.slice(0, 5).map((c) => (
                 <a key={c.id} href={`/collections/${c.slug}`}>
                   {c.name}
@@ -110,11 +112,11 @@ export default function Footer({ id, settings }: EmpSectionProps) {
 
           {/* Help links */}
           <div>
-            <p className="empire-footer__heading">المساعدة</p>
+            <p className="empire-footer__heading">{t("Help", "المساعدة")}</p>
             <div className="empire-footer__links">
-              <a href="/pages/contact">تواصل معنا</a>
-              <a href="/pages/shipping">الشحن</a>
-              <a href="/pages/returns">الإرجاع</a>
+              <a href="/pages/contact">{t("Contact us", "تواصل معنا")}</a>
+              <a href="/pages/shipping">{t("Shipping", "الشحن")}</a>
+              <a href="/pages/returns">{t("Returns", "الإرجاع")}</a>
             </div>
           </div>
         </div>
