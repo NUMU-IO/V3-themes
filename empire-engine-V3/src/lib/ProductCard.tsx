@@ -21,16 +21,15 @@ export function ProductCard({ product }: { product: Product }) {
 
   const image = product.images?.[0];
   const currency = product.currency || shop?.currency;
-  const price = formatMoney(product.price, currency);
-  const hasCompare =
-    product.compare_at_price && product.compare_at_price > product.price;
-  const compareAt = hasCompare
-    ? formatMoney(product.compare_at_price as number, currency)
-    : null;
+  // Coerce — some endpoints return price/compare_at_price as strings, which
+  // breaks numeric comparison (lexicographic) and arithmetic.
+  const priceNum = Number(product.price) || 0;
+  const compareNum = Number(product.compare_at_price) || 0;
+  const price = formatMoney(priceNum, currency);
+  const hasCompare = compareNum > priceNum;
+  const compareAt = hasCompare ? formatMoney(compareNum, currency) : null;
   const discountPct = hasCompare
-    ? Math.round(
-        (1 - product.price / (product.compare_at_price as number)) * 100,
-      )
+    ? Math.round((1 - priceNum / compareNum) * 100)
     : 0;
   const categoryBadge = product.tags?.[0] || product.category;
   const variantId = product.variants?.[0]?.id;
