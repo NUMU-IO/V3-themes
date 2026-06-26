@@ -1,6 +1,7 @@
 import { useCollections } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
+import { useT } from "../lib/i18n";
 
 interface CategoriesSettings {
   title?: string;
@@ -14,6 +15,7 @@ interface CategoriesSettings {
  */
 export default function Categories({ id, settings }: EmpSectionProps) {
   const s = settings as CategoriesSettings;
+  const t = useT();
   const cols = Math.max(2, Math.min(6, s.columns_desktop ?? 5));
   const { collections } = useCollections({ fetchIfMissing: true });
 
@@ -22,16 +24,14 @@ export default function Categories({ id, settings }: EmpSectionProps) {
   return (
     <section className="empire-section empire-bg-white">
       <div className="empire-container">
-        {s.title ? (
-          <EditableText
-            as="h2"
-            className="empire-heading"
-            sectionId={id}
-            settingId="title"
-            value={s.title}
-            style={{ marginBottom: "1.5rem" }}
-          />
-        ) : null}
+        <EditableText
+          as="h2"
+          className="empire-heading"
+          sectionId={id}
+          settingId="title"
+          value={s.title ?? t("Shop by category", "تسوق حسب الفئة")}
+          style={{ marginBottom: "1.5rem" }}
+        />
         <div
           className="empire-catgrid"
           style={{ ["--cols" as string]: cols }}

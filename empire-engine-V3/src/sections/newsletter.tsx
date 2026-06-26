@@ -2,6 +2,7 @@ import {
   useState } from "react";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
+import { useT } from "../lib/i18n";
 
 interface NewsletterSettings {
   title?: string;
@@ -15,10 +16,11 @@ interface NewsletterSettings {
  *  (swap in the host's marketing endpoint when wiring a real list). */
 export default function Newsletter({ id, settings }: EmpSectionProps) {
   const s = settings as NewsletterSettings;
-  const title = s.title ?? "اشترك في نشرتنا";
-  const subtitle = s.subtitle ?? "اعرف أول واحد عن العروض والمنتجات الجديدة";
-  const buttonText = s.button_text ?? "اشترك";
-  const placeholder = s.placeholder ?? "البريد الإلكتروني";
+  const t = useT();
+  const title = s.title ?? t("Join our newsletter", "اشترك في نشرتنا");
+  const subtitle = s.subtitle ?? t("Be first to hear about offers and new arrivals", "اعرف أول واحد عن العروض والمنتجات الجديدة");
+  const buttonText = s.button_text ?? t("Subscribe", "اشترك");
+  const placeholder = s.placeholder ?? t("Email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);

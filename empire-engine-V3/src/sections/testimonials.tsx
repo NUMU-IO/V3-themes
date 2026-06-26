@@ -1,6 +1,7 @@
 import { type BlockInstance } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
+import { useT } from "../lib/i18n";
 
 interface TestimonialsSettings {
   title?: string;
@@ -16,7 +17,8 @@ export default function Testimonials({
   blockOrder,
 }: EmpSectionProps) {
   const s = settings as TestimonialsSettings;
-  const title = s.title ?? "رأي عملائنا";
+  const t = useT();
+  const title = s.title ?? t("What our customers say", "رأي عملائنا");
 
   const reviews = (blockOrder ?? [])
     .map((bid) => ({ bid, block: blocks?.[bid] }))

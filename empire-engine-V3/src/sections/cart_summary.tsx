@@ -160,7 +160,7 @@ export default function CartSummary({ id, settings }: EmpSectionProps) {
             as="span"
             sectionId={id}
             settingId="checkout_label"
-            value={s.checkout_label || "إتمام الطلب"}
+            value={s.checkout_label || t("Checkout", "إتمام الطلب")}
           />
         </a>
       </div>
