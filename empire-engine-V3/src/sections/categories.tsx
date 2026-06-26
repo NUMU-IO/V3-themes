@@ -1,4 +1,5 @@
-import { useCollections, EditableText } from "@numueg/theme-sdk";
+import { useCollections } from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 
 interface CategoriesSettings {

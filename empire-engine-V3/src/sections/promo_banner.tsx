@@ -1,4 +1,5 @@
-import { EditableText, EditableImage } from "@numueg/theme-sdk";
+import { EditableImage } from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 
 interface PromoSettings {

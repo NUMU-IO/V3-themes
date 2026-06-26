@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState } from "react";
 import {
   useCart,
   useLocalization,
   useNavigation,
   useCollections,
   useCurrency,
-  EditableText,
 } from "@numueg/theme-sdk";
+import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { useCartOpen, openCart, closeCart } from "../lib/cartUI";
 import { CouponForm } from "../lib/CouponForm";

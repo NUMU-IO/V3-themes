@@ -58,11 +58,11 @@
 }
 
 .empire-section {
-  padding-block: 4rem;
+  padding-block: 3rem;
 }
 @media (min-width: 768px) {
   .empire-section {
-    padding-block: 5rem;
+    padding-block: 4rem;
   }
 }
 
@@ -1361,12 +1361,21 @@
 }
 @media (min-width: 768px) {
   .empire-pdp {
-    grid-template-columns: 1fr 1fr;
-    gap: 3.5rem;
+    /* Cap the gallery column so the main image isn't oversized and the buy
+       box doesn't trail a big empty gap. */
+    grid-template-columns: minmax(0, 460px) 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+  /* Keep the gallery in view while scrolling the (often taller) buy box. */
+  .empire-pdp__gallery {
+    position: sticky;
+    top: 6rem;
   }
 }
 .empire-pdp__main-img {
   aspect-ratio: 1 / 1;
+  max-height: 540px;
   border-radius: var(--emp-radius);
   overflow: hidden;
   background: var(--emp-secondary);
@@ -1838,6 +1847,26 @@
   margin-top: 0.25rem;
 }
 
+/* ===== INLINE EDITOR AFFORDANCE (customizer only) =====
+   Gold dashed frame on hover, solid while editing. These classes are only
+   applied inside the theme-editor iframe, so live shoppers never see them. */
+.empire-inline-edit--armed {
+  cursor: text;
+  outline: 1px dashed transparent;
+  outline-offset: 4px;
+  border-radius: 3px;
+  transition: outline-color 0.15s ease, background 0.15s ease;
+}
+.empire-inline-edit--armed:hover {
+  outline-color: #c8a24a;
+  background: rgba(200, 162, 74, 0.08);
+}
+.empire-inline-edit--editing {
+  outline: 2px solid #c8a24a !important;
+  outline-offset: 4px;
+  background: rgba(200, 162, 74, 0.12);
+}
+
 /* ===== MISC ===== */
 .empire-page {
   min-height: 50vh;
@@ -1945,6 +1974,19 @@
 }
 
 /* ===== FREQUENTLY BOUGHT TOGETHER ===== */
+.empire-fbt-card {
+  border: 1px solid var(--emp-border);
+  border-radius: 12px;
+  background: var(--emp-card);
+  padding: 1.5rem;
+}
+.empire-fbt-card__title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin: 0 0 1.25rem;
+}
 .empire-fbt {
   display: flex;
   flex-wrap: wrap;
