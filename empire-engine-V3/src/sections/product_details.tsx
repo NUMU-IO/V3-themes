@@ -13,6 +13,7 @@ import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { ProductCard } from "../lib/ProductCard";
 import { openCart } from "../lib/cartUI";
+import { useT } from "../lib/i18n";
 
 interface PdpSettings {
   add_to_cart_label?: string;
@@ -28,6 +29,7 @@ interface PdpSettings {
  */
 export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const s = settings as PdpSettings;
+  const t = useT();
   const product = useProductOptional();
   const { addItem } = useCart();
   const { formatMoney } = useLocalization();
@@ -49,7 +51,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   if (!product) {
     return (
       <section className="empire-page empire-container">
-        <p className="empire-placeholder">لم يتم العثور على المنتج.</p>
+        <p className="empire-placeholder">{t("Product not found.", "لم يتم العثور على المنتج.")}</p>
       </section>
     );
   }
@@ -102,14 +104,14 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const variantLabel = (v: (typeof variants)[number], i: number) =>
     v.name ||
     Object.values(v.option_values ?? {}).join(" / ") ||
-    `الخيار ${i + 1}`;
+    `${t("Option", "الخيار")} ${i + 1}`;
 
   return (
     <section className="empire-container" style={{ paddingBlock: "2.5rem" }}>
       <nav className="empire-breadcrumb empire-label">
-        <a href="/">الرئيسية</a>
+        <a href="/">{t("Home", "الرئيسية")}</a>
         <span>/</span>
-        <a href="/products">المتجر</a>
+        <a href="/products">{t("Shop", "المتجر")}</a>
         <span>/</span>
         <span style={{ color: "var(--emp-fg)" }}>{product.name}</span>
       </nav>
@@ -175,7 +177,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
                     className="empire-pdp__sizelink"
                     onClick={() => setSizeOpen(true)}
                   >
-                    دليل المقاسات
+                    {t("Size guide", "دليل المقاسات")}
                   </button>
                 ) : null}
               </div>
@@ -204,14 +206,14 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
           {hasVariantList ? (
             <div className="empire-pdp__optgroup">
               <div className="empire-pdp__opt-head">
-                <span className="empire-pdp__opt-label">الخيار</span>
+                <span className="empire-pdp__opt-label">{t("Option", "الخيار")}</span>
                 {chart ? (
                   <button
                     type="button"
                     className="empire-pdp__sizelink"
                     onClick={() => setSizeOpen(true)}
                   >
-                    دليل المقاسات
+                    {t("Size guide", "دليل المقاسات")}
                   </button>
                 ) : null}
               </div>
@@ -243,7 +245,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
               className="empire-pdp__sizelink empire-pdp__sizelink--standalone"
               onClick={() => setSizeOpen(true)}
             >
-              دليل المقاسات
+              {t("Size guide", "دليل المقاسات")}
             </button>
           ) : null}
 
@@ -272,13 +274,13 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
               {pending ? (
                 "..."
               ) : !product.in_stock ? (
-                "نفذ المخزون"
+                t("Sold out", "نفذ المخزون")
               ) : (
                 <EditableText
                   as="span"
                   sectionId={id}
                   settingId="add_to_cart_label"
-                  value={s.add_to_cart_label || "أضف إلى السلة"}
+                  value={s.add_to_cart_label || t("Add to cart", "أضف إلى السلة")}
                 />
               )}
             </button>
@@ -288,15 +290,15 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
           <ul className="empire-pdp__trust">
             <li>
               <TruckIcon />
-              <span>شحن سريع لكل المحافظات</span>
+              <span>{t("Fast nationwide shipping", "شحن سريع لكل المحافظات")}</span>
             </li>
             <li>
               <ReturnIcon />
-              <span>إرجاع سهل خلال ١٤ يوم</span>
+              <span>{t("Easy 14-day returns", "إرجاع سهل خلال ١٤ يوم")}</span>
             </li>
             <li>
               <LockIcon />
-              <span>دفع آمن 100%</span>
+              <span>{t("100% secure payment", "دفع آمن 100%")}</span>
             </li>
           </ul>
         </div>
@@ -305,7 +307,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
       {s.show_related !== false && related.items.length > 0 ? (
         <div style={{ marginTop: "4rem" }}>
           <h2 className="empire-heading" style={{ marginBottom: "1.5rem" }}>
-            منتجات مشابهة
+            {t("You may also like", "منتجات مشابهة")}
           </h2>
           <div className="empire-grid" style={{ ["--cols" as string]: 4 }}>
             {related.items.map((p) => (
@@ -327,7 +329,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
           <div className="empire-modal__panel">
             <div className="empire-modal__head">
               <h2 className="empire-modal__title">
-                دليل المقاسات{chart.unit ? ` (${chart.unit})` : ""}
+                {t("Size guide", "دليل المقاسات")}{chart.unit ? ` (${chart.unit})` : ""}
               </h2>
               <button
                 className="empire-drawer__close"
@@ -347,7 +349,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
               <table className="empire-sizetable">
                 <thead>
                   <tr>
-                    <th>المقاس</th>
+                    <th>{t("Size", "المقاس")}</th>
                     {chart.column_headers.map((h, i) => (
                       <th key={i}>{h}</th>
                     ))}

@@ -13,6 +13,7 @@ import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { useCartOpen, openCart, closeCart } from "../lib/cartUI";
 import { CouponForm } from "../lib/CouponForm";
+import { useT } from "../lib/i18n";
 
 interface HeaderSettings {
   brand_name?: string;
@@ -24,19 +25,19 @@ interface HeaderSettings {
   show_cart?: boolean;
 }
 
-const DEFAULT_LINKS = [
-  { label: "الرئيسية", url: "/" },
-  { label: "المتجر", url: "/products" },
-  { label: "تواصل", url: "/pages/contact" },
-];
-
 export default function Header({
   id,
   settings,
   solidHeader,
 }: EmpSectionProps & { solidHeader?: boolean }) {
   const s = settings as HeaderSettings;
+  const t = useT();
   const brand = s.brand_name || "EMPIRE";
+  const DEFAULT_LINKS = [
+    { label: t("Home", "الرئيسية"), url: "/" },
+    { label: t("Shop", "المتجر"), url: "/products" },
+    { label: t("Contact", "تواصل"), url: "/pages/contact" },
+  ];
 
   const { cart, updateQuantity, removeItem, loading } = useCart();
   const { formatMoney } = useLocalization();
@@ -124,7 +125,7 @@ export default function Header({
                             className="empire-mega__link empire-mega__link--strong"
                             href="/products"
                           >
-                            كل المنتجات
+                            {t("All products", "كل المنتجات")}
                           </a>
                           {collections.slice(0, 5).map((c) => (
                             <a
@@ -265,7 +266,9 @@ export default function Header({
         <div className="empire-drawer__panel">
           <div className="empire-drawer__head">
             <span className="empire-drawer__title">
-              {count > 0 ? `${count} عنصر في السلة` : "السلة"}
+              {count > 0
+                ? `${count} ${t("in cart", "عنصر في السلة")}`
+                : t("Cart", "السلة")}
             </span>
             <button
               className="empire-drawer__close"
@@ -280,7 +283,7 @@ export default function Header({
           <div className="empire-drawer__body">
             {items.length === 0 ? (
               <div className="empire-drawer__empty">
-                <p>السلة فاضية</p>
+                <p>{t("Your cart is empty", "السلة فاضية")}</p>
               </div>
             ) : (
               items.map((line) => (
@@ -346,20 +349,20 @@ export default function Header({
             <div className="empire-drawer__foot">
               <CouponForm compact />
               <div className="empire-subtotal">
-                <span>المجموع الفرعي</span>
+                <span>{t("Subtotal", "المجموع الفرعي")}</span>
                 <span>{formatMoney(cart?.subtotal ?? 0, cartCurrency)}</span>
               </div>
               {cart?.discount_amount && cart.discount_amount > 0 ? (
                 <div className="empire-subtotal empire-discount">
                   <span>
-                    الخصم
+                    {t("Discount", "الخصم")}
                     {cart.discount_code ? ` (${cart.discount_code})` : ""}
                   </span>
                   <span>−{formatMoney(cart.discount_amount, cartCurrency)}</span>
                 </div>
               ) : null}
               <div className="empire-subtotal empire-total">
-                <span>الإجمالي</span>
+                <span>{t("Total", "الإجمالي")}</span>
                 <span>
                   {formatMoney(
                     cart?.total ??
@@ -369,7 +372,7 @@ export default function Header({
                 </span>
               </div>
               <a className="empire-btn empire-btn--block" href="/checkout">
-                إتمام الطلب
+                {t("Checkout", "إتمام الطلب")}
               </a>
               <button
                 className="empire-iconbtn"
@@ -377,7 +380,7 @@ export default function Header({
                 style={{ justifyContent: "center" }}
                 onClick={closeCart}
               >
-                متابعة التسوق
+                {t("Continue shopping", "متابعة التسوق")}
               </button>
             </div>
           ) : null}
