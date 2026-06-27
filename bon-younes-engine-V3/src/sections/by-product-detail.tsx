@@ -111,6 +111,7 @@ export default function ByProductDetail({
   const badge2 = asString(s.badge_2_text) || localized(locale, "Best with extra shot", "أحلى بشوت زيادة");
   const quantityLabel = asString(s.quantity_label) || localized(locale, "Quantity", "الكمية");
   const addToCartLabel = asString(s.add_to_cart_label) || localized(locale, "Add to cart", "أضف للسلة");
+  const selectOptionsLabel = localized(locale, "Choose options first", "اختر الخيارات أولاً");
   const saveLabel = asString(s.save_label) || localized(locale, "Save for later", "احفظه لبعدين");
   const addonsTotalLabel = asString(s.addons_total_label) || localized(locale, "Add-ons total:", "إجمالي الإضافات:");
   const recoCtaLabel = asString(s.reco_cta_label) || localized(locale, "View", "شوف");
@@ -151,14 +152,11 @@ export default function ByProductDetail({
 
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  // Start with NO option chosen so the customer must actively pick each axis
+  // before adding to cart (V2 parity). Products with no options skip this gate
+  // and add directly.
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(
-    () => {
-      const init: Record<string, string> = {};
-      product.options?.forEach((o) => {
-        if (o.values?.[0]) init[o.name] = o.values[0];
-      });
-      return init;
-    },
+    {},
   );
   const [chosenAddons, setChosenAddons] = useState<Set<string>>(new Set());
 
@@ -190,15 +188,33 @@ export default function ByProductDetail({
     return sum + (a?.price ?? 0);
   }, 0);
 
+  // Variant gate (V2 parity): when the product has option axes, every axis
+  // must be chosen before the item can be added; a product with no axes adds
+  // directly.
+  const hasOptions = (product.options?.length ?? 0) > 0;
+  const allOptionsChosen = (product.options ?? []).every(
+    (o) => Boolean(selectedOptions[o.name]),
+  );
+  // Match the variant the customer actually selected (axis -> value), not just
+  // the first one, so the chosen size/colour is what's added. Falls back to
+  // undefined when nothing matches (e.g. a legacy product with axes but no
+  // SKU-tracked variant rows) -> the base product is added.
+  const selectedVariant = productCtx?.variants?.find((v) =>
+    Object.entries(selectedOptions).every(
+      ([axis, value]) => (v.option_values ?? {})[axis] === value,
+    ),
+  );
+
   const handleAddToCart = async () => {
     if (isFallback || !productCtx) {
       // No real product context — graceful no-op so the merchant can
       // still preview the section without a hard error.
       return;
     }
-    const variant = productCtx.variants?.[0];
+    // Guard programmatic calls — the button is disabled in this state too.
+    if (hasOptions && !allOptionsChosen) return;
     try {
-      await cart.addItem(productCtx.id, variant?.id, quantity);
+      await cart.addItem(productCtx.id, selectedVariant?.id, quantity);
     } catch (err) {
       console.warn("[bon-younes] add to cart failed", err);
     }
@@ -328,9 +344,10 @@ export default function ByProductDetail({
                 type="button"
                 className="by-btn"
                 onClick={handleAddToCart}
-                disabled={cart.loading}
+                disabled={cart.loading || (hasOptions && !allOptionsChosen)}
               >
-                <ShoppingBag size={16} /> {addToCartLabel}
+                <ShoppingBag size={16} />{" "}
+                {hasOptions && !allOptionsChosen ? selectOptionsLabel : addToCartLabel}
               </button>
               <button type="button" className="by-btn by-btn-ghost">
                 <Heart size={16} /> {saveLabel}

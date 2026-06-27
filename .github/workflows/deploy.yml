@@ -205,10 +205,28 @@ jobs:
             echo "deploying $SLUG@$VER"
             python _deploy-bundle-r2.py "$SLUG" "$VER" "$d/dist"
             # Pipe dist into the api-test container, then seed both registries.
-            tar -C "$d/dist" -cf - . | $SSH "$DROPLET" \
-              "docker exec -i $CONTAINER sh -c 'rm -rf /tmp/seed-dist && mkdir -p /tmp/seed-dist && tar -C /tmp/seed-dist -xf -'"
-            $SSH "$DROPLET" "docker exec -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $CONTAINER python scripts/seed_numu_theme.py"
-            $SSH "$DROPLET" "docker exec -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $CONTAINER python scripts/seed_marketplace_theme.py"
+            # Under the droplet's memory pressure that container can be
+            # OOM-killed mid-run, which previously aborted the WHOLE deploy with
+            # "container is not running" (the runner shell is `bash -eo
+            # pipefail`, so a failed `docker exec` exits the step). Make it
+            # resilient: ensure the container is up first (docker start is a
+            # no-op when already running), retry once, and on a hard failure
+            # count the theme + continue so later themes still deploy.
+            seed_theme() {
+              $SSH "$DROPLET" "docker start $CONTAINER >/dev/null 2>&1 || true"
+              tar -C "$d/dist" -cf - . | $SSH "$DROPLET" \
+                "docker exec -i $CONTAINER sh -c 'rm -rf /tmp/seed-dist && mkdir -p /tmp/seed-dist && tar -C /tmp/seed-dist -xf -'" \
+                && $SSH "$DROPLET" "docker exec -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $CONTAINER python scripts/seed_numu_theme.py" \
+                && $SSH "$DROPLET" "docker exec -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $CONTAINER python scripts/seed_marketplace_theme.py"
+            }
+            if ! seed_theme; then
+              echo "::warning::seed failed for $d; ensuring $CONTAINER is up and retrying once"
+              $SSH "$DROPLET" "docker start $CONTAINER >/dev/null 2>&1 || true; sleep 8"
+              if ! seed_theme; then
+                echo "::error::seed failed for $d (api container kept stopping — check droplet memory/swap)"
+                failed="$failed $d"; fail=$((fail+1)); echo "::endgroup::"; continue
+              fi
+            fi
             ok=$((ok+1))
             echo "::endgroup::"
           done

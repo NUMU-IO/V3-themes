@@ -96,6 +96,8 @@ export default function BzHeader({ instance, sectionId }: SectionRenderProps) {
 
   const showSearch = (s.show_search as boolean) !== false;
   const showCart = (s.show_cart as boolean) !== false;
+  // Account icon is OFF by default (opt-in) — only an explicit `true` shows it.
+  const showAccount = s.show_account === true;
 
   // Nav source priority (§5 hide-page→hide-nav-link):
   //   1. the merchant's `main-menu` (hub Navigation manager) via useNavigation —
@@ -161,8 +163,11 @@ export default function BzHeader({ instance, sectionId }: SectionRenderProps) {
     { label: localized(locale, "SEARCH", "بحث"), icon: Search, to: "/search", badge: 0, action: undefined as "cart" | undefined },
     // Cart opens the slide-in drawer instead of navigating to /cart.
     { label: localized(locale, "CART", "السلة"), icon: ShoppingBag, to: "/cart", badge: itemCount, action: "cart" as "cart" | undefined },
-    { label: localized(locale, "ACCOUNT", "حسابي"), icon: User, to: "/account", badge: 0, action: undefined as "cart" | undefined },
-  ];
+    // Account tab is opt-in (off by default) via the header's `show_account` setting.
+    showAccount
+      ? { label: localized(locale, "ACCOUNT", "حسابي"), icon: User, to: "/account", badge: 0, action: undefined as "cart" | undefined }
+      : null,
+  ].filter((t): t is NonNullable<typeof t> => Boolean(t));
   // Active tab from the current path. Each storefront route is its own SSR
   // render → fresh bundle mount, so reading location at render time is current.
   // Subdomain routing yields clean paths ("/cart"); endsWith also covers the

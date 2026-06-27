@@ -4,6 +4,7 @@ import {
   Link,
   Money,
   AddToCartButton,
+  sanitizeHtml,
   useLocale,
   useProductOptional,
   useResolvedSettings,
@@ -259,12 +260,11 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
 
             {/* Description */}
             {showDescription && product.description && (
-              <p
-                className="text-sm text-[var(--vn-muted)] leading-relaxed mb-8"
+              <div
+                className="text-sm text-[var(--vn-muted)] leading-relaxed mb-8 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:ps-5"
                 data-testid="storefront-product-detail-description"
-              >
-                {product.description}
-              </p>
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }}
+              />
             )}
 
             {/* Stock */}

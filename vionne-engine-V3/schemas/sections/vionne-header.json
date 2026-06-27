@@ -54,7 +54,8 @@
       "id": "show_account",
       "label": "Show account icon",
       "label_ar": "إظهار أيقونة الحساب",
-      "default": true
+      "default": false,
+      "info": "Off by default. Turn on to show the account/login icon in the header."
     },
     {
       "type": "checkbox",
@@ -160,7 +161,7 @@
       "settings": {
         "show_announcement": false,
         "show_search": true,
-        "show_account": true,
+        "show_account": false,
         "show_cart": true,
         "enable_hide_on_scroll": true,
         "show_mobile_dock": true
