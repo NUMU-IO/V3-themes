@@ -205,6 +205,15 @@ export default function ByProductDetail({
     ),
   );
 
+  // Per-variant stock cap (UX only; backend enforces server-side). When the
+  // selected variant tracks no positive inventory, leave the stepper uncapped.
+  const stockQty = selectedVariant?.inventory_quantity;
+  const maxQty =
+    typeof stockQty === "number" && stockQty > 0 ? stockQty : Infinity;
+  // Clamp display + add-to-cart so switching to a lower-stock variant can never
+  // leave the stepper above that variant's cap.
+  const cappedQuantity = Math.min(quantity, maxQty);
+
   const handleAddToCart = async () => {
     if (isFallback || !productCtx) {
       // No real product context — graceful no-op so the merchant can
@@ -214,7 +223,7 @@ export default function ByProductDetail({
     // Guard programmatic calls — the button is disabled in this state too.
     if (hasOptions && !allOptionsChosen) return;
     try {
-      await cart.addItem(productCtx.id, selectedVariant?.id, quantity);
+      await cart.addItem(productCtx.id, selectedVariant?.id, cappedQuantity);
     } catch (err) {
       console.warn("[bon-younes] add to cart failed", err);
     }
@@ -328,15 +337,24 @@ export default function ByProductDetail({
                 >
                   <Minus size={16} />
                 </button>
-                <span aria-live="polite">{quantity}</span>
+                <span aria-live="polite">{cappedQuantity}</span>
                 <button
                   type="button"
-                  onClick={() => setQuantity((q) => q + 1)}
+                  onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
+                  disabled={cappedQuantity >= maxQty}
                   aria-label="Increase quantity"
                 >
                   <Plus size={16} />
                 </button>
               </div>
+              {Number.isFinite(maxQty) && maxQty <= 5 && (
+                <p
+                  className="by-pdp-stock-hint"
+                  style={{ fontSize: "0.75rem", color: "var(--by-caramel, #b07a4a)", marginTop: "0.4rem" }}
+                >
+                  {localized(locale, `Only ${maxQty} left`, `باقي ${maxQty} بس`)}
+                </p>
+              )}
             </div>
 
             <div className="by-pdp-actions">

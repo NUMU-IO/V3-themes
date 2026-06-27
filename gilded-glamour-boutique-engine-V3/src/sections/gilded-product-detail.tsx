@@ -156,6 +156,9 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
   const stockQty = selectedVariant?.inventory_quantity;
   const maxQty =
     typeof stockQty === "number" && stockQty > 0 ? stockQty : 99;
+  // Clamp the displayed/cart quantity to maxQty — guards a variant swap that
+  // drops stock below the current quantity (UX only; backend re-enforces stock).
+  const cartQuantity = Math.min(quantity, maxQty);
 
   // Rating is not exposed on the SDK Product, so render static gold stars (V2
   // showed product.rating; the engine product has no equivalent field yet).
@@ -435,13 +438,14 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
                   className="w-12 text-center text-sm font-semibold tabular-nums"
                   data-testid="storefront-product-detail-quantity"
                 >
-                  {quantity}
+                  {cartQuantity}
                 </span>
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
+                  disabled={quantity >= maxQty}
                   aria-label={localized(locale, "Increase quantity", "زيادة الكمية")}
-                  className="w-10 h-10 text-lg font-light hover:bg-[var(--gilded-gold)]/10 transition-colors"
+                  className="w-10 h-10 text-lg font-light hover:bg-[var(--gilded-gold)]/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                 >
                   +
                 </button>
@@ -454,7 +458,7 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
             <AddToCartButton
               product={product}
               variant={selectedVariant ?? undefined}
-              quantity={quantity}
+              quantity={cartQuantity}
               onAdded={() => {
                 setJustAdded(true);
                 window.setTimeout(() => setJustAdded(false), 2000);
@@ -538,13 +542,13 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
             {product.name}
           </p>
           <p className="text-sm font-bold text-foreground tabular-nums" dir="ltr">
-            <Money amount={variantPrice * quantity} currency={product.currency} />
+            <Money amount={variantPrice * cartQuantity} currency={product.currency} />
           </p>
         </div>
         <AddToCartButton
           product={product}
           variant={selectedVariant ?? undefined}
-          quantity={quantity}
+          quantity={cartQuantity}
           onAdded={() => {
             setJustAdded(true);
             window.setTimeout(() => setJustAdded(false), 2000);

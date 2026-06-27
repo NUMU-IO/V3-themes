@@ -92,6 +92,7 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
     ? selectedVariant.is_in_stock !== false
     : product.in_stock !== false;
   const stockQty = selectedVariant?.inventory_quantity;
+  const maxQty = typeof stockQty === "number" && stockQty > 0 ? stockQty : Infinity;
 
   const tags = (product.tags ?? []).filter(Boolean);
   const options = product.options ?? [];
@@ -301,13 +302,14 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
                   className="px-4 text-sm font-bold tabular-nums"
                   data-testid="storefront-product-detail-quantity"
                 >
-                  {quantity}
+                  {Math.min(quantity, maxQty)}
                 </span>
                 <button
                   type="button"
                   aria-label={localized(locale, "Increase quantity", "زيادة الكمية")}
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="p-3 hover:opacity-70 transition-opacity"
+                  onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
+                  disabled={quantity >= maxQty}
+                  className="p-3 hover:opacity-70 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <Plus size={14} />
                 </button>
@@ -316,7 +318,7 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
               <AddToCartButton
                 product={product}
                 variant={selectedVariant ?? undefined}
-                quantity={quantity}
+                quantity={Math.min(quantity, maxQty)}
                 className="vn-btn vn-btn-filled flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                 label={
                   <>

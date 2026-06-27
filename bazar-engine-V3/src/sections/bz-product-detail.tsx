@@ -144,6 +144,13 @@ export default function BzProductDetail({
   // Stock: variant overrides product-level flag when a variant is resolved.
   const inStock = variant ? variant.is_in_stock : product.in_stock;
 
+  // Per-variant stock cap for the quantity stepper (UX only; backend also
+  // enforces). Falls back to unbounded when no positive count is known.
+  const stockQty = variant?.inventory_quantity;
+  const maxQty =
+    typeof stockQty === "number" && stockQty > 0 ? stockQty : Infinity;
+  const cappedQuantity = Math.min(quantity, maxQty);
+
   const badges =
     demoOrPlaceholder(true, fallbackBadges(locale)); // labels are static chrome, always shown
 
@@ -153,7 +160,7 @@ export default function BzProductDetail({
     if (!isComplete) return;
     addInFlight.current = true;
     try {
-      await addItem(product.id, variant?.id, quantity);
+      await addItem(product.id, variant?.id, cappedQuantity);
       setAdded(true);
       setTimeout(() => {
         setAdded(false);
@@ -353,17 +360,23 @@ export default function BzProductDetail({
                   className="bz-heading text-base text-[var(--bz-dark)] min-w-[3rem] flex items-center justify-center border-x-2 border-[var(--bz-dark)] select-none"
                   aria-live="polite"
                 >
-                  {quantity}
+                  {cappedQuantity}
                 </span>
                 <button
                   type="button"
                   aria-label="Increase quantity"
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="w-11 h-11 flex items-center justify-center text-[var(--bz-dark)] hover:bg-[var(--bz-dark)] hover:text-[var(--bz-amber)] transition-colors"
+                  onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
+                  disabled={quantity >= maxQty}
+                  className="w-11 h-11 flex items-center justify-center text-[var(--bz-dark)] hover:bg-[var(--bz-dark)] hover:text-[var(--bz-amber)] transition-colors disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[var(--bz-dark)]"
                 >
                   <Plus size={16} aria-hidden="true" />
                 </button>
               </div>
+              {Number.isFinite(maxQty) && maxQty <= 5 && (
+                <span className="bz-label text-[11px] text-red-600 mt-2 block">
+                  {localized(locale, `Only ${maxQty} left`, `باقي ${maxQty} فقط`)}
+                </span>
+              )}
             </div>
 
             {/* Add to cart */}
@@ -422,11 +435,11 @@ export default function BzProductDetail({
       <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[var(--bz-cream)] border-t-2 border-[var(--bz-dark)] px-4 py-3 flex items-center gap-3 shadow-[0_-2px_8px_rgba(0,0,0,0.08)]">
         <div className="flex flex-col leading-tight shrink-0">
           <span className="bz-heading text-base text-[var(--bz-dark)]">
-            <Money amount={activePrice * quantity} currency={product.currency} />
+            <Money amount={activePrice * cappedQuantity} currency={product.currency} />
           </span>
           {hasDiscount && (
             <span className="text-[10px] text-[var(--bz-dark)]/40 line-through">
-              <Money amount={activeCompareAt * quantity} currency={product.currency} />
+              <Money amount={activeCompareAt * cappedQuantity} currency={product.currency} />
             </span>
           )}
         </div>
