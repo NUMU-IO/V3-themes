@@ -127,6 +127,7 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
     ? selectedVariant.is_in_stock !== false
     : product.in_stock !== false;
   const stockQty = selectedVariant?.inventory_quantity;
+  const maxQty = typeof stockQty === "number" && stockQty > 0 ? stockQty : Infinity;
 
   const options = product.options ?? [];
 
@@ -320,12 +321,13 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
                   <Minus size={14} />
                 </button>
                 <span className="px-4 text-sm" data-testid="storefront-product-detail-quantity">
-                  {quantity}
+                  {Math.min(quantity, maxQty)}
                 </span>
                 <button
                   type="button"
                   aria-label="Increase quantity"
-                  onClick={() => setQuantity((q) => q + 1)}
+                  onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
+                  disabled={quantity >= maxQty}
                   className="p-3 hover:bg-muted transition-colors"
                 >
                   <Plus size={14} />
@@ -335,7 +337,7 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
               <AddToCartButton
                 product={product}
                 variant={selectedVariant ?? undefined}
-                quantity={quantity}
+                quantity={Math.min(quantity, maxQty)}
                 onAdded={() => {
                   setJustAdded(true);
                   window.setTimeout(() => setJustAdded(false), 2000);
