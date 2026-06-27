@@ -2,7 +2,7 @@
   "id": "gilded-glamour-boutique-v3",
   "name": "Gilded Glamour Boutique (V3)",
   "author": "Saw Saw Atelier",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "layout": "single-column",
   "description": "A bold, gold-accented luxury fashion theme — warm beige canvas, decorative Lobster + uppercase Montserrat display type, parallax hero, scroll-fill brand statement, and curated vertical layouts. A faithful V3 port of the V2 Gilded Glamour Boutique theme. Editable gold header + black footer on every page.",
   "error_template": "templates/error.html",

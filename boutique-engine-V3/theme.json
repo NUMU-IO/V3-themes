@@ -2,7 +2,7 @@
   "id": "boutique-v3",
   "name": "Boutique (V3)",
   "author": "NUMU",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "layout": "single-column",
   "description": "Boutique (V3) — vibrant pink/magenta fashion-forward storefront, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
