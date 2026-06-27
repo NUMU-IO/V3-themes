@@ -82,6 +82,7 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
   const showAnnouncement = (s.show_announcement as boolean) !== false;
   const showSearch = (s.show_search as boolean) !== false;
   const showCart = (s.show_cart as boolean) !== false;
+  const showAccount = s.show_account === true;
   const headerLayout = asString(s.header_layout) || "logo-center";
   const announcementColor = asString(s.announcement_color);
   const announcementTextColor = asString(s.announcement_text_color);
@@ -182,13 +183,15 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
           <Search size={16} />
         </Link>
       )}
-      <Link
-        to="/account"
-        className="p-1 text-muted-foreground hover:text-foreground transition-colors"
-        aria-label="Account"
-      >
-        <User size={16} />
-      </Link>
+      {showAccount && (
+        <Link
+          to="/account"
+          className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Account"
+        >
+          <User size={16} />
+        </Link>
+      )}
       {showCart && (
         <Link
           to="/cart"
@@ -308,13 +311,15 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
               {link.label}
             </Link>
           ))}
-          <Link
-            to="/account"
-            onClick={() => setMenuOpen(false)}
-            className="block lux-nav-link py-1"
-          >
-            {localized(locale, "Account", "حسابي")}
-          </Link>
+          {showAccount && (
+            <Link
+              to="/account"
+              onClick={() => setMenuOpen(false)}
+              className="block lux-nav-link py-1"
+            >
+              {localized(locale, "Account", "حسابي")}
+            </Link>
+          )}
         </div>
       )}
     </header>

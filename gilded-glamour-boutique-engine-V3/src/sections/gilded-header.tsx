@@ -87,6 +87,7 @@ export default function GildedHeader({ instance, sectionId }: SectionRenderProps
   const showAnnouncement = (s.show_announcement as boolean) !== false;
   const showSearch = (s.show_search as boolean) !== false;
   const showCart = (s.show_cart as boolean) !== false;
+  const showAccount = s.show_account === true;
 
   const accountHref = customer ? "/profile" : "/auth";
 
@@ -287,13 +288,15 @@ export default function GildedHeader({ instance, sectionId }: SectionRenderProps
                   )}
                 </Link>
               )}
-              <Link
-                to={accountHref}
-                className="text-foreground hover:text-gold transition-colors"
-                aria-label={localized(locale, "Account", "حسابي")}
-              >
-                <User size={20} />
-              </Link>
+              {showAccount && (
+                <Link
+                  to={accountHref}
+                  className="text-foreground hover:text-gold transition-colors"
+                  aria-label={localized(locale, "Account", "حسابي")}
+                >
+                  <User size={20} />
+                </Link>
+              )}
             </div>
 
             {/* Mobile: menu button next to the logo */}
@@ -374,13 +377,15 @@ export default function GildedHeader({ instance, sectionId }: SectionRenderProps
                     </Link>
                   ),
                 )}
-                <Link
-                  to={accountHref}
-                  onClick={() => setMenuOpen(false)}
-                  className={navLinkClass}
-                >
-                  {localized(locale, "ACCOUNT", "حسابي")}
-                </Link>
+                {showAccount && (
+                  <Link
+                    to={accountHref}
+                    onClick={() => setMenuOpen(false)}
+                    className={navLinkClass}
+                  >
+                    {localized(locale, "ACCOUNT", "حسابي")}
+                  </Link>
+                )}
                 <Link
                   to={isAr ? "/?locale=en" : "/?locale=ar"}
                   onClick={() => setMenuOpen(false)}
@@ -419,7 +424,9 @@ export default function GildedHeader({ instance, sectionId }: SectionRenderProps
                   },
                 ]
               : []),
-            { label: localized(locale, "Account", "حسابي"), icon: User, to: accountHref },
+            ...(showAccount
+              ? [{ label: localized(locale, "Account", "حسابي"), icon: User, to: accountHref }]
+              : []),
           ].map((item, idx) => {
             const active = tabActive(item.to);
             const Icon = item.icon;
