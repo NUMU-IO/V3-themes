@@ -2,7 +2,7 @@
   "id": "empire-v3",
   "name": "Empire (V3)",
   "author": "NUMU",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "layout": "single-column",
   "description": "Premium editorial e-commerce — monochromatic palette, wide uppercase display type, Arabic-first (RTL), content-first design.",
   "error_template": "templates/error.html",
