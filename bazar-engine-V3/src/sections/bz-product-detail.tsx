@@ -120,7 +120,12 @@ export default function BzProductDetail({
     select,
     availability,
     isComplete,
-  } = useVariantSelection(product);
+  } = useVariantSelection(product, { autoSelect: false });
+
+  // Force an explicit choice on every option axis before buying (matches V2).
+  // No options → adds directly; with options → blocked until isComplete.
+  const mustChooseVariant = (product.options?.length ?? 0) > 0 && !isComplete;
+  const chooseOptionsLabel = localized(locale, "Choose options first", "اختر الخيارات أولاً");
 
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -150,7 +155,7 @@ export default function BzProductDetail({
   const handleAdd = async () => {
     if (isFallback || addInFlight.current || added || !inStock) return;
     // Block buying until every axis is chosen on variant products.
-    if (!isComplete) return;
+    if (mustChooseVariant) return;
     addInFlight.current = true;
     try {
       await addItem(product.id, variant?.id, quantity);
@@ -166,7 +171,7 @@ export default function BzProductDetail({
   };
 
   const addDisabled =
-    isFallback || added || !inStock || (product.options?.length ? !isComplete : false);
+    isFallback || added || !inStock || mustChooseVariant;
 
   return (
     <section
@@ -385,6 +390,8 @@ export default function BzProductDetail({
                 </span>
               ) : !inStock ? (
                 outOfStockLabel
+              ) : mustChooseVariant ? (
+                chooseOptionsLabel
               ) : (
                 <InlineEditable
                   sectionId={sectionId}
@@ -448,6 +455,8 @@ export default function BzProductDetail({
             </span>
           ) : !inStock ? (
             outOfStockLabel
+          ) : mustChooseVariant ? (
+            chooseOptionsLabel
           ) : (
             addToCartLabel
           )}

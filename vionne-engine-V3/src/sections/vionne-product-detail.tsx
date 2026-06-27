@@ -87,6 +87,7 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
   // null so the rules-of-hooks stay satisfied.
   const vs = useVariantSelection(
     product ?? { options: [], variants: [] },
+    { autoSelect: false },
   );
 
   const related = useRelatedProducts(showRelated && product ? product.id : null, {
@@ -142,6 +143,12 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
   const tags = (product.tags ?? []).filter(Boolean);
 
   const options = product.options ?? [];
+
+  // Variant gating: when a product HAS option axes, the customer must choose
+  // every axis (so a concrete variant resolves) before add-to-cart is enabled —
+  // matching the V2 PDP. Products with no options add directly.
+  const mustChooseVariant = (product.options?.length ?? 0) > 0 && !vs.isComplete;
+  const chooseOptionsLabel = localized(locale, "Choose options first", "اختر الخيارات أولاً");
 
   return (
     <div className="bg-background" data-testid="storefront-product-detail">
@@ -375,24 +382,35 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                   state machine and calls useCart().addItem(product, variant,
                   quantity) under the hood, so we get a variant-aware add
                   without re-implementing it. We only supply Vionne styling. */}
-              <AddToCartButton
-                product={product}
-                variant={selectedVariant ?? undefined}
-                quantity={quantity}
-                className="vn-btn vn-btn-filled flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                label={
-                  <>
-                    <ShoppingBag size={16} /> {localized(locale, "Add to bag", "أضيفي للشنطة")}
-                  </>
-                }
-                loadingLabel={localized(locale, "Adding…", "بنضيف…")}
-                soldOutLabel={
-                  <>
-                    <ShoppingBag size={16} /> {localized(locale, "Sold out", "خلص المخزون")}
-                  </>
-                }
-                data-testid="storefront-add-to-cart"
-              />
+              {mustChooseVariant ? (
+                <button
+                  type="button"
+                  disabled
+                  className="vn-btn vn-btn-filled flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                  data-testid="storefront-add-to-cart"
+                >
+                  <ShoppingBag size={16} /> {chooseOptionsLabel}
+                </button>
+              ) : (
+                <AddToCartButton
+                  product={product}
+                  variant={selectedVariant ?? undefined}
+                  quantity={quantity}
+                  className="vn-btn vn-btn-filled flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                  label={
+                    <>
+                      <ShoppingBag size={16} /> {localized(locale, "Add to bag", "أضيفي للشنطة")}
+                    </>
+                  }
+                  loadingLabel={localized(locale, "Adding…", "بنضيف…")}
+                  soldOutLabel={
+                    <>
+                      <ShoppingBag size={16} /> {localized(locale, "Sold out", "خلص المخزون")}
+                    </>
+                  }
+                  data-testid="storefront-add-to-cart"
+                />
+              )}
             </div>
 
             {/* Trust guarantees */}
@@ -488,19 +506,29 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
             <Money amount={variantPrice} currency={product.currency} />
           </p>
         </div>
-        <AddToCartButton
-          product={product}
-          variant={selectedVariant ?? undefined}
-          quantity={quantity}
-          className="vn-btn vn-btn-filled shrink-0 px-5 disabled:opacity-50 disabled:cursor-not-allowed"
-          label={
-            <>
-              <ShoppingBag size={16} /> {localized(locale, "Add", "أضيفي")}
-            </>
-          }
-          loadingLabel={localized(locale, "Adding…", "بنضيف…")}
-          soldOutLabel={localized(locale, "Sold out", "خلص المخزون")}
-        />
+        {mustChooseVariant ? (
+          <button
+            type="button"
+            disabled
+            className="vn-btn vn-btn-filled shrink-0 px-5 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ShoppingBag size={16} /> {chooseOptionsLabel}
+          </button>
+        ) : (
+          <AddToCartButton
+            product={product}
+            variant={selectedVariant ?? undefined}
+            quantity={quantity}
+            className="vn-btn vn-btn-filled shrink-0 px-5 disabled:opacity-50 disabled:cursor-not-allowed"
+            label={
+              <>
+                <ShoppingBag size={16} /> {localized(locale, "Add", "أضيفي")}
+              </>
+            }
+            loadingLabel={localized(locale, "Adding…", "بنضيف…")}
+            soldOutLabel={localized(locale, "Sold out", "خلص المخزون")}
+          />
+        )}
       </div>
     </div>
   );

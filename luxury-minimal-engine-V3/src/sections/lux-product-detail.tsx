@@ -76,7 +76,9 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
   const [activeImage, setActiveImage] = useState(0);
   const [justAdded, setJustAdded] = useState(false);
 
-  const vs = useVariantSelection(product ?? { options: [], variants: [] });
+  const vs = useVariantSelection(product ?? { options: [], variants: [] }, {
+    autoSelect: false,
+  });
 
   const related = useRelatedProducts(showRelated && product ? product.id : null, {
     limit: relatedCount,
@@ -129,6 +131,14 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
   const stockQty = selectedVariant?.inventory_quantity;
 
   const options = product.options ?? [];
+  // Variant gate (V2 parity): require a choice on every option axis before
+  // add-to-cart; a product with no options adds directly.
+  const mustChooseVariant = options.length > 0 && !vs.isComplete;
+  const chooseOptionsLabel = localized(
+    locale,
+    "Choose options first",
+    "اختر الخيارات أولاً",
+  );
 
   const guarantees = [
     { icon: Truck, label: shippingLabel, desc: shippingDesc },
@@ -332,6 +342,15 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
                 </button>
               </div>
 
+              {mustChooseVariant ? (
+                <button
+                  type="button"
+                  disabled
+                  className="flex-1 py-3.5 flex items-center justify-center gap-2 transition-all disabled:opacity-50 lux-btn"
+                >
+                  <ShoppingCart size={16} /> {chooseOptionsLabel}
+                </button>
+              ) : (
               <AddToCartButton
                 product={product}
                 variant={selectedVariant ?? undefined}
@@ -363,6 +382,7 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
                 }
                 data-testid="storefront-add-to-cart"
               />
+              )}
             </div>
 
             {/* Trust guarantees */}

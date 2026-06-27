@@ -102,7 +102,7 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
 
   // useVariantSelection wants a {options, variants}-shaped object; hooks can't be
   // conditional, so always call it (a safe empty shell when product is null).
-  const vs = useVariantSelection(product ?? { options: [], variants: [] });
+  const vs = useVariantSelection(product ?? { options: [], variants: [] }, { autoSelect: false });
 
   const related = useRelatedProducts(showRelated && product ? product.id : null, {
     limit: relatedCount,
@@ -176,6 +176,13 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
       : "";
 
   const options = product.options ?? [];
+
+  // Require an explicit choice on every option axis before add-to-cart is
+  // enabled (matches V2). A product WITH options must be fully selected — with
+  // `autoSelect:false` above the axes start empty, so `vs.isComplete` only flips
+  // true once all axes are chosen. A product with NO options adds directly.
+  const mustChooseVariant = (product.options?.length ?? 0) > 0 && !vs.isComplete;
+  const chooseOptionsLabel = localized(locale, "Choose options first", "اختر الخيارات أولاً");
 
   const guarantees = [
     { icon: ShieldCheck, label: secureLabel, desc: secureDesc, keyPrefix: "secure" },
@@ -451,35 +458,51 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
             {/* Add to Cart — SDK button owns the loading/disabled/error machine
                 (calls useCart().addItem(product, variant, quantity) under the
                 hood); we supply the Gilded gold-fill styling + success state. */}
-            <AddToCartButton
-              product={product}
-              variant={selectedVariant ?? undefined}
-              quantity={quantity}
-              onAdded={() => {
-                setJustAdded(true);
-                window.setTimeout(() => setJustAdded(false), 2000);
-              }}
-              className={
-                "w-full flex items-center justify-center gap-2 py-4 text-sm font-semibold tracking-[0.15em] uppercase transition-all disabled:cursor-not-allowed " +
-                (justAdded
-                  ? "bg-[hsl(var(--olive))] text-card"
-                  : "bg-[var(--gilded-gold)] text-foreground hover:bg-[var(--gilded-gold-dark)] disabled:bg-muted disabled:text-muted-foreground")
-              }
-              label={
-                justAdded ? (
-                  <>
-                    <Check size={16} /> {localized(locale, "Added", "تمت الإضافة")}
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart size={16} /> {addToCartLabel}
-                  </>
-                )
-              }
-              loadingLabel={localized(locale, "Adding…", "بنضيف…")}
-              soldOutLabel={soldOutLabel}
-              data-testid="storefront-add-to-cart"
-            />
+            {mustChooseVariant ? (
+              <button
+                type="button"
+                disabled
+                className={
+                  "w-full flex items-center justify-center gap-2 py-4 text-sm font-semibold tracking-[0.15em] uppercase transition-all disabled:cursor-not-allowed " +
+                  (justAdded
+                    ? "bg-[hsl(var(--olive))] text-card"
+                    : "bg-[var(--gilded-gold)] text-foreground hover:bg-[var(--gilded-gold-dark)] disabled:bg-muted disabled:text-muted-foreground")
+                }
+                data-testid="storefront-add-to-cart"
+              >
+                <ShoppingCart size={16} /> {chooseOptionsLabel}
+              </button>
+            ) : (
+              <AddToCartButton
+                product={product}
+                variant={selectedVariant ?? undefined}
+                quantity={quantity}
+                onAdded={() => {
+                  setJustAdded(true);
+                  window.setTimeout(() => setJustAdded(false), 2000);
+                }}
+                className={
+                  "w-full flex items-center justify-center gap-2 py-4 text-sm font-semibold tracking-[0.15em] uppercase transition-all disabled:cursor-not-allowed " +
+                  (justAdded
+                    ? "bg-[hsl(var(--olive))] text-card"
+                    : "bg-[var(--gilded-gold)] text-foreground hover:bg-[var(--gilded-gold-dark)] disabled:bg-muted disabled:text-muted-foreground")
+                }
+                label={
+                  justAdded ? (
+                    <>
+                      <Check size={16} /> {localized(locale, "Added", "تمت الإضافة")}
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart size={16} /> {addToCartLabel}
+                    </>
+                  )
+                }
+                loadingLabel={localized(locale, "Adding…", "بنضيف…")}
+                soldOutLabel={soldOutLabel}
+                data-testid="storefront-add-to-cart"
+              />
+            )}
 
             {/* Trust badges */}
             {showGuarantees && (
@@ -541,34 +564,49 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
             <Money amount={variantPrice * quantity} currency={product.currency} />
           </p>
         </div>
-        <AddToCartButton
-          product={product}
-          variant={selectedVariant ?? undefined}
-          quantity={quantity}
-          onAdded={() => {
-            setJustAdded(true);
-            window.setTimeout(() => setJustAdded(false), 2000);
-          }}
-          className={
-            "flex-shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-semibold tracking-[0.15em] uppercase transition-all disabled:cursor-not-allowed " +
-            (justAdded
-              ? "bg-[hsl(var(--olive))] text-card"
-              : "bg-[var(--gilded-gold)] text-foreground hover:bg-[var(--gilded-gold-dark)] disabled:bg-muted disabled:text-muted-foreground")
-          }
-          label={
-            justAdded ? (
-              <>
-                <Check size={14} /> {localized(locale, "Added", "تمت الإضافة")}
-              </>
-            ) : (
-              <>
-                <ShoppingCart size={14} /> {addToCartLabel}
-              </>
-            )
-          }
-          loadingLabel={localized(locale, "Adding…", "بنضيف…")}
-          soldOutLabel={soldOutLabel}
-        />
+        {mustChooseVariant ? (
+          <button
+            type="button"
+            disabled
+            className={
+              "flex-shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-semibold tracking-[0.15em] uppercase transition-all disabled:cursor-not-allowed " +
+              (justAdded
+                ? "bg-[hsl(var(--olive))] text-card"
+                : "bg-[var(--gilded-gold)] text-foreground hover:bg-[var(--gilded-gold-dark)] disabled:bg-muted disabled:text-muted-foreground")
+            }
+          >
+            <ShoppingCart size={14} /> {chooseOptionsLabel}
+          </button>
+        ) : (
+          <AddToCartButton
+            product={product}
+            variant={selectedVariant ?? undefined}
+            quantity={quantity}
+            onAdded={() => {
+              setJustAdded(true);
+              window.setTimeout(() => setJustAdded(false), 2000);
+            }}
+            className={
+              "flex-shrink-0 inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-semibold tracking-[0.15em] uppercase transition-all disabled:cursor-not-allowed " +
+              (justAdded
+                ? "bg-[hsl(var(--olive))] text-card"
+                : "bg-[var(--gilded-gold)] text-foreground hover:bg-[var(--gilded-gold-dark)] disabled:bg-muted disabled:text-muted-foreground")
+            }
+            label={
+              justAdded ? (
+                <>
+                  <Check size={14} /> {localized(locale, "Added", "تمت الإضافة")}
+                </>
+              ) : (
+                <>
+                  <ShoppingCart size={14} /> {addToCartLabel}
+                </>
+              )
+            }
+            loadingLabel={localized(locale, "Adding…", "بنضيف…")}
+            soldOutLabel={soldOutLabel}
+          />
+        )}
       </div>
     </div>
   );
