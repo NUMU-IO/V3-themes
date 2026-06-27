@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useProductOptional,
   useVariantSelection,
@@ -99,6 +99,11 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
 
   const images = product.images ?? [];
   const mainImage = images[activeImg] ?? images[0];
+  // Stock to surface in the badge/button: the selected variant's when one is
+  // resolved (so "In stock" never sits next to a dead button), else product.
+  const displayInStock = activeVariant
+    ? (activeVariant.is_in_stock ?? activeVariant.in_stock ?? product.in_stock)
+    : product.in_stock;
   const purchasable =
     product.in_stock &&
     (activeVariant?.is_in_stock ?? true) &&
@@ -107,6 +112,22 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const productId = product.id;
   const productName = product.name;
   const selectedVariantId = activeVariant?.id ?? pickedId;
+
+  // Cap the quantity stepper to the selected variant's available stock so the
+  // buyer can't choose more than exists (the backend won't add the surplus —
+  // it caps to inventory — which otherwise looks like "I picked 4, got 1").
+  // No per-variant stock (single-SKU / chart-size products) ⇒ unbounded.
+  const stockCap =
+    activeVariant && typeof activeVariant.inventory_quantity === "number"
+      ? Math.max(0, activeVariant.inventory_quantity)
+      : Infinity;
+  const maxQty = stockCap === Infinity ? Infinity : Math.max(1, stockCap);
+  // When the selection changes to a lower-stock variant, pull qty back down.
+  useEffect(() => {
+    setQty((q) => Math.min(q, maxQty));
+  }, [maxQty]);
+  const lowStockLeft =
+    stockCap !== Infinity && stockCap > 0 && stockCap <= 5 ? stockCap : null;
 
   const href = `/products/${product.slug}`;
   const shareUrl = shop?.formatUrl ? shop.formatUrl(href) : href;
@@ -134,7 +155,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
         const next = `${kept ? `${kept}\n` : ""}${tag}${pickedSize}`;
         await updateNote(next);
       }
-      await addItem(productId, selectedVariantId, qty);
+      await addItem(productId, selectedVariantId, Math.min(qty, maxQty));
       openCart();
     } finally {
       setPending(false);
@@ -221,8 +242,8 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
               ) : null}
               {formatMoney(activePrice, currency)}
             </p>
-            <span className={`empire-pdp__stock${product.in_stock ? " is-in" : " is-out"}`}>
-              {product.in_stock ? t("In stock", "متوفر") : t("Out of stock", "نفذ المخزون")}
+            <span className={`empire-pdp__stock${displayInStock ? " is-in" : " is-out"}`}>
+              {displayInStock ? t("In stock", "متوفر") : t("Out of stock", "نفذ المخزون")}
               <span className="empire-pdp__dot" aria-hidden />
             </span>
           </div>
@@ -345,14 +366,19 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
           <div className="empire-pdp__qtyblock">
             <span className="empire-pdp__opt-label">{t("Quantity", "الكمية")}</span>
             <div className="empire-qty empire-pdp__qty" aria-label={t("Quantity", "الكمية")}>
-              <button type="button" aria-label={t("Decrease", "تقليل")} onClick={() => setQty((q) => Math.max(1, q - 1))}>
+              <button type="button" aria-label={t("Decrease", "تقليل")} disabled={qty <= 1} onClick={() => setQty((q) => Math.max(1, q - 1))}>
                 −
               </button>
-              <span>{qty}</span>
-              <button type="button" aria-label={t("Increase", "زيادة")} onClick={() => setQty((q) => q + 1)}>
+              <span>{Math.min(qty, maxQty)}</span>
+              <button type="button" aria-label={t("Increase", "زيادة")} disabled={qty >= maxQty} onClick={() => setQty((q) => Math.min(maxQty, q + 1))}>
                 +
               </button>
             </div>
+            {lowStockLeft != null ? (
+              <span className="empire-pdp__hint">
+                {t(`Only ${lowStockLeft} left`, `باقي ${lowStockLeft} فقط`)}
+              </span>
+            ) : null}
           </div>
 
           {/* CTAs */}
@@ -365,7 +391,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
           >
             {pending ? (
               "..."
-            ) : !product.in_stock ? (
+            ) : !displayInStock ? (
               t("Sold out", "نفذ المخزون")
             ) : needsSize && !pickedSize ? (
               t("Select a size", "اختر المقاس")
