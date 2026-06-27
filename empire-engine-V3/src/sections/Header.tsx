@@ -244,7 +244,7 @@ export default function Header({
                 </a>
               ) : null}
 
-              {s.show_account !== false ? (
+              {s.show_account === true ? (
                 <a className="empire-iconbtn" href="/account" aria-label="الحساب">
                   <IconUser />
                 </a>

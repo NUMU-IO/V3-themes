@@ -9,6 +9,7 @@ import {
   useRelatedProducts,
   useLocale,
   useResolvedSettings,
+  sanitizeHtml,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import {
@@ -302,14 +303,13 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
               </div>
             )}
 
-            {/* Description */}
+            {/* Description — rich HTML (sanitized), mirroring gilded-rich-text */}
             {product.description && (
-              <p
-                className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6"
+              <div
+                className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:ps-5"
                 data-testid="storefront-product-detail-description"
-              >
-                {product.description}
-              </p>
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }}
+              />
             )}
 
             {/* Stock */}

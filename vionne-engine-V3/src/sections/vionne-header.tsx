@@ -108,7 +108,7 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
   const showAnnouncement = asBool(s.show_announcement, false);
   const showSearch = asBool(s.show_search, true);
   const showCart = asBool(s.show_cart, true);
-  const showAccount = asBool(s.show_account, true);
+  const showAccount = asBool(s.show_account, false);
   const showMobileDock = asBool(s.show_mobile_dock, true);
   // Hide-on-scroll: the W1 global wins (theme-wide), falling back to the legacy
   // per-section setting, default true (V2 parity).

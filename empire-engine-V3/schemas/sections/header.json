@@ -8,7 +8,7 @@
     { "type": "text", "id": "announcement_text", "label": "Announcement bar text", "default": "شحن مجاني للطلبات فوق ٥٠٠ ج.م", "locales": { "ar": { "label": "نص شريط الإعلان" } } },
     { "type": "text", "id": "menu_handle", "label": "Menu handle", "default": "main-menu", "locales": { "ar": { "label": "معرّف القائمة" } } },
     { "type": "checkbox", "id": "show_search", "label": "Show search icon", "default": true, "locales": { "ar": { "label": "إظهار البحث" } } },
-    { "type": "checkbox", "id": "show_account", "label": "Show account icon", "default": true, "locales": { "ar": { "label": "إظهار الحساب" } } },
+    { "type": "checkbox", "id": "show_account", "label": "Show account icon", "default": false, "info": "Off by default. Turn on to show the account/login icon in the header.", "locales": { "ar": { "label": "إظهار الحساب" } } },
     { "type": "checkbox", "id": "show_cart", "label": "Show cart icon", "default": true, "locales": { "ar": { "label": "إظهار السلة" } } }
   ]
 }

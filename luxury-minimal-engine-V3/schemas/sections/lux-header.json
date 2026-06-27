@@ -82,6 +82,14 @@
       "label": "Show cart icon",
       "label_ar": "إظهار أيقونة السلة",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account icon",
+      "label_ar": "إظهار أيقونة الحساب",
+      "default": false,
+      "info": "Off by default. Turn on to show the account/login icon in the header."
     }
   ],
   "blocks": [

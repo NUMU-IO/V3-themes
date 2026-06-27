@@ -5,6 +5,7 @@ import {
   Image,
   Link,
   Money,
+  sanitizeHtml,
   useCart,
   useLocale,
   useProductOptional,
@@ -278,11 +279,12 @@ export default function BzProductDetail({
               </div>
             )}
 
-            {/* Description */}
+            {/* Description — rich HTML, sanitized (mirrors bz-rich-text). */}
             {product.description && (
-              <p className="text-[var(--bz-dark)]/70 text-sm mt-6 leading-relaxed">
-                {product.description}
-              </p>
+              <div
+                className="text-[var(--bz-dark)]/70 text-sm mt-6 leading-relaxed [&_p]:mb-3 [&_ul]:list-disc [&_ul]:ps-5"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }}
+              />
             )}
 
             {/* Variant axes */}

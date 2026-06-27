@@ -9,6 +9,7 @@ import {
   useRelatedProducts,
   useLocale,
   useResolvedSettings,
+  sanitizeHtml,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ArrowRight, ShoppingCart, Check, Truck, RotateCcw, ShieldCheck } from "lucide-react";
@@ -230,14 +231,13 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
               )}
             </div>
 
-            {/* Description */}
+            {/* Description (rich HTML, sanitized — mirrors lux-rich-text) */}
             {product.description && (
-              <p
-                className="text-muted-foreground text-sm leading-relaxed mb-8"
+              <div
+                className="text-muted-foreground text-sm leading-relaxed mb-8 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:ps-5"
                 data-testid="storefront-product-detail-description"
-              >
-                {product.description}
-              </p>
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }}
+              />
             )}
 
             {/* Stock */}

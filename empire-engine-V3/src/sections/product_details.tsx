@@ -8,6 +8,7 @@ import {
   useLocalization,
   useShop,
   defaultVariant,
+  sanitizeHtml,
 } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
@@ -227,7 +228,10 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
           </div>
 
           {product.description ? (
-            <p className="empire-pdp__desc">{product.description}</p>
+            <div
+              className="empire-pdp__desc [&_p]:mb-3 [&_ul]:list-disc [&_ul]:ps-5"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }}
+            />
           ) : null}
 
           <div className="empire-pdp__divider" />
