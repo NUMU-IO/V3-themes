@@ -2,7 +2,7 @@
   "id": "gilded-glamour-boutique-v3",
   "name": "Gilded Glamour Boutique (V3)",
   "author": "Saw Saw Atelier",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "layout": "single-column",
   "description": "A bold, gold-accented luxury fashion theme — warm beige canvas, decorative Lobster + uppercase Montserrat display type, parallax hero, scroll-fill brand statement, and curated vertical layouts. A faithful V3 port of the V2 Gilded Glamour Boutique theme. Editable gold header + black footer on every page.",
   "error_template": "templates/error.html",
@@ -12,15 +12,27 @@
       "404": {
         "name": "404 — Not found",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
-          { "type": "gilded-not-found", "settings": {} },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-not-found",
+            "settings": {}
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "home": {
         "name": "Home",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
           {
             "type": "gilded-hero",
             "settings": {
@@ -33,7 +45,10 @@
           },
           {
             "type": "gilded-categories",
-            "settings": { "title": "Curated Verticals", "max_items": 3 }
+            "settings": {
+              "title": "Curated Verticals",
+              "max_items": 3
+            }
           },
           {
             "type": "gilded-featured-collection",
@@ -75,13 +90,19 @@
               "placeholder": "Your email"
             }
           },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "product": {
         "name": "Product",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
           {
             "type": "gilded-product-detail",
             "settings": {
@@ -92,100 +113,205 @@
               "related_products_count": 4
             }
           },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "products": {
         "name": "Products",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
           {
             "type": "gilded-products-page",
-            "settings": { "columns_desktop": 5, "columns_mobile": 2 }
+            "settings": {
+              "columns_desktop": 5,
+              "columns_mobile": 2
+            }
           },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "collection": {
         "name": "Collection",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
           {
             "type": "gilded-products-page",
-            "settings": { "columns_desktop": 5, "columns_mobile": 2 }
+            "settings": {
+              "columns_desktop": 5,
+              "columns_mobile": 2
+            }
           },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "cart": {
         "name": "Cart",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
-          { "type": "gilded-cart", "settings": {} },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-cart",
+            "settings": {}
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "checkout": {
         "name": "Checkout",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "order-confirmation": {
         "name": "Order confirmation",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
-          { "type": "gilded-order-confirmation", "settings": { "show_guarantees": true } },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-order-confirmation",
+            "settings": {
+              "show_guarantees": true
+            }
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "search": {
         "name": "Search",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
-          { "type": "gilded-search-results", "settings": { "columns_desktop": 5 } },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-search-results",
+            "settings": {
+              "columns_desktop": 5
+            }
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "page": {
         "name": "Page",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
-          { "type": "gilded-rich-text", "settings": {} },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-rich-text",
+            "settings": {}
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "policy": {
         "name": "Policy",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
-          { "type": "gilded-rich-text", "settings": {} },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-rich-text",
+            "settings": {}
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "about": {
         "name": "About",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
-          { "type": "gilded-rich-text", "settings": {} },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-rich-text",
+            "settings": {}
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "contact": {
         "name": "Contact",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
-          { "type": "gilded-rich-text", "settings": {} },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-rich-text",
+            "settings": {}
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       },
       "profile": {
         "name": "Profile",
         "sections": [
-          { "type": "gilded-header", "settings": {} },
-          { "type": "gilded-profile", "settings": { "show_stats": true } },
-          { "type": "gilded-footer", "settings": {} }
+          {
+            "type": "gilded-header",
+            "settings": {}
+          },
+          {
+            "type": "gilded-profile",
+            "settings": {
+              "show_stats": true
+            }
+          },
+          {
+            "type": "gilded-footer",
+            "settings": {}
+          }
         ]
       }
     }

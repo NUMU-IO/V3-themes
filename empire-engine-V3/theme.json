@@ -2,7 +2,7 @@
   "id": "empire-v3",
   "name": "Empire (V3)",
   "author": "NUMU",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "layout": "single-column",
   "description": "Premium editorial e-commerce — monochromatic palette, wide uppercase display type, Arabic-first (RTL), content-first design.",
   "error_template": "templates/error.html",
@@ -38,6 +38,21 @@
       }
     },
     "templates": {
+      "404": {
+        "name": "404 — Not Found",
+        "sections": [
+          {
+            "type": "not_found",
+            "settings": {
+              "code": "404",
+              "title": "الصفحة غير موجودة",
+              "message": "يبدو أن الصفحة التي تبحث عنها غير متاحة أو تم نقلها.",
+              "cta_text": "العودة للتسوق",
+              "cta_link": "/products"
+            }
+          }
+        ]
+      },
       "home": {
         "name": "Home",
         "sections": [
@@ -56,7 +71,10 @@
           },
           {
             "type": "marquee",
-            "settings": { "text": "100% مستقل", "repeat": 10 }
+            "settings": {
+              "text": "100% مستقل",
+              "repeat": 10
+            }
           },
           {
             "type": "featured_collection",
@@ -68,7 +86,10 @@
           },
           {
             "type": "categories",
-            "settings": { "title": "تسوق حسب الفئة", "columns_desktop": 5 }
+            "settings": {
+              "title": "تسوق حسب الفئة",
+              "columns_desktop": 5
+            }
           },
           {
             "type": "promo_banner",
@@ -82,11 +103,37 @@
           },
           {
             "type": "testimonials",
-            "settings": { "title": "رأي عملائنا" },
+            "settings": {
+              "title": "رأي عملائنا"
+            },
             "blocks": [
-              { "type": "review", "settings": { "text": "جودة المنتجات فوق الممتازة والتوصيل سريع جداً.", "author": "ليلى م.", "city": "القاهرة", "rating": 5 } },
-              { "type": "review", "settings": { "text": "تصميم أنيق وخامات تدوم. تجربة شراء مريحة.", "author": "عمر أ.", "city": "الرياض", "rating": 5 } },
-              { "type": "review", "settings": { "text": "أفضل متجر تعاملت معه. أنصح به بشدة.", "author": "نادية ح.", "city": "دبي", "rating": 4 } }
+              {
+                "type": "review",
+                "settings": {
+                  "text": "جودة المنتجات فوق الممتازة والتوصيل سريع جداً.",
+                  "author": "ليلى م.",
+                  "city": "القاهرة",
+                  "rating": 5
+                }
+              },
+              {
+                "type": "review",
+                "settings": {
+                  "text": "تصميم أنيق وخامات تدوم. تجربة شراء مريحة.",
+                  "author": "عمر أ.",
+                  "city": "الرياض",
+                  "rating": 5
+                }
+              },
+              {
+                "type": "review",
+                "settings": {
+                  "text": "أفضل متجر تعاملت معه. أنصح به بشدة.",
+                  "author": "نادية ح.",
+                  "city": "دبي",
+                  "rating": 4
+                }
+              }
             ]
           },
           {
@@ -198,25 +245,15 @@
           }
         ]
       },
-      "404": {
-        "name": "404 — Not Found",
-        "sections": [
-          {
-            "type": "not_found",
-            "settings": {
-              "code": "404",
-              "title": "الصفحة غير موجودة",
-              "message": "يبدو أن الصفحة التي تبحث عنها غير متاحة أو تم نقلها.",
-              "cta_text": "العودة للتسوق",
-              "cta_link": "/products"
-            }
-          }
-        ]
-      },
       "profile": {
         "name": "Account",
         "sections": [
-          { "type": "account", "settings": { "heading": "حسابي" } }
+          {
+            "type": "account",
+            "settings": {
+              "heading": "حسابي"
+            }
+          }
         ]
       }
     }
