@@ -119,8 +119,12 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
     <img
       src={logoUrl}
       alt={brandName}
-      className={logoShaped ? undefined : "h-7 object-contain"}
-      style={logoStyle}
+      className={logoShaped ? "w-auto max-h-10" : "h-7 object-contain"}
+      style={
+        logoShaped
+          ? { ...logoStyle, width: "auto", aspectRatio: "1 / 1" }
+          : logoStyle
+      }
     />
   ) : (
     <span className="lux-heading text-foreground text-lg">

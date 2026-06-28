@@ -209,7 +209,8 @@ export default function ByHeader({ instance, sectionId }: SectionRenderProps) {
               <img
                 src={logoUrl}
                 alt=""
-                style={logoStyle}
+                className="w-auto max-h-12"
+                style={{ ...logoStyle, width: "auto", aspectRatio: "1 / 1" }}
               />
             ) : (
               <img

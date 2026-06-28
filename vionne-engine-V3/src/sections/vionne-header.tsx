@@ -280,14 +280,14 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                 alt={brandName}
                 className={
                   logoShaped
-                    ? "inline-block"
+                    ? "inline-block w-auto max-h-12 md:max-h-14"
                     : logoWidth
                       ? "inline-block"
                       : "h-7 md:h-8 w-auto inline-block"
                 }
                 style={
                   logoShaped
-                    ? logoStyle
+                    ? { ...logoStyle, width: "auto", aspectRatio: "1 / 1" }
                     : logoWidth
                       ? { width: logoWidth, height: "auto" }
                       : undefined

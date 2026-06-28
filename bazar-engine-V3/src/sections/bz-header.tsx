@@ -276,9 +276,15 @@ export default function BzHeader({ instance, sectionId }: SectionRenderProps) {
                 src={logoUrl}
                 alt={brandName}
                 className={
-                  logoShaped ? "" : "h-9 sm:h-11 w-auto max-h-12 object-contain"
+                  logoShaped
+                    ? "w-auto max-h-11 sm:max-h-12"
+                    : "h-9 sm:h-11 w-auto max-h-12 object-contain"
                 }
-                style={logoStyle}
+                style={
+                  logoShaped
+                    ? { ...logoStyle, width: "auto", aspectRatio: "1 / 1" }
+                    : logoStyle
+                }
               />
             ) : (
               <span className="bz-heading text-lg sm:text-2xl text-[var(--bz-amber)] truncate">
