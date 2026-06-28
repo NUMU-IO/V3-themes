@@ -71,9 +71,11 @@
     {
       "id": "item_1_video",
       "type": "video_picker",
-      "label": "Item 1 video URL (MP4)",
-      "label_ar": "فيديو عنصر 1",
-      "default": ""
+      "label": "Item 1 video link",
+      "label_ar": "رابط فيديو عنصر 1",
+      "default": "",
+      "info": "Paste a direct MP4/WebM file URL or a link from YouTube, Vimeo, Instagram, TikTok, or Facebook.",
+      "info_ar": "الصق رابط ملف MP4/WebM مباشر أو رابطًا من يوتيوب أو فيميو أو إنستجرام أو تيك توك أو فيسبوك."
     },
     {
       "id": "item_1_caption",
@@ -112,9 +114,11 @@
     {
       "id": "item_2_video",
       "type": "video_picker",
-      "label": "Item 2 video URL (MP4)",
-      "label_ar": "فيديو عنصر 2",
-      "default": ""
+      "label": "Item 2 video link",
+      "label_ar": "رابط فيديو عنصر 2",
+      "default": "",
+      "info": "Paste a direct MP4/WebM file URL or a link from YouTube, Vimeo, Instagram, TikTok, or Facebook.",
+      "info_ar": "الصق رابط ملف MP4/WebM مباشر أو رابطًا من يوتيوب أو فيميو أو إنستجرام أو تيك توك أو فيسبوك."
     },
     {
       "id": "item_2_caption",
@@ -153,9 +157,11 @@
     {
       "id": "item_3_video",
       "type": "video_picker",
-      "label": "Item 3 video URL (MP4)",
-      "label_ar": "فيديو عنصر 3",
-      "default": ""
+      "label": "Item 3 video link",
+      "label_ar": "رابط فيديو عنصر 3",
+      "default": "",
+      "info": "Paste a direct MP4/WebM file URL or a link from YouTube, Vimeo, Instagram, TikTok, or Facebook.",
+      "info_ar": "الصق رابط ملف MP4/WebM مباشر أو رابطًا من يوتيوب أو فيميو أو إنستجرام أو تيك توك أو فيسبوك."
     },
     {
       "id": "item_3_caption",
@@ -194,9 +200,11 @@
     {
       "id": "item_4_video",
       "type": "video_picker",
-      "label": "Item 4 video URL (MP4)",
-      "label_ar": "فيديو عنصر 4",
-      "default": ""
+      "label": "Item 4 video link",
+      "label_ar": "رابط فيديو عنصر 4",
+      "default": "",
+      "info": "Paste a direct MP4/WebM file URL or a link from YouTube, Vimeo, Instagram, TikTok, or Facebook.",
+      "info_ar": "الصق رابط ملف MP4/WebM مباشر أو رابطًا من يوتيوب أو فيميو أو إنستجرام أو تيك توك أو فيسبوك."
     },
     {
       "id": "item_4_caption",
@@ -235,9 +243,11 @@
     {
       "id": "item_5_video",
       "type": "video_picker",
-      "label": "Item 5 video URL (MP4)",
-      "label_ar": "فيديو عنصر 5",
-      "default": ""
+      "label": "Item 5 video link",
+      "label_ar": "رابط فيديو عنصر 5",
+      "default": "",
+      "info": "Paste a direct MP4/WebM file URL or a link from YouTube, Vimeo, Instagram, TikTok, or Facebook.",
+      "info_ar": "الصق رابط ملف MP4/WebM مباشر أو رابطًا من يوتيوب أو فيميو أو إنستجرام أو تيك توك أو فيسبوك."
     },
     {
       "id": "item_5_caption",
@@ -276,9 +286,11 @@
     {
       "id": "item_6_video",
       "type": "video_picker",
-      "label": "Item 6 video URL (MP4)",
-      "label_ar": "فيديو عنصر 6",
-      "default": ""
+      "label": "Item 6 video link",
+      "label_ar": "رابط فيديو عنصر 6",
+      "default": "",
+      "info": "Paste a direct MP4/WebM file URL or a link from YouTube, Vimeo, Instagram, TikTok, or Facebook.",
+      "info_ar": "الصق رابط ملف MP4/WebM مباشر أو رابطًا من يوتيوب أو فيميو أو إنستجرام أو تيك توك أو فيسبوك."
     },
     {
       "id": "item_6_caption",

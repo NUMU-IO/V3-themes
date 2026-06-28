@@ -2,14 +2,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, resolveVideoEmbed, type ImageTransform, type SectionRenderProps, type VideoEmbed } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 interface Item {
   n: number;
   media: string;
   mediaTransform?: ImageTransform;
-  video: string;
+  video: VideoEmbed | null;
   caption: string;
   productImage: string;
   productImageTransform?: ImageTransform;
@@ -33,7 +33,9 @@ const VionneUgcCarousel = ({ instance, sectionId }: SectionRenderProps) => {
   const items: Item[] = [];
   for (let i = 1; i <= 6; i++) {
     const media = asImageUrl(s[`item_${i}_media`]);
-    const video = asImageUrl(s[`item_${i}_video`]);
+    // Accepts a direct MP4/WebM OR a YouTube / Vimeo / Instagram / TikTok /
+    // Facebook link — resolveVideoEmbed maps each to the right player.
+    const video = resolveVideoEmbed(s[`item_${i}_video`]);
     if (!media && !video) continue;
     items.push({
       n: i,
@@ -141,15 +143,26 @@ const VionneUgcCarousel = ({ instance, sectionId }: SectionRenderProps) => {
               style={{ transitionDelay: visible ? `${idx * 70}ms` : "0ms" }}
             >
               <div className="relative flex-1 overflow-hidden">
-                {it.video ? (
+                {it.video?.kind === "file" ? (
                   <video
-                    src={it.video}
-                    poster={it.media || undefined}
+                    src={it.video.src}
+                    poster={it.media || it.video.poster || undefined}
                     className="absolute inset-0 w-full h-full object-cover"
                     muted
                     loop
                     playsInline
                     autoPlay
+                  />
+                ) : it.video?.kind === "iframe" ? (
+                  <iframe
+                    src={it.video.src}
+                    title={it.caption || `${title} ${it.n}`}
+                    className="absolute inset-0 w-full h-full"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    allow="autoplay; encrypted-media; picture-in-picture; clipboard-write; fullscreen"
+                    allowFullScreen
+                    referrerPolicy="strict-origin-when-cross-origin"
                   />
                 ) : it.media ? (
                   <img src={it.media} alt={it.caption} className="absolute inset-0 w-full h-full object-cover" style={applyImageTransform(it.mediaTransform, "cover")} />
