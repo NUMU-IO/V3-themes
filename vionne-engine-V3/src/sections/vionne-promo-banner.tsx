@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 export default function PromoBanner({ instance, sectionId }: SectionRenderProps) {
@@ -13,7 +13,11 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
   const subtitle = asString(s.subtitle) || localized(locale, "Shop our latest collection", "اكتشفي أحدث تشكيلة");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوّقي دلوقتي");
   const ctaLink = asString(s.cta_link) || "/products";
-  const imageUrl = asString(s.image_url);
+  // image_picker stores either a plain URL (legacy) or an `{ url, transform }`
+  // object (once the merchant uses Adjust/focal). asString returns "" for the
+  // object shape, which flipped imageError on and showed the placeholder bag
+  // even though an image was set — use asImageUrl so both shapes render.
+  const imageUrl = asImageUrl(s.image_url);
   const imageTransform = asImageTransform(s.image_url);
 
   const [imageLoading, setImageLoading] = useState(true);
