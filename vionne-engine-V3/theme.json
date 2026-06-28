@@ -2,7 +2,7 @@
   "id": "vionne-v3",
   "name": "Vionne (V3)",
   "author": "NUMU",
-  "version": "0.4.14",
+  "version": "0.4.15",
   "layout": "single-column",
   "description": "Vionne (V3) — refined grayscale storefront for modest fashion, ported faithfully from the V2 in-tree theme. Now with an editable Vionne header + footer included across every page.",
   "error_template": "templates/error.html",

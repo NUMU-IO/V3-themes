@@ -2,7 +2,7 @@
   "id": "skeuomorphic-v3",
   "name": "Skeuomorphic (V3)",
   "author": "NUMU",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "layout": "single-column",
   "description": "Skeuomorphic (V3) — physical, tactile 3D interface, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
