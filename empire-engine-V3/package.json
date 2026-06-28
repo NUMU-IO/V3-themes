@@ -9,7 +9,7 @@
     "preview": "vite preview --port 5173"
   },
   "dependencies": {
-    "@numueg/theme-sdk": "^0.5.1"
+    "@numueg/theme-sdk": "^0.5.2"
   },
   "devDependencies": {
     "@numueg/theme-plugin": "0.5.0",
