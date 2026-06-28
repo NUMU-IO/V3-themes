@@ -1,20 +1,25 @@
 name: Deploy V3 themes
 
-# Build each V3 theme, upload its bundle to R2, and register it in BOTH the
-# storefront registry (themes/theme_versions) and the marketplace catalog
-# (marketplace_themes/versions) on the test environment.
+# Build each V3 theme, upload its bundle to R2 (shared by every env), and
+# register it in BOTH the storefront registry (themes/theme_versions) and the
+# marketplace catalog (marketplace_themes/versions) on the TEST environment
+# (droplet) AND on PROD (AWS EC2).
 #
-# Registry/marketplace seeding runs the NUMU-api seed scripts inside the
-# `numu-api-test` container on the droplet (the only place with test-DB access),
-# piping each theme's freshly-built dist in over SSH.
+# Registry/marketplace seeding runs the NUMU-api seed scripts inside the API
+# container of each env, piping each theme's freshly-built dist in over SSH:
+#   - TEST: `numu-api-test` container on the droplet (test DB).
+#   - PROD: the `api` compose service in /opt/numu-api on the EC2 box
+#           (Supabase prod DB). seed_marketplace_theme.py auto-resolves the
+#           developer to the prod `admin@numueg.app` user, so the catalog rows
+#           land on the right owner without a DEVELOPER_USER_ID override — this
+#           replaces the manual test→prod DB copy we used to run by hand.
 #
 # Required secrets (reuses the same names the NUMU-api / numu-storefront CD
-# workflows already use, so org-level secrets apply without re-adding them):
-#   R2:  S3_ENDPOINT_URL S3_ACCESS_KEY_ID S3_SECRET_ACCESS_KEY
-#        S3_BUCKET_NAME  S3_PUBLIC_URL    S3_REGION
-#   SSH: STAGING_SSH_KEY  STAGING_HOST  STAGING_SSH_USER
-# (The SSH user needs docker access on the droplet to exec the api-test
-# container's seed scripts. Prefer a scoped deploy user over root.)
+# workflows already use):
+#   R2:   S3_ENDPOINT_URL S3_ACCESS_KEY_ID S3_SECRET_ACCESS_KEY
+#         S3_BUCKET_NAME  S3_PUBLIC_URL    S3_REGION
+#   TEST: STAGING_SSH_KEY  STAGING_HOST  STAGING_SSH_USER  (droplet, docker access)
+#   PROD: PROD_EC2_SSH_KEY PROD_EC2_HOST PROD_EC2_USER     (EC2, docker access)
 
 on:
   workflow_dispatch:
@@ -44,6 +49,14 @@ on:
         description: "Fail the whole run if any theme fails to build"
         type: boolean
         default: false
+      seed_test:
+        description: "Seed the TEST registry/marketplace (droplet numu-api-test)"
+        type: boolean
+        default: true
+      seed_prod:
+        description: "Seed the PROD registry/marketplace (EC2 Supabase). Pushes go live in the storefront."
+        type: boolean
+        default: true
   push:
     branches: [main]
     paths:
@@ -158,6 +171,7 @@ jobs:
           R2_PUBLIC: ${{ secrets.S3_PUBLIC_URL }}
           R2_REGION: ${{ secrets.S3_REGION }}
           SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          EC2_KEY: ${{ secrets.PROD_EC2_SSH_KEY }}
         run: |
           umask 077
           cat > "$RUNNER_TEMP/r2.env" <<EOF
@@ -170,18 +184,27 @@ jobs:
           EOF
           printf '%s\n' "$SSH_KEY" > "$RUNNER_TEMP/ssh_key"
           chmod 600 "$RUNNER_TEMP/ssh_key"
+          printf '%s\n' "$EC2_KEY" > "$RUNNER_TEMP/ec2_key"
+          chmod 600 "$RUNNER_TEMP/ec2_key"
 
       - name: Build, deploy to R2, seed registry + marketplace
         env:
           NUMU_R2_ENV: ${{ runner.temp }}/r2.env
           BUNDLE_BASE: ${{ secrets.S3_PUBLIC_URL }}
           DROPLET: ${{ secrets.STAGING_SSH_USER }}@${{ secrets.STAGING_HOST }}
+          EC2: ${{ secrets.PROD_EC2_USER }}@${{ secrets.PROD_EC2_HOST }}
           THEME_INPUT: ${{ github.event.inputs.theme }}
           STRICT: ${{ github.event.inputs.strict }}
+          # Empty (push trigger) → seed both. Only an explicit 'false' opts out.
+          SEED_TEST: ${{ github.event.inputs.seed_test != 'false' }}
+          SEED_PROD: ${{ github.event.inputs.seed_prod != 'false' }}
           CONTAINER: numu-api-test
+          # PROD api lives as the `api` compose service in /opt/numu-api on EC2.
+          EC2_DIR: /opt/numu-api
         run: |
           set -u
           SSH="ssh -i $RUNNER_TEMP/ssh_key -o StrictHostKeyChecking=no -o ConnectTimeout=20"
+          SSH_EC2="ssh -i $RUNNER_TEMP/ec2_key -o StrictHostKeyChecking=no -o ConnectTimeout=20"
           WANT="${THEME_INPUT:-all}"
           ok=0; fail=0; failed=""
           for d in *-engine-V3/; do
@@ -204,14 +227,21 @@ jobs:
             VER=$(node -e "console.log(require('./$d/theme.json').version)")
             echo "deploying $SLUG@$VER"
             python _deploy-bundle-r2.py "$SLUG" "$VER" "$d/dist"
-            # Pipe dist into the api-test container, then seed both registries.
-            # Under the droplet's memory pressure that container can be
-            # OOM-killed mid-run, which previously aborted the WHOLE deploy with
-            # "container is not running" (the runner shell is `bash -eo
+            # Pipe dist into each env's api container, then seed both registries
+            # there. Under the droplet's memory pressure the test container can
+            # be OOM-killed mid-run, which previously aborted the WHOLE deploy
+            # with "container is not running" (the runner shell is `bash -eo
             # pipefail`, so a failed `docker exec` exits the step). Make it
-            # resilient: ensure the container is up first (docker start is a
-            # no-op when already running), retry once, and on a hard failure
-            # count the theme + continue so later themes still deploy.
+            # resilient: ensure the container is up first (start is a no-op when
+            # already running), retry once, and on a hard failure count the
+            # theme + continue so later themes still deploy.
+            #
+            # TEST = `docker exec` against the named `numu-api-test` container on
+            # the droplet. PROD = `docker compose exec` against the `api` service
+            # in /opt/numu-api on EC2 (no fixed container name; compose resolves
+            # it). Both seed scripts read THEME_DIR + THEME_BUNDLE_BASE; the
+            # marketplace script auto-resolves the developer to each env's
+            # admin@numueg.app user.
             seed_theme() {
               $SSH "$DROPLET" "docker start $CONTAINER >/dev/null 2>&1 || true"
               tar -C "$d/dist" -cf - . | $SSH "$DROPLET" \
@@ -219,13 +249,44 @@ jobs:
                 && $SSH "$DROPLET" "docker exec -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $CONTAINER python scripts/seed_numu_theme.py" \
                 && $SSH "$DROPLET" "docker exec -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $CONTAINER python scripts/seed_marketplace_theme.py"
             }
-            if ! seed_theme; then
-              echo "::warning::seed failed for $d; ensuring $CONTAINER is up and retrying once"
-              $SSH "$DROPLET" "docker start $CONTAINER >/dev/null 2>&1 || true; sleep 8"
+            seed_theme_ec2() {
+              $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose start api >/dev/null 2>&1 || true"
+              tar -C "$d/dist" -cf - . | $SSH_EC2 "$EC2" \
+                "cd $EC2_DIR && docker compose exec -T api sh -c 'rm -rf /tmp/seed-dist && mkdir -p /tmp/seed-dist && tar -C /tmp/seed-dist -xf -'" \
+                && $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose exec -T -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE api python scripts/seed_numu_theme.py" \
+                && $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose exec -T -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE api python scripts/seed_marketplace_theme.py"
+            }
+
+            theme_failed=0
+
+            if [ "$SEED_TEST" = "true" ]; then
               if ! seed_theme; then
-                echo "::error::seed failed for $d (api container kept stopping — check droplet memory/swap)"
-                failed="$failed $d"; fail=$((fail+1)); echo "::endgroup::"; continue
+                echo "::warning::test seed failed for $d; ensuring $CONTAINER is up and retrying once"
+                $SSH "$DROPLET" "docker start $CONTAINER >/dev/null 2>&1 || true; sleep 8"
+                if ! seed_theme; then
+                  echo "::error::test seed failed for $d (api container kept stopping — check droplet memory/swap)"
+                  theme_failed=1
+                fi
               fi
+            else
+              echo "seed_test=false — skipping TEST seed for $d"
+            fi
+
+            if [ "$SEED_PROD" = "true" ]; then
+              if ! seed_theme_ec2; then
+                echo "::warning::prod (EC2) seed failed for $d; ensuring api is up and retrying once"
+                $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose start api >/dev/null 2>&1 || true; sleep 8"
+                if ! seed_theme_ec2; then
+                  echo "::error::prod seed failed for $d (check EC2 api container / Supabase reachability)"
+                  theme_failed=1
+                fi
+              fi
+            else
+              echo "seed_prod=false — skipping PROD seed for $d"
+            fi
+
+            if [ "$theme_failed" = "1" ]; then
+              failed="$failed $d"; fail=$((fail+1)); echo "::endgroup::"; continue
             fi
             ok=$((ok+1))
             echo "::endgroup::"
