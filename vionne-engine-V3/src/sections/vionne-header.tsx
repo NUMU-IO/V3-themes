@@ -271,7 +271,7 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
           {/* Centered logo */}
           <Link
             to="/"
-            className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[55%] md:max-w-[35%] truncate text-center"
+            className="absolute inset-y-0 start-1/2 -translate-x-1/2 flex items-center justify-center max-w-[55%] md:max-w-[35%] overflow-hidden text-center"
             aria-label={brandName}
           >
             {logoUrl ? (
