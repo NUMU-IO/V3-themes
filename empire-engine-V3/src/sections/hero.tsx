@@ -1,6 +1,7 @@
 import {
   useEffect,
   useState } from "react";
+import { focalSrc } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { useT } from "../lib/i18n";
@@ -58,7 +59,14 @@ export default function Hero({ id, settings }: EmpSectionProps) {
           className={`empire-hero__slide${i === current ? " is-active" : ""}`}
           aria-hidden={i !== current}
         >
-          <img src={src} alt="" />
+          {/* Slide 1 is the LCP: route through the transformer (resize + AVIF)
+              and load it eagerly at high priority. Later slides stay as-is. */}
+          <img
+            src={i === 0 ? focalSrc(src, { width: 1920 }) : src}
+            alt=""
+            loading={i === 0 ? "eager" : undefined}
+            fetchPriority={i === 0 ? "high" : undefined}
+          />
           <div className="empire-hero__overlay" />
         </div>
       ))}

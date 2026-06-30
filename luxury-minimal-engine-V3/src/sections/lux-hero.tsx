@@ -1,10 +1,10 @@
 "use client";
 
-import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import {
-  applyImageTransform,
+  asImageAlt,
   asImageTransform,
   asImageUrl,
   asString,
@@ -45,6 +45,7 @@ export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
   const heroImageUrl = asImageUrl(s.hero_image_url);
   // Non-destructive focal/zoom/rotation. Undefined → image renders unchanged.
   const heroImageTransform = asImageTransform(s.hero_image_url);
+  const heroAlt = asImageAlt(s.hero_image_url);
 
   return (
     <section className="relative" data-lux-section={sectionId}>
@@ -59,12 +60,13 @@ export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
           >
             <div className="h-full bg-[hsl(var(--lux-gray))]">
               {heroImageUrl && (
-                <img
+                <HeroMedia
                   src={heroImageUrl}
-                  alt=""
-                  className="w-full h-full object-contain"
-                  style={applyImageTransform(heroImageTransform, "contain")}
-                  loading="eager"
+                  alt={heroAlt}
+                  transform={heroImageTransform}
+                  fit="contain"
+                  priority
+                  className="w-full h-full"
                 />
               )}
             </div>

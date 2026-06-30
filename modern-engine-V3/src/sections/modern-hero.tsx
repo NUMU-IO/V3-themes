@@ -1,9 +1,8 @@
 "use client";
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import {
-  applyImageTransform,
   asImageTransform,
   localized,
   type SectionRenderProps,
@@ -21,6 +20,15 @@ function imgUrl(v: unknown): string {
     const r = v as Record<string, unknown>;
     if (typeof r.url === "string") return r.url;
     if (typeof r.src === "string") return r.src;
+  }
+  return "";
+}
+
+/** Alt text for an image-picker value (present only on the object shape). */
+function imgAlt(v: unknown): string {
+  if (v && typeof v === "object") {
+    const r = v as Record<string, unknown>;
+    if (typeof r.alt === "string") return r.alt;
   }
   return "";
 }
@@ -45,20 +53,29 @@ const ModernHero = ({ instance }: SectionRenderProps) => {
   const secondaryText = s.secondary_text ?? localized(locale, "Browse categories", "تصفح الفئات");
   const secondaryLink = s.secondary_link ?? "/products?category=clothing";
   const heroImage = imgUrl(s.hero_image_url) || undefined;
+  const mobileEnabled = s.use_mobile_image === true;
+  const heroImageMobile = mobileEnabled ? imgUrl(s.hero_image_mobile) || undefined : undefined;
   // Non-destructive focal/zoom/rotation the merchant framed on the hero image.
   // Undefined → the <img> renders exactly as before.
   const heroImageTransform = asImageTransform(s.hero_image_url);
+  const heroImageMobileTransform = asImageTransform(s.hero_image_mobile);
+  const heroAlt = imgAlt(s.hero_image_url);
 
   return (
     <section className="relative min-h-[70vh] md:min-h-[80vh] overflow-hidden">
       {/* Background image with gradient overlay */}
       {heroImage ? (
         <div className="absolute inset-0">
-          <img
+          <HeroMedia
             src={heroImage}
-            alt=""
-            className="w-full h-full object-contain"
-            style={applyImageTransform(heroImageTransform, "contain")}
+            alt={heroAlt}
+            transform={heroImageTransform}
+            mobileSrc={heroImageMobile}
+            mobileTransform={heroImageMobileTransform}
+            fit="contain"
+            mobileAspect="4/5"
+            priority
+            className="w-full h-full"
           />
           <div className="absolute inset-0 bg-gradient-to-l from-black/70 via-black/50 to-black/70" />
         </div>

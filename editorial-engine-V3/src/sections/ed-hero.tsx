@@ -1,8 +1,8 @@
 "use client";
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Editorial hero — faithful port of V2 themes/editorial/sections/hero/EdHero.tsx.
@@ -19,8 +19,9 @@ export default function EdHero({ instance }: SectionRenderProps) {
     localized(locale, "A curated collection of the finest global brands", "تشكيلة منتقاة من أرقى الماركات العالمية");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop the Collection", "تسوّق التشكيلة");
   const ctaLink = asString(s.cta_link) || "/products";
-  const heroImage = asString(s.hero_image_url);
+  const heroImage = asImageUrl(s.hero_image_url) || undefined;
   const heroImageTransform = asImageTransform(s.hero_image_url);
+  const heroAlt = asImageAlt(s.hero_image_url);
 
   return (
     <section className="relative overflow-hidden bg-[hsl(var(--ed-green))]">
@@ -57,11 +58,13 @@ export default function EdHero({ instance }: SectionRenderProps) {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="hidden md:block relative h-full"
             >
-              <img
+              <HeroMedia
                 src={heroImage}
-                alt=""
-                className="w-full h-full object-contain"
-                style={applyImageTransform(heroImageTransform, "contain")}
+                alt={heroAlt}
+                transform={heroImageTransform}
+                fit="contain"
+                priority
+                className="w-full h-full"
               />
             </motion.div>
           )}

@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, useDemo, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { HeroMedia, Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { asImageTransform, asImageUrl, asString, localized, useDemo, type ImageTransform, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const HEIGHT_DESKTOP: Record<string, string> = {
@@ -148,16 +148,13 @@ const VionneSlideshow = ({ instance, sectionId }: SectionRenderProps) => {
             className={`vn-slide ${isActive ? "is-active" : ""}`}
           >
             {sl.image ? (
-              <img
+              <HeroMedia
                 src={sl.image}
                 alt={sl.headline || `Slide ${i + 1}`}
-                className="absolute inset-0 w-full h-full object-cover"
-                style={applyImageTransform(sl.imageTransform, "cover")}
-                // First slide is the LCP; eager + high priority. Others
-                // are below the fold visually (CSS-stacked) and can wait.
-                loading={isFirst ? "eager" : "lazy"}
-                fetchPriority={isFirst ? "high" : "low"}
-                decoding={isFirst ? "sync" : "async"}
+                transform={sl.imageTransform}
+                fit="cover"
+                priority={isFirst}
+                className="absolute inset-0 w-full h-full"
               />
             ) : (
               <div className="absolute inset-0 vn-shimmer" />

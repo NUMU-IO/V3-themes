@@ -29,6 +29,30 @@ export function localized(locale: string | undefined, en: string, ar: string): s
   return (locale || "").toLowerCase().startsWith("ar") ? ar : en;
 }
 
+/**
+ * Read an image-picker value. The editor stores image_picker settings as
+ * either a plain URL string (legacy) or an `{ url, alt }` object (current).
+ * Always returns a usable URL string.
+ */
+export function asImageUrl(v: unknown, fallback = ""): string {
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object") {
+    const r = v as Record<string, unknown>;
+    if (typeof r.url === "string") return r.url;
+    if (typeof r.src === "string") return r.src;
+  }
+  return fallback;
+}
+
+/** Alt text for an image-picker value (only present on the object shape). */
+export function asImageAlt(v: unknown, fallback = ""): string {
+  if (v && typeof v === "object") {
+    const r = v as Record<string, unknown>;
+    if (typeof r.alt === "string") return r.alt;
+  }
+  return fallback;
+}
+
 
 // ── Non-destructive image transform (focal / zoom / rotation) — Phase 2 ──────
 // Mirror of merchant-hub imageTransform.ts (and bazar _shared). Keep

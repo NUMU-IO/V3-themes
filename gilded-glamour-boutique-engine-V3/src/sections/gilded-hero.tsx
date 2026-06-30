@@ -1,10 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  applyImageTransform,
   asImageAlt,
   asImageTransform,
   asImageUrl,
@@ -18,11 +17,13 @@ import { InlineEditable } from "./_inline-editable";
  * gilded-hero — faithful V3 port of the V2 GildedHero
  * (numu-egyptian-bazaar/src/themes/gilded-glamour-boutique/sections/hero/GildedHero.tsx).
  *
- * Full-screen parallax hero (`md:h-screen min-h-[80vh]`). Optional merchant
- * image renders `object-contain` (preserve aspect) over the gold→ink gradient
- * fallback, with a dark `bg-foreground/40` overlay. On mobile, a mobile-specific
- * image is treated as portrait art (4:5 container); a desktop-only image renders
- * at natural aspect so wide banners aren't crushed. Centered content: a Montserrat
+ * Full-screen parallax hero (`md:h-screen min-h-[80vh]`). The merchant hero image
+ * renders `object-cover` — it FILLS the hero, cropped to the merchant's focal point
+ * (Adjust) — so the gold→ink gradient only shows as a fallback until an image is set;
+ * a dark `bg-foreground/40` overlay keeps the white text legible. One `<picture>`
+ * art-directs the image: on mobile it fills a 4:5 portrait box (the mobile image when
+ * set, else the desktop image cover-cropped to that 4:5 box); full-screen on desktop.
+ * Centered content: a Montserrat
  * uppercase wide-tracked H1, an uppercase letter-spaced subtitle, and a gold-fill
  * CTA that scales on hover. Stagger delays 0.2 / 0.5 / 0.8s, matching V2 verbatim.
  *
@@ -47,17 +48,16 @@ export default function GildedHero({ instance, sectionId }: SectionRenderProps) 
   const ctaLink = asString(s.cta_link) || "/products";
 
   const heroImageUrl = asImageUrl(s.hero_image_url) || undefined;
-  const heroImageUrlMobile = asImageUrl(s.hero_image_mobile) || undefined;
-  const heroImageAlt = asImageAlt(s.hero_image_url) || headline;
-  // When the merchant uploads a mobile-specific image, treat it as
-  // intentionally portrait-cropped art and render it in a tall 4:5 container.
-  // When they only have a desktop image, fall back to natural aspect on mobile
-  // so a wide banner isn't crushed/cropped.
-  const mobileImage = heroImageUrlMobile || heroImageUrl;
-  const hasMobileArt = Boolean(heroImageUrlMobile);
+  // Mobile art is default-ON for gilded (its hero was designed dual-image);
+  // the merchant can switch it off to reuse the desktop image on phones.
+  const mobileEnabled = s.use_mobile_image !== false;
+  const heroImageMobile = mobileEnabled ? asImageUrl(s.hero_image_mobile) || undefined : undefined;
+  // Hero image fills via object-cover: a mobile image frames the 4:5 box cleanly;
+  // with none, the desktop image is cover-cropped to 4:5 (merchant sets a mobile
+  // image for tighter framing) — matches the merchant's "fill the hero" expectation.
+  const heroAlt = asImageAlt(s.hero_image_url);
   // Non-destructive image transforms (focal/zoom/rotation). With no saved
-  // transform asImageTransform → undefined and applyImageTransform → {}, so
-  // the image renders exactly as before.
+  // transform asImageTransform → undefined, so the image renders unchanged.
   const heroImageTransform = asImageTransform(s.hero_image_url);
   const heroImageMobileTransform = asImageTransform(s.hero_image_mobile);
   const enableParallax = s.enable_parallax !== false;
@@ -77,59 +77,39 @@ export default function GildedHero({ instance, sectionId }: SectionRenderProps) 
       data-gilded-section={sectionId}
       className="relative w-full overflow-hidden bg-foreground md:min-h-[80vh] md:h-screen"
     >
-      {/* Mobile background.
-          - If the merchant uploaded a mobile-specific image, render it
-            contain-fit in a tall portrait container — they've designed art
-            for this aspect.
-          - Otherwise the desktop image renders in-flow at its natural
-            aspect, so wide banners aren't cropped or letterboxed. */}
-      <div className="relative md:hidden">
-        {hasMobileArt ? (
-          <div className="aspect-[4/5] w-full overflow-hidden">
-            <img
-              src={mobileImage}
-              alt={heroImageAlt}
-              className="w-full h-full object-contain"
-              style={applyImageTransform(heroImageMobileTransform, "contain")}
-            />
-          </div>
-        ) : mobileImage ? (
-          <img src={mobileImage} alt={heroImageAlt} className="block w-full h-auto" />
-        ) : (
-          <div
-            className="aspect-[4/5] w-full"
-            style={{
-              background:
-                "linear-gradient(135deg, hsl(var(--gold-dark)), hsl(var(--foreground)))",
-            }}
-          />
-        )}
-        <div className="absolute inset-0 bg-foreground/40 pointer-events-none" />
-      </div>
+      {/* Gold→ink gradient background (kept as-is). */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(135deg, hsl(var(--gold-dark)), hsl(var(--foreground)))",
+        }}
+      />
 
-      {/* Desktop parallax background — object-contain over the gold→ink gradient. */}
+      {/* Unified hero image — one <picture> (art direction) replaces the former
+          dual-<img>: portrait 4:5 on mobile, full-screen on desktop. Parallax
+          rides the same layer. */}
       <motion.div
         style={enableParallax ? { y } : undefined}
-        className="hidden md:block absolute inset-0"
+        className="relative aspect-[4/5] md:aspect-auto md:h-screen w-full"
       >
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(135deg, hsl(var(--gold-dark)), hsl(var(--foreground)))",
-          }}
-        />
-        {heroImageUrl ? (
-          <img
+        {heroImageUrl && (
+          <HeroMedia
             src={heroImageUrl}
-            alt=""
-            aria-hidden="true"
-            className="relative w-full h-full object-contain"
-            style={applyImageTransform(heroImageTransform, "contain")}
+            alt={heroAlt}
+            transform={heroImageTransform}
+            mobileSrc={heroImageMobile}
+            mobileTransform={heroImageMobileTransform}
+            fit="cover"
+            mobileAspect="4/5"
+            priority
+            className="w-full h-full"
           />
-        ) : null}
-        <div className="absolute inset-0 bg-foreground/40" />
+        )}
       </motion.div>
+
+      {/* Dark overlay (kept as-is). */}
+      <div className="absolute inset-0 bg-foreground/40 pointer-events-none" />
 
       {/* Content */}
       <motion.div

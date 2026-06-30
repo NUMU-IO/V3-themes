@@ -47,6 +47,23 @@
       "label_ar": "الصورة الرئيسية",
       "aspect_ratio": "16/9",
       "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_image",
+      "label": "Use a different image on mobile",
+      "label_ar": "استخدام صورة مختلفة على الجوال",
+      "default": false,
+      "info": "Show a separate, portrait-friendly image on phones."
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_mobile",
+      "label": "Mobile image",
+      "label_ar": "صورة الجوال",
+      "aspect_ratio": "4/5",
+      "visible_if": { "use_mobile_image": true },
+      "info": "Recommended portrait, e.g. 1080×1350 (4:5). Leave blank to reuse the desktop image."
     }
   ],
   "presets": [

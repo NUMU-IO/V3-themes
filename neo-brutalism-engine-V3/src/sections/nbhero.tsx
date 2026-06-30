@@ -1,8 +1,8 @@
 "use client";
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 const NBHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
@@ -18,14 +18,18 @@ const NBHero = ({ instance }: SectionRenderProps) => {
   const ctaLink = asString(s.cta_link, "/products");
   const secondaryText = asString(s.secondary_text) || localized(locale, "New clothing", "الملابس الجديدة");
   const secondaryLink = asString(s.secondary_link, "/products?category=clothing");
-  const img1 = s.hero_image_url as string | undefined;
-  const img2 = s.hero_image_2 as string | undefined;
-  const img3 = s.hero_image_3 as string | undefined;
-  const img4 = s.hero_image_4 as string | undefined;
+  const img1 = asImageUrl(s.hero_image_url) || undefined;
+  const img2 = asImageUrl(s.hero_image_2) || undefined;
+  const img3 = asImageUrl(s.hero_image_3) || undefined;
+  const img4 = asImageUrl(s.hero_image_4) || undefined;
   const img1Transform = asImageTransform(s.hero_image_url);
   const img2Transform = asImageTransform(s.hero_image_2);
   const img3Transform = asImageTransform(s.hero_image_3);
   const img4Transform = asImageTransform(s.hero_image_4);
+  const img1Alt = asImageAlt(s.hero_image_url);
+  const img2Alt = asImageAlt(s.hero_image_2);
+  const img3Alt = asImageAlt(s.hero_image_3);
+  const img4Alt = asImageAlt(s.hero_image_4);
 
   return (
     <section className="py-12 md:py-20">
@@ -73,11 +77,13 @@ const NBHero = ({ instance }: SectionRenderProps) => {
           >
             {img1 && !img2 ? (
               <div className="col-span-2 nb-img-frame rounded-lg overflow-hidden aspect-[16/9]">
-                <img
+                <HeroMedia
                   src={img1}
-                  alt=""
-                  className="w-full h-full object-contain"
-                  style={applyImageTransform(img1Transform, "contain")}
+                  alt={img1Alt}
+                  transform={img1Transform}
+                  fit="contain"
+                  priority
+                  className="w-full h-full"
                 />
               </div>
             ) : (img1 || img2 || img3 || img4) ? (
@@ -85,21 +91,25 @@ const NBHero = ({ instance }: SectionRenderProps) => {
                 <div className="space-y-4">
                   {img1 && (
                     <div className="nb-img-frame rounded-lg aspect-[3/4]">
-                      <img
+                      <HeroMedia
                         src={img1}
-                        alt=""
-                        className="w-full h-full object-contain"
-                        style={applyImageTransform(img1Transform, "contain")}
+                        alt={img1Alt}
+                        transform={img1Transform}
+                        fit="contain"
+                        priority
+                        className="w-full h-full"
                       />
                     </div>
                   )}
                   {img2 && (
                     <div className="nb-img-frame rounded-lg aspect-square">
-                      <img
+                      <HeroMedia
                         src={img2}
-                        alt=""
-                        className="w-full h-full object-contain"
-                        style={applyImageTransform(img2Transform, "contain")}
+                        alt={img2Alt}
+                        transform={img2Transform}
+                        fit="contain"
+                        priority={false}
+                        className="w-full h-full"
                       />
                     </div>
                   )}
@@ -107,21 +117,25 @@ const NBHero = ({ instance }: SectionRenderProps) => {
                 <div className="space-y-4 mt-8">
                   {img3 && (
                     <div className="nb-img-frame rounded-lg aspect-square">
-                      <img
+                      <HeroMedia
                         src={img3}
-                        alt=""
-                        className="w-full h-full object-contain"
-                        style={applyImageTransform(img3Transform, "contain")}
+                        alt={img3Alt}
+                        transform={img3Transform}
+                        fit="contain"
+                        priority={false}
+                        className="w-full h-full"
                       />
                     </div>
                   )}
                   {img4 && (
                     <div className="nb-img-frame rounded-lg aspect-[3/4]">
-                      <img
+                      <HeroMedia
                         src={img4}
-                        alt=""
-                        className="w-full h-full object-contain"
-                        style={applyImageTransform(img4Transform, "contain")}
+                        alt={img4Alt}
+                        transform={img4Transform}
+                        fit="contain"
+                        priority={false}
+                        className="w-full h-full"
                       />
                     </div>
                   )}

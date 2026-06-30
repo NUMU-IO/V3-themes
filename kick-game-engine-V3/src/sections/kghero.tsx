@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { ShoppingBag } from "lucide-react";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 const KGHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
@@ -11,8 +11,12 @@ const KGHero = ({ instance }: SectionRenderProps) => {
   const subtitle = asString(s.subtitle) || localized(locale, "ELEVATE YOUR GAME", "ارفع مستواك");
   const ctaText = asString(s.cta_text) || localized(locale, "SHOP NOW", "اتسوّق دلوقتي");
   const ctaLink = asString(s.cta_link) || "/products";
-  const heroImage = asString(s.hero_image_url);
+  const heroImage = asImageUrl(s.hero_image_url) || undefined;
+  const mobileEnabled = s.use_mobile_image === true;
+  const heroImageMobile = mobileEnabled ? asImageUrl(s.hero_image_mobile) || undefined : undefined;
   const heroImageTransform = asImageTransform(s.hero_image_url);
+  const heroImageMobileTransform = asImageTransform(s.hero_image_mobile);
+  const heroAlt = asImageAlt(s.hero_image_url);
 
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -49,20 +53,22 @@ const KGHero = ({ instance }: SectionRenderProps) => {
               <ShoppingBag size={64} color="#d9cd9a" strokeWidth={1} />
             </div>
           ) : (
-            <img
+            <HeroMedia
               src={heroImage}
-              alt=""
+              alt={heroAlt}
+              transform={heroImageTransform}
+              mobileSrc={heroImageMobile}
+              mobileTransform={heroImageMobileTransform}
+              fit="contain"
+              mobileAspect="4/5"
+              priority
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgError(true)}
               style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
                 opacity: imgLoaded ? 1 : 0,
                 transition: "opacity 0.4s ease",
                 position: "absolute",
                 inset: 0,
-                ...applyImageTransform(heroImageTransform, "contain"),
               }}
             />
           )}
