@@ -40,7 +40,12 @@ const VionneImageComparison = ({ instance, sectionId }: SectionRenderProps) => {
   // Set to true the first time the user interacts. Cancels the entrance
   // animation mid-flight so it doesn't fight the drag.
   const userInteractedRef = useRef(false);
-  const [position, setPosition] = useState(initialPos);
+  // The entrance animation sweeps the divider in from the "before" edge
+  // (logical start side) to its resting position, so the reveal reads as
+  // before → after. Start near the before edge, not fully at it, so a sliver
+  // of the after image is visible from the first frame.
+  const REVEAL_FROM = 8;
+  const [position, setPosition] = useState(animateToCenter ? REVEAL_FROM : initialPos);
 
   // Detect RTL on mount.
   useEffect(() => {
@@ -63,8 +68,8 @@ const VionneImageComparison = ({ instance, sectionId }: SectionRenderProps) => {
           if (!e.isIntersecting) continue;
           io.disconnect();
           const start = performance.now();
-          const from = initialPos;
-          const to = 50;
+          const from = REVEAL_FROM;
+          const to = initialPos;
           const duration = 1100;
           const tick = (now: number) => {
             if (cancelled || userInteractedRef.current) return;
@@ -98,21 +103,35 @@ const VionneImageComparison = ({ instance, sectionId }: SectionRenderProps) => {
 
   // Use refs (not state) for drag tracking — re-renders during pointer-move
   // cause the listener handlers to thrash, which feels janky.
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+  const startDrag = (el: HTMLElement, pointerId: number, clientX: number) => {
     draggingRef.current = true;
     userInteractedRef.current = true;
     try {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      el.setPointerCapture(pointerId);
     } catch {
       /* ignore */
     }
-    setFromPointer(e.clientX);
+    setFromPointer(clientX);
   };
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+  // TOUCH: only the handle starts a drag — the rest of the image must stay
+  // vertically scrollable (the container has NO `touch-none`), so a finger
+  // swipe over the picture scrolls the page instead of getting stuck moving
+  // the divider. MOUSE / PEN keep the "click anywhere to scrub" affordance.
+  const onContainerPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "touch") return;
+    startDrag(e.currentTarget, e.pointerId, e.clientX);
+  };
+  const onHandlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    // The handle is the ONLY touch drag target — stop the event reaching the
+    // container so its (mouse-only) handler doesn't double-fire.
+    e.stopPropagation();
+    startDrag(e.currentTarget, e.pointerId, e.clientX);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLElement>) => {
     if (!draggingRef.current) return;
     setFromPointer(e.clientX);
   };
-  const stopDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+  const stopDrag = (e: React.PointerEvent<HTMLElement>) => {
     draggingRef.current = false;
     try {
       (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
@@ -247,8 +266,8 @@ const VionneImageComparison = ({ instance, sectionId }: SectionRenderProps) => {
             stays graceful when height is clamped. */}
         <div
           ref={containerRef}
-          className={`relative w-full ${aspectClass} max-h-[85vh] overflow-hidden bg-[var(--vn-band)] select-none touch-none cursor-ew-resize`}
-          onPointerDown={onPointerDown}
+          className={`relative w-full ${aspectClass} max-h-[85vh] overflow-hidden bg-[var(--vn-band)] select-none md:cursor-ew-resize`}
+          onPointerDown={onContainerPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={stopDrag}
           onPointerCancel={stopDrag}
@@ -303,7 +322,11 @@ const VionneImageComparison = ({ instance, sectionId }: SectionRenderProps) => {
           <button
             type="button"
             className="vn-cmp-handle"
-            style={{ ["--vn-pos" as string]: `${position}%` } as React.CSSProperties}
+            style={{ ["--vn-pos" as string]: `${position}%`, touchAction: "none" } as React.CSSProperties}
+            onPointerDown={onHandlePointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={stopDrag}
+            onPointerCancel={stopDrag}
             onKeyDown={onHandleKeyDown}
             aria-label="Drag to compare before and after"
           >

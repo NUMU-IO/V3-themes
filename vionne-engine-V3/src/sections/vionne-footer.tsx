@@ -167,7 +167,7 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
       { label: t("footer.privacy", localized(locale, "Privacy", "الخصوصية")), href: "/pages/privacy" },
       { label: t("footer.terms", localized(locale, "Terms", "الشروط")), href: "/pages/terms" },
       { label: t("footer.faq", localized(locale, "FAQ", "الأسئلة الشائعة")), href: "/pages/faq" },
-      { label: t("footer.contact", localized(locale, "Contact", "تواصلي")), href: "/pages/contact" },
+      { label: t("footer.contact", localized(locale, "Contact", "تواصلي")), href: "/contact" },
       { label: t("footer.track_order", localized(locale, "Track order", "تتبع الطلب")), href: "/track" },
     ],
   };
