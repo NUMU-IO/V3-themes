@@ -1,8 +1,8 @@
 "use client";
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft, Truck, ShieldCheck, CreditCard } from "lucide-react";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Tech Wave hero — faithful port of the V2 in-tree
@@ -35,6 +35,10 @@ const TechWaveHero = ({ instance }: SectionRenderProps) => {
   const img2Transform = asImageTransform(s.hero_image_2);
   const img3Transform = asImageTransform(s.hero_image_3);
   const img4Transform = asImageTransform(s.hero_image_4);
+  const img1Alt = asImageAlt(s.hero_image_url);
+  const img2Alt = asImageAlt(s.hero_image_2);
+  const img3Alt = asImageAlt(s.hero_image_3);
+  const img4Alt = asImageAlt(s.hero_image_4);
 
   return (
     <>
@@ -85,21 +89,25 @@ const TechWaveHero = ({ instance }: SectionRenderProps) => {
               <div className="space-y-4">
                 {img1 && (
                   <div className="tw-img-frame rounded-xl overflow-hidden aspect-[3/4]">
-                    <img
+                    <HeroMedia
                       src={img1}
-                      alt=""
-                      className="w-full h-full object-contain"
-                      style={applyImageTransform(img1Transform, "contain")}
+                      alt={img1Alt}
+                      transform={img1Transform}
+                      fit="contain"
+                      priority
+                      className="w-full h-full"
                     />
                   </div>
                 )}
                 {img2 && (
                   <div className="tw-img-frame rounded-xl overflow-hidden aspect-square">
-                    <img
+                    <HeroMedia
                       src={img2}
-                      alt=""
-                      className="w-full h-full object-contain"
-                      style={applyImageTransform(img2Transform, "contain")}
+                      alt={img2Alt}
+                      transform={img2Transform}
+                      fit="contain"
+                      priority={false}
+                      className="w-full h-full"
                     />
                   </div>
                 )}
@@ -107,21 +115,25 @@ const TechWaveHero = ({ instance }: SectionRenderProps) => {
               <div className="space-y-4 mt-8">
                 {img3 && (
                   <div className="tw-img-frame rounded-xl overflow-hidden aspect-square">
-                    <img
+                    <HeroMedia
                       src={img3}
-                      alt=""
-                      className="w-full h-full object-contain"
-                      style={applyImageTransform(img3Transform, "contain")}
+                      alt={img3Alt}
+                      transform={img3Transform}
+                      fit="contain"
+                      priority={false}
+                      className="w-full h-full"
                     />
                   </div>
                 )}
                 {img4 && (
                   <div className="tw-img-frame rounded-xl overflow-hidden aspect-[3/4]">
-                    <img
+                    <HeroMedia
                       src={img4}
-                      alt=""
-                      className="w-full h-full object-contain"
-                      style={applyImageTransform(img4Transform, "contain")}
+                      alt={img4Alt}
+                      transform={img4Transform}
+                      fit="contain"
+                      priority={false}
+                      className="w-full h-full"
                     />
                   </div>
                 )}

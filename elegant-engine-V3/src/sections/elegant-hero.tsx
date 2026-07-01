@@ -1,8 +1,8 @@
 "use client";
-import { Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 const ElegantHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
@@ -20,19 +20,28 @@ const ElegantHero = ({ instance }: SectionRenderProps) => {
     );
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
-  const heroImage = asString(s.hero_image_url) || undefined;
+  const heroImage = asImageUrl(s.hero_image_url) || undefined;
+  const mobileEnabled = s.use_mobile_image === true;
+  const heroImageMobile = mobileEnabled ? asImageUrl(s.hero_image_mobile) || undefined : undefined;
   const heroImageTransform = asImageTransform(s.hero_image_url);
+  const heroImageMobileTransform = asImageTransform(s.hero_image_mobile);
+  const heroAlt = asImageAlt(s.hero_image_url);
 
   return (
     <section className="relative min-h-[70vh] flex items-center overflow-hidden">
       {/* Background image with warm overlay */}
       {heroImage && (
         <div className="absolute inset-0">
-          <img
+          <HeroMedia
             src={heroImage}
-            alt=""
-            className="w-full h-full object-contain"
-            style={applyImageTransform(heroImageTransform, "contain")}
+            alt={heroAlt}
+            transform={heroImageTransform}
+            mobileSrc={heroImageMobile}
+            mobileTransform={heroImageMobileTransform}
+            fit="contain"
+            mobileAspect="4/5"
+            priority
+            className="w-full h-full"
           />
           <div className="absolute inset-0 bg-gradient-to-l from-[hsl(30_40%_12%/0.85)] via-[hsl(30_40%_12%/0.7)] to-[hsl(30_40%_12%/0.4)]" />
         </div>

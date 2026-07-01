@@ -50,9 +50,17 @@
       "label": "Hero image (desktop)",
       "label_ar": "صورة البانر (للحاسوب)",
       "aspect_ratio": "16/9",
-      "info": "Shown full-screen on desktop, fit to preserve aspect over a gold gradient.",
-      "info_ar": "تُعرض بملء الشاشة على الحاسوب مع الحفاظ على نسبة الأبعاد فوق تدرّج ذهبي.",
+      "info": "Fills the hero full-screen on desktop, cropped to your focal point (use Adjust).",
+      "info_ar": "تملأ البانر بملء الشاشة على الحاسوب، وتُقصّ حسب نقطة التركيز (استخدم ضبط).",
       "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_image",
+      "label": "Use a different image on mobile",
+      "label_ar": "استخدام صورة مختلفة على الجوال",
+      "default": true,
+      "info": "Show a separate, portrait-friendly image on phones."
     },
     {
       "type": "image_picker",
@@ -60,6 +68,7 @@
       "label": "Hero image (mobile)",
       "label_ar": "صورة البانر (للهاتف)",
       "aspect_ratio": "4/5",
+      "visible_if": { "use_mobile_image": true },
       "info": "Optional portrait image for phones. When set, it crops to a 4:5 frame.",
       "info_ar": "صورة عمودية اختيارية للهواتف. عند تعيينها تُقصّ بنسبة 4:5.",
       "default": ""

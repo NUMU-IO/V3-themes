@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
 import {
-  applyImageTransform,
+  asImageAlt,
   asImageTransform,
   asImageUrl,
   asString,
@@ -39,12 +39,16 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
   // Field key includes "hero" so the merchant hub's ImageUploadField picks
   // the 16:9 crop aspect instead of the default 1:1 square. Falls back to
   // the legacy `image_url` key for any merchant who set it before the rename.
-  const imageUrl = asImageUrl(s.hero_image_url) || asImageUrl(s.image_url);
+  const imageUrl = asImageUrl(s.hero_image_url) || asImageUrl(s.image_url) || undefined;
+  const mobileEnabled = s.use_mobile_image === true;
+  const imageMobile = mobileEnabled ? asImageUrl(s.hero_image_mobile) || undefined : undefined;
   // Non-destructive focal/zoom/rotation the merchant set on whichever key
   // supplied the URL (hero_image_url is primary, image_url is the legacy
   // fallback). Undefined → image renders exactly as before.
   const imageTransform =
     asImageTransform(s.hero_image_url) || asImageTransform(s.image_url);
+  const imageMobileTransform = asImageTransform(s.hero_image_mobile);
+  const imageAlt = asImageAlt(s.hero_image_url) || asImageAlt(s.image_url);
   const colorScheme = asString(s.color_scheme) || "auto";
   // Decoration toggles (gap #8) — the morphing blob behind the drop-letter and
   // the SVG wave divider at the hero's base. Default ON so an un-customised
@@ -154,12 +158,16 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
                 the frame, cropping to the merchant's focal point) instead of
                 letterboxing inside it. `cover` is the default fit; the merchant
                 fine-tunes framing via the editor's Adjust (focal/zoom) modal. */}
-            <img
+            <HeroMedia
               src={imageUrl}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-              style={applyImageTransform(imageTransform, "cover")}
-              loading="eager"
+              alt={imageAlt}
+              transform={imageTransform}
+              mobileSrc={imageMobile}
+              mobileTransform={imageMobileTransform}
+              fit="cover"
+              mobileAspect="4/5"
+              priority
+              className="absolute inset-0 w-full h-full"
             />
           </div>
           <div className="relative bz-wavy-bg flex flex-col justify-center px-6 sm:px-10 md:px-12 lg:px-16 py-12 md:py-16">
