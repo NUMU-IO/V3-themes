@@ -138,8 +138,8 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
             .filter((n) => n.label)
         : [
             { label: asString(s.nav_shop_label) || t("nav.shop", localized(locale, "SHOP", "تسوّقي")), to: "/products" },
-            { label: asString(s.nav_about_label) || t("nav.about", localized(locale, "ABOUT", "عن المتجر")), to: "/pages/about" },
-            { label: asString(s.nav_contact_label) || t("nav.contact", localized(locale, "CONTACT", "تواصلي")), to: "/pages/contact" },
+            { label: asString(s.nav_about_label) || t("nav.about", localized(locale, "ABOUT", "عن المتجر")), to: "/about" },
+            { label: asString(s.nav_contact_label) || t("nav.contact", localized(locale, "CONTACT", "تواصلي")), to: "/contact" },
           ];
 
   const [drawerOpen, setDrawerOpen] = useState(false);

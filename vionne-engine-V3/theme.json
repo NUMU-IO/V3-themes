@@ -176,7 +176,22 @@
           },
           {
             "type": "vionne-about",
-            "settings": {}
+            "settings": {
+              "eyebrow": "ABOUT VIONNE",
+              "headline": "Made for the way you dress",
+              "quote": "Quietly tailored. Refined. Made to be lived in.",
+              "description": "Vionne is built around modest fashion that doesn't compromise on cut, fabric, or the way a piece moves with you. Each release is small, considered, and shipped worldwide.",
+              "value_1_title": "Crafted small",
+              "value_1_text": "Limited drops, considered every season.",
+              "value_2_title": "Honest fabric",
+              "value_2_text": "Modal, chiffon and silk-blends — sourced from mills we know.",
+              "value_3_title": "Worldwide",
+              "value_3_text": "Now shipping to over forty countries.",
+              "cta_text": "Explore the edit",
+              "cta_link": "/products",
+              "contact_cta_text": "Get in touch",
+              "contact_cta_link": "/contact"
+            }
           },
           {
             "type": "vionne-footer",

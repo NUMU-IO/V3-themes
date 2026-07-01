@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
@@ -23,6 +23,21 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(!imageUrl);
 
+  // `imageError`/`imageLoading` are seeded from `useState` on FIRST render only.
+  // In the live editor the section re-renders (applyDraft) when the merchant
+  // picks an image — without this the stale `imageError` stayed `true` and the
+  // placeholder bag kept showing even though `image_url` was now set (the image
+  // "not being set" bug). Re-sync both whenever the resolved URL changes.
+  useEffect(() => {
+    if (imageUrl) {
+      setImageError(false);
+      setImageLoading(true);
+    } else {
+      setImageError(true);
+      setImageLoading(false);
+    }
+  }, [imageUrl]);
+
   return (
     <section className="py-6">
       <div className="container mx-auto px-4">
@@ -40,12 +55,9 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
               <p className="text-muted-foreground text-sm mb-4">
                 <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
               </p>
-              <Link
-                to={ctaLink}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl store-gradient text-white font-bold text-sm hover:opacity-90 transition-opacity shadow-md"
-              >
+              <Link to={ctaLink} className="vn-btn vn-btn-filled shadow-md">
                 <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
-                <ArrowLeft size={16} />
+                <ArrowLeft size={16} className="rtl:rotate-180" />
               </Link>
             </div>
             <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl overflow-hidden shadow-lg shrink-0">

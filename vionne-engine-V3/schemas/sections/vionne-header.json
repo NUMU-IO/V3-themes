@@ -178,14 +178,14 @@
           "type": "nav_item",
           "settings": {
             "label": "ABOUT",
-            "href": "/pages/about"
+            "href": "/about"
           }
         },
         {
           "type": "nav_item",
           "settings": {
             "label": "CONTACT",
-            "href": "/pages/contact"
+            "href": "/contact"
           }
         }
       ]
