@@ -65,6 +65,17 @@ def main() -> int:
         region_name=env.get("S3_REGION", "auto"),
     )
 
+    # Assets live under an IMMUTABLE, version-scoped key (`<slug>/<version>/…`),
+    # so cache them for a year with `immutable` — the browser/CDN never
+    # re-validate, making repeat visits + navigations instant. A theme update
+    # ships a NEW version → new URL → fresh fetch.
+    #
+    # ⚠️ INVARIANT: never OVERWRITE an existing version's files — bump the
+    # version (publish-theme.sh --bump) instead. With `immutable`, an in-place
+    # overwrite would be silently ignored by already-cached clients for up to a
+    # year. (This replaces the old max-age=300, which existed only to let the
+    # overwrite hotfix pattern propagate.)
+    cache_control = "public, max-age=31536000, immutable"
     count = 0
     for path in sorted(dist.rglob("*")):
         if path.is_dir():
@@ -76,7 +87,7 @@ def main() -> int:
             str(path),
             bucket,
             key,
-            ExtraArgs={"ContentType": ctype, "CacheControl": "public, max-age=300"},
+            ExtraArgs={"ContentType": ctype, "CacheControl": cache_control},
         )
         print(f"  {key}  [{ctype}]")
         count += 1
