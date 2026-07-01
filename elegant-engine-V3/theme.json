@@ -2,7 +2,7 @@
   "id": "elegant-v3",
   "name": "Elegant (V3)",
   "author": "NUMU",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "layout": "single-column",
   "description": "Elegant (V3) — rich warm-brown classic storefront, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
