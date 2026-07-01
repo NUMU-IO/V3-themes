@@ -22,6 +22,10 @@ export default function EdHero({ instance }: SectionRenderProps) {
   const heroImage = asImageUrl(s.hero_image_url) || undefined;
   const heroImageTransform = asImageTransform(s.hero_image_url);
   const heroAlt = asImageAlt(s.hero_image_url);
+  // Mobile hero (user-approved: now shown on mobile; departs from V2's hidden-on-mobile).
+  const mobileEnabled = s.use_mobile_image === true;
+  const heroImageMobile = mobileEnabled ? asImageUrl(s.hero_image_mobile) || undefined : undefined;
+  const heroImageMobileTransform = asImageTransform(s.hero_image_mobile);
 
   return (
     <section className="relative overflow-hidden bg-[hsl(var(--ed-green))]">
@@ -56,12 +60,15 @@ export default function EdHero({ instance }: SectionRenderProps) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="hidden md:block relative h-full"
+              className="relative aspect-[4/5] md:aspect-auto md:h-full"
             >
               <HeroMedia
                 src={heroImage}
                 alt={heroAlt}
                 transform={heroImageTransform}
+                mobileSrc={heroImageMobile}
+                mobileTransform={heroImageMobileTransform}
+                mobileAspect="4/5"
                 fit="contain"
                 priority
                 className="w-full h-full"

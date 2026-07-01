@@ -33,6 +33,11 @@ const SkeuHero = ({ instance }: SectionRenderProps) => {
   const img2Alt = asImageAlt(s.hero_image_2);
   const img3Alt = asImageAlt(s.hero_image_3);
   const img4Alt = asImageAlt(s.hero_image_4);
+  // Mobile hero (user-approved): the 4-image mosaic stays desktop-only; on mobile
+  // show one image full-width — the dedicated mobile image, else the main image.
+  const mobileEnabled = s.use_mobile_image === true;
+  const heroImageMobile = mobileEnabled ? asImageUrl(s.hero_image_mobile) || undefined : undefined;
+  const heroImageMobileTransform = asImageTransform(s.hero_image_mobile);
 
   return (
     <>
@@ -136,6 +141,21 @@ const SkeuHero = ({ instance }: SectionRenderProps) => {
                 )}
               </div>
             </motion.div>
+
+            {/* Mobile hero — the desktop mosaic is hidden on phones; show one
+                image full-width (user-approved mobile-hero addition). */}
+            {(heroImageMobile || img1) && (
+              <div className="md:hidden skeu-img-frame rounded-xl overflow-hidden aspect-[4/5]">
+                <HeroMedia
+                  src={heroImageMobile || img1}
+                  alt={img1Alt}
+                  transform={heroImageMobile ? heroImageMobileTransform : img1Transform}
+                  fit="contain"
+                  priority
+                  className="w-full h-full"
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>

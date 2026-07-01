@@ -10,6 +10,10 @@
     { "type": "image_picker", "id": "image_1", "label": "Slide 1 image", "locales": { "ar": { "label": "صورة الشريحة 1" } } },
     { "type": "image_picker", "id": "image_2", "label": "Slide 2 image", "locales": { "ar": { "label": "صورة الشريحة 2" } } },
     { "type": "image_picker", "id": "image_3", "label": "Slide 3 image", "locales": { "ar": { "label": "صورة الشريحة 3" } } },
+    { "type": "checkbox", "id": "use_mobile_image", "label": "Use different images on mobile", "default": false, "locales": { "ar": { "label": "استخدام صور مختلفة على الجوال" } } },
+    { "type": "image_picker", "id": "image_1_mobile", "label": "Slide 1 image (mobile)", "aspect_ratio": "4/5", "visible_if": { "use_mobile_image": true }, "locales": { "ar": { "label": "صورة الشريحة 1 (جوال)" } } },
+    { "type": "image_picker", "id": "image_2_mobile", "label": "Slide 2 image (mobile)", "aspect_ratio": "4/5", "visible_if": { "use_mobile_image": true }, "locales": { "ar": { "label": "صورة الشريحة 2 (جوال)" } } },
+    { "type": "image_picker", "id": "image_3_mobile", "label": "Slide 3 image (mobile)", "aspect_ratio": "4/5", "visible_if": { "use_mobile_image": true }, "locales": { "ar": { "label": "صورة الشريحة 3 (جوال)" } } },
     { "type": "checkbox", "id": "autoplay", "label": "Auto-advance slides", "default": true, "locales": { "ar": { "label": "تشغيل تلقائي" } } }
   ]
 }

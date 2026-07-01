@@ -77,6 +77,17 @@
     },
     {
       "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "id": "use_mobile_image",
+      "type": "checkbox",
+      "label": "Use different images on mobile",
+      "label_ar": "استخدام صور مختلفة على الجوال",
+      "default": false
+    },
+    {
+      "type": "header",
       "content": "Slide 1"
     },
     {
@@ -85,6 +96,15 @@
       "label": "Slide 1 image",
       "label_ar": "صورة الشريحة 1",
       "aspect_ratio": "16/9",
+      "default": ""
+    },
+    {
+      "id": "slide_1_image_mobile",
+      "type": "image_picker",
+      "label": "Slide 1 image (mobile)",
+      "label_ar": "صورة الشريحة 1 (جوال)",
+      "aspect_ratio": "4/5",
+      "visible_if": { "use_mobile_image": true },
       "default": ""
     },
     {
@@ -128,6 +148,15 @@
       "default": ""
     },
     {
+      "id": "slide_2_image_mobile",
+      "type": "image_picker",
+      "label": "Slide 2 image (mobile)",
+      "label_ar": "صورة الشريحة 2 (جوال)",
+      "aspect_ratio": "4/5",
+      "visible_if": { "use_mobile_image": true },
+      "default": ""
+    },
+    {
       "id": "slide_2_headline",
       "type": "text",
       "label": "Slide 2 headline",
@@ -165,6 +194,15 @@
       "label": "Slide 3 image",
       "label_ar": "صورة الشريحة 3",
       "aspect_ratio": "16/9",
+      "default": ""
+    },
+    {
+      "id": "slide_3_image_mobile",
+      "type": "image_picker",
+      "label": "Slide 3 image (mobile)",
+      "label_ar": "صورة الشريحة 3 (جوال)",
+      "aspect_ratio": "4/5",
+      "visible_if": { "use_mobile_image": true },
       "default": ""
     },
     {
