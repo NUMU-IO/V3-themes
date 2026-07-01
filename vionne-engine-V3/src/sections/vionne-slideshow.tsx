@@ -17,6 +17,8 @@ interface Slide {
   n?: number;
   image: string;
   imageTransform?: ImageTransform;
+  imageMobile?: string;
+  imageMobileTransform?: ImageTransform;
   headline: string;
   subtitle: string;
   ctaText: string;
@@ -69,16 +71,21 @@ const VionneSlideshow = ({ instance, sectionId }: SectionRenderProps) => {
   // URL via asImageUrl so they render (raw object → broken image, the "green
   // blob" the merchant saw). Text coerced so a bound field can't crash a slide.
   // Subtitle uses one shared class for every slide, so sizing stays uniform.
+  const mobileEnabled = s.use_mobile_image === true;
   const built: Slide[] = [];
   for (let i = 1; i <= 3; i++) {
     const image = asImageUrl(s[`slide_${i}_image`]);
     const imageTransform = asImageTransform(s[`slide_${i}_image`]);
+    const imageMobile = mobileEnabled ? asImageUrl(s[`slide_${i}_image_mobile`]) : "";
+    const imageMobileTransform = asImageTransform(s[`slide_${i}_image_mobile`]);
     const headline = asString(s[`slide_${i}_headline`]);
     if (!image && !headline) continue;
     built.push({
       n: i,
       image,
       imageTransform,
+      imageMobile: imageMobile || undefined,
+      imageMobileTransform,
       headline,
       subtitle: asString(s[`slide_${i}_subtitle`]),
       ctaText: asString(s[`slide_${i}_cta_text`]),
@@ -152,6 +159,8 @@ const VionneSlideshow = ({ instance, sectionId }: SectionRenderProps) => {
                 src={sl.image}
                 alt={sl.headline || `Slide ${i + 1}`}
                 transform={sl.imageTransform}
+                mobileSrc={sl.imageMobile}
+                mobileTransform={sl.imageMobileTransform}
                 fit="cover"
                 priority={isFirst}
                 className="absolute inset-0 w-full h-full"

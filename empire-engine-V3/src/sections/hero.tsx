@@ -1,7 +1,7 @@
 import {
   useEffect,
   useState } from "react";
-import { focalSrc } from "@numueg/theme-sdk";
+import { HeroMedia } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { useT } from "../lib/i18n";
@@ -11,9 +11,13 @@ interface HeroSettings {
   subtitle?: string;
   cta_text?: string;
   cta_link?: string;
-  image_1?: string;
-  image_2?: string;
-  image_3?: string;
+  image_1?: unknown;
+  image_2?: unknown;
+  image_3?: unknown;
+  image_1_mobile?: unknown;
+  image_2_mobile?: unknown;
+  image_3_mobile?: unknown;
+  use_mobile_image?: boolean;
   autoplay?: boolean;
 }
 
@@ -31,13 +35,23 @@ export default function Hero({ id, settings }: EmpSectionProps) {
   const ctaText = s.cta_text ?? t("Shop", "تسوق");
   const ctaLink = s.cta_link ?? "/products";
 
-  const slides = [s.image_1, s.image_2, s.image_3].filter(
-    (x): x is string => Boolean(x),
-  );
+  const imgUrl = (v: unknown): string =>
+    typeof v === "string"
+      ? v
+      : v && typeof v === "object" && typeof (v as { url?: unknown }).url === "string"
+        ? (v as { url: string }).url
+        : "";
+  const mobileEnabled = s.use_mobile_image === true;
+  const slides = [
+    { d: imgUrl(s.image_1), m: mobileEnabled ? imgUrl(s.image_1_mobile) : "" },
+    { d: imgUrl(s.image_2), m: mobileEnabled ? imgUrl(s.image_2_mobile) : "" },
+    { d: imgUrl(s.image_3), m: mobileEnabled ? imgUrl(s.image_3_mobile) : "" },
+  ].filter((x) => x.d);
   if (slides.length === 0) {
-    slides.push(
-      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600",
-    );
+    slides.push({
+      d: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600",
+      m: "",
+    });
   }
 
   const [current, setCurrent] = useState(0);
@@ -53,19 +67,20 @@ export default function Hero({ id, settings }: EmpSectionProps) {
 
   return (
     <section className="empire-hero">
-      {slides.map((src, i) => (
+      {slides.map((sl, i) => (
         <div
           key={i}
           className={`empire-hero__slide${i === current ? " is-active" : ""}`}
           aria-hidden={i !== current}
         >
-          {/* Slide 1 is the LCP: route through the transformer (resize + AVIF)
-              and load it eagerly at high priority. Later slides stay as-is. */}
-          <img
-            src={i === 0 ? focalSrc(src, { width: 1920 }) : src}
+          {/* HeroMedia: responsive srcSet + AVIF via the transformer, optional
+              mobile art-direction; slide 0 is the LCP (eager + high priority). */}
+          <HeroMedia
+            src={sl.d}
+            mobileSrc={sl.m || undefined}
             alt=""
-            loading={i === 0 ? "eager" : undefined}
-            fetchPriority={i === 0 ? "high" : undefined}
+            fit="cover"
+            priority={i === 0}
           />
           <div className="empire-hero__overlay" />
         </div>

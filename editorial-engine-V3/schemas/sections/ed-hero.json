@@ -45,6 +45,22 @@
       "label_ar": "صورة البطل",
       "aspect_ratio": "16/9",
       "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_image",
+      "label": "Use a different image on mobile",
+      "label_ar": "استخدام صورة مختلفة على الجوال",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image_mobile",
+      "label": "Hero image (mobile)",
+      "label_ar": "صورة البطل (جوال)",
+      "aspect_ratio": "4/5",
+      "visible_if": { "use_mobile_image": true },
+      "default": ""
     }
   ],
   "presets": []

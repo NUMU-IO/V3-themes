@@ -46,6 +46,10 @@ export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
   // Non-destructive focal/zoom/rotation. Undefined → image renders unchanged.
   const heroImageTransform = asImageTransform(s.hero_image_url);
   const heroAlt = asImageAlt(s.hero_image_url);
+  // Mobile hero (user-approved: now shown on mobile; departs from V2's hidden-on-mobile).
+  const mobileEnabled = s.use_mobile_image === true;
+  const heroImageMobile = mobileEnabled ? asImageUrl(s.hero_image_mobile) || undefined : undefined;
+  const heroImageMobileTransform = asImageTransform(s.hero_image_mobile);
 
   return (
     <section className="relative" data-lux-section={sectionId}>
@@ -56,7 +60,7 @@ export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
-            className="hidden md:block h-full"
+            className="aspect-[4/5] md:aspect-auto md:h-full"
           >
             <div className="h-full bg-[hsl(var(--lux-gray))]">
               {heroImageUrl && (
@@ -64,6 +68,9 @@ export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
                   src={heroImageUrl}
                   alt={heroAlt}
                   transform={heroImageTransform}
+                  mobileSrc={heroImageMobile}
+                  mobileTransform={heroImageMobileTransform}
+                  mobileAspect="4/5"
                   fit="contain"
                   priority
                   className="w-full h-full"
