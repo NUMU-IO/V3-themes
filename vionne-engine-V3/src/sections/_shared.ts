@@ -178,6 +178,126 @@ export function asImageAlt(v: unknown, fallback = ""): string {
   return fallback;
 }
 
+/** Poster image URL stored alongside a `video_picker` value (`{ url, poster }`). */
+export function asVideoPoster(v: unknown): string {
+  if (v && typeof v === "object" && "poster" in v) {
+    return asImageUrl((v as { poster?: unknown }).poster);
+  }
+  return "";
+}
+
+/**
+ * Resolve a `video_picker` value into something renderable. The editor stores
+ * it as `{ url, poster }` (or a legacy plain URL string), and merchants paste a
+ * link from wherever their content lives — a direct MP4/WebM file, or a
+ * YouTube / Vimeo / Instagram / TikTok / Facebook page URL. A native `<video>`
+ * only plays direct files, so we map each social URL to its embeddable iframe
+ * form instead. Returns `null` when the value is empty or from an unrecognized
+ * host so the caller can fall back to the poster image (never a blank tile).
+ */
+export type VideoEmbed =
+  | { kind: "file"; src: string; poster?: string }
+  | { kind: "iframe"; src: string; provider: string; poster?: string };
+
+const _VIDEO_FILE_RE = /\.(mp4|webm|ogg|ogv|mov|m4v)(\?.*)?$/i;
+
+export function resolveVideoEmbed(raw: unknown): VideoEmbed | null {
+  const url = asImageUrl(raw).trim();
+  if (!url) return null;
+  const poster = asVideoPoster(raw) || undefined;
+
+  // Direct media file (or inline/blob) → native <video>.
+  if (
+    _VIDEO_FILE_RE.test(url) ||
+    url.startsWith("blob:") ||
+    url.startsWith("data:")
+  ) {
+    return { kind: "file", src: url, poster };
+  }
+
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return null;
+  }
+  const host = u.hostname.replace(/^www\./, "").toLowerCase();
+  const iframe = (src: string, provider: string): VideoEmbed => ({
+    kind: "iframe",
+    src,
+    provider,
+    poster,
+  });
+
+  // YouTube — watch / youtu.be / shorts / embed. loop needs playlist=<id>.
+  if (
+    host === "youtube.com" ||
+    host === "m.youtube.com" ||
+    host === "youtube-nocookie.com" ||
+    host === "youtu.be"
+  ) {
+    let id = "";
+    if (host === "youtu.be") id = u.pathname.split("/").filter(Boolean)[0] ?? "";
+    else if (u.pathname.startsWith("/shorts/")) id = u.pathname.split("/")[2] ?? "";
+    else if (u.pathname.startsWith("/embed/")) id = u.pathname.split("/")[2] ?? "";
+    else id = u.searchParams.get("v") ?? "";
+    if (!id) return null;
+    const q = new URLSearchParams({
+      autoplay: "1",
+      mute: "1",
+      loop: "1",
+      playlist: id,
+      controls: "0",
+      playsinline: "1",
+      modestbranding: "1",
+      rel: "0",
+    });
+    return iframe(`https://www.youtube-nocookie.com/embed/${id}?${q.toString()}`, "youtube");
+  }
+
+  // Vimeo — background=1 gives a chromeless autoplay-muted-loop, ideal for reels.
+  if (host === "vimeo.com" || host === "player.vimeo.com") {
+    const id = u.pathname.split("/").filter(Boolean).pop() ?? "";
+    if (!/^\d+$/.test(id)) return null;
+    const q = new URLSearchParams({
+      autoplay: "1",
+      muted: "1",
+      loop: "1",
+      background: "1",
+    });
+    return iframe(`https://player.vimeo.com/video/${id}?${q.toString()}`, "vimeo");
+  }
+
+  // Instagram — reel / post / tv.
+  if (host === "instagram.com") {
+    const m = u.pathname.match(/\/(reels?|p|tv)\/([^/]+)/);
+    if (!m) return null;
+    const kind = m[1] === "reels" ? "reel" : m[1];
+    return iframe(`https://www.instagram.com/${kind}/${m[2]}/embed`, "instagram");
+  }
+
+  // TikTok.
+  if (host === "tiktok.com") {
+    const m = u.pathname.match(/\/video\/(\d+)/);
+    if (!m) return null;
+    return iframe(`https://www.tiktok.com/embed/v2/${m[1]}`, "tiktok");
+  }
+
+  // Facebook / fb.watch — the official video plugin accepts the original href,
+  // so we don't need to parse the (opaque) id out of the URL.
+  if (host === "facebook.com" || host === "m.facebook.com" || host === "fb.watch") {
+    const q = new URLSearchParams({
+      href: url,
+      show_text: "false",
+      autoplay: "true",
+      mute: "1",
+    });
+    return iframe(`https://www.facebook.com/plugins/video.php?${q.toString()}`, "facebook");
+  }
+
+  return null;
+}
+
 
 // ── Non-destructive image transform (focal / zoom / rotation) — Phase 2 ──────
 // Mirror of merchant-hub imageTransform.ts (and bazar _shared). Keep
