@@ -96,6 +96,27 @@ export default function GildedCart({ instance, sectionId }: SectionRenderProps) 
   const isEmpty = items.length === 0;
   const totalItems = items.reduce((n, it) => n + it.quantity, 0);
 
+  // ── INITIAL-LOAD STATE ─────────────────────────────────────────────────────
+  // The SDK seeds an EMPTY cart until the on-mount GET /api/cart lands. Rendering
+  // the empty state during that window flashed "Nothing Here Yet" for a returning
+  // shopper who actually has items. While loading with nothing yet, show a neutral
+  // spinner in the same shell (no layout shift) instead of the empty state.
+  if (isEmpty && loading) {
+    return (
+      <section
+        className="min-h-[60vh] bg-background flex items-center justify-center"
+        data-gilded-section={sectionId}
+        aria-busy="true"
+      >
+        <div
+          role="status"
+          aria-label={localized(locale, "Loading", "جارٍ التحميل")}
+          className="w-9 h-9 rounded-full border-2 border-[var(--gilded-gold)]/20 border-t-[var(--gilded-gold)] motion-safe:animate-spin"
+        />
+      </section>
+    );
+  }
+
   // ── EMPTY STATE ──────────────────────────────────────────────────────────
   if (isEmpty) {
     return (

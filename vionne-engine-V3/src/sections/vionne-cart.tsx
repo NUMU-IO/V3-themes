@@ -57,6 +57,28 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
   const isEmpty = items.length === 0;
   const totalItems = items.reduce((n, it) => n + it.quantity, 0);
 
+  // ── Initial-load state ────────────────────────────────────────────────────
+  // The cart is EMPTY_CART until the on-mount GET /api/cart lands. Rendering
+  // the empty state during that window flashed "YOUR CART IS EMPTY" for a
+  // returning shopper who actually has items. While loading with nothing yet,
+  // show a neutral placeholder (same shell height → no layout shift) instead.
+  if (isEmpty && loading) {
+    return (
+      <section
+        className="bg-background min-h-[70vh] flex items-center justify-center"
+        data-vn-section={sectionId}
+        data-testid="storefront-cart"
+        aria-busy="true"
+      >
+        <div
+          className="w-9 h-9 rounded-full border-2 border-[var(--vn-border)] border-t-[var(--vn-ink)] motion-safe:animate-spin"
+          role="status"
+          aria-label={localized(locale, "Loading your bag", "جارٍ تحميل شنطتك")}
+        />
+      </section>
+    );
+  }
+
   // ── Empty state ──────────────────────────────────────────────────────────
   if (isEmpty) {
     return (

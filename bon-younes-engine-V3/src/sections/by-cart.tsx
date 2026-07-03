@@ -24,7 +24,7 @@ import { InlineEditable } from "./_inline-editable";
  */
 export default function ByCart({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
-  const cart = useCart();
+  const { cart, loading } = useCart();
   // System strings (not section settings) flow through the locale
   // catalog so a merchant can rebrand them in Edit theme content. Keys
   // match locales/<lang>.json (see the theme's locale catalog).
@@ -46,6 +46,42 @@ export default function ByCart({ instance, sectionId }: SectionRenderProps) {
 
   const items: CartItem[] = cart?.items ?? [];
   const isEmpty = items.length === 0;
+
+  // Initial-load guard: the cart seeds as EMPTY_CART until the on-mount
+  // GET /api/cart lands. Rendering the empty state during that window
+  // flashed "Your basket is empty" for a returning shopper who actually
+  // has items. While loading with nothing yet, show a neutral spinner in
+  // the same shell (same background + centered layout → no layout shift).
+  if (isEmpty && loading) {
+    return (
+      <section
+        className="by-cart by-cart--loading"
+        data-by-section={sectionId}
+        aria-busy="true"
+        style={{
+          padding: "4rem 1rem",
+          background: "var(--by-cream, #fdf8ee)",
+          minHeight: "60vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          role="status"
+          aria-label={localized(locale, "Loading your basket", "جارٍ تحميل سلتك")}
+          className="motion-safe:animate-spin"
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            border: "2px solid rgba(58,36,24,0.15)",
+            borderTopColor: "var(--by-espresso, #3a2418)",
+          }}
+        />
+      </section>
+    );
+  }
 
   if (isEmpty) {
     return (

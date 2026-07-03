@@ -21,8 +21,42 @@ export default function CartSummary({ id, settings }: EmpSectionProps) {
 
   const items = cart?.items ?? [];
   const currency = cart?.currency;
+  const isEmpty = items.length === 0;
 
-  if (items.length === 0) {
+  // Initial-load guard: the SDK seeds an EMPTY_CART, then GET /api/cart fills
+  // it. Rendering the empty state during that window flashed "السلة فاضية" for
+  // returning shoppers who actually have items. While still loading with an
+  // empty cart, show a neutral placeholder using the SAME shell (no layout
+  // shift) instead of the empty state.
+  if (isEmpty && loading) {
+    return (
+      <section
+        className="empire-container"
+        style={{
+          paddingBlock: "5rem",
+          textAlign: "center",
+          display: "flex",
+          justifyContent: "center",
+        }}
+        aria-busy="true"
+      >
+        <div
+          role="status"
+          aria-label={t("Loading", "جارٍ التحميل")}
+          className="motion-safe:animate-spin"
+          style={{
+            width: "2.25rem",
+            height: "2.25rem",
+            borderRadius: "9999px",
+            border: "2px solid var(--emp-border)",
+            borderTopColor: "var(--emp-fg, currentColor)",
+          }}
+        />
+      </section>
+    );
+  }
+
+  if (isEmpty) {
     return (
       <section
         className="empire-container"

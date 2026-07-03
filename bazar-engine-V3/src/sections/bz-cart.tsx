@@ -56,6 +56,27 @@ export default function BzCart({ instance, sectionId }: SectionRenderProps) {
   const isEmpty = items.length === 0;
   const totalItems = items.reduce((n, it) => n + it.quantity, 0);
 
+  // Initial-load guard — the SDK seeds an empty cart, then the on-mount
+  // GET /api/cart populates it. Rendering the empty state during that window
+  // flashed "YOUR CART IS EMPTY" for a returning shopper who actually has
+  // items. While loading with nothing yet, show a neutral placeholder (same
+  // shell → no layout shift) instead of the empty state.
+  if (isEmpty && loading) {
+    return (
+      <section
+        className="min-h-[70vh] bg-[var(--bz-cream)] flex items-center justify-center"
+        data-bz-section={sectionId}
+        aria-busy="true"
+      >
+        <div
+          className="w-9 h-9 rounded-full border-2 border-[var(--bz-dark)]/15 border-t-[var(--bz-amber)] motion-safe:animate-spin"
+          role="status"
+          aria-label={localized(locale, "Loading your cart", "جارٍ تحميل سلتك")}
+        />
+      </section>
+    );
+  }
+
   if (isEmpty) {
     return (
       <section

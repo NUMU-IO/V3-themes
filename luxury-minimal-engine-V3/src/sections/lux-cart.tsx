@@ -69,6 +69,27 @@ export default function LuxCart({ instance, sectionId }: SectionRenderProps) {
   const isEmpty = items.length === 0;
   const totalItems = items.reduce((n, it) => n + it.quantity, 0);
 
+  // ── Initial-load state ────────────────────────────────────────────────────
+  // The cart seeds EMPTY until the on-mount GET /api/cart lands. Rendering the
+  // empty state during that window flashed "Your cart is empty" for a returning
+  // shopper who actually has items. While loading with nothing yet, show a
+  // neutral spinner in the same shell (no layout shift) instead.
+  if (isEmpty && loading) {
+    return (
+      <section
+        className="min-h-[70vh] bg-background flex items-center justify-center"
+        data-lux-section={sectionId}
+        aria-busy="true"
+      >
+        <div
+          role="status"
+          aria-label={localized(locale, "Loading", "جارٍ التحميل")}
+          className="w-8 h-8 border-2 border-border border-t-foreground rounded-full motion-safe:animate-spin"
+        />
+      </section>
+    );
+  }
+
   if (isEmpty) {
     return (
       <section
