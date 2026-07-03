@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   Link,
   useCustomer,
+  Money,
   useOrders,
   useCustomerActions,
   useCustomerAddresses,
@@ -381,7 +382,7 @@ export default function LuxProfile({ instance, sectionId }: SectionRenderProps) 
                           </div>
                           <div className="text-end">
                             <span className="text-[13px] font-medium text-foreground block">
-                              {(order.total / 100).toLocaleString("en-US")} {localized(locale, "EGP", "ج.م")}
+                              <Money amount={order.total / 100} currency={order.currency} />
                             </span>
                             <span className="text-[10px] px-1.5 py-0.5 bg-[hsl(var(--lux-gray))] text-foreground/70">
                               {STATUS_LABELS[order.status] || order.status}
