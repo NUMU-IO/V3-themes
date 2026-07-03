@@ -2,7 +2,7 @@
   "id": "neo-brutalism-v3",
   "name": "Neo Brutalism (V3)",
   "author": "NUMU",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "layout": "single-column",
   "description": "Neo Brutalism (V3) — bold, raw, unapologetic design with thick borders, hard shadows, and neon accents. Ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
