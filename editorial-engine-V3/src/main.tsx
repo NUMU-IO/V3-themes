@@ -4,11 +4,11 @@
  */
 
 import {
-  StrictMode, Suspense, forwardRef, lazy, useImperativeHandle, useState,
+  StrictMode, forwardRef, useImperativeHandle, useState, type ComponentType,
 } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import {
-  NuMuProvider, Section, useThemeSettings, mountTheme,
+  NuMuProvider, Section, useThemeSettings, defineThemeEntry,
   type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
@@ -19,22 +19,39 @@ import {
   selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
+// Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+// server-rendered by renderToString (they suspend on a chunk fetch), and the
+// per-chunk download waterfall caused the blank-content flash on every nav.
+// Eager imports bundle every section into theme.js so the whole page renders
+// in one commit — server-side (createApp) and client-side (mount) alike.
+import EdHero from "./sections/ed-hero";
+import EdCategories from "./sections/ed-categories";
+import EdFeaturedCollection from "./sections/ed-featured-collection";
+import EdPromoBanner from "./sections/ed-promo-banner";
+import EdTestimonials from "./sections/ed-testimonials";
+import EdNewsletter from "./sections/ed-newsletter";
+import EdProductDetailSection from "./sections/ed-product-detail-section";
+import EdProductsPageSection from "./sections/ed-products-page-section";
+import EdProfile from "./sections/ed-profile";
+import EdOrderConfirmationSection from "./sections/ed-order-confirmation-section";
+
 interface MountResult {
   cleanup: () => void;
   applyDraft: (next: ThemeSettingsV3) => void;
 }
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
-  "ed-hero": lazy(() => import("./sections/ed-hero")),
-  "ed-categories": lazy(() => import("./sections/ed-categories")),
-  "ed-featured-collection": lazy(() => import("./sections/ed-featured-collection")),
-  "ed-promo-banner": lazy(() => import("./sections/ed-promo-banner")),
-  "ed-testimonials": lazy(() => import("./sections/ed-testimonials")),
-  "ed-newsletter": lazy(() => import("./sections/ed-newsletter")),
-  "ed-product-detail-section": lazy(() => import("./sections/ed-product-detail-section")),
-  "ed-products-page-section": lazy(() => import("./sections/ed-products-page-section")),
-  "ed-profile": lazy(() => import("./sections/ed-profile")),
-  "ed-order-confirmation-section": lazy(() => import("./sections/ed-order-confirmation-section")),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
+  "ed-hero": EdHero,
+  "ed-categories": EdCategories,
+  "ed-featured-collection": EdFeaturedCollection,
+  "ed-promo-banner": EdPromoBanner,
+  "ed-testimonials": EdTestimonials,
+  "ed-newsletter": EdNewsletter,
+  "ed-product-detail-section": EdProductDetailSection,
+  "ed-products-page-section": EdProductsPageSection,
+  "ed-profile": EdProfile,
+  "ed-order-confirmation-section": EdOrderConfirmationSection,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -59,9 +76,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -105,11 +120,15 @@ function pickTemplate(ctx: MountContext): string {
   return "home";
 }
 
-export function mount(el: HTMLElement, ctx: MountContext) {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
-  ));
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+const entry = defineThemeEntry(({ currentTemplate }) => (
+  <ThemeApp currentTemplate={currentTemplate} />
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

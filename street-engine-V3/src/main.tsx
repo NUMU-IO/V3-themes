@@ -6,32 +6,28 @@
  * merchant actually uses pay the bundle cost.
  */
 
+import { type ComponentType } from "react";
 import {
-  StrictMode,
-  lazy,
-  Suspense,
-  useImperativeHandle,
-  useRef,
-  useState,
-  forwardRef,
-} from "react";
-import { createRoot, type Root } from "react-dom/client";
-import {
-  NuMuProvider,
   Section,
   useThemeSettings,
+  defineThemeEntry,
   type ThemeSettingsV3,
   type Store,
   type Cart,
   type Customer,
   type SectionInstance,
-  type MountResult,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
-  "st-street-product-detail-section": lazy(() => import("./sections/st-street-product-detail-section")),
-  "st-street-products-page-section": lazy(() => import("./sections/st-street-products-page-section")),
+// Eager section imports (no React.lazy): sections bundle into theme.js so the
+// page renders in one commit (no chunk-download flash); SSR-safe.
+import StStreetProductDetailSection from "./sections/st-street-product-detail-section";
+import StStreetProductsPageSection from "./sections/st-street-products-page-section";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
+  "st-street-product-detail-section": StStreetProductDetailSection,
+  "st-street-products-page-section": StStreetProductsPageSection,
 };
 
 function UnknownSection({ type }: { type: string }) {
@@ -93,9 +89,7 @@ function RenderSection({
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} />
-      </Suspense>
+      <Component instance={instance} />
     </Section>
   );
 }
@@ -125,66 +119,13 @@ export interface MountContext {
   [extra: string]: unknown;
 }
 
-interface DraftHandle {
-  applyDraft: (next: ThemeSettingsV3) => void;
-}
+// defineThemeEntry yields both mount (client) and createApp (server SSR). The
+// SDK's buildThemeElement handles the NuMuProvider wiring (store / themeSettings
+// / cart / customer / locale) that this theme's old hand-rolled mount did.
+const entry = defineThemeEntry(() => <ThemeApp />);
 
-const ThemeSettingsBridge = forwardRef<DraftHandle, { ctx: MountContext }>(
-  function ThemeSettingsBridge({ ctx }, ref) {
-    const [themeSettings, setThemeSettings] = useState<ThemeSettingsV3>(
-      ctx.themeSettings,
-    );
-    useImperativeHandle(
-      ref,
-      () => ({
-        applyDraft: (next) => setThemeSettings((prev) => (prev === next ? prev : next)),
-      }),
-      [],
-    );
-    return (
-      <NuMuProvider
-        store={ctx.store}
-        themeSettings={themeSettings}
-        initialCart={ctx.initialCart}
-        customer={ctx.customer}
-        locale={ctx.locale}
-        translations={ctx.translations}
-      >
-        <ThemeApp />
-      </NuMuProvider>
-    );
-  },
-);
-
-let currentRoot: Root | null = null;
-
-export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  if (currentRoot) {
-    currentRoot.unmount();
-    currentRoot = null;
-  }
-  const root = createRoot(el);
-  currentRoot = root;
-  const handleRef = { current: null as DraftHandle | null };
-  root.render(
-    <StrictMode>
-      <ThemeSettingsBridge
-        ctx={ctx}
-        ref={(h) => {
-          handleRef.current = h;
-        }}
-      />
-    </StrictMode>,
-  );
-  return {
-    applyDraft: (next) => handleRef.current?.applyDraft(next),
-    cleanup: () => {
-      root.unmount();
-      if (currentRoot === root) currentRoot = null;
-      handleRef.current = null;
-    },
-  };
-}
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

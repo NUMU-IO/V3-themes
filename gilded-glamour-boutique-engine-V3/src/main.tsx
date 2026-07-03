@@ -8,10 +8,10 @@
  * (host-provided) or falls back to the manifest's built-in preset template.
  */
 
-import { Suspense, lazy } from "react";
+import { type ComponentType } from "react";
 import {
   Section,
-  mountTheme,
+  defineThemeEntry,
   useThemeSettings,
   type Cart,
   type Customer,
@@ -30,37 +30,55 @@ import {
 } from "./sections/_template-utils";
 import { DemoContext, PageDataContext, type MountPageData } from "./sections/_shared";
 
-interface MountResult {
-  cleanup: () => void;
-  applyDraft: (next: ThemeSettingsV3) => void;
-}
+// Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+// server-rendered by renderToString (they suspend on a chunk fetch), and the
+// per-chunk download waterfall caused the blank-content flash on every nav.
+// Eager imports bundle every section into theme.js so the whole page renders
+// in one commit — server-side (createApp) and client-side (mount) alike.
+import GildedHeader from "./sections/gilded-header";
+import GildedFooter from "./sections/gilded-footer";
+import GildedHero from "./sections/gilded-hero";
+import GildedCategories from "./sections/gilded-categories";
+import GildedFeaturedCollection from "./sections/gilded-featured-collection";
+import GildedPromoBanner from "./sections/gilded-promo-banner";
+import GildedTestimonials from "./sections/gilded-testimonials";
+import GildedNewsletter from "./sections/gilded-newsletter";
+import GildedRichText from "./sections/gilded-rich-text";
+import GildedProductDetail from "./sections/gilded-product-detail";
+import GildedProductsPage from "./sections/gilded-products-page";
+import GildedCart from "./sections/gilded-cart";
+import GildedSearchResults from "./sections/gilded-search-results";
+import GildedNotFound from "./sections/gilded-not-found";
+import GildedProfile from "./sections/gilded-profile";
+import GildedOrderConfirmation from "./sections/gilded-order-confirmation";
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // Chrome — header / footer (on every template). Aliased to the GENERIC
   // "header"/"footer" types too: chrome delivered via section_groups can carry
   // either the theme-prefixed type (V3 customizer) or the generic type
   // (legacy/host normalisation), so both must resolve.
-  "gilded-header": lazy(() => import("./sections/gilded-header")),
-  "gilded-footer": lazy(() => import("./sections/gilded-footer")),
-  header: lazy(() => import("./sections/gilded-header")),
-  footer: lazy(() => import("./sections/gilded-footer")),
+  "gilded-header": GildedHeader,
+  "gilded-footer": GildedFooter,
+  header: GildedHeader,
+  footer: GildedFooter,
   // Home / content sections — faithful V2 ports.
-  "gilded-hero": lazy(() => import("./sections/gilded-hero")),
-  "gilded-categories": lazy(() => import("./sections/gilded-categories")),
-  "gilded-featured-collection": lazy(() => import("./sections/gilded-featured-collection")),
-  "gilded-promo-banner": lazy(() => import("./sections/gilded-promo-banner")),
-  "gilded-testimonials": lazy(() => import("./sections/gilded-testimonials")),
-  "gilded-newsletter": lazy(() => import("./sections/gilded-newsletter")),
-  "gilded-rich-text": lazy(() => import("./sections/gilded-rich-text")),
+  "gilded-hero": GildedHero,
+  "gilded-categories": GildedCategories,
+  "gilded-featured-collection": GildedFeaturedCollection,
+  "gilded-promo-banner": GildedPromoBanner,
+  "gilded-testimonials": GildedTestimonials,
+  "gilded-newsletter": GildedNewsletter,
+  "gilded-rich-text": GildedRichText,
   // Commerce templates.
-  "gilded-product-detail": lazy(() => import("./sections/gilded-product-detail")),
-  "gilded-products-page": lazy(() => import("./sections/gilded-products-page")),
-  "gilded-cart": lazy(() => import("./sections/gilded-cart")),
-  "gilded-search-results": lazy(() => import("./sections/gilded-search-results")),
-  "gilded-not-found": lazy(() => import("./sections/gilded-not-found")),
+  "gilded-product-detail": GildedProductDetail,
+  "gilded-products-page": GildedProductsPage,
+  "gilded-cart": GildedCart,
+  "gilded-search-results": GildedSearchResults,
+  "gilded-not-found": GildedNotFound,
   // Account templates.
-  "gilded-profile": lazy(() => import("./sections/gilded-profile")),
-  "gilded-order-confirmation": lazy(() => import("./sections/gilded-order-confirmation")),
+  "gilded-profile": GildedProfile,
+  "gilded-order-confirmation": GildedOrderConfirmation,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -107,9 +125,7 @@ function RenderSection({
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -208,15 +224,19 @@ export interface MountContext {
   [extra: string]: unknown;
 }
 
-export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  return mountTheme(el, ctx, ({ currentTemplate, demo, page }) => (
-    <DemoContext.Provider value={demo}>
-      <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
-        <ThemeApp currentTemplate={currentTemplate} />
-      </PageDataContext.Provider>
-    </DemoContext.Provider>
-  ));
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+const entry = defineThemeEntry(({ currentTemplate, demo, page }) => (
+  <DemoContext.Provider value={demo}>
+    <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
+      <ThemeApp currentTemplate={currentTemplate} />
+    </PageDataContext.Provider>
+  </DemoContext.Provider>
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

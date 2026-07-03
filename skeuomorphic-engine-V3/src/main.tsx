@@ -5,9 +5,9 @@
  * order-confirmation) exactly like the Vionne V3 exemplar.
  */
 
-import { Suspense, lazy } from "react";
+import { type ComponentType } from "react";
 import {
-  Section, useThemeSettings, mountTheme,
+  Section, useThemeSettings, defineThemeEntry,
   type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
@@ -19,27 +19,44 @@ import {
   selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
+// Eager section imports (no React.lazy): sections bundle into theme.js so the
+// whole page renders in one commit — no chunk-download flash, SSR-safe.
+import SkeuAnnouncementBar from "./sections/skeu-announcement-bar";
+import SkeuHero from "./sections/skeu-hero";
+import SkeuCategories from "./sections/skeu-categories";
+import SkeuFeaturedCollection from "./sections/skeu-featured-collection";
+import SkeuPromoBanner from "./sections/skeu-promo-banner";
+import SkeuTestimonials from "./sections/skeu-testimonials";
+import SkeuNewsletter from "./sections/skeu-newsletter";
+import SkeuProductDetail from "./sections/skeu-product-detail";
+import SkeuProductsPage from "./sections/skeu-products-page";
+import SkeuProfile from "./sections/skeu-profile";
+import SkeuAbout from "./sections/skeu-about";
+import SkeuContact from "./sections/skeu-contact";
+import SkeuOrderConfirmationSection from "./sections/skeu-order-confirmation-section";
+
 interface MountResult {
   cleanup: () => void;
   applyDraft: (next: ThemeSettingsV3) => void;
 }
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // Home sections
-  "skeu-announcement-bar": lazy(() => import("./sections/skeu-announcement-bar")),
-  "skeu-hero": lazy(() => import("./sections/skeu-hero")),
-  "skeu-categories": lazy(() => import("./sections/skeu-categories")),
-  "skeu-featured-collection": lazy(() => import("./sections/skeu-featured-collection")),
-  "skeu-promo-banner": lazy(() => import("./sections/skeu-promo-banner")),
-  "skeu-testimonials": lazy(() => import("./sections/skeu-testimonials")),
-  "skeu-newsletter": lazy(() => import("./sections/skeu-newsletter")),
+  "skeu-announcement-bar": SkeuAnnouncementBar,
+  "skeu-hero": SkeuHero,
+  "skeu-categories": SkeuCategories,
+  "skeu-featured-collection": SkeuFeaturedCollection,
+  "skeu-promo-banner": SkeuPromoBanner,
+  "skeu-testimonials": SkeuTestimonials,
+  "skeu-newsletter": SkeuNewsletter,
   // Page-level sections (full V2 parity + Vionne-ported pages)
-  "skeu-product-detail": lazy(() => import("./sections/skeu-product-detail")),
-  "skeu-products-page": lazy(() => import("./sections/skeu-products-page")),
-  "skeu-profile": lazy(() => import("./sections/skeu-profile")),
-  "skeu-about": lazy(() => import("./sections/skeu-about")),
-  "skeu-contact": lazy(() => import("./sections/skeu-contact")),
-  "skeu-order-confirmation-section": lazy(() => import("./sections/skeu-order-confirmation-section")),
+  "skeu-product-detail": SkeuProductDetail,
+  "skeu-products-page": SkeuProductsPage,
+  "skeu-profile": SkeuProfile,
+  "skeu-about": SkeuAbout,
+  "skeu-contact": SkeuContact,
+  "skeu-order-confirmation-section": SkeuOrderConfirmationSection,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -64,9 +81,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -95,11 +110,13 @@ export interface MountContext {
   [extra: string]: unknown;
 }
 
-export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
-  ));
-}
+// defineThemeEntry yields both mount (client) and createApp (server SSR).
+const entry = defineThemeEntry(({ currentTemplate }) => (
+  <ThemeApp currentTemplate={currentTemplate} />
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

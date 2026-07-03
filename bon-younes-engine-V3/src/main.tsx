@@ -3,30 +3,21 @@
  *
  * Renders sections from `themeSettings.templates.<currentTemplate>`
  * (host-provided) or falls back to the manifest's preset home template.
- * Sections lazy-load so each page only pays for what it shows.
+ *
+ * Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+ * server-rendered by renderToString (they suspend on a chunk fetch), and the
+ * per-chunk download waterfall caused the blank-content flash on every nav.
+ * Eager imports bundle every section into theme.js so the whole page renders
+ * in one commit — server-side (createApp) and client-side (mount) alike.
  */
 
+import { type ComponentType } from "react";
 import {
-  StrictMode,
-  Suspense,
-  forwardRef,
-  lazy,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from "react";
-import { createRoot, type Root } from "react-dom/client";
-import {
-  applyGlobalStyleTokens,
-  resolveFontStack,
-  NuMuProvider,
-  ProductProvider,
   Section,
   useThemeSettings,
+  defineThemeEntry,
   type Cart,
-  type Collection,
   type Customer,
-  type Product,
   type SectionInstance,
   type Store,
   type ThemeSettingsV3,
@@ -34,32 +25,39 @@ import {
 import themeManifest from "../theme.json";
 import { DemoContext, PageDataContext, type MountPageData } from "./sections/_shared";
 
-/**
- * MountResult shape. The published @numueg/theme-sdk@0.1.0 doesn't
- * re-export this type yet, so we declare it inline. Matches the host
- * contract documented in `ByotThemeBoundary.tsx` on the storefront.
- */
-interface MountResult {
-  cleanup: () => void;
-  applyDraft: (next: ThemeSettingsV3) => void;
-}
+import ByHeader from "./sections/by-header";
+import ByHero from "./sections/by-hero";
+import ByScrollStory from "./sections/by-scroll-story";
+import ByMenu from "./sections/by-menu";
+import ByProductDetail from "./sections/by-product-detail";
+import ByFooter from "./sections/by-footer";
+// Phase 2 — multipage templates
+import ByProductGrid from "./sections/by-product-grid";
+import ByRelatedProducts from "./sections/by-related-products";
+import ByCart from "./sections/by-cart";
+import ByOrderConfirmation from "./sections/by-order-confirmation";
+import ByRichText from "./sections/by-rich-text";
+import ByNotFound from "./sections/by-not-found";
+import BySearchResults from "./sections/by-search-results";
+import ByProfileSection from "./sections/by-profile-section";
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
-  "by-header": lazy(() => import("./sections/by-header")),
-  "by-hero": lazy(() => import("./sections/by-hero")),
-  "by-scroll-story": lazy(() => import("./sections/by-scroll-story")),
-  "by-menu": lazy(() => import("./sections/by-menu")),
-  "by-product-detail": lazy(() => import("./sections/by-product-detail")),
-  "by-footer": lazy(() => import("./sections/by-footer")),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
+  "by-header": ByHeader,
+  "by-hero": ByHero,
+  "by-scroll-story": ByScrollStory,
+  "by-menu": ByMenu,
+  "by-product-detail": ByProductDetail,
+  "by-footer": ByFooter,
   // Phase 2 — multipage templates
-  "by-product-grid": lazy(() => import("./sections/by-product-grid")),
-  "by-related-products": lazy(() => import("./sections/by-related-products")),
-  "by-cart": lazy(() => import("./sections/by-cart")),
-  "by-order-confirmation": lazy(() => import("./sections/by-order-confirmation")),
-  "by-rich-text": lazy(() => import("./sections/by-rich-text")),
-  "by-not-found": lazy(() => import("./sections/by-not-found")),
-  "by-search-results": lazy(() => import("./sections/by-search-results")),
-  "by-profile-section": lazy(() => import("./sections/by-profile-section")),
+  "by-product-grid": ByProductGrid,
+  "by-related-products": ByRelatedProducts,
+  "by-cart": ByCart,
+  "by-order-confirmation": ByOrderConfirmation,
+  "by-rich-text": ByRichText,
+  "by-not-found": ByNotFound,
+  "by-search-results": BySearchResults,
+  "by-profile-section": ByProfileSection,
 };
 
 function UnknownSection({ type }: { type: string }) {
@@ -108,9 +106,7 @@ function RenderSection({
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -147,10 +143,8 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
  *   { themeSettings, storeData, page, locale }
  *
  * Older drafts of the contract used `{ store, currentTemplate, ... }`.
- * We accept both shapes and normalise — bundles published to the
- * marketplace need to be defensive because the host evolves
- * independently. Anything we don't recognise still flows through via
- * the index signature.
+ * We accept both shapes — the SDK's defineThemeEntry normalises them
+ * (pickStore / pickTemplate / catalog forwarding / style tokens / nav).
  */
 export interface MountContext {
   // V3 storefront contract (current host)
@@ -169,185 +163,27 @@ export interface MountContext {
   locale?: string;
   translations?: Record<string, string>;
   /** Phase 2.4 — store navigation menus keyed by handle (`main-menu`,
-   *  `footer`, …), resolved server-side by the host. Forwarded to
-   *  NuMuProvider so header/footer `useNavigation(handle)` resolves with
-   *  no client round-trip. The `navigation` prop resolves against the
-   *  federated host SDK at runtime (like MountResult, it post-dates the
-   *  pinned @numueg/theme-sdk@0.1.0 types). */
+   *  `footer`, …), resolved server-side by the host. */
   navigation?: Record<string, unknown[]>;
   [extra: string]: unknown;
 }
 
-interface DraftHandle {
-  applyDraft: (next: ThemeSettingsV3) => void;
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+// It owns the provider stack (catalog + nav + style tokens + demo inference);
+// the theme only wraps its LOCAL DemoContext / PageDataContext and renders
+// its section list.
+const entry = defineThemeEntry(({ currentTemplate, demo, page }) => (
+  <DemoContext.Provider value={demo}>
+    <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
+      <ThemeApp currentTemplate={currentTemplate} />
+    </PageDataContext.Provider>
+  </DemoContext.Provider>
+));
 
-/** Normalize the two ctx shapes into one. */
-function pickStore(ctx: MountContext): Store {
-  const s = ctx.storeData ?? ctx.store;
-  if (s) return s;
-  // Last-resort fallback so undefined never reaches NuMuProvider —
-  // SDK code reads `store.currency` without optional chaining and
-  // would throw. Keeps the bundle alive long enough to render.
-  return {
-    id: "unknown",
-    name: "Store",
-    slug: "store",
-    currency: "EGP",
-    default_language: "en",
-    use_nextjs_storefront: true,
-  } as Store;
-}
-
-function pickTemplate(ctx: MountContext): string {
-  if (typeof ctx.currentTemplate === "string" && ctx.currentTemplate) {
-    return ctx.currentTemplate;
-  }
-  const pageType = ctx.page?.type;
-  if (typeof pageType === "string" && pageType) return pageType;
-  return "home";
-}
-
-const ThemeSettingsBridge = forwardRef<
-  DraftHandle,
-  { ctx: MountContext; mountEl: HTMLElement }
->(function ThemeSettingsBridge({ ctx, mountEl }, ref) {
-    const [themeSettings, setThemeSettings] = useState<ThemeSettingsV3>(
-      ctx.themeSettings,
-    );
-    useImperativeHandle(
-      ref,
-      () => ({
-        applyDraft: (next) =>
-          setThemeSettings((prev) => (prev === next ? prev : next)),
-      }),
-      [],
-    );
-    // Phase 3.5 — bridge global settings (colors/fonts/layout) to CSS custom
-    // properties on the mount root so editing them re-paints the storefront.
-    // Re-runs on every applyDraft, so the customizer's live preview recolors
-    // as the merchant drags a color.
-    useEffect(() => {
-      const gs = (themeSettings.global_settings ?? {}) as Record<string, unknown>;
-      applyGlobalStyleTokens(gs, mountEl);
-      // Fonts (#4 → font_picker): the typography fields now use the platform's
-      // ~55-font catalog, but SDK applyGlobalStyleTokens only writes
-      // `--theme-<id>` for the ~10 fonts in its built-in FONT_REGISTRY (its
-      // isFontToken gate). Any catalog font outside that set falls through to
-      // the raw string branch — wrong var value (bare name, no font stack) and,
-      // critically, no Google Fonts <link> injected, so "fonts don't change
-      // anything". resolveFontStack() turns the chosen name into a usable
-      // stack AND injects the @font-face link for known faces. We write the
-      // EXACT vars styles.css reads (--theme-heading_font / --theme-body_font),
-      // overriding whatever the generic pass set. Colors are already handled
-      // correctly by applyGlobalStyleTokens (--theme-primary_color etc.), so we
-      // don't touch them here.
-      const headingFont = gs.heading_font;
-      if (typeof headingFont === "string" && headingFont.trim()) {
-        mountEl.style.setProperty(
-          "--theme-heading_font",
-          resolveFontStack(headingFont),
-        );
-      }
-      const bodyFont = gs.body_font;
-      if (typeof bodyFont === "string" && bodyFont.trim()) {
-        mountEl.style.setProperty(
-          "--theme-body_font",
-          resolveFontStack(bodyFont),
-        );
-      }
-    }, [themeSettings, mountEl]);
-    const store = pickStore(ctx);
-    const template = pickTemplate(ctx);
-    // Real catalog the host forwards in the mount ctx: home/products routes
-    // ship page.data.{products,collections}; the PDP ships page.data.product.
-    // Feeding these into NuMuProvider (+ ProductProvider) is what makes
-    // useProducts()/useProduct() return the merchant's ACTUAL catalog — without
-    // it every data-driven section saw empty real data and fell back to demo
-    // content (the phantom coffee products on real stores).
-    const pageData = (ctx.page?.data ?? {}) as {
-      products?: Product[];
-      collections?: Collection[];
-      product?: Product;
-    };
-    // Demo mode: an explicit host flag (ctx.demo) wins when the host sets it;
-    // otherwise infer from empty templates — the marketplace preview ships none
-    // (so the bundle renders its built-in preset with demo imagery), while the
-    // editor + an installed store ship a populated customization (→ neutral
-    // placeholders for unconfigured images, never demo coffee photos).
-    //
-    // KNOWN LIMITATION (hardening tracked for the batch — see
-    // SESSION-IMGMODEL-COMPLETE.md): the empty-templates inference can misfire
-    // for an installed store whose stored customization diverges from the
-    // active bundle's schemas (the storefront's sanitizeAgainstSchemas can then
-    // empty `templates`). The robust fix is for the host to pass an explicit
-    // `ctx.demo` (true only for the marketplace preview); the bundle already
-    // honours it above. Land that host wiring before copying this pattern to
-    // the other themes.
-    const demo =
-      typeof ctx.demo === "boolean"
-        ? ctx.demo
-        : !themeSettings.templates ||
-          Object.keys(themeSettings.templates).length === 0;
-    return (
-      <DemoContext.Provider value={demo}>
-        <PageDataContext.Provider value={(ctx.page as MountPageData | undefined) ?? null}>
-          <NuMuProvider
-            store={store}
-            themeSettings={themeSettings}
-            initialCart={ctx.initialCart}
-            customer={ctx.customer}
-            locale={ctx.locale}
-            translations={ctx.translations}
-            navigation={ctx.navigation}
-            initialProducts={pageData.products}
-            initialCollections={pageData.collections}
-            currentTemplate={template}
-          >
-            {pageData.product ? (
-              <ProductProvider product={pageData.product}>
-                <ThemeApp currentTemplate={template} />
-              </ProductProvider>
-            ) : (
-              <ThemeApp currentTemplate={template} />
-            )}
-          </NuMuProvider>
-        </PageDataContext.Provider>
-      </DemoContext.Provider>
-    );
-  },
-);
-
-let currentRoot: Root | null = null;
-
-export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  if (currentRoot) {
-    currentRoot.unmount();
-    currentRoot = null;
-  }
-  const root = createRoot(el);
-  currentRoot = root;
-  const handleRef = { current: null as DraftHandle | null };
-  root.render(
-    <StrictMode>
-      <ThemeSettingsBridge
-        ctx={ctx}
-        mountEl={el}
-        ref={(h) => {
-          handleRef.current = h;
-        }}
-      />
-    </StrictMode>,
-  );
-  return {
-    applyDraft: (next) => handleRef.current?.applyDraft(next),
-    cleanup: () => {
-      root.unmount();
-      if (currentRoot === root) currentRoot = null;
-      handleRef.current = null;
-    },
-  };
-}
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

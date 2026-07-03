@@ -13,17 +13,16 @@
 
 import {
   StrictMode,
-  Suspense,
   forwardRef,
-  lazy,
   useImperativeHandle,
   useState,
+  type ComponentType,
 } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import {
   NuMuProvider,
   Section,
-  mountTheme,
+  defineThemeEntry,
   useThemeSettings,
   type Cart,
   type Customer,
@@ -36,6 +35,32 @@ import { DemoContext, PageDataContext, type MountPageData } from "./sections/_sh
 import BzWhatsAppFab from "./sections/_whatsapp-fab";
 import "./theme.css";
 
+// Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+// server-rendered by renderToString (they suspend on a chunk fetch), and the
+// per-chunk download waterfall caused the blank-content flash on every nav.
+// Eager imports bundle every section into theme.js so the whole page renders
+// in one commit — server-side (createApp) and client-side (mount) alike.
+import BzAboutSection from "./sections/bz-about-section";
+import BzHero from "./sections/bz-hero";
+import BzImageWithText from "./sections/bz-image-with-text";
+import BzMarquee from "./sections/bz-marquee";
+import BzNewsletter from "./sections/bz-newsletter";
+import BzPromoBanner from "./sections/bz-promo-banner";
+import BzRichText from "./sections/bz-rich-text";
+import BzTestimonials from "./sections/bz-testimonials";
+import BzHeader from "./sections/bz-header";
+import BzFooter from "./sections/bz-footer";
+import BzFeaturedCollection from "./sections/bz-featured-collection";
+import BzProductGrid from "./sections/bz-product-grid";
+import BzProductDetail from "./sections/bz-product-detail";
+import BzRelatedProducts from "./sections/bz-related-products";
+import BzCart from "./sections/bz-cart";
+import BzSearchResults from "./sections/bz-search-results";
+import BzNotFound from "./sections/bz-not-found";
+import BzContact from "./sections/bz-contact";
+import BzProfile from "./sections/bz-profile";
+import BzOrderConfirmation from "./sections/bz-order-confirmation";
+
 /**
  * MountResult shape. The published @numueg/theme-sdk@0.1.0 doesn't
  * re-export this type yet, so we declare it inline. Matches the host
@@ -46,34 +71,35 @@ interface MountResult {
   applyDraft: (next: ThemeSettingsV3) => void;
 }
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // Home / content sections (Phase 0–2)
-  "bz-about-section": lazy(() => import("./sections/bz-about-section")),
-  "bz-hero": lazy(() => import("./sections/bz-hero")),
-  "bz-image-with-text": lazy(() => import("./sections/bz-image-with-text")),
-  "bz-marquee": lazy(() => import("./sections/bz-marquee")),
-  "bz-newsletter": lazy(() => import("./sections/bz-newsletter")),
-  "bz-promo-banner": lazy(() => import("./sections/bz-promo-banner")),
-  "bz-rich-text": lazy(() => import("./sections/bz-rich-text")),
-  "bz-testimonials": lazy(() => import("./sections/bz-testimonials")),
+  "bz-about-section": BzAboutSection,
+  "bz-hero": BzHero,
+  "bz-image-with-text": BzImageWithText,
+  "bz-marquee": BzMarquee,
+  "bz-newsletter": BzNewsletter,
+  "bz-promo-banner": BzPromoBanner,
+  "bz-rich-text": BzRichText,
+  "bz-testimonials": BzTestimonials,
   // Chrome + commerce sections (Phase 3 — multipage templates). Header/footer
   // aliased to the GENERIC "header"/"footer" types too, so chrome delivered via
   // section_groups (prefixed OR generic type) always resolves.
-  "bz-header": lazy(() => import("./sections/bz-header")),
-  "bz-footer": lazy(() => import("./sections/bz-footer")),
-  header: lazy(() => import("./sections/bz-header")),
-  footer: lazy(() => import("./sections/bz-footer")),
-  "bz-featured-collection": lazy(() => import("./sections/bz-featured-collection")),
-  "bz-product-grid": lazy(() => import("./sections/bz-product-grid")),
-  "bz-product-detail": lazy(() => import("./sections/bz-product-detail")),
-  "bz-related-products": lazy(() => import("./sections/bz-related-products")),
-  "bz-cart": lazy(() => import("./sections/bz-cart")),
-  "bz-search-results": lazy(() => import("./sections/bz-search-results")),
-  "bz-not-found": lazy(() => import("./sections/bz-not-found")),
+  "bz-header": BzHeader,
+  "bz-footer": BzFooter,
+  header: BzHeader,
+  footer: BzFooter,
+  "bz-featured-collection": BzFeaturedCollection,
+  "bz-product-grid": BzProductGrid,
+  "bz-product-detail": BzProductDetail,
+  "bz-related-products": BzRelatedProducts,
+  "bz-cart": BzCart,
+  "bz-search-results": BzSearchResults,
+  "bz-not-found": BzNotFound,
   // Standalone page sections (Phase 4 — V2 parity: about/contact/profile/order)
-  "bz-contact": lazy(() => import("./sections/bz-contact")),
-  "bz-profile": lazy(() => import("./sections/bz-profile")),
-  "bz-order-confirmation": lazy(() => import("./sections/bz-order-confirmation")),
+  "bz-contact": BzContact,
+  "bz-profile": BzProfile,
+  "bz-order-confirmation": BzOrderConfirmation,
 };
 
 function UnknownSection({ type }: { type: string }) {
@@ -126,9 +152,7 @@ function RenderSection({
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -275,15 +299,19 @@ function pickTemplate(ctx: MountContext): string {
   return "home";
 }
 
-export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  return mountTheme(el, ctx, ({ currentTemplate, demo, page }) => (
-    <DemoContext.Provider value={demo}>
-      <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
-        <ThemeApp currentTemplate={currentTemplate} />
-      </PageDataContext.Provider>
-    </DemoContext.Provider>
-  ));
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+const entry = defineThemeEntry(({ currentTemplate, demo, page }) => (
+  <DemoContext.Provider value={demo}>
+    <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
+      <ThemeApp currentTemplate={currentTemplate} />
+    </PageDataContext.Provider>
+  </DemoContext.Provider>
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

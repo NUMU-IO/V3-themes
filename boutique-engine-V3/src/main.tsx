@@ -4,11 +4,11 @@
  */
 
 import {
-  StrictMode, Suspense, forwardRef, lazy, useImperativeHandle, useState,
+  StrictMode, forwardRef, useImperativeHandle, useState, type ComponentType,
 } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import {
-  NuMuProvider, Section, useThemeSettings, mountTheme,
+  NuMuProvider, Section, useThemeSettings, defineThemeEntry,
   type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
@@ -19,25 +19,44 @@ import {
   selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
+// Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+// server-rendered by renderToString (they suspend on a chunk fetch), and the
+// per-chunk download waterfall caused the blank-content flash on every nav.
+// Eager imports bundle every section into theme.js so the whole page renders
+// in one commit — server-side (createApp) and client-side (mount) alike.
+import BoutiqueHero from "./sections/boutique-hero";
+import BoutiqueCategories from "./sections/boutique-categories";
+import BoutiqueFeaturedCollection from "./sections/boutique-featured-collection";
+import BoutiquePromoBanner from "./sections/boutique-promo-banner";
+import BoutiqueTestimonials from "./sections/boutique-testimonials";
+import BoutiqueNewsletter from "./sections/boutique-newsletter";
+import BoutiqueProductDetail from "./sections/boutique-product-detail";
+import BoutiqueProductsPage from "./sections/boutique-products-page";
+import BoutiqueProfile from "./sections/boutique-profile";
+import BoutiqueAbout from "./sections/boutique-about";
+import BoutiqueContact from "./sections/boutique-contact";
+import BoutiqueOrderConfirmationSection from "./sections/boutique-order-confirmation-section";
+
 interface MountResult {
   cleanup: () => void;
   applyDraft: (next: ThemeSettingsV3) => void;
 }
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
-  "boutique-hero": lazy(() => import("./sections/boutique-hero")),
-  "boutique-categories": lazy(() => import("./sections/boutique-categories")),
-  "boutique-featured-collection": lazy(() => import("./sections/boutique-featured-collection")),
-  "boutique-promo-banner": lazy(() => import("./sections/boutique-promo-banner")),
-  "boutique-testimonials": lazy(() => import("./sections/boutique-testimonials")),
-  "boutique-newsletter": lazy(() => import("./sections/boutique-newsletter")),
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
+  "boutique-hero": BoutiqueHero,
+  "boutique-categories": BoutiqueCategories,
+  "boutique-featured-collection": BoutiqueFeaturedCollection,
+  "boutique-promo-banner": BoutiquePromoBanner,
+  "boutique-testimonials": BoutiqueTestimonials,
+  "boutique-newsletter": BoutiqueNewsletter,
   // Full V2 parity: page-level sections + extras.
-  "boutique-product-detail": lazy(() => import("./sections/boutique-product-detail")),
-  "boutique-products-page": lazy(() => import("./sections/boutique-products-page")),
-  "boutique-profile": lazy(() => import("./sections/boutique-profile")),
-  "boutique-about": lazy(() => import("./sections/boutique-about")),
-  "boutique-contact": lazy(() => import("./sections/boutique-contact")),
-  "boutique-order-confirmation-section": lazy(() => import("./sections/boutique-order-confirmation-section")),
+  "boutique-product-detail": BoutiqueProductDetail,
+  "boutique-products-page": BoutiqueProductsPage,
+  "boutique-profile": BoutiqueProfile,
+  "boutique-about": BoutiqueAbout,
+  "boutique-contact": BoutiqueContact,
+  "boutique-order-confirmation-section": BoutiqueOrderConfirmationSection,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -62,9 +81,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -108,11 +125,15 @@ function pickTemplate(ctx: MountContext): string {
   return "home";
 }
 
-export function mount(el: HTMLElement, ctx: MountContext) {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
-  ));
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+const entry = defineThemeEntry(({ currentTemplate }) => (
+  <ThemeApp currentTemplate={currentTemplate} />
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

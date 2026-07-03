@@ -3,9 +3,9 @@
  * Dual mount-context shape, sanitised template selection.
  */
 
-import { Suspense, lazy } from "react";
+import { type ComponentType } from "react";
 import {
-  Section, useThemeSettings, mountTheme,
+  Section, useThemeSettings, defineThemeEntry,
   type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
@@ -16,28 +16,44 @@ import {
   selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
-interface MountResult {
-  cleanup: () => void;
-  applyDraft: (next: ThemeSettingsV3) => void;
-}
+// Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+// server-rendered by renderToString (they suspend on a chunk fetch), and the
+// per-chunk download waterfall caused the blank-content flash on every nav.
+// Eager imports bundle every section into theme.js so the whole page renders
+// in one commit — server-side (createApp) and client-side (mount) alike.
+import NbAnnouncementBar from "./sections/nb-announcement-bar";
+import Nbhero from "./sections/nbhero";
+import Nbmarquee from "./sections/nbmarquee";
+import Nbcategories from "./sections/nbcategories";
+import NbfeaturedCollection from "./sections/nbfeatured-collection";
+import NbpromoBanner from "./sections/nbpromo-banner";
+import Nbtestimonials from "./sections/nbtestimonials";
+import Nbnewsletter from "./sections/nbnewsletter";
+import NbProductDetail from "./sections/nb-product-detail";
+import NbProductsPage from "./sections/nb-products-page";
+import NbProfile from "./sections/nb-profile";
+import NbAbout from "./sections/nb-about";
+import NbContact from "./sections/nb-contact";
+import NbOrderConfirmationSection from "./sections/nb-order-confirmation-section";
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // Home sections (faithful V2 neo-brutalism ports)
-  "nb-announcement-bar": lazy(() => import("./sections/nb-announcement-bar")),
-  "nbhero": lazy(() => import("./sections/nbhero")),
-  "nbmarquee": lazy(() => import("./sections/nbmarquee")),
-  "nbcategories": lazy(() => import("./sections/nbcategories")),
-  "nbfeatured-collection": lazy(() => import("./sections/nbfeatured-collection")),
-  "nbpromo-banner": lazy(() => import("./sections/nbpromo-banner")),
-  "nbtestimonials": lazy(() => import("./sections/nbtestimonials")),
-  "nbnewsletter": lazy(() => import("./sections/nbnewsletter")),
+  "nb-announcement-bar": NbAnnouncementBar,
+  "nbhero": Nbhero,
+  "nbmarquee": Nbmarquee,
+  "nbcategories": Nbcategories,
+  "nbfeatured-collection": NbfeaturedCollection,
+  "nbpromo-banner": NbpromoBanner,
+  "nbtestimonials": Nbtestimonials,
+  "nbnewsletter": Nbnewsletter,
   // Page-level sections (full V2 parity — never a blank page)
-  "nb-product-detail": lazy(() => import("./sections/nb-product-detail")),
-  "nb-products-page": lazy(() => import("./sections/nb-products-page")),
-  "nb-profile": lazy(() => import("./sections/nb-profile")),
-  "nb-about": lazy(() => import("./sections/nb-about")),
-  "nb-contact": lazy(() => import("./sections/nb-contact")),
-  "nb-order-confirmation-section": lazy(() => import("./sections/nb-order-confirmation-section")),
+  "nb-product-detail": NbProductDetail,
+  "nb-products-page": NbProductsPage,
+  "nb-profile": NbProfile,
+  "nb-about": NbAbout,
+  "nb-contact": NbContact,
+  "nb-order-confirmation-section": NbOrderConfirmationSection,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -62,9 +78,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -125,11 +139,15 @@ function pickTemplate(ctx: MountContext): string {
   return "home";
 }
 
-export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
-  ));
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+const entry = defineThemeEntry(({ currentTemplate }) => (
+  <ThemeApp currentTemplate={currentTemplate} />
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

@@ -4,11 +4,11 @@
  */
 
 import {
-  StrictMode, Suspense, forwardRef, lazy, useImperativeHandle, useState,
+  StrictMode, forwardRef, useImperativeHandle, useState, type ComponentType,
 } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import {
-  NuMuProvider, Section, useThemeSettings, mountTheme,
+  NuMuProvider, Section, useThemeSettings, defineThemeEntry,
   type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
@@ -19,23 +19,39 @@ import {
   selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
+// Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+// server-rendered by renderToString (they suspend on a chunk fetch), and the
+// per-chunk download waterfall caused the blank-content flash on every nav.
+// Eager imports bundle every section into theme.js so the whole page renders
+// in one commit — server-side (createApp) and client-side (mount) alike.
+import ModernHero from "./sections/modern-hero";
+import ModernCategories from "./sections/modern-categories";
+import ModernFeaturedCollection from "./sections/modern-featured-collection";
+import ModernPromoBanner from "./sections/modern-promo-banner";
+import ModernTestimonials from "./sections/modern-testimonials";
+import ModernNewsletter from "./sections/modern-newsletter";
+import ModernProductDetail from "./sections/modern-product-detail";
+import ModernProductsPage from "./sections/modern-products-page";
+import ModernProfile from "./sections/modern-profile";
+
 interface MountResult {
   cleanup: () => void;
   applyDraft: (next: ThemeSettingsV3) => void;
 }
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // Home sections
-  "modern-hero": lazy(() => import("./sections/modern-hero")),
-  "modern-categories": lazy(() => import("./sections/modern-categories")),
-  "modern-featured-collection": lazy(() => import("./sections/modern-featured-collection")),
-  "modern-promo-banner": lazy(() => import("./sections/modern-promo-banner")),
-  "modern-testimonials": lazy(() => import("./sections/modern-testimonials")),
-  "modern-newsletter": lazy(() => import("./sections/modern-newsletter")),
+  "modern-hero": ModernHero,
+  "modern-categories": ModernCategories,
+  "modern-featured-collection": ModernFeaturedCollection,
+  "modern-promo-banner": ModernPromoBanner,
+  "modern-testimonials": ModernTestimonials,
+  "modern-newsletter": ModernNewsletter,
   // Page-level sections (product / products / profile)
-  "modern-product-detail": lazy(() => import("./sections/modern-product-detail")),
-  "modern-products-page": lazy(() => import("./sections/modern-products-page")),
-  "modern-profile": lazy(() => import("./sections/modern-profile")),
+  "modern-product-detail": ModernProductDetail,
+  "modern-products-page": ModernProductsPage,
+  "modern-profile": ModernProfile,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -60,9 +76,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -106,11 +120,15 @@ function pickTemplate(ctx: MountContext): string {
   return "home";
 }
 
-export function mount(el: HTMLElement, ctx: MountContext) {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
-  ));
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+const entry = defineThemeEntry(({ currentTemplate }) => (
+  <ThemeApp currentTemplate={currentTemplate} />
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

@@ -9,9 +9,9 @@
  * exactly like the Vionne V3 theme.
  */
 
-import { lazy, Suspense } from "react";
+import { type ComponentType } from "react";
 import {
-  Section, useThemeSettings, mountTheme,
+  Section, useThemeSettings, defineThemeEntry,
   type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
@@ -22,27 +22,44 @@ import {
   selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
+// Eager section imports (no React.lazy): sections bundle into theme.js so the
+// whole page renders in one commit — no chunk-download flash, SSR-safe.
+import TwAnnouncementBar from "./sections/tw-announcement-bar";
+import TechWaveHero from "./sections/tech-wave-hero";
+import TechWaveCategories from "./sections/tech-wave-categories";
+import TechWaveFeaturedCollection from "./sections/tech-wave-featured-collection";
+import TechWavePromoBanner from "./sections/tech-wave-promo-banner";
+import TechWaveTestimonials from "./sections/tech-wave-testimonials";
+import TechWaveNewsletter from "./sections/tech-wave-newsletter";
+import TechWaveProductDetail from "./sections/tech-wave-product-detail";
+import TechWaveProductsPage from "./sections/tech-wave-products-page";
+import TechWaveProfile from "./sections/tech-wave-profile";
+import TechWaveAbout from "./sections/tech-wave-about";
+import TechWaveContact from "./sections/tech-wave-contact";
+import TechWaveOrderConfirmationSection from "./sections/tech-wave-order-confirmation-section";
+
 interface MountResult {
   cleanup: () => void;
   applyDraft: (next: ThemeSettingsV3) => void;
 }
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // Home sections (faithful ports of the V2 in-tree tech-wave sections)
-  "tw-announcement-bar": lazy(() => import("./sections/tw-announcement-bar")),
-  "tech-wave-hero": lazy(() => import("./sections/tech-wave-hero")),
-  "tech-wave-categories": lazy(() => import("./sections/tech-wave-categories")),
-  "tech-wave-featured-collection": lazy(() => import("./sections/tech-wave-featured-collection")),
-  "tech-wave-promo-banner": lazy(() => import("./sections/tech-wave-promo-banner")),
-  "tech-wave-testimonials": lazy(() => import("./sections/tech-wave-testimonials")),
-  "tech-wave-newsletter": lazy(() => import("./sections/tech-wave-newsletter")),
+  "tw-announcement-bar": TwAnnouncementBar,
+  "tech-wave-hero": TechWaveHero,
+  "tech-wave-categories": TechWaveCategories,
+  "tech-wave-featured-collection": TechWaveFeaturedCollection,
+  "tech-wave-promo-banner": TechWavePromoBanner,
+  "tech-wave-testimonials": TechWaveTestimonials,
+  "tech-wave-newsletter": TechWaveNewsletter,
   // Page-level sections (ported from the Vionne V3 page sections, re-skinned)
-  "tech-wave-product-detail": lazy(() => import("./sections/tech-wave-product-detail")),
-  "tech-wave-products-page": lazy(() => import("./sections/tech-wave-products-page")),
-  "tech-wave-profile": lazy(() => import("./sections/tech-wave-profile")),
-  "tech-wave-about": lazy(() => import("./sections/tech-wave-about")),
-  "tech-wave-contact": lazy(() => import("./sections/tech-wave-contact")),
-  "tech-wave-order-confirmation-section": lazy(() => import("./sections/tech-wave-order-confirmation-section")),
+  "tech-wave-product-detail": TechWaveProductDetail,
+  "tech-wave-products-page": TechWaveProductsPage,
+  "tech-wave-profile": TechWaveProfile,
+  "tech-wave-about": TechWaveAbout,
+  "tech-wave-contact": TechWaveContact,
+  "tech-wave-order-confirmation-section": TechWaveOrderConfirmationSection,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -67,9 +84,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -111,11 +126,13 @@ function pickTemplate(ctx: MountContext): string {
   return "home";
 }
 
-export function mount(el: HTMLElement, ctx: MountContext) {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
-  ));
-}
+// defineThemeEntry yields both mount (client) and createApp (server SSR).
+const entry = defineThemeEntry(({ currentTemplate }) => (
+  <ThemeApp currentTemplate={currentTemplate} />
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

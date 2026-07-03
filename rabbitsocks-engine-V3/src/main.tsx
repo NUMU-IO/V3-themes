@@ -1,14 +1,11 @@
 /**
  * Rabbitsocks (V3) — V3 entry point.
  * Dual mount-context shape, sanitised template selection.
- *
- * Section components live in src/sections/<type>.tsx and are lazy-loaded so
- * only sections the merchant actually uses pay the bundle cost.
  */
 
-import { Suspense, lazy } from "react";
+import { type ComponentType } from "react";
 import {
-  Section, useThemeSettings, mountTheme,
+  Section, useThemeSettings, defineThemeEntry,
   type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
@@ -18,6 +15,24 @@ import "./theme.css";
 import {
   selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
+
+// Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+// server-rendered by renderToString (they suspend on a chunk fetch), and the
+// per-chunk download waterfall caused the blank-content flash on every nav.
+// Eager imports bundle every section into theme.js so the whole page renders
+// in one commit — server-side (createApp) and client-side (mount) alike.
+import RsHero from "./sections/rs-hero";
+import RsMarquee from "./sections/rs-marquee";
+import RsFeatured from "./sections/rs-featured";
+import RsCategories from "./sections/rs-categories";
+import RsImageWithText from "./sections/rs-image-with-text";
+import RsPromoBanner from "./sections/rs-promo-banner";
+import RsNewsletter from "./sections/rs-newsletter";
+import RsEditorial from "./sections/rs-editorial";
+import RsProductDetail from "./sections/rs-product-detail";
+import RsProductsPage from "./sections/rs-products-page";
+import RsProfile from "./sections/rs-profile";
+import RsOrderConfirmationSection from "./sections/rs-order-confirmation-section";
 
 /**
  * MountResult shape. The published @numueg/theme-sdk@0.1.0 doesn't
@@ -29,21 +44,22 @@ interface MountResult {
   applyDraft: (next: ThemeSettingsV3) => void;
 }
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // ── Home sections (faithful V2 ports) ──────────────────────────────
-  "rs-hero": lazy(() => import("./sections/rs-hero")),
-  "rs-marquee": lazy(() => import("./sections/rs-marquee")),
-  "rs-featured": lazy(() => import("./sections/rs-featured")),
-  "rs-categories": lazy(() => import("./sections/rs-categories")),
-  "rs-image-with-text": lazy(() => import("./sections/rs-image-with-text")),
-  "rs-promo-banner": lazy(() => import("./sections/rs-promo-banner")),
-  "rs-newsletter": lazy(() => import("./sections/rs-newsletter")),
-  "rs-editorial": lazy(() => import("./sections/rs-editorial")),
+  "rs-hero": RsHero,
+  "rs-marquee": RsMarquee,
+  "rs-featured": RsFeatured,
+  "rs-categories": RsCategories,
+  "rs-image-with-text": RsImageWithText,
+  "rs-promo-banner": RsPromoBanner,
+  "rs-newsletter": RsNewsletter,
+  "rs-editorial": RsEditorial,
   // ── Page-level sections (full V2 parity) ───────────────────────────
-  "rs-product-detail": lazy(() => import("./sections/rs-product-detail")),
-  "rs-products-page": lazy(() => import("./sections/rs-products-page")),
-  "rs-profile": lazy(() => import("./sections/rs-profile")),
-  "rs-order-confirmation-section": lazy(() => import("./sections/rs-order-confirmation-section")),
+  "rs-product-detail": RsProductDetail,
+  "rs-products-page": RsProductsPage,
+  "rs-profile": RsProfile,
+  "rs-order-confirmation-section": RsOrderConfirmationSection,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -68,9 +84,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -137,11 +151,15 @@ function pickTemplate(ctx: MountContext): string {
   return "home";
 }
 
-export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
-  ));
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+const entry = defineThemeEntry(({ currentTemplate }) => (
+  <ThemeApp currentTemplate={currentTemplate} />
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

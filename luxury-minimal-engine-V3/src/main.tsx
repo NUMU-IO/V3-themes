@@ -11,10 +11,10 @@
  * template's section list lives in theme.json's `presets.templates`.
  */
 
-import { Suspense, lazy } from "react";
+import { type ComponentType } from "react";
 import {
   Section,
-  mountTheme,
+  defineThemeEntry,
   useThemeSettings,
   type Cart,
   type Customer,
@@ -33,36 +33,54 @@ import {
 } from "./sections/_template-utils";
 import { DemoContext, PageDataContext, type MountPageData } from "./sections/_shared";
 
-interface MountResult {
-  cleanup: () => void;
-  applyDraft: (next: ThemeSettingsV3) => void;
-}
+// Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+// server-rendered by renderToString (they suspend on a chunk fetch), and the
+// per-chunk download waterfall caused the blank-content flash on every nav.
+// Eager imports bundle every section into theme.js so the whole page renders
+// in one commit — server-side (createApp) and client-side (mount) alike.
+import LuxHeader from "./sections/lux-header";
+import LuxFooter from "./sections/lux-footer";
+import LuxHero from "./sections/lux-hero";
+import LuxCategories from "./sections/lux-categories";
+import LuxFeaturedCollection from "./sections/lux-featured-collection";
+import LuxPromoBanner from "./sections/lux-promo-banner";
+import LuxTestimonials from "./sections/lux-testimonials";
+import LuxNewsletter from "./sections/lux-newsletter";
+import LuxRichText from "./sections/lux-rich-text";
+import LuxProductDetail from "./sections/lux-product-detail";
+import LuxProductGrid from "./sections/lux-product-grid";
+import LuxCart from "./sections/lux-cart";
+import LuxSearchResults from "./sections/lux-search-results";
+import LuxNotFound from "./sections/lux-not-found";
+import LuxProfile from "./sections/lux-profile";
+import LuxOrderConfirmation from "./sections/lux-order-confirmation";
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // Chrome — header / footer (on every template). Aliased to the GENERIC
   // "header"/"footer" types too, so chrome delivered via section_groups (which
   // can carry either the theme-prefixed or the generic type) always resolves.
-  "lux-header": lazy(() => import("./sections/lux-header")),
-  "lux-footer": lazy(() => import("./sections/lux-footer")),
-  header: lazy(() => import("./sections/lux-header")),
-  footer: lazy(() => import("./sections/lux-footer")),
+  "lux-header": LuxHeader,
+  "lux-footer": LuxFooter,
+  header: LuxHeader,
+  footer: LuxFooter,
   // Home / content sections.
-  "lux-hero": lazy(() => import("./sections/lux-hero")),
-  "lux-categories": lazy(() => import("./sections/lux-categories")),
-  "lux-featured-collection": lazy(() => import("./sections/lux-featured-collection")),
-  "lux-promo-banner": lazy(() => import("./sections/lux-promo-banner")),
-  "lux-testimonials": lazy(() => import("./sections/lux-testimonials")),
-  "lux-newsletter": lazy(() => import("./sections/lux-newsletter")),
-  "lux-rich-text": lazy(() => import("./sections/lux-rich-text")),
+  "lux-hero": LuxHero,
+  "lux-categories": LuxCategories,
+  "lux-featured-collection": LuxFeaturedCollection,
+  "lux-promo-banner": LuxPromoBanner,
+  "lux-testimonials": LuxTestimonials,
+  "lux-newsletter": LuxNewsletter,
+  "lux-rich-text": LuxRichText,
   // Commerce templates.
-  "lux-product-detail": lazy(() => import("./sections/lux-product-detail")),
-  "lux-product-grid": lazy(() => import("./sections/lux-product-grid")),
-  "lux-cart": lazy(() => import("./sections/lux-cart")),
-  "lux-search-results": lazy(() => import("./sections/lux-search-results")),
-  "lux-not-found": lazy(() => import("./sections/lux-not-found")),
+  "lux-product-detail": LuxProductDetail,
+  "lux-product-grid": LuxProductGrid,
+  "lux-cart": LuxCart,
+  "lux-search-results": LuxSearchResults,
+  "lux-not-found": LuxNotFound,
   // Account templates.
-  "lux-profile": lazy(() => import("./sections/lux-profile")),
-  "lux-order-confirmation": lazy(() => import("./sections/lux-order-confirmation")),
+  "lux-profile": LuxProfile,
+  "lux-order-confirmation": LuxOrderConfirmation,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -109,9 +127,7 @@ function RenderSection({
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -211,15 +227,19 @@ export interface MountContext {
   [extra: string]: unknown;
 }
 
-export function mount(el: HTMLElement, ctx: MountContext): MountResult {
-  return mountTheme(el, ctx, ({ currentTemplate, demo, page }) => (
-    <DemoContext.Provider value={demo}>
-      <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
-        <ThemeApp currentTemplate={currentTemplate} />
-      </PageDataContext.Provider>
-    </DemoContext.Provider>
-  ));
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+const entry = defineThemeEntry(({ currentTemplate, demo, page }) => (
+  <DemoContext.Provider value={demo}>
+    <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
+      <ThemeApp currentTemplate={currentTemplate} />
+    </PageDataContext.Provider>
+  </DemoContext.Provider>
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

@@ -3,13 +3,10 @@
  * Dual mount-context shape, sanitised template selection, dev HUD.
  */
 
+import { useMemo, type ComponentType } from "react";
 import {
-  StrictMode, Suspense, forwardRef, lazy, useImperativeHandle, useMemo, useState,
-} from "react";
-import { createRoot, type Root } from "react-dom/client";
-import {
-  NuMuProvider, Section, useThemeSettings, mountTheme, useLocale, sanitizeHtml,
-  type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
+  Section, useThemeSettings, useLocale, sanitizeHtml, defineThemeEntry,
+  type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 // Tailwind-in-bundle: compiles @tailwind directives + ported V2 vionne
@@ -20,36 +17,56 @@ import {
 } from "./sections/_template-utils";
 import { DemoContext, PageDataContext, usePageData, type MountPageData } from "./sections/_shared";
 
-interface MountResult {
-  cleanup: () => void;
-  applyDraft: (next: ThemeSettingsV3) => void;
-}
+// Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+// server-rendered by renderToString (they suspend on a chunk fetch), and the
+// per-chunk download waterfall caused the blank-content flash on every nav.
+// Eager imports bundle every section into theme.js so the whole page renders
+// in one commit — server-side (createApp) and client-side (mount) alike.
+import VionneHeader from "./sections/vionne-header";
+import VionneFooter from "./sections/vionne-footer";
+import VionneSlideshow from "./sections/vionne-slideshow";
+import VionneFeaturedCollection from "./sections/vionne-featured-collection";
+import VionneMarquee from "./sections/vionne-marquee";
+import VionneImageComparison from "./sections/vionne-image-comparison";
+import VionneUgcCarousel from "./sections/vionne-ugc-carousel";
+import VionneAbout from "./sections/vionne-about";
+import VionneContact from "./sections/vionne-contact";
+import VionneOrderConfirmationSection from "./sections/vionne-order-confirmation-section";
+import VionnePromoBanner from "./sections/vionne-promo-banner";
+import VionneCollectionStrip from "./sections/vionne-collection-strip";
+import VionneProductDetail from "./sections/vionne-product-detail";
+import VionneProductsPage from "./sections/vionne-products-page";
+import VionneCart from "./sections/vionne-cart";
+import VionneProfile from "./sections/vionne-profile";
+import VionneSearchResults from "./sections/vionne-search-results";
+import VionneNotFound from "./sections/vionne-not-found";
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // Chrome — header / footer (included first/last on every template). Aliased
   // to the GENERIC "header"/"footer" types too, so chrome delivered via
   // section_groups (prefixed OR generic type) always resolves.
-  "vionne-header": lazy(() => import("./sections/vionne-header")),
-  "vionne-footer": lazy(() => import("./sections/vionne-footer")),
-  header: lazy(() => import("./sections/vionne-header")),
-  footer: lazy(() => import("./sections/vionne-footer")),
-  "vionne-slideshow": lazy(() => import("./sections/vionne-slideshow")),
-  "vionne-featured-collection": lazy(() => import("./sections/vionne-featured-collection")),
-  "vionne-marquee": lazy(() => import("./sections/vionne-marquee")),
-  "vionne-image-comparison": lazy(() => import("./sections/vionne-image-comparison")),
-  "vionne-ugc-carousel": lazy(() => import("./sections/vionne-ugc-carousel")),
-  "vionne-about": lazy(() => import("./sections/vionne-about")),
-  "vionne-contact": lazy(() => import("./sections/vionne-contact")),
-  "vionne-order-confirmation-section": lazy(() => import("./sections/vionne-order-confirmation-section")),
+  "vionne-header": VionneHeader,
+  "vionne-footer": VionneFooter,
+  header: VionneHeader,
+  footer: VionneFooter,
+  "vionne-slideshow": VionneSlideshow,
+  "vionne-featured-collection": VionneFeaturedCollection,
+  "vionne-marquee": VionneMarquee,
+  "vionne-image-comparison": VionneImageComparison,
+  "vionne-ugc-carousel": VionneUgcCarousel,
+  "vionne-about": VionneAbout,
+  "vionne-contact": VionneContact,
+  "vionne-order-confirmation-section": VionneOrderConfirmationSection,
   // Phase A — full V2 parity: home extras + page-level sections.
-  "vionne-promo-banner": lazy(() => import("./sections/vionne-promo-banner")),
-  "vionne-collection-strip": lazy(() => import("./sections/vionne-collection-strip")),
-  "vionne-product-detail": lazy(() => import("./sections/vionne-product-detail")),
-  "vionne-products-page": lazy(() => import("./sections/vionne-products-page")),
-  "vionne-cart": lazy(() => import("./sections/vionne-cart")),
-  "vionne-profile": lazy(() => import("./sections/vionne-profile")),
-  "vionne-search-results": lazy(() => import("./sections/vionne-search-results")),
-  "vionne-not-found": lazy(() => import("./sections/vionne-not-found")),
+  "vionne-promo-banner": VionnePromoBanner,
+  "vionne-collection-strip": VionneCollectionStrip,
+  "vionne-product-detail": VionneProductDetail,
+  "vionne-products-page": VionneProductsPage,
+  "vionne-cart": VionneCart,
+  "vionne-profile": VionneProfile,
+  "vionne-search-results": VionneSearchResults,
+  "vionne-not-found": VionneNotFound,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -74,9 +91,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -203,15 +218,19 @@ function pickTemplate(ctx: MountContext): string {
   return "home";
 }
 
-export function mount(el: HTMLElement, ctx: MountContext) {
-  return mountTheme(el, ctx, ({ currentTemplate, demo, page }) => (
-    <DemoContext.Provider value={demo}>
-      <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
-        <ThemeApp currentTemplate={currentTemplate} />
-      </PageDataContext.Provider>
-    </DemoContext.Provider>
-  ));
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+const entry = defineThemeEntry(({ currentTemplate, demo, page }) => (
+  <DemoContext.Provider value={demo}>
+    <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
+      <ThemeApp currentTemplate={currentTemplate} />
+    </PageDataContext.Provider>
+  </DemoContext.Provider>
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,

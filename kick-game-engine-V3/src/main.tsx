@@ -6,12 +6,12 @@
  * only sections the merchant actually uses pay the bundle cost.
  */
 
-import { Suspense, lazy } from "react";
+import { type ComponentType } from "react";
 import {
   NuMuProvider,
   Section,
   useThemeSettings,
-  mountTheme,
+  defineThemeEntry,
   type Cart,
   type Customer,
   type SectionInstance,
@@ -27,6 +27,24 @@ import {
   type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
+// Sections are imported EAGERLY (not React.lazy): lazy sections can't be
+// server-rendered by renderToString (they suspend on a chunk fetch), and the
+// per-chunk download waterfall caused the blank-content flash on every nav.
+// Eager imports bundle every section into theme.js so the whole page renders
+// in one commit — server-side (createApp) and client-side (mount) alike.
+import KgHero from "./sections/kghero";
+import KgCategories from "./sections/kgcategories";
+import KgFeatured from "./sections/kgfeatured";
+import KgNewsletter from "./sections/kgnewsletter";
+import KgPromoBanner from "./sections/kgpromo-banner";
+import KgTestimonials from "./sections/kgtestimonials";
+import KgProductDetail from "./sections/kg-product-detail";
+import KgProductsPage from "./sections/kg-products-page";
+import KgProfile from "./sections/kg-profile";
+import KgOrderConfirmation from "./sections/kg-order-confirmation";
+import KgAbout from "./sections/kg-about";
+import KgContact from "./sections/kg-contact";
+
 /**
  * MountResult shape. The published @numueg/theme-sdk@0.1.0 doesn't re-export
  * this type yet, so we declare it inline. Matches the host contract documented
@@ -37,21 +55,22 @@ interface MountResult {
   applyDraft: (next: ThemeSettingsV3) => void;
 }
 
-const SECTION_REGISTRY: Record<string, ReturnType<typeof lazy>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // Home sections (faithful V2 ports)
-  "kghero": lazy(() => import("./sections/kghero")),
-  "kgcategories": lazy(() => import("./sections/kgcategories")),
-  "kgfeatured": lazy(() => import("./sections/kgfeatured")),
-  "kgnewsletter": lazy(() => import("./sections/kgnewsletter")),
-  "kgpromo-banner": lazy(() => import("./sections/kgpromo-banner")),
-  "kgtestimonials": lazy(() => import("./sections/kgtestimonials")),
+  "kghero": KgHero,
+  "kgcategories": KgCategories,
+  "kgfeatured": KgFeatured,
+  "kgnewsletter": KgNewsletter,
+  "kgpromo-banner": KgPromoBanner,
+  "kgtestimonials": KgTestimonials,
   // Page-level sections (ported from the proven vionne V3, re-palette'd)
-  "kg-product-detail": lazy(() => import("./sections/kg-product-detail")),
-  "kg-products-page": lazy(() => import("./sections/kg-products-page")),
-  "kg-profile": lazy(() => import("./sections/kg-profile")),
-  "kg-order-confirmation": lazy(() => import("./sections/kg-order-confirmation")),
-  "kg-about": lazy(() => import("./sections/kg-about")),
-  "kg-contact": lazy(() => import("./sections/kg-contact")),
+  "kg-product-detail": KgProductDetail,
+  "kg-products-page": KgProductsPage,
+  "kg-profile": KgProfile,
+  "kg-order-confirmation": KgOrderConfirmation,
+  "kg-about": KgAbout,
+  "kg-contact": KgContact,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -76,9 +95,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   }
   return (
     <Section id={sectionId} type={instance.type} groupId={groupId}>
-      <Suspense fallback={<div style={{ minHeight: "20vh" }} />}>
-        <Component instance={instance} sectionId={sectionId} />
-      </Suspense>
+      <Component instance={instance} sectionId={sectionId} />
     </Section>
   );
 }
@@ -107,11 +124,15 @@ export interface MountContext {
   [extra: string]: unknown;
 }
 
-export function mount(el: HTMLElement, ctx: MountContext) {
-  return mountTheme(el, ctx, ({ currentTemplate }) => (
-    <ThemeApp currentTemplate={currentTemplate} />
-  ));
-}
+// defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
+// (host-side renderToString for SSR) from a single render function, so the
+// server markup and the client hydration tree are identical by construction.
+const entry = defineThemeEntry(({ currentTemplate }) => (
+  <ThemeApp currentTemplate={currentTemplate} />
+));
+
+export const mount = entry.mount;
+export const createApp = entry.createApp;
 
 const v3Handle = {
   kind: "v3-mount" as const,
