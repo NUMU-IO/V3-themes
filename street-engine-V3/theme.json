@@ -2,7 +2,7 @@
   "id": "street-v3",
   "name": "Street (V3)",
   "author": "NUMU",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "layout": "single-column",
   "description": "Street (V3) — migrated from V2.",
   "error_template": "templates/error.html",
