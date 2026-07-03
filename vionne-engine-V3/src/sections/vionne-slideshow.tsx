@@ -212,7 +212,7 @@ const VionneSlideshow = ({ instance, sectionId }: SectionRenderProps) => {
       })}
 
       {count > 1 && (
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex gap-2.5">
+        <div className="absolute bottom-5 inset-x-0 z-20 flex justify-center gap-2.5">
           {slides.map((_, i) => (
             <button
               key={i}
