@@ -83,11 +83,16 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
   // + footer). Legacy per-section `logo_url`, the old global key, and the live
   // store logo stay as read-compat fallbacks so a store that set a logo before
   // the W1 hoist still renders unchanged.
+  // Single source of truth = the Store Settings logo (`shop.logo_url`, set in
+  // the dashboard AND by the theme editor's Logo field, which writes the same
+  // store logo — so the two always stay in sync). Legacy editor-global keys
+  // stay as fallbacks so a store that set a logo in the theme editor before
+  // this change doesn't lose it.
   const logoUrl =
+    shop?.logo_url ||
     asImageUrl(globals.logo) ||
     asImageUrl(s.logo_url) ||
     asImageUrl(globals.logo_url) ||
-    shop?.logo_url ||
     "";
   const logoWidth = asNumber(globals.logo_width, 0);
 
@@ -204,9 +209,13 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
       <header
         className={`vn-header sticky top-0 z-50 ${hidden ? "is-hidden" : ""} ${condensed ? "is-condensed" : ""}`}
       >
-        <div className="container mx-auto px-4 h-14 md:h-16 flex items-center justify-between gap-3 relative">
+        {/* 3-column grid (1fr · auto · 1fr) keeps the logo dead-centre on every
+            screen and in both LTR/RTL — the two equal side columns guarantee the
+            middle (logo) column is centred, with no fragile absolute-position +
+            translate math. */}
+        <div className="container mx-auto px-4 h-14 md:h-16 grid grid-cols-[1fr_auto_1fr] items-center gap-3 relative">
           {/* Left cluster */}
-          <div className="flex items-center gap-3 md:gap-5 shrink-0">
+          <div className="flex items-center gap-3 md:gap-5 min-w-0 justify-self-start">
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
@@ -271,7 +280,7 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
           {/* Centered logo */}
           <Link
             to="/"
-            className="absolute inset-y-0 start-1/2 -translate-x-1/2 flex items-center justify-center max-w-[55%] md:max-w-[35%] overflow-hidden text-center"
+            className="justify-self-center flex items-center justify-center max-w-full overflow-hidden text-center"
             aria-label={brandName}
           >
             {logoUrl ? (
@@ -301,7 +310,7 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
           </Link>
 
           {/* Right cluster */}
-          <div className="flex items-center gap-3 md:gap-4 shrink-0">
+          <div className="flex items-center gap-3 md:gap-4 min-w-0 justify-self-end">
             {showSearch && (
               <Link
                 to="/search"
