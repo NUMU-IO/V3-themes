@@ -14,6 +14,6 @@ import { numuTheme } from "@numueg/theme-plugin";
 // + federate:false produces the full manifest and a self-contained bundle.
 
 export default defineConfig({
-  plugins: [react(), numuTheme({ federate: false })],
+  plugins: [react(), numuTheme({ federate: true })],
   server: { port: 5173 },
 });
