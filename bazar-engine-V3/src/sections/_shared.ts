@@ -102,25 +102,15 @@ export function demoOrPlaceholder<T>(demo: boolean, items: T[]): T[] {
  * untouched. `locale` comes from the SDK's `useLocale()` (active visitor
  * locale, e.g. "en" | "ar").
  */
-export function localized(locale: string | undefined, en: string, ar: string): string {
-  return (locale || "").toLowerCase().startsWith("ar") ? ar : en;
-}
-
-export function asString(v: unknown, fallback = ""): string {
-  return typeof v === "string" ? v : fallback;
-}
-
-export function asNumber(v: unknown, fallback = 0): number {
-  return typeof v === "number" && Number.isFinite(v) ? v : fallback;
-}
-
-export function asBool(v: unknown, fallback = false): boolean {
-  return typeof v === "boolean" ? v : fallback;
-}
-
-export function asArray<T = unknown>(v: unknown): T[] {
-  return Array.isArray(v) ? (v as T[]) : [];
-}
+// Adopted from @numueg/theme-kit — shared, de-duplicated across the fleet
+// (was copy-pasted per-theme; one fix now reaches every theme that adopts it).
+export {
+  localized,
+  asString,
+  asNumber,
+  asBool,
+  asArray,
+} from "@numueg/theme-kit";
 
 /** Treat an unknown value as a property bag for reading editor blocks. */
 export function asRecord(v: unknown): Record<string, unknown> {

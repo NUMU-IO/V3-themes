@@ -21,7 +21,7 @@ import { numuTheme } from "@numueg/theme-plugin";
  * this theme already shipped.
  */
 export default defineConfig({
-  plugins: [react(), numuTheme({ federate: false }) as unknown as PluginOption],
+  plugins: [react(), numuTheme({ federate: true }) as unknown as PluginOption],
   build: {
     lib: {
       entry: "src/main.tsx",
