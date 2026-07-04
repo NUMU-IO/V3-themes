@@ -77,7 +77,7 @@ function serveBuildChunks(): Plugin {
 export default defineConfig({
   plugins: [
     react(),
-    numuTheme({ federate: false }) as unknown as PluginOption,
+    numuTheme({ federate: true }) as unknown as PluginOption,
     serveBuildChunks(),
   ],
   server: { port: 5173 },

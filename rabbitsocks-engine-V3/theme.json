@@ -2,7 +2,7 @@
   "id": "rabbitsocks-v3",
   "name": "Rabbitsocks (V3)",
   "author": "NUMU",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "layout": "single-column",
   "description": "Rabbitsocks (V3) — quiet-luxury editorial minimalism (serif italic headlines, generous whitespace), ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",

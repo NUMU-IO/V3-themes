@@ -1,3 +1,7 @@
+// Shared guards from @numueg/theme-kit (import+re-export: local binding + public export).
+import { localized, asString, asNumber, asBool, asArray } from "@numueg/theme-kit";
+export { localized, asString, asNumber, asBool, asArray };
+
 import type { CSSProperties } from "react";
 /**
  * Shared helpers for Bon Younes V3 sections.
@@ -121,25 +125,10 @@ export function demoOrPlaceholder<T extends Record<string, unknown>>(
  * English. (Strings already wired through `useTranslation(...)` keep using the
  * locale catalog; this is for the remaining HARDCODED literals.)
  */
-export function localized(locale: string | undefined, en: string, ar: string): string {
-  return (locale || "").toLowerCase().startsWith("ar") ? ar : en;
-}
 
-export function asString(v: unknown, fallback = ""): string {
-  return typeof v === "string" ? v : fallback;
-}
 
-export function asNumber(v: unknown, fallback = 0): number {
-  return typeof v === "number" && Number.isFinite(v) ? v : fallback;
-}
 
-export function asBool(v: unknown, fallback = false): boolean {
-  return typeof v === "boolean" ? v : fallback;
-}
 
-export function asArray<T = unknown>(v: unknown): T[] {
-  return Array.isArray(v) ? (v as T[]) : [];
-}
 
 /** Treat an unknown value as a property bag for reading editor blocks. */
 export function asRecord(v: unknown): Record<string, unknown> {

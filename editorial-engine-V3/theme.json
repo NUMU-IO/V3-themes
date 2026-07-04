@@ -2,7 +2,7 @@
   "id": "editorial-v3",
   "name": "Editorial (V3)",
   "author": "NUMU",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "layout": "single-column",
   "description": "Editorial (V3) — bold fashion editorial with oversized typography and a dramatic green palette, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",

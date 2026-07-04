@@ -12,7 +12,7 @@ import { numuTheme } from "@numueg/theme-plugin";
  * external_theme.css_url), so the plugin's fallback-copy of styles.css no-ops.
  */
 export default defineConfig({
-  plugins: [react(), numuTheme({ federate: false }) as unknown as PluginOption],
+  plugins: [react(), numuTheme({ federate: true }) as unknown as PluginOption],
   build: {
     lib: {
       entry: "src/main.tsx",

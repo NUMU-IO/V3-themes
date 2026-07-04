@@ -11,11 +11,11 @@ import { numuTheme } from "@numueg/theme-plugin";
  * the COMPILED stylesheet as dist/theme.css (the exact name the host loads via
  * external_theme.css_url), so the plugin's fallback-copy of styles.css no-ops.
  *
- * `federate: false` keeps the self-contained bundle (own React + SDK) the
+ * `federate: true` keeps the self-contained bundle (own React + SDK) the
  * deployed V3 themes ship — matches the proven bazar pipeline.
  */
 export default defineConfig({
-  plugins: [react(), numuTheme({ federate: false }) as unknown as PluginOption],
+  plugins: [react(), numuTheme({ federate: true }) as unknown as PluginOption],
   build: {
     lib: {
       entry: "src/main.tsx",
