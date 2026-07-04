@@ -1,18 +1,74 @@
 [
   {
     "name": "Brand",
+    "name_ar": "العلامة التجارية",
     "settings": [
       {
         "type": "color",
         "id": "primary_color",
         "label": "Primary color",
-        "default": "#111111"
+        "label_ar": "اللون الأساسي",
+        "default": "#2f6f52",
+        "info": "Signature green — hero, category blocks and primary brand surfaces.",
+        "info_ar": "اللون الأخضر المميز — البانر والفئات والأسطح الأساسية."
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color",
+        "label_ar": "لون الخلفية",
+        "default": "#f0f1ec"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color",
+        "label_ar": "لون النص",
+        "default": "#1c1c1c",
+        "info": "Body text plus the dark footer and chips.",
+        "info_ar": "نص المحتوى بالإضافة إلى الفوتر الداكن والوسوم."
       },
       {
         "type": "color",
         "id": "accent_color",
         "label": "Accent color",
-        "default": "#d4af37"
+        "label_ar": "لون التمييز",
+        "default": "#d4af37",
+        "info": "Focus rings and highlights.",
+        "info_ar": "حلقات التركيز والإبرازات."
+      },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "Button color",
+        "label_ar": "لون الأزرار",
+        "default": "#141414",
+        "info": "Primary button background.",
+        "info_ar": "خلفية الزر الأساسي."
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "name_ar": "الخطوط",
+    "settings": [
+      {
+        "type": "font",
+        "id": "heading_font",
+        "label": "Heading font",
+        "label_ar": "خط العناوين",
+        "default": "",
+        "info": "Display headings. Leave empty to use the theme's built-in typography.",
+        "info_ar": "عناوين العرض. اتركه فارغًا لاستخدام خط الثيم الافتراضي."
+      },
+      {
+        "type": "font",
+        "id": "body_font",
+        "label": "Body font",
+        "label_ar": "خط النص",
+        "default": "",
+        "info": "Body copy and UI text. Leave empty to use the theme's built-in typography.",
+        "info_ar": "نص المحتوى والواجهة. اتركه فارغًا لاستخدام خط الثيم الافتراضي."
       }
     ]
   }

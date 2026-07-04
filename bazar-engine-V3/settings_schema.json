@@ -86,6 +86,15 @@
         "label": "Ink (text)",
         "label_ar": "لون النص",
         "default": "#0A0A14"
+      },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "Button color",
+        "label_ar": "لون الأزرار",
+        "default": "#FFB300",
+        "info": "Primary button background. Defaults to the amber brand color.",
+        "info_ar": "خلفية الزر الأساسي. الافتراضي هو اللون الكهرماني للعلامة."
       }
     ]
   },
@@ -94,52 +103,22 @@
     "name_ar": "الخطوط",
     "settings": [
       {
-        "type": "select",
+        "type": "font",
         "id": "heading_font",
         "label": "Heading font",
         "label_ar": "خط العناوين",
         "default": "inter",
-        "options": [
-          {
-            "value": "inter",
-            "label": "Inter (sans-serif)",
-            "label_ar": "إنتر"
-          },
-          {
-            "value": "poppins",
-            "label": "Poppins (geometric)",
-            "label_ar": "بوبينز"
-          },
-          {
-            "value": "montserrat",
-            "label": "Montserrat (display)",
-            "label_ar": "مونتسيرات"
-          }
-        ]
+        "info": "Used for display headings and titles.",
+        "info_ar": "يُستخدم للعناوين الرئيسية."
       },
       {
-        "type": "select",
+        "type": "font",
         "id": "body_font",
         "label": "Body font",
         "label_ar": "خط النص",
         "default": "inter",
-        "options": [
-          {
-            "value": "inter",
-            "label": "Inter (sans-serif)",
-            "label_ar": "إنتر"
-          },
-          {
-            "value": "montserrat",
-            "label": "Montserrat",
-            "label_ar": "مونتسيرات"
-          },
-          {
-            "value": "cairo",
-            "label": "Cairo (Arabic-first)",
-            "label_ar": "القاهرة"
-          }
-        ]
+        "info": "Used for body copy and UI text.",
+        "info_ar": "يُستخدم لنص المحتوى وواجهة المستخدم."
       }
     ]
   },

@@ -11,6 +11,28 @@
 /* Theme: Editorial — Bold fashion editorial with dramatic green palette */
 
 [data-editorial-v3-app] {
+  /* ── Merchant color scheme + fonts ──────────────────────────────────────
+     The SDK writes --theme-color-<role> / --theme-font-<role> onto the mount
+     root from global_settings; these hex/stack bridge tokens consume them with
+     Editorial's own values as fallbacks, so an un-customized store renders
+     identically while the Brand + Typography pickers now re-paint the theme's
+     signature surfaces (see the .ed-* / .vn-* rules below). The theme's HSL
+     Tailwind tokens (--primary, --foreground, …) stay on their static values;
+     the brand-critical custom classes are rewired to these bridge tokens. */
+  --ed-primary: var(--theme-color-primary, #2f6f52);
+  --ed-ink: var(--theme-color-text, #1c1c1c);
+  --ed-page-bg: var(--theme-color-background, #f0f1ec);
+  --ed-accent-color: var(--theme-color-accent, #d4af37);
+  --ed-btn-bg: var(--theme-color-button, #141414);
+  --heading-font: var(
+    --theme-font-heading,
+    var(--theme-heading_font, "Helvetica Neue", Helvetica, Arial, sans-serif)
+  );
+  --body-font: var(
+    --theme-font-body,
+    var(--theme-body_font, "Helvetica Neue", Helvetica, Arial, sans-serif)
+  );
+
   --background: 90 10% 94%;
   --foreground: 0 0% 11%;
   --card: 90 8% 97%;
@@ -82,8 +104,9 @@
 }
 
 [data-editorial-v3-app] body {
-  background: hsl(var(--ed-cream));
-  color: hsl(var(--foreground));
+  background: var(--ed-page-bg);
+  color: var(--ed-ink);
+  font-family: var(--body-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* Editorial giant heading style */
@@ -99,7 +122,7 @@
 [data-editorial-v3-app] .ed-block {
   position: relative;
   overflow: hidden;
-  background: hsl(var(--ed-green));
+  background: var(--ed-primary);
 }
 
 [data-editorial-v3-app] .ed-block-light {
@@ -118,7 +141,7 @@
 
 /* Editorial button — solid, sharp */
 [data-editorial-v3-app] .ed-btn {
-  background: hsl(var(--ed-dark));
+  background: var(--ed-btn-bg);
   color: white;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -128,7 +151,7 @@
   transition: all 0.2s ease;
 }
 [data-editorial-v3-app] .ed-btn:hover {
-  background: hsl(var(--ed-green));
+  background: var(--ed-primary);
 }
 
 [data-editorial-v3-app] .ed-btn-outline {
@@ -155,7 +178,7 @@
 
 /* Editorial footer — dark */
 [data-editorial-v3-app] .ed-footer {
-  background: hsl(var(--ed-dark));
+  background: var(--ed-ink);
   color: hsl(90 10% 85%);
 }
 
@@ -168,9 +191,9 @@
   transition: all 0.2s ease;
 }
 [data-editorial-v3-app] .ed-chip-active {
-  background: hsl(var(--ed-dark));
+  background: var(--ed-ink);
   color: white;
-  border-color: hsl(var(--ed-dark));
+  border-color: var(--ed-ink);
 }
 
 /* Inset input */
@@ -179,7 +202,7 @@
   border: 1px solid hsl(var(--border));
 }
 [data-editorial-v3-app] .ed-inset:focus {
-  border-color: hsl(var(--ed-green));
+  border-color: var(--ed-accent-color);
   outline: none;
   box-shadow: 0 0 0 2px hsl(153 45% 30% / 0.15);
 }
@@ -249,11 +272,11 @@
 }
 
 .vn-btn-filled {
-  background: var(--vn-ink);
+  background: var(--ed-btn-bg);
   color: var(--vn-white);
 }
 .vn-btn-filled:hover {
-  background: hsl(var(--ed-green));
+  background: var(--ed-primary);
   opacity: 1;
 }
 
