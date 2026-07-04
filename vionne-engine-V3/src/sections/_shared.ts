@@ -1,3 +1,7 @@
+// Shared guards from @numueg/theme-kit (import+re-export: local binding + public export).
+import { localized, asString, asNumber, asBool, asArray } from "@numueg/theme-kit";
+export { localized, asString, asNumber, asBool, asArray };
+
 import type { CSSProperties } from "react";
 import { createContext, useContext } from "react";
 import type { SectionInstance } from "@numueg/theme-sdk";
@@ -53,25 +57,10 @@ export const usePageData = (): MountPageData | null =>
  * Drives only the empty-state DEFAULT copy a section renders when the merchant
  * hasn't typed a value — under `?locale=ar` (RTL) Arabic shows, else English.
  */
-export function localized(locale: string | undefined, en: string, ar: string): string {
-  return (locale || "").toLowerCase().startsWith("ar") ? ar : en;
-}
 
-export function asString(v: unknown, fallback = ""): string {
-  return typeof v === "string" ? v : fallback;
-}
 
-export function asNumber(v: unknown, fallback = 0): number {
-  return typeof v === "number" && Number.isFinite(v) ? v : fallback;
-}
 
-export function asBool(v: unknown, fallback = false): boolean {
-  return typeof v === "boolean" ? v : fallback;
-}
 
-export function asArray<T = unknown>(v: unknown): T[] {
-  return Array.isArray(v) ? (v as T[]) : [];
-}
 
 interface RawBlock {
   type?: string;

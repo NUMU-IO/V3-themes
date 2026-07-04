@@ -1,3 +1,7 @@
+// Shared guards from @numueg/theme-kit (import+re-export: local binding + public export).
+import { localized, asString, asNumber, asArray } from "@numueg/theme-kit";
+export { localized, asString, asNumber, asArray };
+
 import type { CSSProperties } from "react";
 import type { SectionInstance } from "@numueg/theme-sdk";
 
@@ -6,25 +10,13 @@ export interface SectionRenderProps {
   sectionId: string;
 }
 
-export function asString(v: unknown, fallback = ""): string {
-  return typeof v === "string" ? v : fallback;
-}
 
-export function asNumber(v: unknown, fallback = 0): number {
-  return typeof v === "number" && Number.isFinite(v) ? v : fallback;
-}
 
-export function asArray<T = unknown>(v: unknown): T[] {
-  return Array.isArray(v) ? (v as T[]) : [];
-}
 
 /**
  * ENG-3: pick the locale-appropriate default. Merchant-entered values still
  * win because callers do `asString(s.x) || localized(locale, en, ar)`.
  */
-export function localized(locale: string | undefined, en: string, ar: string): string {
-  return (locale || "").toLowerCase().startsWith("ar") ? ar : en;
-}
 
 /**
  * Read an image-picker value. The editor stores image_picker settings as

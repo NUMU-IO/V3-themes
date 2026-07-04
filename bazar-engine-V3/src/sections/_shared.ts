@@ -104,13 +104,9 @@ export function demoOrPlaceholder<T>(demo: boolean, items: T[]): T[] {
  */
 // Adopted from @numueg/theme-kit — shared, de-duplicated across the fleet
 // (was copy-pasted per-theme; one fix now reaches every theme that adopts it).
-export {
-  localized,
-  asString,
-  asNumber,
-  asBool,
-  asArray,
-} from "@numueg/theme-kit";
+// import + re-export: local binding for helpers below AND public re-export.
+import { localized, asString, asNumber, asBool, asArray } from "@numueg/theme-kit";
+export { localized, asString, asNumber, asBool, asArray };
 
 /** Treat an unknown value as a property bag for reading editor blocks. */
 export function asRecord(v: unknown): Record<string, unknown> {
