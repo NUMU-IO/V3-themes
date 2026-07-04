@@ -38,6 +38,9 @@
   --bz-cream: var(--theme-background_color, #FFF5E1);
   --bz-dark: var(--theme-text_color, #0a0a14);
   --bz-navy: var(--theme-accent_color, #001f3f);
+  /* Primary button background — merchant-controllable (Brand ▸ Button color),
+   * falls back to the amber brand colour so un-customised stores are unchanged. */
+  --bz-button: var(--theme-color-button, var(--bz-amber));
   --bz-white: #FFFFFF;
   --bz-gray: #6b7280;
 
@@ -203,9 +206,9 @@
   border-color: var(--bz-navy);
 }
 .bz-btn-amber {
-  background: var(--bz-amber);
+  background: var(--bz-button);
   color: var(--bz-dark);
-  border-color: var(--bz-amber);
+  border-color: var(--bz-button);
 }
 .bz-btn-amber:hover {
   background: var(--bz-amber-dark);

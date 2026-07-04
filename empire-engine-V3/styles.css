@@ -6,13 +6,22 @@
    =========================================================================== */
 
 .empire {
-  /* Palette — overridable from global_settings via inline --emp-* vars */
-  --emp-black: #000000;
+  /* Palette — driven by the merchant's global theme settings. Each token reads
+     the canonical --theme-* custom property the SDK writes from global_settings
+     (colors → --theme-color-<role>; fonts → --theme-font-<role>, else the
+     id-based --theme-<id>_font), and falls back to this theme's static default
+     so the storefront looks identical before any customization. Editing a color
+     or font in the customizer re-paints every rule that uses these --emp-*
+     tokens. `--emp-black` is intentionally the merchant's primary ink so the
+     monochrome chrome (footer, marquee, badges, …) recolors as one. */
+  --emp-primary: var(--theme-color-primary, #000000);
+  --emp-black: var(--theme-color-primary, #000000);
   --emp-white: #ffffff;
-  --emp-bg: #efeeed;
-  --emp-fg: #000000;
+  --emp-bg: var(--theme-color-background, #efeeed);
+  --emp-fg: var(--theme-color-text, #000000);
   --emp-card: #ffffff;
-  --emp-accent: #0099ff;
+  --emp-accent: var(--theme-color-accent, #0099ff);
+  --emp-button: var(--theme-color-button, var(--emp-primary));
   --emp-charcoal: #383838;
   --emp-gray: #888888;
   --emp-muted: #666666;
@@ -20,9 +29,23 @@
   --emp-secondary: #f6f5f4;
   --emp-radius: 6px;
 
-  --emp-font-body: "Cairo", "Inter", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", system-ui, sans-serif;
-  --emp-font-display: "Cairo", "Inter", system-ui, sans-serif;
+  --emp-font-body: var(
+    --theme-font-body,
+    var(
+      --theme-body_font,
+      "Cairo",
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      system-ui,
+      sans-serif
+    )
+  );
+  --emp-font-display: var(
+    --theme-font-heading,
+    var(--theme-heading_font, "Cairo", "Inter", system-ui, sans-serif)
+  );
   --emp-font-mono: "Fragment Mono", "SF Mono", "Fira Code", ui-monospace,
     monospace;
 
@@ -157,9 +180,9 @@
   text-align: center;
 }
 .empire-btn {
-  background: var(--emp-black);
+  background: var(--emp-button);
   color: var(--emp-white);
-  border-color: var(--emp-black);
+  border-color: var(--emp-button);
 }
 .empire-btn:hover {
   background: var(--emp-charcoal);
