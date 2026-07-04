@@ -4,6 +4,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import {
   Link,
   useCustomer,
+  Money,
   useOrders,
   useCustomerActions,
   useCustomerAddresses,
@@ -601,8 +602,7 @@ export default function ByProfileSection({ instance, sectionId }: SectionRenderP
                               color: espresso,
                             }}
                           >
-                            {(order.total / 100).toLocaleString("en-US")}{" "}
-                            {localized(locale, "EGP", "ج.م")}
+                            <Money amount={order.total / 100} currency={order.currency} />
                           </span>
                           <span
                             style={{

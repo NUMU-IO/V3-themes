@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
-import { Link, useOrders, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, Money, useOrders, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { Check, Copy, MessageCircle, Package } from "lucide-react";
 import { asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -26,7 +26,7 @@ import { InlineEditable } from "./_inline-editable";
  *
  * Money: order totals from useOrders() come back in integer CENTS (the
  * SDK does not normalize them like it does the cart), so we divide by 100
- * and append the EGP/ج.م label — the same convention as by-profile-section.
+ * and render via <Money currency={order.currency}> — the same convention as by-profile-section.
  */
 
 // ── Shared inline-style fragments (Bon Younes tokens) ─────────────────────
@@ -97,7 +97,6 @@ export default function ByOrderConfirmation({ instance, sectionId }: SectionRend
   const order = orders?.[0];
   const orderNumber = order?.order_number ?? "NUM-000000";
   const total = typeof order?.total === "number" ? order.total / 100 : undefined;
-  const currencyLabel = localized(locale, "EGP", "ج.م");
 
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
@@ -220,7 +219,7 @@ export default function ByOrderConfirmation({ instance, sectionId }: SectionRend
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem" }}>
                   <span style={rowLabel}>{localized(locale, "Total", "الإجمالي")}</span>
                   <span style={{ ...rowValue, fontFamily: fontSerif, fontSize: "1.05rem", fontWeight: 600 }}>
-                    {total.toLocaleString("en-US")} {currencyLabel}
+                    <Money amount={total} currency={order?.currency} />
                   </span>
                 </div>
               </>
@@ -337,7 +336,7 @@ export default function ByOrderConfirmation({ instance, sectionId }: SectionRend
                 <span>
                   {localized(locale, "Total", "الإجمالي")}:{" "}
                   <strong style={{ fontWeight: 600 }}>
-                    {total.toLocaleString("en-US")} {currencyLabel}
+                    <Money amount={total} currency={order?.currency} />
                   </strong>
                 </span>
               )}

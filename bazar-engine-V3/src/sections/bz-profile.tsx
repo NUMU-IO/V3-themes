@@ -5,6 +5,7 @@ import {
   Link,
   useCustomer,
   useLocale,
+  Money,
   useOrders,
   useCustomerActions,
   useCustomerAddresses,
@@ -390,7 +391,7 @@ export default function BzProfile({ instance, sectionId }: SectionRenderProps) {
                           </div>
                           <div className="text-end">
                             <span className="text-[13px] font-bold text-[var(--bz-dark)] block">
-                              {(order.total / 100).toLocaleString("en-US")} EGP
+                              <Money amount={order.total / 100} currency={order.currency} />
                             </span>
                             <span className="bz-label text-[9px] px-2 py-0.5 rounded-full bg-[var(--bz-amber)] text-[var(--bz-dark)]">
                               {STATUS_LABELS[order.status] || order.status}

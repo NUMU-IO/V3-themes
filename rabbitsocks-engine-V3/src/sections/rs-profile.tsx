@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   Link,
   useCustomer,
+  Money,
   useOrders,
   useCustomerActions,
   useCustomerAddresses,
@@ -358,7 +359,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                           </div>
                           <div className="text-end">
                             <span className="text-[13px] font-medium text-[var(--vn-ink)] block">
-                              {(order.total / 100).toLocaleString("en-US")} EGP
+                              <Money amount={order.total / 100} currency={order.currency} />
                             </span>
                             <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--vn-band)] text-[var(--vn-ink)]/70">
                               {STATUS_LABELS[order.status] || order.status}
