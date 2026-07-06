@@ -1,7 +1,12 @@
 "use client";
-import { Link, Money, useProducts, useLocale } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+
+/** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
 
 const ElegantFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
@@ -89,7 +94,14 @@ const ElegantFeaturedCollection = ({ instance }: SectionRenderProps) => {
         ) : (
           /* Product grid */
           <div className={gridClassName} style={cssVars}>
-            {displayProducts.map((product) => (
+            {displayProducts.map((product) => {
+              const p = product as ProductExtras;
+              // Merchant label — top-start pill (same classes as the PLP card's tag badge).
+              const merchantLabel =
+                p.label && p.label.key
+                  ? localized(locale, p.label.text_en || "", p.label.text_ar || p.label.text_en || "")
+                  : "";
+              return (
               <Link
                 key={product.id}
                 to={`/product/${product.slug || product.id}`}
@@ -108,6 +120,11 @@ const ElegantFeaturedCollection = ({ instance }: SectionRenderProps) => {
                   ) : (
                     <div className="absolute inset-0 eg-shimmer" />
                   )}
+                  {merchantLabel && (
+                    <span className="absolute top-3 start-3 eg-label px-2.5 py-1 bg-white/95 text-[var(--eg-ink)] rounded-full text-[10px]">
+                      {merchantLabel}
+                    </span>
+                  )}
                 </div>
 
                 {/* Info — classic, minimal */}
@@ -122,7 +139,8 @@ const ElegantFeaturedCollection = ({ instance }: SectionRenderProps) => {
                   </div>
                 </div>
               </Link>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

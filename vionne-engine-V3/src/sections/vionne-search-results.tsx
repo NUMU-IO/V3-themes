@@ -11,7 +11,7 @@ import {
 } from "@numueg/theme-sdk";
 import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, asString, localized, usePageData, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, merchantLabelText, usePageData, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -142,8 +142,10 @@ export default function VionneSearchResults({ instance, sectionId }: SectionRend
 
 /** Compact Vionne product card — mirrors vn-product-card classes. */
 function SearchCard({ product }: { product: Product }) {
+  const locale = useLocale();
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const primary = product.images?.[0]?.url;
+  const merchantLabel = merchantLabelText(product, locale);
   return (
     <Link
       to={`/product/${product.slug || product.id}`}
@@ -160,6 +162,11 @@ function SearchCard({ product }: { product: Product }) {
           />
         ) : (
           <div className="absolute inset-0 vn-shimmer" />
+        )}
+        {merchantLabel && (
+          <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+            {merchantLabel}
+          </span>
         )}
       </div>
       <div className="mt-3 px-1">

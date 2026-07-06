@@ -201,6 +201,11 @@ export default function LuxSearchResults({
   );
 }
 
+/** Product + optional merchant-assigned label badge (backend extra, not in the SDK Product type). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /** Inline luxury-minimal product card (mirrors the products page card). */
 function ProductCard({
   product,
@@ -215,6 +220,11 @@ function ProductCard({
   const outOfStock = product.in_stock === false;
   const primary = asImageUrl(product.images?.[0]);
   const secondary = asImageUrl(product.images?.[1]);
+  const label = (product as ProductExtras).label;
+  const merchantLabel =
+    label && label.key
+      ? localized(locale, label.text_en || "", label.text_ar || label.text_en || "")
+      : "";
 
   return (
     <Link
@@ -242,7 +252,13 @@ function ProductCard({
           />
         )}
 
-        {product.tags?.[0] && !outOfStock && (
+        {/* Merchant label badge — takes precedence over the tag badge (same classes). */}
+        {merchantLabel && !outOfStock && (
+          <span className="absolute top-3 start-3 text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 bg-white/95 text-foreground">
+            {merchantLabel}
+          </span>
+        )}
+        {!merchantLabel && product.tags?.[0] && !outOfStock && (
           <span className="absolute top-3 start-3 text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 bg-white/95 text-foreground">
             {product.tags[0]}
           </span>

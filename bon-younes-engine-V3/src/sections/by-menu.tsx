@@ -127,13 +127,29 @@ interface DisplayItem {
   isFallback: boolean;
 }
 
-function productToDisplay(p: Product): DisplayItem {
+/** Local extras-cast: the backend now serves an optional merchant-assigned
+ *  bilingual label on storefront products; the SDK's Product type doesn't
+ *  carry it (do not depend on/rebuild the SDK for it). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
+function productToDisplay(p: Product, locale: string | undefined): DisplayItem {
+  const px = p as ProductExtras;
+  const isArabicLocale = (locale || "").toLowerCase().startsWith("ar");
+  const merchantLabel =
+    px.label && px.label.key
+      ? ((isArabicLocale ? px.label.text_ar || px.label.text_en : px.label.text_en) || "")
+      : "";
   const variant = p.variants?.[0];
   return {
     key: p.id,
     href: productHref(p.slug || p.id),
     name: p.name,
     description: p.description ?? "",
+    // Merchant-assigned label rides the card's EXISTING badge slot (same
+    // class the demo "New"/"Popular" badges use); absent → no badge, as before.
+    badge: merchantLabel || undefined,
     // Real products keep their name + price always; an imageless product
     // gets the neutral placeholder glyph (never blanked, never dropped).
     image: p.images?.[0]?.url || PLACEHOLDER_IMG,
@@ -205,7 +221,7 @@ export default function ByMenu({ instance, sectionId }: SectionRenderProps) {
     // Keep EVERY real product: an imageless one now carries the neutral
     // placeholder (see productToDisplay), so it is no longer dropped — which
     // previously emptied realItems and leaked the FALLBACK_ITEMS coffee cards.
-    const realItems = products.map(productToDisplay);
+    const realItems = products.map((p) => productToDisplay(p, locale));
     if (realItems.length > 0) return realItems;
     return demoOrPlaceholder(demo, FALLBACK_ITEMS(locale)).map((f) =>
       fallbackToDisplay(f, fallbackCurrency),

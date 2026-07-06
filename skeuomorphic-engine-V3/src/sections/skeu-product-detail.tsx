@@ -8,11 +8,17 @@ import {
   useVariantSelection,
   useRelatedProducts,
   useLocale,
+  type Product,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { asNumber, localized, type SectionRenderProps } from "./_shared";
+
+/** Product + optional merchant-assigned label (first-class `label`, bilingual). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
 
 /**
  * Skeuomorphic product-detail section.
@@ -370,7 +376,16 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
               className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
               data-testid="storefront-related-products-grid"
             >
-              {related.items.map((p) => (
+              {related.items.map((p) => {
+                const px = p as ProductExtras;
+                // Merchant label badge — reuses the PLP card's tag-badge look.
+                const merchantLabel =
+                  px.label && px.label.key
+                    ? ((locale || "").toLowerCase().startsWith("ar")
+                        ? px.label.text_ar || px.label.text_en
+                        : px.label.text_en) || ""
+                    : "";
+                return (
                 <Link
                   key={p.id}
                   to={`/product/${p.slug || p.id}`}
@@ -388,6 +403,11 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
                     ) : (
                       <div className="absolute inset-0 vn-shimmer" />
                     )}
+                    {merchantLabel ? (
+                      <span className="absolute top-2 start-2 skeu-chip px-2.5 py-1 rounded-lg text-[10px] font-bold text-foreground">
+                        {merchantLabel}
+                      </span>
+                    ) : null}
                   </div>
                   <div className="mt-3 px-1">
                     <h3 className="text-sm font-bold text-[var(--vn-ink)] line-clamp-1">
@@ -400,7 +420,8 @@ export default function SkeuProductDetail({ instance }: SectionRenderProps) {
                     </div>
                   </div>
                 </Link>
-              ))}
+                );
+              })}
             </div>
           </section>
         )}

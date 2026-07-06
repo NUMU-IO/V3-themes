@@ -269,6 +269,11 @@ export default function KGProductsPage({ instance }: SectionRenderProps) {
   );
 }
 
+type ProductExtras = Product & {
+  /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /** Inline Kick Game product card — mirrors KGProductCard's markup/classes. */
 function ProductCard({ product, list }: { product: Product; list?: boolean }) {
   const locale = useLocale();
@@ -282,6 +287,15 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
   const categoryBadge = product.tags?.[0] || product.category;
   const brandTag = product.tags?.[1] || product.tags?.[0];
   const primary = product.images?.[0]?.url;
+  const p = product as ProductExtras;
+  // Merchant label wins the black tag-badge slot over the auto category badge;
+  // the discount badge above it is independent and untouched.
+  const merchantLabel =
+    p.label && p.label.key
+      ? (locale?.startsWith("ar")
+          ? p.label.text_ar || p.label.text_en
+          : p.label.text_en) || ""
+      : "";
 
   return (
     <Link
@@ -317,11 +331,15 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
               -{discountPct}%
             </span>
           )}
-          {categoryBadge && !outOfStock && (
+          {merchantLabel && !outOfStock ? (
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 text-white bg-[#121212]">
+              {merchantLabel}
+            </span>
+          ) : categoryBadge && !outOfStock ? (
             <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 text-white bg-[#121212]">
               {categoryBadge}
             </span>
-          )}
+          ) : null}
         </div>
         {outOfStock && (
           <div className="absolute inset-0 bg-[#fcfbf7]/65 flex items-center justify-center">

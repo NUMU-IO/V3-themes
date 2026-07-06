@@ -1,7 +1,7 @@
 "use client";
 import { Link, Money, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
-import { asString, localized, type SectionRenderProps } from "./_shared";
+import { asString, localized, merchantLabelText, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) => {
@@ -91,6 +91,12 @@ const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) =
                     />
                   ) : (
                     <div className="absolute inset-0 vn-shimmer" />
+                  )}
+                  {/* Merchant label — same pill as the PLP card's top-start slot. */}
+                  {merchantLabelText(product, locale) && (
+                    <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+                      {merchantLabelText(product, locale)}
+                    </span>
                   )}
                 </div>
 

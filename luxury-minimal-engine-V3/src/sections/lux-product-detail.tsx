@@ -10,6 +10,7 @@ import {
   useLocale,
   useResolvedSettings,
   sanitizeHtml,
+  type Product,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ArrowRight, ShoppingCart, Check, Truck, RotateCcw, ShieldCheck } from "lucide-react";
@@ -44,6 +45,11 @@ import { InlineEditable } from "./_inline-editable";
  * variant from `useVariantSelection()`; add-to-cart via the SDK button; related
  * rail from `useRelatedProducts()`. Never blank / never crashes.
  */
+/** Product + optional merchant-assigned label badge (backend extra, not in the SDK Product type). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 export default function LuxProductDetail({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
@@ -408,36 +414,49 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
               <InlineEditable sectionId={sectionId} settingKey="related_title" value={relatedTitle} />
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4" data-testid="storefront-related-products-grid">
-              {related.items.map((p) => (
-                <Link
-                  key={p.id}
-                  to={`/product/${p.slug || p.id}`}
-                  className="lux-product-card group block"
-                  data-testid="storefront-product-card"
-                >
-                  <div className="relative aspect-[3/4] overflow-hidden bg-[hsl(var(--lux-gray))] mb-3">
-                    {asImageUrl(p.images?.[0]) ? (
-                      <img
-                        src={asImageUrl(p.images?.[0])}
-                        alt={p.name}
-                        className="lux-product-image absolute inset-0 w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 lux-shimmer" />
-                    )}
-                    {asImageUrl(p.images?.[1]) && (
-                      <img src={asImageUrl(p.images?.[1])} alt="" className="lux-product-image-secondary" loading="lazy" />
-                    )}
-                  </div>
-                  <p className="text-sm text-foreground line-clamp-1 mb-1.5 group-hover:opacity-50 transition-opacity">
-                    {p.name}
-                  </p>
-                  <p className="text-sm text-foreground">
-                    <Money amount={p.variants?.[0]?.price ?? p.price ?? 0} currency={p.currency} />
-                  </p>
-                </Link>
-              ))}
+              {related.items.map((p) => {
+                const label = (p as ProductExtras).label;
+                const merchantLabel =
+                  label && label.key
+                    ? localized(locale, label.text_en || "", label.text_ar || label.text_en || "")
+                    : "";
+                return (
+                  <Link
+                    key={p.id}
+                    to={`/product/${p.slug || p.id}`}
+                    className="lux-product-card group block"
+                    data-testid="storefront-product-card"
+                  >
+                    <div className="relative aspect-[3/4] overflow-hidden bg-[hsl(var(--lux-gray))] mb-3">
+                      {asImageUrl(p.images?.[0]) ? (
+                        <img
+                          src={asImageUrl(p.images?.[0])}
+                          alt={p.name}
+                          className="lux-product-image absolute inset-0 w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 lux-shimmer" />
+                      )}
+                      {asImageUrl(p.images?.[1]) && (
+                        <img src={asImageUrl(p.images?.[1])} alt="" className="lux-product-image-secondary" loading="lazy" />
+                      )}
+                      {/* Merchant label badge — classes mirror the search-results tag badge. */}
+                      {merchantLabel && (
+                        <span className="absolute top-3 start-3 text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 bg-white/95 text-foreground">
+                          {merchantLabel}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-foreground line-clamp-1 mb-1.5 group-hover:opacity-50 transition-opacity">
+                      {p.name}
+                    </p>
+                    <p className="text-sm text-foreground">
+                      <Money amount={p.variants?.[0]?.price ?? p.price ?? 0} currency={p.currency} />
+                    </p>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}

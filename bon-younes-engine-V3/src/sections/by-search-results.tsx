@@ -5,6 +5,13 @@ import { useMemo } from "react";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
+/** Local extras-cast: the backend now serves an optional merchant-assigned
+ *  bilingual label on storefront products; the SDK's Product type doesn't
+ *  carry it (do not depend on/rebuild the SDK for it). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /**
  * by-search-results — body for the `search` template. Reads the
  * visitor's query from `usePage().data.query` (storefront /search
@@ -34,6 +41,7 @@ export default function BySearchResults({
     asString(s.no_results_text) ||
     localized(locale, "No matches. Try a different keyword or browse all drinks.", "مفيش نتائج. جرّب كلمة تانية أو اتفرّج على كل المشروبات.");
   const cols = Math.max(1, Math.min(5, asNumber(s.columns_desktop, 3)));
+  const isArabicLocale = (locale || "").toLowerCase().startsWith("ar");
 
   // The storefront's search route puts the query string on page.data.q;
   // results (if it pre-fetched) live on page.data.results.
@@ -129,6 +137,11 @@ export default function BySearchResults({
             {matches.map((p) => {
               const slugOrId = p.slug || p.id;
               const image = p.images?.[0]?.url || null;
+              const px = p as ProductExtras;
+              const merchantLabel =
+                px.label && px.label.key
+                  ? ((isArabicLocale ? px.label.text_ar || px.label.text_en : px.label.text_en) || "")
+                  : "";
               return (
                 <Link
                   key={p.id}
@@ -152,8 +165,12 @@ export default function BySearchResults({
                       background: "rgba(58,36,24,0.06)",
                       borderRadius: 8,
                       overflow: "hidden",
+                      ...(merchantLabel ? { position: "relative" as const } : {}),
                     }}
                   >
+                    {merchantLabel && (
+                      <span className="by-product-card-badge">{merchantLabel}</span>
+                    )}
                     {image && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img

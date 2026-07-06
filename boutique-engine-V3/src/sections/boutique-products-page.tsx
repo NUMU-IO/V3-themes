@@ -270,14 +270,26 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
   );
 }
 
+/** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /** Inline Boutique product card — pink palette, rounded cards. */
 function ProductCard({ product, list, locale }: { product: Product; list?: boolean; locale?: string }) {
+  const p = product as ProductExtras;
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
   const outOfStock = product.in_stock === false;
   const primary = product.images?.[0]?.url;
   const secondary = product.images?.[1]?.url;
+  // Merchant label wins the top-start badge slot over the first-tag badge;
+  // the Sale badge is independent and untouched.
+  const merchantLabel =
+    p.label && p.label.key
+      ? localized(locale, p.label.text_en || "", p.label.text_ar || p.label.text_en || "")
+      : "";
 
   return (
     <Link
@@ -313,11 +325,15 @@ function ProductCard({ product, list, locale }: { product: Product; list?: boole
           />
         )}
 
-        {product.tags?.[0] && !outOfStock && (
+        {merchantLabel && !outOfStock ? (
+          <span className="absolute top-3 start-3 px-2.5 py-1 bg-white/95 text-foreground rounded-full text-[10px] font-bold">
+            {merchantLabel}
+          </span>
+        ) : product.tags?.[0] && !outOfStock ? (
           <span className="absolute top-3 start-3 px-2.5 py-1 bg-white/95 text-foreground rounded-full text-[10px] font-bold">
             {product.tags[0]}
           </span>
-        )}
+        ) : null}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-3 start-3 px-2.5 py-1 bg-primary text-primary-foreground rounded-full text-[10px] font-bold">
             {localized(locale, "Sale", "تخفيض")}

@@ -8,11 +8,17 @@ import {
   useVariantSelection,
   useRelatedProducts,
   useLocale,
+  type Product,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { asNumber, localized, type SectionRenderProps } from "./_shared";
+
+/** Product + optional merchant-assigned label (first-class `label`, bilingual). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
 
 /**
  * Tech Wave product-detail section.
@@ -373,7 +379,16 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
               className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
               data-testid="storefront-related-products-grid"
             >
-              {related.items.map((p) => (
+              {related.items.map((p) => {
+                const px = p as ProductExtras;
+                // Merchant label badge — reuses the PLP card's tag-badge look.
+                const merchantLabel =
+                  px.label && px.label.key
+                    ? ((locale || "").toLowerCase().startsWith("ar")
+                        ? px.label.text_ar || px.label.text_en
+                        : px.label.text_en) || ""
+                    : "";
+                return (
                 <Link
                   key={p.id}
                   to={`/product/${p.slug || p.id}`}
@@ -399,6 +414,11 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
                         loading="lazy"
                       />
                     )}
+                    {merchantLabel ? (
+                      <span className="absolute top-3 start-3 vn-label px-2.5 py-1 tw-badge rounded-full text-[10px]">
+                        {merchantLabel}
+                      </span>
+                    ) : null}
                   </div>
                   <div className="p-3">
                     <h3 className="text-sm font-medium text-[var(--vn-ink)] line-clamp-1">
@@ -411,7 +431,8 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
                     </div>
                   </div>
                 </Link>
-              ))}
+                );
+              })}
             </div>
           </section>
         )}

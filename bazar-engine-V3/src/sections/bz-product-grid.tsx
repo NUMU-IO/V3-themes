@@ -20,6 +20,12 @@ function firstImage(p: Product): string | null {
   return img?.url ?? null;
 }
 
+/** Storefront products may carry a merchant-assigned label badge (bilingual,
+ *  text-only) as a first-class field the SDK's Product type doesn't know yet. */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /**
  * Bazar product card — the souk-print look from V2 BzProductCard:
  * hard 2px dark border, offset hover lift (`bz-card-hover`), image
@@ -47,6 +53,13 @@ export function BzProductCard({
       : null;
   const hasDiscount = compareAt != null && compareAt > price;
   const outOfStock = product.in_stock === false;
+  // Merchant-assigned product label (bilingual, text-only). When set it takes
+  // the top-start badge slot over the first-tag pill; the SALE tag (top-end,
+  // computed from compare_at_price) is independent and coexists.
+  const label = (product as ProductExtras).label;
+  const merchantLabel = label?.key
+    ? localized(locale, label.text_en || "", label.text_ar || label.text_en || "")
+    : "";
 
   return (
     <Link
@@ -67,10 +80,16 @@ export function BzProductCard({
             <ShoppingBag size={32} className="text-[var(--bz-dark)]/20" aria-hidden="true" />
           </div>
         )}
-        {product.tags?.[0] && (
+        {merchantLabel ? (
           <span className="absolute top-3 start-3 bz-label px-3 py-1 bg-[var(--bz-amber)] text-[var(--bz-dark)] border-2 border-[var(--bz-dark)] rounded-full text-[10px] shadow-[2px_2px_0_var(--bz-dark)]">
-            {product.tags[0]}
+            {merchantLabel}
           </span>
+        ) : (
+          product.tags?.[0] && (
+            <span className="absolute top-3 start-3 bz-label px-3 py-1 bg-[var(--bz-amber)] text-[var(--bz-dark)] border-2 border-[var(--bz-dark)] rounded-full text-[10px] shadow-[2px_2px_0_var(--bz-dark)]">
+              {product.tags[0]}
+            </span>
+          )
         )}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-3 end-3 bz-label px-3 py-1 bg-red-500 text-white border-2 border-[var(--bz-dark)] rounded-full text-[10px] shadow-[2px_2px_0_var(--bz-dark)]">

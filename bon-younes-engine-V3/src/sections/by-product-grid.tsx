@@ -136,7 +136,15 @@ export default function ByProductGrid({
   );
 }
 
+/** Local extras-cast: the backend now serves an optional merchant-assigned
+ *  bilingual label on storefront products; the SDK's Product type doesn't
+ *  carry it (do not depend on/rebuild the SDK for it). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 function ProductCard({ product }: { product: Product }) {
+  const locale = useLocale();
   const price = typeof product.price === "number" ? product.price : 0;
   const compareAt =
     typeof product.compare_at_price === "number"
@@ -144,6 +152,12 @@ function ProductCard({ product }: { product: Product }) {
       : null;
   const slugOrId = product.slug || product.id;
   const image = product.images?.[0]?.url || null;
+  const px = product as ProductExtras;
+  const isArabicLocale = (locale || "").toLowerCase().startsWith("ar");
+  const merchantLabel =
+    px.label && px.label.key
+      ? ((isArabicLocale ? px.label.text_ar || px.label.text_en : px.label.text_en) || "")
+      : "";
 
   return (
     <Link
@@ -163,8 +177,12 @@ function ProductCard({ product }: { product: Product }) {
           background: "rgba(58,36,24,0.06)",
           borderRadius: 12,
           overflow: "hidden",
+          ...(merchantLabel ? { position: "relative" as const } : {}),
         }}
       >
+        {merchantLabel && (
+          <span className="by-product-card-badge">{merchantLabel}</span>
+        )}
         {image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
