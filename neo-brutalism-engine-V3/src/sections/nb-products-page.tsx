@@ -270,15 +270,29 @@ export default function NBProductsPage({ instance }: SectionRenderProps) {
   );
 }
 
+/** Product + optional backend extras not yet on the SDK type. */
+type ProductExtras = Product & {
+  /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /** Inline neo-brutalism product card — mirrors NBProductCard's markup. */
 function ProductCard({ product, list }: { product: Product; list?: boolean }) {
   const locale = useLocale();
+  const p = product as ProductExtras;
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
   const outOfStock = product.in_stock === false;
   const primary = product.images?.[0]?.url;
   const secondary = product.images?.[1]?.url;
+  // Merchant label wins the top-start badge slot over the auto tag badge;
+  // the Sale badge is independent and untouched.
+  const isArabic = (locale || "").toLowerCase().startsWith("ar");
+  const merchantLabel =
+    p.label && p.label.key
+      ? ((isArabic ? p.label.text_ar || p.label.text_en : p.label.text_en) || "")
+      : "";
 
   return (
     <Link
@@ -314,11 +328,15 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
           />
         )}
 
-        {product.tags?.[0] && !outOfStock && (
+        {merchantLabel && !outOfStock ? (
+          <span className="absolute top-2 start-2 nb-badge px-2 py-0.5 rounded text-[10px]">
+            {merchantLabel}
+          </span>
+        ) : product.tags?.[0] && !outOfStock ? (
           <span className="absolute top-2 start-2 nb-badge px-2 py-0.5 rounded text-[10px]">
             {product.tags[0]}
           </span>
-        )}
+        ) : null}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-2 start-2 nb-badge-pink px-2 py-0.5 rounded text-[10px]">
             {localized(locale, "Sale", "خصم")}

@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Link, Money, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, merchantLabelText, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -319,6 +319,11 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
   const outOfStock = product.in_stock === false;
   const primary = product.images?.[0]?.url;
   const secondary = product.images?.[1]?.url;
+  // Merchant label wins the top-start pill over tags[0]. Sale + label
+  // coexist in one stacked column (sale on top — it was the dominant badge
+  // in the original overlapping layout) so a discounted+labeled product
+  // shows both instead of the sale pill painting over the label.
+  const merchantLabel = merchantLabelText(product, locale);
 
   return (
     <Link
@@ -354,15 +359,23 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
           />
         )}
 
-        {product.tags?.[0] && !outOfStock && (
-          <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
-            {product.tags[0]}
-          </span>
-        )}
-        {hasDiscount && !outOfStock && (
-          <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-[var(--vn-sale)] text-white rounded-full text-[10px]">
-            {t("common.sale", localized(locale, "Sale", "تخفيض"))}
-          </span>
+        {!outOfStock && (hasDiscount || merchantLabel || product.tags?.[0]) && (
+          <div className="absolute top-3 start-3 flex flex-col items-start gap-1.5">
+            {hasDiscount && (
+              <span className="vn-label px-2.5 py-1 bg-[var(--vn-sale)] text-white rounded-full text-[10px]">
+                {t("common.sale", localized(locale, "Sale", "تخفيض"))}
+              </span>
+            )}
+            {merchantLabel ? (
+              <span className="vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+                {merchantLabel}
+              </span>
+            ) : product.tags?.[0] ? (
+              <span className="vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+                {product.tags[0]}
+              </span>
+            ) : null}
+          </div>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-white/65 flex items-center justify-center">

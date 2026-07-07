@@ -25,6 +25,8 @@ type ProductExtras = Product & {
   is_new?: boolean;
   isNew?: boolean;
   rating?: number;
+  /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
 };
 
 export function GildedProductCard({
@@ -52,6 +54,14 @@ export function GildedProductCard({
   const primary = asImageUrl(product.images?.[0]);
   const isNew = p.is_new ?? p.isNew ?? false;
   const rating = typeof p.rating === "number" ? p.rating : undefined;
+  // Merchant label wins the top-start badge slot over the auto NEW badge;
+  // the discount badge (top-end) is independent and untouched.
+  const merchantLabel =
+    p.label && p.label.key
+      ? (locale?.startsWith("ar")
+          ? p.label.text_ar || p.label.text_en
+          : p.label.text_en) || ""
+      : "";
 
   // More than one variant ⇒ the shopper must choose → let the click bubble to
   // the wrapping <Link> and navigate to the PDP (V2 `requiresSelection`).
@@ -94,11 +104,15 @@ export function GildedProductCard({
             <div className="absolute inset-0 gld-shimmer" />
           )}
 
-          {isNew && (
+          {merchantLabel ? (
+            <span className="absolute top-2 start-2 md:top-4 md:start-4 bg-primary text-primary-foreground px-2 py-1 md:px-3 md:py-1.5 text-[9px] md:text-[10px] font-semibold tracking-[0.1em] md:tracking-[0.15em] uppercase">
+              {merchantLabel}
+            </span>
+          ) : isNew ? (
             <span className="absolute top-2 start-2 md:top-4 md:start-4 bg-primary text-primary-foreground px-2 py-1 md:px-3 md:py-1.5 text-[9px] md:text-[10px] font-semibold tracking-[0.1em] md:tracking-[0.15em] uppercase">
               {newLabel}
             </span>
-          )}
+          ) : null}
           {hasDiscount && (
             <span className="absolute top-2 end-2 md:top-4 md:end-4 bg-foreground text-card px-2 py-1 md:px-3 md:py-1.5 text-[9px] md:text-[10px] font-semibold tracking-[0.1em] md:tracking-[0.15em] uppercase">
               {discountPercent}% {localized(locale, "Off", "خصم")}

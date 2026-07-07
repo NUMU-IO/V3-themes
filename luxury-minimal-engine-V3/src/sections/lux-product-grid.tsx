@@ -300,6 +300,11 @@ export default function LuxProductGrid({ instance, sectionId }: SectionRenderPro
   );
 }
 
+/** Product + optional merchant-assigned label badge (backend extra, not in the SDK Product type). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /**
  * Inline luxury-minimal product card — faithful V2 LuxProductCard
  * (numu-egyptian-bazaar/src/components/store/luxury-minimal/LuxProductCard +
@@ -328,6 +333,11 @@ function LuxProductCard({
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
   const primary = asImageUrl(product.images?.[0]);
   const href = `/product/${product.slug || product.id}`;
+  const label = (product as ProductExtras).label;
+  const merchantLabel =
+    label && label.key
+      ? localized(locale, label.text_en || "", label.text_ar || label.text_en || "")
+      : "";
 
   return (
     <div
@@ -352,6 +362,13 @@ function LuxProductCard({
             )}
           </div>
         </Link>
+
+        {/* Merchant label badge — classes mirror the search-results tag badge. */}
+        {merchantLabel && (
+          <span className="absolute top-3 start-3 text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 bg-white/95 text-foreground">
+            {merchantLabel}
+          </span>
+        )}
 
         {/* Desktop quick-add — slide-up hover bar (V2 `py-3 lux-btn`). */}
         <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 translate-y-full group-hover:translate-y-0 transition-all duration-300 hidden md:block">

@@ -59,6 +59,20 @@ export const usePageData = (): MountPageData | null =>
  */
 
 
+/**
+ * Merchant-assigned product label (backend `product.label`, denormalized
+ * bilingual text). Returns the locale-appropriate badge text or "" when the
+ * product carries no label — callers gate rendering on a non-empty string so
+ * unlabeled products render exactly as before.
+ */
+export function merchantLabelText(product: unknown, locale: string | undefined): string {
+  const label = (
+    product as { label?: { key?: string; text_en?: string; text_ar?: string } | null }
+  )?.label;
+  if (!label || !label.key) return "";
+  const isAr = (locale || "").toLowerCase().startsWith("ar");
+  return (isAr ? label.text_ar || label.text_en : label.text_en) || "";
+}
 
 
 

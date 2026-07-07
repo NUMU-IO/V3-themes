@@ -8,11 +8,17 @@ import {
   useVariantSelection,
   useRelatedProducts,
   useLocale,
+  type Product,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { asNumber, localized, type SectionRenderProps } from "./_shared";
+
+type ProductExtras = Product & {
+  /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
 
 /**
  * Kick Game product-detail section.
@@ -375,37 +381,53 @@ export default function KGProductDetail({ instance }: SectionRenderProps) {
               className="grid grid-cols-2 md:grid-cols-4 gap-2"
               data-testid="storefront-related-products-grid"
             >
-              {related.items.map((p) => (
-                <Link
-                  key={p.id}
-                  to={`/product/${p.slug || p.id}`}
-                  className="kg-product-card group block"
-                  data-testid="storefront-product-card"
-                >
-                  <div className="relative aspect-square overflow-hidden bg-[#f0efe9] mb-3">
-                    {p.images?.[0]?.url ? (
-                      <img
-                        src={p.images[0].url}
-                        alt={p.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 vn-shimmer" />
-                    )}
-                  </div>
-                  <div className="px-1">
-                    <h3 className="text-sm font-medium text-[var(--vn-ink)] line-clamp-1">
-                      {p.name}
-                    </h3>
-                    <div className="flex items-baseline gap-2 mt-1">
-                      <span className="text-sm font-bold text-[var(--vn-ink)]">
-                        <Money amount={p.variants?.[0]?.price ?? p.price ?? 0} currency={p.currency} />
-                      </span>
+              {related.items.map((p) => {
+                const rp = p as ProductExtras;
+                // Merchant label — the related card's only badge; reuses the
+                // product card's black tag-badge pill.
+                const merchantLabel =
+                  rp.label && rp.label.key
+                    ? (locale?.startsWith("ar")
+                        ? rp.label.text_ar || rp.label.text_en
+                        : rp.label.text_en) || ""
+                    : "";
+                return (
+                  <Link
+                    key={p.id}
+                    to={`/product/${p.slug || p.id}`}
+                    className="kg-product-card group block"
+                    data-testid="storefront-product-card"
+                  >
+                    <div className="relative aspect-square overflow-hidden bg-[#f0efe9] mb-3">
+                      {p.images?.[0]?.url ? (
+                        <img
+                          src={p.images[0].url}
+                          alt={p.name}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 vn-shimmer" />
+                      )}
+                      {merchantLabel && (
+                        <span className="absolute top-2 start-2 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 text-white bg-[#121212]">
+                          {merchantLabel}
+                        </span>
+                      )}
                     </div>
-                  </div>
-                </Link>
-              ))}
+                    <div className="px-1">
+                      <h3 className="text-sm font-medium text-[var(--vn-ink)] line-clamp-1">
+                        {p.name}
+                      </h3>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="text-sm font-bold text-[var(--vn-ink)]">
+                          <Money amount={p.variants?.[0]?.price ?? p.price ?? 0} currency={p.currency} />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}

@@ -99,12 +99,19 @@ const KGFeatured = ({ instance }: SectionRenderProps) => {
   );
 };
 
+type ProductExtras = Product & {
+  /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /**
  * Inlined Kick Game product card — mirrors KGProductCard's makeStyles():
  * square image on #f0efe9 with scale-on-hover, left-aligned category/discount
  * badges, brand tag, name, price.
  */
 export function KGCard({ product }: { product: Product }) {
+  const locale = useLocale();
+  const p = product as ProductExtras;
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -114,6 +121,14 @@ export function KGCard({ product }: { product: Product }) {
   const categoryBadge = product.tags?.[0] || product.category;
   const brandTag = product.tags?.[1] || product.tags?.[0];
   const image = product.images?.[0]?.url;
+  // Merchant label wins the black tag-badge slot over the auto category badge;
+  // the discount badge above it is independent and untouched.
+  const merchantLabel =
+    p.label && p.label.key
+      ? (locale?.startsWith("ar")
+          ? p.label.text_ar || p.label.text_en
+          : p.label.text_en) || ""
+      : "";
 
   return (
     <Link
@@ -141,11 +156,15 @@ export function KGCard({ product }: { product: Product }) {
               -{discountPct}%
             </span>
           )}
-          {categoryBadge && (
+          {merchantLabel ? (
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 text-white bg-[#121212]">
+              {merchantLabel}
+            </span>
+          ) : categoryBadge ? (
             <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 text-white bg-[#121212]">
               {categoryBadge}
             </span>
-          )}
+          ) : null}
         </div>
       </div>
 

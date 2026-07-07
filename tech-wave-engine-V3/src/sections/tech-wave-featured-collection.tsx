@@ -94,15 +94,28 @@ const TechWaveFeaturedCollection = ({ instance }: SectionRenderProps) => {
   );
 };
 
+/** Product + optional merchant-assigned label (first-class `label`, bilingual). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /** Inline Tech Wave product card — mirrors the V2 TechWaveProductCard look
  *  (neon-bordered glass card, sale badge, hover glow). */
 function TechWaveProductCard({ product }: { product: Product }) {
   const locale = useLocale();
+  const p = product as ProductExtras;
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
   const outOfStock = product.in_stock === false;
   const primary = product.images?.[0]?.url;
+  // Merchant label badge — top-end so it coexists with the "Sale" badge (top-start).
+  const merchantLabel =
+    p.label && p.label.key
+      ? ((locale || "").toLowerCase().startsWith("ar")
+          ? p.label.text_ar || p.label.text_en
+          : p.label.text_en) || ""
+      : "";
 
   return (
     <Link
@@ -121,6 +134,11 @@ function TechWaveProductCard({ product }: { product: Product }) {
         ) : (
           <div className="absolute inset-0 vn-shimmer" />
         )}
+        {merchantLabel && !outOfStock ? (
+          <span className="absolute top-2.5 end-2.5 tw-badge-accent px-2.5 py-1 rounded-lg text-[10px] font-bold">
+            {merchantLabel}
+          </span>
+        ) : null}
         {hasDiscount && !outOfStock && (
           <span className="absolute top-2.5 start-2.5 tw-badge-accent px-2.5 py-1 rounded-lg text-[10px] font-bold">
             {localized(locale, "Sale", "خصم")}

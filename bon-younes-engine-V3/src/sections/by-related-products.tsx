@@ -15,6 +15,13 @@ import { InlineEditable } from "./_inline-editable";
  *   - title        — section heading
  *   - count        — how many cards to show (default 4)
  */
+/** Local extras-cast: the backend now serves an optional merchant-assigned
+ *  bilingual label on storefront products; the SDK's Product type doesn't
+ *  carry it (do not depend on/rebuild the SDK for it). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 export default function ByRelatedProducts({
   instance,
   sectionId,
@@ -24,6 +31,7 @@ export default function ByRelatedProducts({
   const locale = useLocale();
   const title = asString(s.title) || localized(locale, "Pairs well with", "يتحلّى مع");
   const count = Math.max(2, Math.min(8, asNumber(s.count, 4)));
+  const isArabicLocale = (locale || "").toLowerCase().startsWith("ar");
 
   const items: Product[] = products.slice(0, count);
   if (items.length === 0) return null;
@@ -67,6 +75,11 @@ export default function ByRelatedProducts({
           {items.map((p) => {
             const slugOrId = p.slug || p.id;
             const image = p.images?.[0]?.url || null;
+            const px = p as ProductExtras;
+            const merchantLabel =
+              px.label && px.label.key
+                ? ((isArabicLocale ? px.label.text_ar || px.label.text_en : px.label.text_en) || "")
+                : "";
             return (
               <Link
                 key={p.id}
@@ -85,8 +98,12 @@ export default function ByRelatedProducts({
                     background: "rgba(58,36,24,0.05)",
                     borderRadius: 10,
                     overflow: "hidden",
+                    ...(merchantLabel ? { position: "relative" as const } : {}),
                   }}
                 >
+                  {merchantLabel && (
+                    <span className="by-product-card-badge">{merchantLabel}</span>
+                  )}
                   {image && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img

@@ -1,11 +1,18 @@
 import { useState } from "react";
 import {
   useCart,
+  useLocale,
   useLocalization,
   useShop,
   type Product,
 } from "@numueg/theme-sdk";
 import { openCart } from "./cartUI";
+
+/** Storefront products may carry a merchant-assigned label badge (bilingual,
+ *  text-only) that the SDK's Product type doesn't model yet. */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
 
 /**
  * Empire product card — monochrome, square media with a hover "quick add"
@@ -17,6 +24,7 @@ export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
   const { formatMoney } = useLocalization();
   const shop = useShop();
+  const locale = useLocale();
   const [pending, setPending] = useState(false);
 
   const image = product.images?.[0];
@@ -32,6 +40,17 @@ export function ProductCard({ product }: { product: Product }) {
     ? Math.round((1 - priceNum / compareNum) * 100)
     : 0;
   const categoryBadge = product.tags?.[0] || product.category;
+  // Merchant-assigned label (bilingual, text-only) — wins the top-start badge
+  // slot over the automatic category badge when present.
+  const p = product as ProductExtras;
+  const isArabicLocale =
+    typeof locale === "string" && locale.toLowerCase().startsWith("ar");
+  const merchantLabel =
+    p.label && p.label.key
+      ? (isArabicLocale
+          ? p.label.text_ar || p.label.text_en
+          : p.label.text_en) || ""
+      : "";
   const variantId = product.variants?.[0]?.id;
   const href = `/products/${product.slug}`;
 
@@ -64,7 +83,9 @@ export function ProductCard({ product }: { product: Product }) {
             <div className="empire-card__placeholder" aria-hidden="true" />
           )}
         </a>
-        {categoryBadge ? (
+        {merchantLabel ? (
+          <span className="empire-badge">{merchantLabel}</span>
+        ) : categoryBadge ? (
           <span className="empire-badge">{categoryBadge}</span>
         ) : null}
         {discountPct > 0 ? (

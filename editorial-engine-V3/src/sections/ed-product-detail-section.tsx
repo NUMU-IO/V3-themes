@@ -8,11 +8,17 @@ import {
   useVariantSelection,
   useRelatedProducts,
   useLocale,
+  type Product,
   type ProductVariant,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { asNumber, localized, type SectionRenderProps } from "./_shared";
+
+/** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
 
 /**
  * Editorial product-detail section.
@@ -376,7 +382,14 @@ export default function EdProductDetailSection({ instance }: SectionRenderProps)
               className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
               data-testid="storefront-related-products-grid"
             >
-              {related.items.map((p) => (
+              {related.items.map((p) => {
+                const rp = p as ProductExtras;
+                // Merchant label — top-start pill (same classes as the PLP card's tag badge).
+                const merchantLabel =
+                  rp.label && rp.label.key
+                    ? localized(locale, rp.label.text_en || "", rp.label.text_ar || rp.label.text_en || "")
+                    : "";
+                return (
                 <Link
                   key={p.id}
                   to={`/product/${p.slug || p.id}`}
@@ -402,6 +415,11 @@ export default function EdProductDetailSection({ instance }: SectionRenderProps)
                         loading="lazy"
                       />
                     )}
+                    {merchantLabel && (
+                      <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+                        {merchantLabel}
+                      </span>
+                    )}
                   </div>
                   <div className="px-1">
                     <h3 className="text-sm font-medium text-[var(--vn-ink)] line-clamp-1">
@@ -414,7 +432,8 @@ export default function EdProductDetailSection({ instance }: SectionRenderProps)
                     </div>
                   </div>
                 </Link>
-              ))}
+                );
+              })}
             </div>
           </section>
         )}

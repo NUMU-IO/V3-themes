@@ -84,10 +84,22 @@ export default function EdFeaturedCollection({ instance }: SectionRenderProps) {
   );
 }
 
+/** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /** Inline Editorial product card — mirrors V2 EdProductCard's markup/classes. */
 function EdProductCard({ product }: { product: Product }) {
+  const locale = useLocale();
+  const p = product as ProductExtras;
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const primary = product.images?.[0]?.url;
+  // Merchant label — top-start pill (same classes as the PLP card's tag badge).
+  const merchantLabel =
+    p.label && p.label.key
+      ? localized(locale, p.label.text_en || "", p.label.text_ar || p.label.text_en || "")
+      : "";
   return (
     <Link
       to={`/product/${product.slug || product.id}`}
@@ -104,6 +116,11 @@ function EdProductCard({ product }: { product: Product }) {
           />
         ) : (
           <div className="absolute inset-0 bg-muted" />
+        )}
+        {merchantLabel && (
+          <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+            {merchantLabel}
+          </span>
         )}
       </div>
       <div className="p-3 pt-3">

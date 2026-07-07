@@ -3,17 +3,32 @@ import { useRef } from "react";
 import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
+/** Product + optional backend extras not yet on the SDK type. */
+type ProductExtras = Product & {
+  /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /** Inline Rabbitsocks product card — mirrors RsProductCard's editorial look. */
 function RsProductCard({ product }: { product: Product }) {
+  const locale = useLocale();
+  const p = product as ProductExtras;
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const image = product.images?.[0]?.url;
+  // Merchant label badge — same slot/classes as the PLP card's tag badge
+  // (this editorial card has no auto badges of its own).
+  const isArabic = (locale || "").toLowerCase().startsWith("ar");
+  const merchantLabel =
+    p.label && p.label.key
+      ? ((isArabic ? p.label.text_ar || p.label.text_en : p.label.text_en) || "")
+      : "";
   return (
     <Link
       to={`/product/${product.slug || product.id}`}
       className="rs-product-card group block"
       data-testid="storefront-product-card"
     >
-      <div className="rs-product-media">
+      <div className={merchantLabel ? "rs-product-media relative" : "rs-product-media"}>
         <div className="rs-product-media-inner overflow-hidden">
           {image ? (
             <img
@@ -26,6 +41,11 @@ function RsProductCard({ product }: { product: Product }) {
             <div className="w-full h-full bg-[hsl(var(--rs-surface-high))]" />
           )}
         </div>
+        {merchantLabel && (
+          <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+            {merchantLabel}
+          </span>
+        )}
       </div>
       <div className="flex items-baseline justify-between gap-4 mt-5">
         <h3 className="rs-product-name">{product.name}</h3>

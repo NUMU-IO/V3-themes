@@ -1,5 +1,5 @@
 "use client";
-import { Link, Money, useProducts, useLocale } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
 import { localized, type SectionRenderProps } from "./_shared";
 
@@ -15,6 +15,11 @@ import { localized, type SectionRenderProps } from "./_shared";
  * and the product card is inlined (SDK `Money`, variant-first price). The
  * section header / grid / "view all" markup keeps V2's classNames verbatim.
  */
+type ProductExtras = Product & {
+  /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 const ModernFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
   const isLoading = false;
@@ -99,6 +104,15 @@ const ModernFeaturedCollection = ({ instance }: SectionRenderProps) => {
               const price = product.variants?.[0]?.price ?? product.price ?? 0;
               const compareAt = product.compare_at_price;
               const hasDiscount = typeof compareAt === "number" && compareAt > price;
+              const p = product as ProductExtras;
+              // Merchant label — the card's only top-start badge; reuses the
+              // PLP card's tag-badge pill.
+              const merchantLabel =
+                p.label && p.label.key
+                  ? (locale?.startsWith("ar")
+                      ? p.label.text_ar || p.label.text_en
+                      : p.label.text_en) || ""
+                  : "";
               return (
                 <Link
                   key={product.id}
@@ -117,6 +131,11 @@ const ModernFeaturedCollection = ({ instance }: SectionRenderProps) => {
                       />
                     ) : (
                       <div className="absolute inset-0 vn-shimmer" />
+                    )}
+                    {merchantLabel && (
+                      <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+                        {merchantLabel}
+                      </span>
                     )}
                   </div>
 

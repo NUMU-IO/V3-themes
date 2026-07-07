@@ -1,6 +1,13 @@
 "use client";
 
-import { Link, Money, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
+import {
+  Link,
+  Money,
+  useLocale,
+  useProducts,
+  useResolvedSettings,
+  type Product,
+} from "@numueg/theme-sdk";
 import type { CSSProperties } from "react";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -38,6 +45,11 @@ import { InlineEditable } from "./_inline-editable";
  * the V2 "fall back to all products if filtered is empty"). Renders null when
  * there are no products (no demo data on a real store).
  */
+/** Product + optional merchant-assigned label badge (backend extra, not in the SDK Product type). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 export default function LuxFeaturedCollection({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
@@ -118,53 +130,66 @@ export default function LuxFeaturedCollection({ instance, sectionId }: SectionRe
         </div>
 
         <div className={gridClassName} style={cssVars}>
-          {displayProducts.map((product) => (
-            <Link
-              key={product.id}
-              to={`/product/${product.slug || product.id}`}
-              className="lux-product-card group block"
-              data-testid="storefront-product-card"
-            >
-              <div className="relative aspect-[3/4] overflow-hidden bg-[hsl(var(--lux-gray))] mb-3">
-                {asImageUrl(product.images?.[0]) ? (
-                  <img
-                    src={asImageUrl(product.images?.[0])}
-                    alt={product.name}
-                    className="lux-product-image absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="absolute inset-0 lux-shimmer" />
-                )}
-                {asImageUrl(product.images?.[1]) && (
-                  <img
-                    src={asImageUrl(product.images?.[1])}
-                    alt=""
-                    className="lux-product-image-secondary"
-                    loading="lazy"
-                  />
-                )}
-              </div>
-              <p className="text-sm text-foreground line-clamp-1 mb-1.5 group-hover:opacity-50 transition-opacity">
-                {product.name}
-              </p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-sm text-foreground">
-                  <Money
-                    amount={product.variants?.[0]?.price ?? product.price ?? 0}
-                    currency={product.currency}
-                  />
-                </span>
-                {typeof product.compare_at_price === "number" &&
-                  product.compare_at_price >
-                    (product.variants?.[0]?.price ?? product.price ?? 0) && (
-                    <span className="text-[11px] text-muted-foreground line-through">
-                      <Money amount={product.compare_at_price} currency={product.currency} />
+          {displayProducts.map((product) => {
+            const label = (product as ProductExtras).label;
+            const merchantLabel =
+              label && label.key
+                ? localized(locale, label.text_en || "", label.text_ar || label.text_en || "")
+                : "";
+            return (
+              <Link
+                key={product.id}
+                to={`/product/${product.slug || product.id}`}
+                className="lux-product-card group block"
+                data-testid="storefront-product-card"
+              >
+                <div className="relative aspect-[3/4] overflow-hidden bg-[hsl(var(--lux-gray))] mb-3">
+                  {asImageUrl(product.images?.[0]) ? (
+                    <img
+                      src={asImageUrl(product.images?.[0])}
+                      alt={product.name}
+                      className="lux-product-image absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 lux-shimmer" />
+                  )}
+                  {asImageUrl(product.images?.[1]) && (
+                    <img
+                      src={asImageUrl(product.images?.[1])}
+                      alt=""
+                      className="lux-product-image-secondary"
+                      loading="lazy"
+                    />
+                  )}
+                  {/* Merchant label badge — classes mirror the search-results tag badge. */}
+                  {merchantLabel && (
+                    <span className="absolute top-3 start-3 text-[10px] uppercase tracking-[0.2em] px-2.5 py-1 bg-white/95 text-foreground">
+                      {merchantLabel}
                     </span>
                   )}
-              </div>
-            </Link>
-          ))}
+                </div>
+                <p className="text-sm text-foreground line-clamp-1 mb-1.5 group-hover:opacity-50 transition-opacity">
+                  {product.name}
+                </p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-sm text-foreground">
+                    <Money
+                      amount={product.variants?.[0]?.price ?? product.price ?? 0}
+                      currency={product.currency}
+                    />
+                  </span>
+                  {typeof product.compare_at_price === "number" &&
+                    product.compare_at_price >
+                      (product.variants?.[0]?.price ?? product.price ?? 0) && (
+                      <span className="text-[11px] text-muted-foreground line-through">
+                        <Money amount={product.compare_at_price} currency={product.currency} />
+                      </span>
+                    )}
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>

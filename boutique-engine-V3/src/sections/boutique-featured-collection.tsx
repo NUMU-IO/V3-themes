@@ -1,7 +1,12 @@
 "use client";
-import { Link, Money, useProducts, useLocale } from "@numueg/theme-sdk";
+import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+
+/** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+type ProductExtras = Product & {
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
 
 const BoutiqueFeaturedCollection = ({ instance }: SectionRenderProps) => {
   const { products } = useProducts();
@@ -60,7 +65,14 @@ const BoutiqueFeaturedCollection = ({ instance }: SectionRenderProps) => {
         ) : (
           <>
             <div className={gridClassName} style={cssVars}>
-              {displayProducts.map((product) => (
+              {displayProducts.map((product) => {
+                const p = product as ProductExtras;
+                // Merchant label — top-start pill (same classes as the PLP card's tag badge).
+                const merchantLabel =
+                  p.label && p.label.key
+                    ? localized(locale, p.label.text_en || "", p.label.text_ar || p.label.text_en || "")
+                    : "";
+                return (
                 <div
                   key={product.id}
                   className="group transition-all duration-300 hover:scale-[1.02] hover:shadow-lg rounded-2xl"
@@ -79,6 +91,11 @@ const BoutiqueFeaturedCollection = ({ instance }: SectionRenderProps) => {
                           loading="lazy"
                         />
                       )}
+                      {merchantLabel && (
+                        <span className="absolute top-3 start-3 px-2.5 py-1 bg-white/95 text-foreground rounded-full text-[10px] font-bold">
+                          {merchantLabel}
+                        </span>
+                      )}
                     </div>
                     <div className="p-3 text-center">
                       <h3 className="font-semibold text-sm text-foreground line-clamp-1 group-hover:text-primary transition-colors">
@@ -90,7 +107,8 @@ const BoutiqueFeaturedCollection = ({ instance }: SectionRenderProps) => {
                     </div>
                   </Link>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* View all link */}

@@ -97,9 +97,16 @@ const NBFeaturedCollection = ({ instance }: SectionRenderProps) => {
   );
 };
 
+/** Product + optional backend extras not yet on the SDK type. */
+type ProductExtras = Product & {
+  /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
+  label?: { key?: string; text_en?: string; text_ar?: string } | null;
+};
+
 /** Inline neo-brutalism product card — mirrors NBProductCard's markup/classes. */
 export function NBProductCard({ product }: { product: Product }) {
   const locale = useLocale();
+  const p = product as ProductExtras;
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
@@ -108,6 +115,13 @@ export function NBProductCard({ product }: { product: Product }) {
     : 0;
   const isNew = (product.tags ?? []).some((t) => t.toLowerCase() === "new");
   const primary = product.images?.[0]?.url;
+  // Merchant label wins the badge slot over the auto NEW badge; the discount
+  // badge in the same stack is independent and untouched.
+  const isArabic = (locale || "").toLowerCase().startsWith("ar");
+  const merchantLabel =
+    p.label && p.label.key
+      ? ((isArabic ? p.label.text_ar || p.label.text_en : p.label.text_en) || "")
+      : "";
 
   return (
     <motion.div
@@ -138,11 +152,15 @@ export function NBProductCard({ product }: { product: Product }) {
                 {localized(locale, `${discountPercent}% off`, `خصم ${discountPercent}%`)}
               </span>
             )}
-            {isNew && (
+            {merchantLabel ? (
+              <span className="nb-badge px-2 py-0.5 text-[10px] rounded">
+                {merchantLabel}
+              </span>
+            ) : isNew ? (
               <span className="nb-badge px-2 py-0.5 text-[10px] rounded">
                 {localized(locale, "New", "جديد")}
               </span>
-            )}
+            ) : null}
           </div>
         </div>
       </Link>
