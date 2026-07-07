@@ -18,6 +18,7 @@ import {
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
+import { PaymentMark, useEnabledPaymentMarks } from "./_payment-marks";
 
 /**
  * vionne-footer — faithful V3 port of V2 VionneStoreFooter
@@ -94,12 +95,17 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
       ),
     );
 
-  const paymentMethods = (
-    asString(s.payment_methods) || "Visa, Mastercard, Cash on Delivery, Fawry"
-  )
-    .split(",")
-    .map((p) => p.trim())
-    .filter(Boolean);
+  // B3 phase 2 — the trust row derives from the gateways the checkout ACTUALLY
+  // offers; an explicit merchant `payment_methods` value still wins, and the
+  // old static default remains the fallback while (or if) the config fetch
+  // hasn't landed.
+  const showPayments = s.show_payment_methods !== false;
+  const derivedMarks = useEnabledPaymentMarks();
+  const configuredMethods = asString(s.payment_methods);
+  const paymentMethods = configuredMethods
+    ? configuredMethods.split(",").map((p) => p.trim()).filter(Boolean)
+    : derivedMarks ??
+      "Visa, Mastercard, Cash on Delivery, Fawry".split(",").map((p) => p.trim());
 
   // (1) Merchant footer menu — §5 hide-page→nav. useNavigation drops links to
   // hidden/unpublished pages (target_visible:false); top-level items WITH
@@ -221,7 +227,10 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
 
   return (
     <footer className="vn-footer" data-vionne-section={sectionId}>
-      <div className="container mx-auto px-4 pt-14 pb-8">
+      {/* Below md the header's fixed bottom dock (.vn-dock, ~64px + safe-area)
+          overlays the page; without this reserve the footer's last rows
+          (copyright + payments) hide underneath it (B2). md+ has no dock. */}
+      <div className="container mx-auto px-4 pt-14 pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
           {/* Brand column */}
           <div className="md:col-span-1">
@@ -342,11 +351,12 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
 
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs text-white/55">
           <span>{copyright}</span>
-          <div className="flex flex-wrap items-center gap-3">
-            {paymentMethods.map((m) => (
-              <span key={m}>{m}</span>
-            ))}
-            {paymentMethods.length > 0 && <span aria-hidden="true">·</span>}
+          <div className="flex flex-wrap items-center gap-2">
+            {showPayments &&
+              paymentMethods.map((m) => (
+                <PaymentMark key={m} name={m} isAr={locale === "ar"} />
+              ))}
+            {showPayments && paymentMethods.length > 0 && <span aria-hidden="true" className="mx-1">·</span>}
             <span>{t("footer.powered_by", localized(locale, "Powered by NUMU", "مدعوم من NUMU"))}</span>
           </div>
         </div>

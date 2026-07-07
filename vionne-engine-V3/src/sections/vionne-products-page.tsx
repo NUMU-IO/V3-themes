@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { Link, Money, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, asString, localized, merchantLabelText, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
+import { QuickAddButton } from "./_quick-add";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -317,7 +318,7 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
   const outOfStock = product.in_stock === false;
-  const primary = product.images?.[0]?.url;
+  const primary = productImage(product);
   const secondary = product.images?.[1]?.url;
   // Merchant label wins the top-start pill over tags[0]. Sale + label
   // coexist in one stacked column (sale on top — it was the dominant badge
@@ -358,6 +359,9 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
             loading="lazy"
           />
         )}
+
+        {/* A8 — one-tap quick-add (single-variant products only). */}
+        <QuickAddButton product={product} locale={locale} />
 
         {!outOfStock && (hasDiscount || merchantLabel || product.tags?.[0]) && (
           <div className="absolute top-3 start-3 flex flex-col items-start gap-1.5">

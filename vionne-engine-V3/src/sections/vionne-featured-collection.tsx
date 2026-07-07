@@ -1,8 +1,9 @@
 "use client";
 import { Link, Money, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
-import { asString, localized, merchantLabelText, type SectionRenderProps } from "./_shared";
+import { asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
+import { QuickAddButton } from "./_quick-add";
 
 const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) => {
   const { products } = useProducts();
@@ -45,24 +46,15 @@ const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) =
   return (
     <section className="py-10 md:py-14 bg-background">
       <div className="container mx-auto px-4">
-        <div className="flex items-end justify-between mb-6 md:mb-8 gap-4">
-          <div>
-            {subtitle && (
-              <span className="vn-eyebrow block mb-1.5">
-                <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} />
-              </span>
-            )}
-            <h2 className="vn-heading text-2xl md:text-3xl">
-              <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
-            </h2>
-          </div>
-          <Link
-            to={viewAllLink}
-            className="vn-label inline-flex items-center gap-1.5 text-[var(--vn-ink)] hover:opacity-70 transition-opacity shrink-0 pb-2"
-          >
-            <InlineEditable sectionId={sectionId} settingKey="view_all_text" value={viewAllText} />
-            <ArrowRight size={14} />
-          </Link>
+        <div className="mb-6 md:mb-8">
+          {subtitle && (
+            <span className="vn-eyebrow block mb-1.5">
+              <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} />
+            </span>
+          )}
+          <h2 className="vn-heading text-2xl md:text-3xl">
+            <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
+          </h2>
         </div>
 
         {isLoading ? (
@@ -82,9 +74,9 @@ const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) =
               >
                 {/* Image */}
                 <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-3 group-hover:scale-[1.02] transition-transform duration-500">
-                  {product.images?.[0]?.url ? (
+                  {productImage(product) ? (
                     <img
-                      src={product.images[0].url}
+                      src={productImage(product)}
                       alt={product.name}
                       className="vn-product-image w-full h-full object-cover"
                       loading="lazy"
@@ -92,6 +84,8 @@ const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) =
                   ) : (
                     <div className="absolute inset-0 vn-shimmer" />
                   )}
+                  {/* A8 — one-tap quick-add (single-variant products only). */}
+                  <QuickAddButton product={product} locale={locale} />
                   {/* Merchant label — same pill as the PLP card's top-start slot. */}
                   {merchantLabelText(product, locale) && (
                     <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
@@ -116,6 +110,16 @@ const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) =
             ))}
           </div>
         )}
+
+        {/* VIEW ALL sits AFTER the products (B1): the natural reading order is
+            see the items → want more → view all. A top-right link before the
+            grid asked for a click before the customer had a reason to give it. */}
+        <div className="mt-8 md:mt-10 text-center">
+          <Link to={viewAllLink} className="vn-btn vn-btn-outline-dark">
+            <InlineEditable sectionId={sectionId} settingKey="view_all_text" value={viewAllText} />
+            <ArrowRight size={14} className="rtl:rotate-180" />
+          </Link>
+        </div>
       </div>
     </section>
   );

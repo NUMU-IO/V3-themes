@@ -340,3 +340,34 @@ export function applyImageTransform(
   if (effFit === "cover") style.objectPosition = `${fx}% ${fy}%`;
   return style;
 }
+
+/**
+ * Product image URL across the API's TWO shapes: catalog products carry
+ * `images: [{url}]` objects while the related-products endpoint returns
+ * `images: ["https://…"]` plain strings (plus legacy `image_url` /
+ * `first_image_url` fields on some rows). Reading `.images[0].url` blind
+ * rendered blank cards for related items.
+ */
+export function productImage(p: unknown): string | undefined {
+  const obj = p as Record<string, unknown> | null | undefined;
+  if (!obj) return undefined;
+  const imgs = obj.images;
+  if (Array.isArray(imgs) && imgs.length > 0) {
+    const first = imgs[0] as unknown;
+    if (typeof first === "string") return first;
+    const url = (first as { url?: unknown })?.url;
+    if (typeof url === "string") return url;
+  }
+  for (const k of ["image_url", "first_image_url", "image"]) {
+    const v = obj[k];
+    if (typeof v === "string" && v) return v;
+  }
+  return undefined;
+}
+
+/** Product currency across shapes (`currency` vs related's `price_currency`). */
+export function productCurrency(p: unknown): string | undefined {
+  const obj = p as Record<string, unknown> | null | undefined;
+  const v = obj?.currency ?? obj?.price_currency;
+  return typeof v === "string" ? v : undefined;
+}

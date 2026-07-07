@@ -112,14 +112,44 @@
       "label_ar": "شحن مجاني فوق (0 = بدون عرض)",
       "default": 0,
       "info": "Your real free-shipping threshold. Drives the FREE label + 'add X more' progress hint."
+    },
+    {
+      "type": "header",
+      "content": "Recommendations",
+      "content_ar": "الاقتراحات"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recommendations",
+      "label": "Show \"You may also like\" under the cart",
+      "label_ar": "إظهار «ممكن يعجبك كمان» تحت السلة",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "recommendations_title",
+      "label": "Recommendations title",
+      "label_ar": "عنوان الاقتراحات",
+      "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "show_promo_nudge",
+      "label": "Show active-offer nudge (auto discounts)",
+      "label_ar": "إظهار تنبيه العروض التلقائية",
+      "default": true
     }
   ],
   "presets": [
     {
       "name": "Cart",
       "locales": {
-        "en": { "name": "Cart" },
-        "ar": { "name": "السلة" }
+        "en": {
+          "name": "Cart"
+        },
+        "ar": {
+          "name": "السلة"
+        }
       },
       "settings": {
         "populated_title": ""

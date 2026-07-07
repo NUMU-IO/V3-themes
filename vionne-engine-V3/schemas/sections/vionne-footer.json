@@ -78,6 +78,13 @@
       "content": "Bottom bar"
     },
     {
+      "type": "checkbox",
+      "id": "show_payment_methods",
+      "label": "Show payment method badges",
+      "label_ar": "إظهار شارات وسائل الدفع",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "payment_methods",
       "label": "Payment methods",
