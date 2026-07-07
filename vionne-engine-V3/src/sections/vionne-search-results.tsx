@@ -11,7 +11,7 @@ import {
 } from "@numueg/theme-sdk";
 import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, asString, localized, merchantLabelText, usePageData, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, merchantLabelText, usePageData, type SectionRenderProps, productImage } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -144,7 +144,7 @@ export default function VionneSearchResults({ instance, sectionId }: SectionRend
 function SearchCard({ product }: { product: Product }) {
   const locale = useLocale();
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
-  const primary = product.images?.[0]?.url;
+  const primary = productImage(product);
   const merchantLabel = merchantLabelText(product, locale);
   return (
     <Link

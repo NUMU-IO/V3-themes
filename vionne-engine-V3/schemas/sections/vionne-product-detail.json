@@ -140,6 +140,39 @@
       "label": "Guarantee 3 detail",
       "label_ar": "ضمان 3 تفصيل",
       "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Offers",
+      "content_ar": "العروض"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_offer_line",
+      "label": "Show active-offer line near the price",
+      "label_ar": "إظهار سطر العرض بجانب السعر",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_added_drawer",
+      "label": "Show \"added to bag\" drawer with suggestions",
+      "label_ar": "إظهار نافذة «اتضافت للشنطة» مع الاقتراحات",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recently_viewed",
+      "label": "Show \"Recently viewed\" rail",
+      "label_ar": "إظهار «شفتيها قريب»",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "recently_viewed_title",
+      "label": "\"Recently viewed\" title",
+      "label_ar": "عنوان «شفتيها قريب»",
+      "default": ""
     }
   ],
   "presets": [

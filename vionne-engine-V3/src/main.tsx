@@ -6,7 +6,7 @@
 import { useMemo, type ComponentType } from "react";
 import {
   Section, useThemeSettings, useLocale, sanitizeHtml, defineThemeEntry,
-  type SectionInstance, type Store, type ThemeSettingsV3,
+  type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 // Tailwind-in-bundle: compiles @tailwind directives + ported V2 vionne
@@ -236,7 +236,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "vionne-v3", name: "Vionne (V3)", version: "0.4.19" },
+  manifest: { id: "vionne-v3", name: "Vionne (V3)", version: "0.5.0" },
   mount,
 };
 export default v3Handle;
