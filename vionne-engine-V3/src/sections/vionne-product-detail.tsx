@@ -21,7 +21,9 @@ import { motion } from "framer-motion";
 import { asNumber, asString, localized, productCurrency, productImage, type SectionRenderProps } from "./_shared";
 import { bestCartNudge, pdpOfferLine, qtyBogoHint, useActivePromotions } from "./_promotions";
 import { InlineEditable } from "./_inline-editable";
+import { PricePair } from "./_price";
 import { recordRecentlyViewed, useRecentlyViewed } from "./_recently-viewed";
+import { ReviewsSection, Stars, useProductReviews } from "./_reviews";
 
 /**
  * Vionne product-detail section.
@@ -126,6 +128,10 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
       window.removeEventListener("keydown", onKey);
     };
   }, [drawerOpen]);
+
+  // Honest reviews — real aggregate for the header stars + the reviews block.
+  const showReviews = s.show_reviews !== false;
+  const { stats: reviewStats } = useProductReviews(product?.id);
 
   // A8 — recently-viewed trail. Record this visit + read the prior trail
   // (excluding this product). Hooks before the early return.
@@ -285,23 +291,27 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
             </h1>
 
             {/* Rating (static — review data not exposed on the SDK product) */}
-            {showRating && (
-              <div className="flex items-center gap-1 mb-4 text-[var(--vn-muted)]">
-                <span className="text-sm">★★★★★</span>
-                <span className="text-xs">{localized(locale, "(reviews)", "(تقييمات)")}</span>
+            {/* REAL rating aggregate — decorative 5 stars with "(reviews)"
+                advertised ratings that didn't exist; nothing erodes trust
+                faster. Renders only when approved reviews exist. */}
+            {showRating && reviewStats.count > 0 && (
+              <div className="flex items-center gap-2 mb-4 text-[var(--vn-muted)]">
+                <Stars value={reviewStats.average} />
+                <span className="text-xs">
+                  {reviewStats.average.toFixed(1)} ({reviewStats.count})
+                </span>
               </div>
             )}
 
-            {/* Price */}
+            {/* Price — original struck in sale red BEFORE the bold current
+                price (merchant-requested order: ~~LE 500~~ **LE 450**). */}
             <div className="flex items-baseline gap-3 mb-5">
-              <span className="text-2xl font-semibold text-[var(--vn-ink)]">
-                <Money amount={variantPrice} currency={product.currency} />
-              </span>
-              {hasDiscount && (
-                <span className="text-sm text-[var(--vn-muted)] line-through">
-                  <Money amount={compareAt} currency={product.currency} />
-                </span>
-              )}
+              <PricePair
+                price={variantPrice}
+                compareAt={compareAt}
+                currency={product.currency}
+                size="lg"
+              />
             </div>
 
             {/* A3 — active-offer line. The merchant's "spend X save Y%" style
@@ -554,6 +564,9 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
           </section>
         )}
 
+        {/* Honest CRO — customer reviews (real data + submit form). */}
+        {showReviews && <ReviewsSection productId={product.id} locale={locale} />}
+
         {/* A8 — recently-viewed trail (localStorage, zero setup). Below the
             related rail; hidden until there's something to show. */}
         {showRecentlyViewed && recentlyViewed.length > 0 && (
@@ -617,8 +630,8 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
           aria-label={localized(locale, "Added to bag", "اتضافت للشنطة")}
           data-testid="storefront-added-drawer"
         >
-          <div className="absolute inset-0 bg-black/45" onClick={() => setDrawerOpen(false)} />
-          <div className="absolute inset-x-0 bottom-0 md:inset-y-0 md:end-0 md:inset-x-auto md:w-[420px] bg-[var(--vn-white)] text-[var(--vn-ink)] rounded-t-2xl md:rounded-none max-h-[85vh] md:max-h-none overflow-y-auto p-5 md:p-6">
+          <div className="vn-sheet-backdrop absolute inset-0 bg-black/45" onClick={() => setDrawerOpen(false)} />
+          <div className="vn-sheet-panel absolute inset-x-0 bottom-0 md:inset-y-0 md:end-0 md:inset-x-auto md:w-[420px] bg-[var(--vn-white)] text-[var(--vn-ink)] rounded-t-2xl md:rounded-none max-h-[85vh] md:max-h-none overflow-y-auto p-5 md:p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="inline-flex items-center gap-2 vn-heading text-base">
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--vn-ink)] text-[var(--vn-white)]">

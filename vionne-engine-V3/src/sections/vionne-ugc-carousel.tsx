@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, resolveVideoEmbed, type ImageTransform, type SectionRenderProps, type VideoEmbed } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, productImage, resolveVideoEmbed, type ImageTransform, type SectionRenderProps, type VideoEmbed } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 interface Item {
@@ -29,6 +29,16 @@ const VionneUgcCarousel = ({ instance, sectionId }: SectionRenderProps) => {
   const introImage = asImageUrl(s.intro_image);
   const introImageTransform = asImageTransform(s.intro_image);
   const badgeText = asString(s.badge_text) || localized(locale, "Shop now", "تسوّقي دلوقتي");
+  // Resolve the linked product (name + fallback thumb) from the catalog by
+  // matching the /product/<slug-or-id> link, so each card can show the real
+  // product under the video without the merchant re-typing anything.
+  const { products: catalog } = useProducts();
+  const linkedProduct = (link: string) => {
+    const m = link.match(/\/product\/([^/?#]+)/);
+    if (!m) return undefined;
+    const key = decodeURIComponent(m[1]);
+    return catalog.find((p) => p.slug === key || p.id === key);
+  };
 
   const items: Item[] = [];
   for (let i = 1; i <= 6; i++) {
@@ -175,17 +185,40 @@ const VionneUgcCarousel = ({ instance, sectionId }: SectionRenderProps) => {
                     <InlineEditable sectionId={sectionId} settingKey={`item_${it.n}_caption`} value={it.caption} />
                   </span>
                 )}
+
+                {/* Product thumbnail OVERLAY (bottom-start, white ring) —
+                    the tagged-product affordance from the reference design. */}
+                {it.productLink && (() => {
+                  const prod = linkedProduct(it.productLink);
+                  const thumb = it.productImage || (prod ? productImage(prod) : undefined);
+                  return thumb ? (
+                    <img
+                      src={thumb}
+                      alt={prod?.name || ""}
+                      className="absolute bottom-3 start-3 w-11 h-11 object-cover rounded-lg ring-2 ring-white shadow-md"
+                      style={applyImageTransform(it.productImageTransform, "cover")}
+                      loading="lazy"
+                    />
+                  ) : null;
+                })()}
               </div>
 
+              {/* Under the media: product name + red "Shop Now". */}
               {it.productLink && (
                 <Link
                   to={it.productLink}
-                  className="bg-white px-3 py-2.5 flex items-center gap-2.5 hover:bg-[var(--vn-band)] transition-colors"
+                  className="bg-white px-3 py-2.5 block hover:bg-[var(--vn-band)] transition-colors"
+                  data-testid="storefront-ugc-shop"
                 >
-                  {it.productImage && (
-                    <img src={it.productImage} alt="" className="w-9 h-9 object-cover rounded-sm shrink-0" style={applyImageTransform(it.productImageTransform, "cover")} />
-                  )}
-                  <span className="vn-label text-[10px] text-[var(--vn-ink)] flex-1 text-start">
+                  {(() => {
+                    const prod = linkedProduct(it.productLink);
+                    return prod?.name ? (
+                      <span className="block text-[13px] font-medium text-[var(--vn-ink)] line-clamp-1">
+                        {prod.name}
+                      </span>
+                    ) : null;
+                  })()}
+                  <span className="block mt-0.5 text-[12px] font-semibold text-[var(--vn-sale)]">
                     {badgeText}
                   </span>
                 </Link>
