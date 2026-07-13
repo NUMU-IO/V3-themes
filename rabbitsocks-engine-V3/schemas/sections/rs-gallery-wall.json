@@ -1,0 +1,56 @@
+{
+  "type": "rs-gallery-wall",
+  "name": "Gallery Wall",
+  "name_ar": "حيطة المعرض",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro",
+      "label_ar": "المقدمة",
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "count",
+      "label": "Pieces on the wall",
+      "label_ar": "عدد القطع",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "product_list",
+      "id": "product_ids",
+      "label": "Hand-pick products",
+      "label_ar": "اختيار المنتجات يدويًا",
+      "info": "Leave empty to feature your newest products.",
+      "info_ar": "اتركه فارغًا لعرض أحدث المنتجات.",
+      "default": []
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gallery Wall",
+      "locales": {
+        "en": {
+          "name": "Gallery Wall"
+        },
+        "ar": {
+          "name": "حيطة المعرض"
+        }
+      },
+      "settings": {
+        "count": 3
+      }
+    }
+  ]
+}

@@ -1,37 +1,53 @@
 {
   "type": "rs-featured",
-  "name": "Featured Collection (Rabbitsocks)",
+  "name": "Featured Collection",
   "settings": [
     {
       "type": "header",
       "content": "Content"
     },
     {
-      "id": "label",
-      "type": "text",
-      "label": "Label",
-      "label_ar": "العنوان الفرعي",
-      "default": ""
-    },
-    {
       "id": "title",
       "type": "text",
       "label": "Title",
-      "label_ar": "العنوان",
       "default": ""
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "label": "Subtitle",
+      "default": ""
+    },
+    {
+      "id": "collection_tag",
+      "type": "select",
+      "label": "Collection",
+      "default": "new",
+      "options": [
+        {
+          "value": "new",
+          "label": "New arrivals"
+        },
+        {
+          "value": "bestseller",
+          "label": "Best sellers"
+        },
+        {
+          "value": "featured",
+          "label": "Featured"
+        }
+      ]
     },
     {
       "id": "view_all_text",
       "type": "text",
       "label": "View all text",
-      "label_ar": "نص عرض الكل",
       "default": ""
     },
     {
       "id": "view_all_link",
       "type": "url",
       "label": "View all link",
-      "label_ar": "رابط عرض الكل",
       "default": "/products"
     },
     {
@@ -42,11 +58,39 @@
       "id": "product_count",
       "type": "range",
       "label": "Products to show",
-      "label_ar": "عدد المنتجات",
       "default": 8,
       "min": 2,
       "max": 12,
       "step": 1
+    },
+    {
+      "id": "columns",
+      "type": "range",
+      "label": "Columns",
+      "default": 4,
+      "min": 2,
+      "max": 5,
+      "step": 1
     }
-  ]
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection",
+      "locales": {
+        "en": {
+          "name": "Featured Collection"
+        },
+        "ar": {
+          "name": "تشكيلة مميزة"
+        }
+      },
+      "settings": {
+        "collection_tag": "new",
+        "view_all_link": "/products",
+        "product_count": 8,
+        "columns": 4
+      }
+    }
+  ],
+  "name_ar": "تشكيلة مميزة"
 }

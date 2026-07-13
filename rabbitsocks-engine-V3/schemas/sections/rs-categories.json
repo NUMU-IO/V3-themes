@@ -1,24 +1,33 @@
 {
   "type": "rs-categories",
-  "name": "Categories (Rabbitsocks)",
+  "name": "Category arcade",
   "settings": [
     {
       "type": "header",
       "content": "Content"
     },
     {
-      "id": "label",
       "type": "text",
-      "label": "Label",
-      "label_ar": "العنوان الفرعي",
-      "default": ""
-    },
-    {
       "id": "title",
-      "type": "text",
       "label": "Title",
       "label_ar": "العنوان",
       "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_items",
+      "label": "Max categories (0 = all)",
+      "label_ar": "أقصى عدد للفئات (0 = الكل)",
+      "default": 0,
+      "min": 0,
+      "max": 12,
+      "step": 1
     }
-  ]
+  ],
+  "presets": [],
+  "name_ar": "أقسام المتجر"
 }

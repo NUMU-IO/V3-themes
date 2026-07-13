@@ -1,31 +1,40 @@
 {
   "type": "rs-newsletter",
-  "name": "Newsletter (Rabbitsocks)",
+  "name": "Newsletter",
   "settings": [
     {
       "type": "header",
       "content": "Content"
     },
     {
-      "id": "subtitle",
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
       "type": "textarea",
+      "id": "subtitle",
       "label": "Subtitle",
-      "label_ar": "الوصف",
+      "label_ar": "العنوان الفرعي",
       "default": ""
     },
     {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": ""
+    },
+    {
+      "type": "text",
       "id": "placeholder",
-      "type": "text",
-      "label": "Input placeholder",
-      "label_ar": "نص الحقل",
-      "default": ""
-    },
-    {
-      "id": "success_text",
-      "type": "text",
-      "label": "Success message",
-      "label_ar": "رسالة النجاح",
+      "label": "Email placeholder",
+      "label_ar": "نص حقل البريد",
       "default": ""
     }
-  ]
+  ],
+  "presets": [],
+  "name_ar": "النشرة البريدية"
 }

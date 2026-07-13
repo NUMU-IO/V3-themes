@@ -1,10 +1,10 @@
 {
   "id": "rabbitsocks-v3",
-  "name": "Rabbitsocks (V3)",
+  "name": "Mashkal",
   "author": "NUMU",
-  "version": "0.3.11",
+  "version": "0.4.0",
   "layout": "single-column",
-  "description": "Rabbitsocks (V3) — quiet-luxury editorial minimalism (serif italic headlines, generous whitespace), ported faithfully from the V2 in-tree theme.",
+  "description": "The kaleidoscope gallery theme: products framed in arches, diamonds and circles, with a built-in bundle builder and size chart.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
@@ -13,54 +13,48 @@
         "name": "Home",
         "sections": [
           {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
             "type": "rs-hero",
-            "settings": {
-              "cta_link": "/products"
-            }
+            "settings": {}
           },
           {
             "type": "rs-marquee",
-            "settings": {
-              "repeat": 3
-            }
+            "settings": {}
+          },
+          {
+            "type": "rs-categories",
+            "settings": {}
+          },
+          {
+            "type": "rs-gallery-wall",
+            "settings": {}
           },
           {
             "type": "rs-featured",
-            "settings": {
-              "view_all_link": "/products",
-              "product_count": 8
-            }
+            "settings": {}
           },
           {
-            "type": "rs-image-with-text",
-            "settings": {
-              "image_alt": "Curated objects",
-              "image_position": "right"
-            }
+            "type": "rs-pick-three",
+            "settings": {}
           },
           {
-            "type": "rs-promo-banner",
-            "settings": {
-              "journal_link": "/blog",
-              "edit_link": "/products"
-            }
+            "type": "rs-fit-guide",
+            "settings": {}
+          },
+          {
+            "type": "rs-testimonials",
+            "settings": {}
           },
           {
             "type": "rs-newsletter",
             "settings": {}
           },
           {
-            "type": "rs-image-with-text",
-            "settings": {
-              "image_position": "left",
-              "cta_link": "/contact"
-            }
-          },
-          {
-            "type": "rs-editorial",
-            "settings": {
-              "cta_url": "/products"
-            }
+            "type": "rs-footer",
+            "settings": {}
           }
         ]
       },
@@ -68,14 +62,22 @@
         "name": "Product",
         "sections": [
           {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
             "type": "rs-product-detail",
             "settings": {
-              "show_rating": true,
+              "show_rating": false,
               "show_stock": true,
               "show_guarantees": true,
               "show_related_products": true,
               "related_products_count": 4
             }
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
           }
         ]
       },
@@ -83,12 +85,41 @@
         "name": "Products",
         "sections": [
           {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
             "type": "rs-products-page",
             "settings": {
-              "show_view_toggle": true,
+              "show_view_toggle": false,
               "columns_desktop": 4,
               "columns_mobile": 2
             }
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "collection": {
+        "name": "Collection",
+        "sections": [
+          {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
+            "type": "rs-products-page",
+            "settings": {
+              "show_view_toggle": false,
+              "columns_desktop": 4,
+              "columns_mobile": 2
+            }
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
           }
         ]
       },
@@ -96,17 +127,16 @@
         "name": "About",
         "sections": [
           {
-            "type": "rs-image-with-text",
-            "settings": {
-              "image_position": "right",
-              "cta_link": "/products"
-            }
+            "type": "rs-header",
+            "settings": {}
           },
           {
-            "type": "rs-editorial",
-            "settings": {
-              "cta_url": "/products"
-            }
+            "type": "rs-about",
+            "settings": {}
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
           }
         ]
       },
@@ -114,13 +144,62 @@
         "name": "Contact",
         "sections": [
           {
-            "type": "rs-editorial",
-            "settings": {
-              "cta_url": "/products"
-            }
+            "type": "rs-header",
+            "settings": {}
           },
           {
-            "type": "rs-newsletter",
+            "type": "rs-contact",
+            "settings": {}
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "search": {
+        "name": "Search",
+        "sections": [
+          {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
+            "type": "rs-search-results",
+            "settings": {}
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "page": {
+        "name": "Content page",
+        "sections": [
+          {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "404": {
+        "name": "Not found",
+        "sections": [
+          {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
+            "type": "rs-not-found",
+            "settings": {}
+          },
+          {
+            "type": "rs-footer",
             "settings": {}
           }
         ]
@@ -129,24 +208,84 @@
         "name": "Profile",
         "sections": [
           {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
             "type": "rs-profile",
+            "settings": {}
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "account": {
+        "name": "Account",
+        "sections": [
+          {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
+            "type": "rs-profile",
+            "settings": {}
+          },
+          {
+            "type": "rs-footer",
             "settings": {}
           }
         ]
       },
       "cart": {
         "name": "Cart",
-        "sections": []
+        "sections": [
+          {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
+            "type": "rs-cart",
+            "settings": {}
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
+          }
+        ]
       },
       "checkout": {
         "name": "Checkout",
-        "sections": []
+        "sections": [
+          {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
+          }
+        ]
       },
       "order-confirmation": {
         "name": "Order confirmation",
         "sections": [
           {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
             "type": "rs-order-confirmation-section",
+            "settings": {
+              "show_emoji": false,
+              "show_progress": false,
+              "show_whatsapp": false,
+              "show_track_order": false
+            }
+          },
+          {
+            "type": "rs-footer",
             "settings": {}
           }
         ]

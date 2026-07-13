@@ -1,14 +1,15 @@
 /**
- * Tailwind config for the Rabbitsocks V3 theme bundle (Tailwind-in-bundle — see
- * bazar/vionne configs for the full rationale). Rabbitsocks's V2 sections are
+ * Tailwind config for the Editorial V3 theme bundle (Tailwind-in-bundle — see
+ * bazar/vionne configs for the full rationale). Editorial's V2 sections are
  * authored in Tailwind utility classes (`py-10 md:py-14`, `grid grid-cols-[...]`,
- * `bg-background`, arbitrary values like `text-[hsl(var(--rs-primary))]`) + custom
- * `rs-*` classes. src/main.tsx imports src/theme.css; Vite's PostCSS step
- * compiles these into dist/theme.css.
+ * `bg-[hsl(var(--ed-green))]`, `text-muted-foreground`) + custom `ed-*` classes.
+ * src/main.tsx imports src/theme.css; Vite's PostCSS step compiles these into
+ * dist/theme.css.
  *
  * The `colors` extend maps shadcn semantic names to the HSL channel vars that
- * src/theme.css (ported from V2 rabbitsocks styles.css) defines, so `bg-background`
- * / `text-foreground` / `bg-muted` etc. from the ported sections resolve.
+ * src/theme.css (ported from V2 editorial styles.css) defines, so
+ * `bg-background` / `text-foreground` / `bg-muted` etc. from the ported
+ * sections resolve.
  */
 
 /** @type {import('tailwindcss').Config} */
@@ -63,6 +64,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        whatsapp: {
+          DEFAULT: "hsl(var(--whatsapp))",
+          foreground: "hsl(var(--whatsapp-foreground))",
+        },
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -70,9 +77,9 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--body-font)", "Manrope", "Helvetica Neue", "Arial", "sans-serif"],
-        heading: ["var(--heading-font)", "Cormorant Garamond", "Georgia", "serif"],
-        body: ["var(--body-font)", "Manrope", "sans-serif"],
+        sans: ["var(--body-font)", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+        heading: ["var(--heading-font)", "var(--body-font)", "sans-serif"],
+        body: ["var(--body-font)", "Helvetica Neue", "sans-serif"],
       },
     },
   },

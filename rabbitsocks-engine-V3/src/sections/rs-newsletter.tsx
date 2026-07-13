@@ -1,89 +1,71 @@
 "use client";
 import { useState } from "react";
-import { useShop, useLocale } from "@numueg/theme-sdk";
+import { useLocale } from "@numueg/theme-sdk";
 import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
-const RsNewsletter = ({ instance }: SectionRenderProps) => {
-  const shop = useShop();
-  const locale = useLocale();
+/**
+ * Editorial newsletter — faithful port of V2
+ * themes/editorial/sections/newsletter/RsNewsletter.tsx.
+ *
+ * Green full-bleed band, centered white copy, inline email input + button.
+ * V2 used the shared `useNewsletterSubmit` hook; here we keep equivalent local
+ * email state + submit so the section is self-contained in the bundle. All
+ * className strings are verbatim.
+ */
+export default function RsNewsletter({ instance, sectionId }: SectionRenderProps) {
   const s = instance.settings ?? {};
-  const storeName = shop?.name || "RabbitSocks";
-  const subtitle = asString(s.subtitle) || localized(
-    locale,
-    "Subscribe to our newsletter for the latest collections and exclusive offers.",
-    "اشترك في نشرتنا عشان توصلك أحدث التشكيلات والعروض الحصرية.",
-  );
-  const placeholder = asString(s.placeholder) || localized(locale, "Email address", "البريد الإلكتروني");
-  const successText = asString(s.success_text) || localized(
-    locale,
-    "Thank you for subscribing! We'll keep you posted.",
-    "شكراً لاشتراكك! هنطمنك على كل جديد.",
-  );
+  const locale = useLocale();
+  const title = asString(s.title) || localized(locale, "Subscribe to our newsletter", "اشترك في نشرتنا");
+  const subtitle =
+    asString(s.subtitle) ||
+    localized(locale, "Be the first to hear about new products and exclusive offers", "اعرف أول واحد عن العروض والمنتجات الجديدة");
+  const buttonText = asString(s.button_text) || localized(locale, "Subscribe", "اشترك");
+  const placeholder = asString(s.placeholder) || localized(locale, "Your email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
+  const handleSubmit = () => {
+    if (!email) return;
     setSubmitted(true);
+    setEmail("");
   };
 
   return (
-    <section className="bg-[hsl(var(--rs-surface-low))] w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 px-6 md:px-12 py-20 border-t border-[hsl(var(--rs-outline-variant)/0.15)]">
-        <div>
-          <span className="font-[var(--heading-font,'Cormorant_Garamond')] italic text-3xl mb-8 block text-[hsl(var(--rs-primary))]">
-            {storeName}
-          </span>
-          <p className="rs-body mb-12 max-w-xs text-[hsl(var(--rs-primary)/0.65)]">{subtitle}</p>
-
-          {submitted ? (
-            <p className="rs-body text-[hsl(var(--rs-primary))]">
-              {successText}
-            </p>
-          ) : (
-            <form onSubmit={handleSubmit} className="max-w-md">
-              <div className="relative">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={placeholder}
-                  className="w-full rs-input"
-                  dir="ltr"
-                  required
-                />
-                <button type="submit" className="absolute end-0 bottom-4" aria-label="Subscribe">
-                  <span className="material-symbols-outlined text-[hsl(var(--rs-primary))]">
-                    arrow_forward
-                  </span>
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
-
-        <div className="flex flex-col md:flex-row gap-12 md:gap-16">
-          <div className="flex flex-col gap-4">
-            <span className="rs-label mb-4 text-[hsl(var(--rs-primary))]">
-              {localized(locale, "Navigation", "روابط")}
-            </span>
-            <a href="/shipping" className="rs-footer-link">{localized(locale, "Shipping & Delivery", "الشحن والتوصيل")}</a>
-            <a href="/returns" className="rs-footer-link">{localized(locale, "Returns & Exchanges", "الاسترجاع والاستبدال")}</a>
-            <a href="/contact" className="rs-footer-link">{localized(locale, "Contact us", "اتصل بينا")}</a>
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="rs-label mb-4 text-[hsl(var(--rs-primary))]">
-              {localized(locale, "Follow us", "تابعنا")}
-            </span>
-            <a href="#" className="rs-footer-link">Instagram</a>
-            <a href="#" className="rs-footer-link">Pinterest</a>
-          </div>
+    <section className="py-12 bg-[hsl(var(--rs-navy))]">
+      <div className="container mx-auto px-4 text-center">
+        <h2 className="text-white font-black text-2xl md:text-3xl mb-3">
+          <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
+        </h2>
+        <p className="text-white/70 text-sm mb-6 max-w-sm mx-auto">
+          <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
+        </p>
+        <div className="flex gap-2 max-w-md mx-auto">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSubmit();
+            }}
+            placeholder={placeholder}
+            dir="ltr"
+            className="flex-1 h-12 px-4 bg-white/10 text-white placeholder:text-white/40 text-sm border border-white/20 focus:outline-none focus:border-white/50"
+          />
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="px-6 h-12 bg-white text-[hsl(var(--rs-navy-deep))] font-bold text-xs uppercase tracking-[0.15em] hover:bg-white/90 transition-colors"
+          >
+            {submitted ? (
+              localized(locale, "Subscribed", "تم الاشتراك")
+            ) : (
+              <InlineEditable sectionId={sectionId} settingKey="button_text" value={buttonText} />
+            )}
+          </button>
         </div>
       </div>
     </section>
   );
-};
-
-export default RsNewsletter;
+}

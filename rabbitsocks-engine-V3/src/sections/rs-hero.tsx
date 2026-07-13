@@ -1,137 +1,134 @@
 "use client";
-import { Link, useProducts, useLocale } from "@numueg/theme-sdk";
-import { asString, localized, type SectionRenderProps } from "./_shared";
+import { Link, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
+import {
+  asImageAlt,
+  asImageUrl,
+  asString,
+  localized,
+  productImage,
+  useDemo,
+  useInsideEditor,
+  type SectionRenderProps,
+} from "./_shared";
+import { InlineEditable } from "./_inline-editable";
+import { Aperture, Focus, FrameSpin, Rise, useMotionOn } from "./_motion";
 
-const DiamondFrame = ({ image, name }: { image?: string; name?: string }) => (
-  <div className="rs-hero-frame relative" style={{ aspectRatio: "1 / 0.9" }}>
-    <svg
-      viewBox="0 0 100 90"
-      className="rs-hero-triangle-outline"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-    >
-      <polygon points="50,2 98,45 50,88 2,45" />
-    </svg>
-    <div className="rs-hero-frame-inner">
-      {image ? (
-        <img
-          src={image}
-          alt={name ?? ""}
-          className="w-[62%] h-[62%] object-contain"
-          style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}
-        />
-      ) : (
-        <div
-          className="w-[62%] h-[62%] bg-[hsl(var(--rs-surface-high))]"
-          style={{ clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" }}
-        />
-      )}
-    </div>
-  </div>
-);
-
-const SquareFrame = ({ image, name }: { image?: string; name?: string }) => (
-  <div className="rs-hero-frame rs-hero-frame-square">
-    <div className="rs-hero-frame-inner rs-hero-frame-inner-square">
-      {image ? (
-        <img
-          src={image}
-          alt={name ?? ""}
-          className="w-full h-full object-contain"
-        />
-      ) : (
-        <div className="w-full h-full bg-[hsl(var(--rs-surface-high))]" />
-      )}
-    </div>
-  </div>
-);
-
-const TriangleFrame = ({ image, name }: { image?: string; name?: string }) => (
-  <div className="rs-hero-frame rs-hero-frame-triangle">
-    <svg
-      viewBox="0 0 100 95"
-      className="rs-hero-triangle-outline"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
-    >
-      <polygon points="50,2 98,93 2,93" />
-    </svg>
-    <div className="rs-hero-frame-inner rs-hero-frame-inner-triangle">
-      {image ? (
-        <img
-          src={image}
-          alt={name ?? ""}
-          className="w-full h-full object-contain"
-        />
-      ) : (
-        <div className="w-full h-full bg-[hsl(var(--rs-surface-high))]" />
-      )}
-    </div>
-  </div>
-);
-
-const RsHero = ({ instance }: SectionRenderProps) => {
-  const { products } = useProducts();
+/**
+ * Mashkal hero — the kaleidoscope pane. Serif display copy on gallery white
+ * beside a composed arrangement of geometric frames: one ARCH-clipped image,
+ * one DIAMOND-clipped image overlapping it, and a thin outlined circle —
+ * the theme's shapes stated in the first viewport. Frames click home
+ * (FrameSpin), imagery opens through the Aperture, the headline pulls into
+ * Focus. Falls back to the store's first products for imagery so a fresh
+ * store is never empty; explicit image settings win.
+ */
+export default function RsHero({ instance, sectionId }: SectionRenderProps) {
+  const s = useResolvedSettings(instance);
   const locale = useLocale();
-  const s = instance.settings ?? {};
-  const badgeText = asString(s.badge_text) || localized(locale, "AUTUMN/WINTER COLLECTION", "تشكيلة خريف/شتاء");
-  const headline = asString(s.headline) || localized(locale, "Elegance\nwithout limits.", "أناقة\nمن غير حدود.");
-  const subtitle = asString(s.subtitle) || localized(
-    locale,
-    "We believe in quiet luxury for everyday essentials. Crafted with technical precision and selected for the modern wardrobe.",
-    "بنؤمن بالرفاهية الهادئة في تفاصيل يومك. مصنوعة بدقة واتختارت بعناية لخزانة العصري.",
-  );
-  const ctaLink = asString(s.cta_link, "/products");
-  const ctaText = asString(s.cta_text) || localized(locale, "SHOP NOW", "تسوّق دلوقتي");
+  const { products } = useProducts();
+  const demo = useDemo();
+  const inEditor = useInsideEditor();
+  const on = useMotionOn();
 
-  const getImg = (i: number) => products[i]?.images?.[0]?.url;
-  const getName = (i: number) => products[i]?.name;
+  const headline =
+    asString(s.headline) ||
+    localized(locale, "Made to be looked at,\nworn anyway", "معمولة تتفرج عليها،\nوتتلبس برضه");
+  const subtitle =
+    asString(s.subtitle) ||
+    localized(
+      locale,
+      "A small collection, displayed like a gallery and priced like a friend.",
+      "تشكيلة صغيرة، معروضة كأنها معرض فني وسعرها صاحبك.",
+    );
+  const ctaText = asString(s.cta_text) || localized(locale, "Browse the collection", "اتفرج على التشكيلة");
+  const ctaLink = asString(s.cta_link) || "/products";
+  const specLabel = asString(s.spec_label);
+
+  // Imagery: explicit settings → first products → (editor/demo) placeholders.
+  const productA = productImage(products[0]);
+  const productB = productImage(products[1] ?? products[0]);
+  const showPlaceholders = demo || inEditor;
+  const imageMain =
+    asImageUrl(s.image_main) || productA || (showPlaceholders ? "https://picsum.photos/seed/mashkal-arch/900/1200" : "");
+  const imageAccent =
+    asImageUrl(s.image_accent) || productB || (showPlaceholders ? "https://picsum.photos/seed/mashkal-diamond/700/700" : "");
+  const altMain = asImageAlt(s.image_main) || headline.replace(/\n/g, " ");
+  const altAccent = asImageAlt(s.image_accent) || altMain;
+
+  const headlineLines = headline.split("\n").filter((l) => l.trim().length > 0);
+  const focus = on && !inEditor;
 
   return (
-    <section className="rs-hero-stage bg-[hsl(var(--rs-background))] relative overflow-hidden">
-      {/* Decorative circles */}
-      <div className="absolute top-16 left-[7%] w-8 h-8 rounded-full border border-[hsl(var(--rs-primary)/0.16)] pointer-events-none" />
-      <div className="absolute top-28 left-[21%] w-4 h-4 rounded-full border border-[hsl(var(--rs-primary)/0.1)] pointer-events-none" />
-      <div className="absolute top-14 left-[35%] w-3 h-3 rounded-full border border-[hsl(var(--rs-primary)/0.12)] pointer-events-none" />
-      <div className="absolute top-20 right-[34%] w-5 h-5 rounded-full border border-[hsl(var(--rs-primary)/0.1)] pointer-events-none" />
-      <div className="absolute top-10 right-[19%] w-7 h-7 rounded-full border border-[hsl(var(--rs-primary)/0.14)] pointer-events-none" />
-      <div className="absolute top-24 right-[7%] w-3 h-3 rounded-full border border-[hsl(var(--rs-primary)/0.18)] pointer-events-none" />
-      <div className="absolute top-36 right-[12%] w-2 h-2 rounded-full bg-[hsl(var(--rs-primary)/0.08)] pointer-events-none" />
+    <section className="relative overflow-hidden bg-[hsl(var(--background))]">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-y-10 md:gap-x-8 py-14 md:py-20 min-h-[68vh]">
+          {/* Copy side */}
+          <div className="md:col-span-6 lg:col-span-5">
+            {specLabel && (
+              <p className="rs-spec mb-5">
+                <InlineEditable sectionId={sectionId} settingKey="spec_label" value={specLabel} />
+              </p>
+            )}
+            <h1 className="rs-hero-title text-[hsl(var(--foreground))] mb-5">
+              {focus ? (
+                <Focus on lines={headlineLines} delay={0.1} />
+              ) : (
+                <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} multiline />
+              )}
+            </h1>
+            <Rise on={on} delay={0.45}>
+              <p className="text-base md:text-lg text-[var(--vn-muted)] max-w-[46ch] leading-relaxed mb-8">
+                <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
+              </p>
+            </Rise>
+            <Rise on={on} delay={0.58} className="flex flex-wrap items-center gap-4">
+              <Link to={ctaLink} className="vn-btn vn-btn-filled">
+                <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
+              </Link>
+            </Rise>
+          </div>
 
-      {/* Sky / breathing room */}
-      <div className="rs-hero-sky" />
+          {/* Shape side — the kaleidoscope arrangement */}
+          <div className="md:col-span-6 lg:col-span-7 relative flex justify-center md:justify-end" aria-hidden={!imageMain}>
+            <div className="relative w-full max-w-[520px]">
+              {/* Arch: the tall pane */}
+              <FrameSpin on={on} inView={false} delay={0.15}>
+                <div className="relative w-[78%] aspect-[3/4] ms-auto">
+                  <Aperture on={on} inView={false} delay={0.25} className="absolute inset-0 rs-clip-arch rs-morph bg-[var(--rs-surface-high)]">
+                    {imageMain && (
+                      <img src={imageMain} alt={altMain} className="w-full h-full object-cover" />
+                    )}
+                  </Aperture>
+                  {/* thin outline echoing the arch, offset like a gallery mat */}
+                  <div
+                    className="absolute -inset-3 border border-[hsl(var(--rs-line))] rs-clip-arch pointer-events-none"
+                    aria-hidden="true"
+                  />
+                </div>
+              </FrameSpin>
 
-      {/* Hero text */}
-      <div className="px-6 md:px-10 max-w-[1440px] mx-auto mb-6">
-        <h1 className="rs-headline-md whitespace-pre-line text-[hsl(var(--rs-primary))]">
-          {headline}
-        </h1>
-        <p className="mt-3 rs-body max-w-md text-[hsl(var(--rs-primary)/0.65)]">
-          {subtitle}
-        </p>
-      </div>
+              {/* Diamond: the accent pane, overlapping the arch's lower start edge */}
+              <FrameSpin on={on} inView={false} delay={0.4} className="absolute bottom-[-6%] start-0 w-[42%]">
+                <div className="relative aspect-square">
+                  <svg viewBox="0 0 100 100" className="rs-frame-line text-[hsl(var(--foreground))]" aria-hidden="true">
+                    <polygon points="50,1 99,50 50,99 1,50" vectorEffect="non-scaling-stroke" />
+                  </svg>
+                  <Aperture on={on} inView={false} delay={0.5} className="absolute inset-[9%] rs-clip-diamond rs-morph bg-[var(--rs-surface-high)]">
+                    {imageAccent && (
+                      <img src={imageAccent} alt={altAccent} className="w-full h-full object-cover" />
+                    )}
+                  </Aperture>
+                </div>
+              </FrameSpin>
 
-      {/* Geometric product grid */}
-      <div className="px-6 md:px-10 max-w-[1440px] mx-auto">
-        <div className="rs-hero-grid">
-          <DiamondFrame image={getImg(0)} name={getName(0)} />
-          <SquareFrame image={getImg(1)} name={getName(1)} />
-          <TriangleFrame image={getImg(2)} name={getName(2)} />
-          <DiamondFrame image={getImg(3)} name={getName(3)} />
+              {/* Circle ornament: pure line, top start corner */}
+              <FrameSpin on={on} inView={false} delay={0.55} className="absolute -top-6 start-[6%] w-[18%]">
+                <div className="aspect-square rounded-full border border-[hsl(var(--rs-line))]" aria-hidden="true" />
+              </FrameSpin>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Bottom bar: collection label + CTA */}
-      <div className="px-6 md:px-10 py-8 max-w-[1440px] mx-auto flex items-center justify-between">
-        <p className="rs-label">{badgeText}</p>
-        <Link to={ctaLink} className="rs-btn-ghost inline-block">
-          {ctaText}
-        </Link>
       </div>
     </section>
   );
-};
-
-export default RsHero;
+}

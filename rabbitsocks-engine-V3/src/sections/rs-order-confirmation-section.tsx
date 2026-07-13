@@ -1,46 +1,64 @@
 "use client";
 import { useState } from "react";
-import { Link, Money, useOrders, useLocale } from "@numueg/theme-sdk";
+import { Link, Money, useLocale, useOrders, useResolvedSettings } from "@numueg/theme-sdk";
 import { Check, Copy, Package, ArrowLeft, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
- * Rabbitsocks order-confirmation section.
+ * Mashkal order-confirmation section.
  *
- * Faithful port of the proven Vionne V3 order-confirmation page, re-mapped onto
- * Rabbitsocks's quiet-luxury palette via the `vn-*` token aliases in theme.css.
+ * Responsive design strategy:
+ *  - Mobile-first: tight padding, narrow column, smaller icon + type.
+ *  - sm (≥640px): bumps padding and type scale.
+ *  - md (≥768px): full padding, max-width caps at ~lg.
+ *  - lg+ (≥1024px): no further expansion — keeps the page centered and readable
+ *    rather than letting it spread across ultra-wide displays.
  *
- * Data: reads the customer's most-recent order from the SDK's `useOrders()`
- * hook (the just-placed order on a real storefront). When no order is available
- * (anonymous visitor, editor preview, or no orders yet) we still render the full
- * static layout with placeholder values and gracefully omit the total — we never
- * crash and never redirect away.
+ * Uses Mashkal's design tokens (`var(--vn-ink)`, `var(--vn-band)`, etc.) and
+ * utility classes (`vn-heading`, `vn-eyebrow`, `vn-label`, `vn-btn-*`) so it
+ * matches the rest of the theme.
+ *
+ * Data: in V2 the placed order arrived via `useLocation().state` / query
+ * params and was rendered through `BaseOrderConfirmationPage` — neither the
+ * router state nor that base component exist in V3, which is why the original
+ * V3 stub rendered blank (the base returned `<Navigate to="/" />` with no
+ * order). Here we read the customer's most-recent order from the SDK's
+ * `useOrders()` hook (the just-placed order on a real storefront). When no
+ * order is available (anonymous visitor, editor preview, or no orders yet) we
+ * still render the full static layout with placeholder values and gracefully
+ * omit the total — we never crash and never redirect away.
  */
-export default function RsOrderConfirmationSection({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
+export default function MashkalOrderConfirmationSection({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
+  const s = useResolvedSettings(instance);
 
   const showProgress = s.show_progress ?? true;
   const showWhatsApp = s.show_whatsapp ?? true;
   const showTrackOrder = s.show_track_order ?? true;
   const showEmoji = s.show_emoji ?? false;
 
-  const title = asString(s.title) || localized(locale, "Order confirmed", "تم تأكيد الطلب");
+  const title = asString(s.title) || localized(locale, "Order confirmed", "تم تأكيد طلبك");
   const subtitle =
     asString(s.subtitle) ||
     localized(
       locale,
       "Thank you for your order. We'll send you the order details via WhatsApp.",
-      "شكراً لطلبك. هنبعتلك تفاصيل الطلب على الواتساب.",
+      "شكرًا لطلبك. هنبعتلك تفاصيل الأوردر على الواتساب.",
     );
-  const continueText = asString(s.continue_shopping_text) || localized(locale, "Continue shopping", "كمّل تسوّق");
+  const continueText = asString(s.continue_shopping_text) || localized(locale, "Continue shopping", "كمّلي تسوّق");
   const continueLink = asString(s.continue_shopping_link) || "/";
 
+  // Most-recent order = the one the customer just placed. `useOrders()` is
+  // gated on the logged-in customer; anonymous visitors / editor preview get
+  // an empty list, so `order` is undefined and we fall back to placeholders.
   const { orders } = useOrders();
   const order = orders?.[0];
   const orderNumber = order?.order_number ?? "NUM-000000";
-  const total = order?.total;
+  // order.total is integer CENTS (useOrders doesn't normalize it, unlike
+  // useCart); <Money> expects MAJOR units — divide by 100 to avoid a 100× total.
+  const total = typeof order?.total === "number" ? order.total / 100 : undefined;
   const currency = order?.currency;
 
   const [copied, setCopied] = useState(false);
@@ -53,10 +71,10 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
   };
 
   const steps = [
-    localized(locale, "Order Placed", "اتعمل الطلب"),
+    localized(locale, "Order Placed", "تم الطلب"),
     localized(locale, "Processing", "بنجهّز"),
     localized(locale, "On the Way", "في الطريق"),
-    localized(locale, "Delivered", "اتسلّم"),
+    localized(locale, "Delivered", "تم التوصيل"),
   ];
 
   return (
@@ -94,10 +112,10 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
             {localized(locale, "ORDER CONFIRMED", "تم تأكيد الطلب")}
           </span>
           <h1 className="vn-heading text-2xl sm:text-3xl md:text-4xl text-[var(--vn-ink)] mb-2 sm:mb-3 leading-tight">
-            {title}{showEmoji ? " 🎉" : ""}
+            <InlineEditable sectionId={sectionId} settingKey="title" value={title} />{showEmoji ? " 🎉" : ""}
           </h1>
           <p className="text-sm sm:text-[15px] text-[var(--vn-muted)] mb-7 sm:mb-9 max-w-md mx-auto leading-relaxed">
-            {subtitle}
+            <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
           </p>
 
           {/* Order detail card */}
@@ -201,18 +219,18 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
                 <span className="text-sm font-bold text-whatsapp">{localized(locale, "WhatsApp Message", "رسالة واتساب")}</span>
               </div>
               <div className="bg-[var(--vn-band)] rounded-md p-3 sm:p-4 text-xs sm:text-sm text-[var(--vn-ink)] leading-relaxed">
-                <p>{localized(locale, "Hello! 👋", "أهلاً! 👋")}</p>
+                <p>{localized(locale, "Hello! 👋", "أهلًا بيكي! 👋")}</p>
                 <p className="mt-1">
                   {localized(locale, "Your order", "طلبك")}{" "}
-                  <strong className="font-semibold text-[var(--vn-ink)]" dir="ltr">{orderNumber}</strong> {localized(locale, "has been received successfully.", "اتستلم بنجاح.")}
+                  <strong className="font-semibold text-[var(--vn-ink)]">{orderNumber}</strong> {localized(locale, "has been received successfully.", "وصلنا بنجاح.")}
                 </p>
                 {typeof total === "number" && total > 0 && (
                   <p className="mt-1">
                     {localized(locale, "Total:", "الإجمالي:")} <strong><Money amount={total} currency={currency} /></strong>
                   </p>
                 )}
-                <p className="mt-1">{localized(locale, "We'll deliver it within 3-5 business days. If you have any questions, contact us here.", "هنوصّلهولك خلال ٣-٥ أيام عمل. لو عندك أي استفسار، كلّمنا هنا.")}</p>
-                <p className="mt-1">{localized(locale, "Thank you for shopping with us ❤️", "شكراً لتسوّقك معانا ❤️")}</p>
+                <p className="mt-1">{localized(locale, "We'll deliver it within 3-5 business days. If you have any questions, contact us here.", "هنوصّلك خلال ٣-٥ أيام عمل. لو عندك أي استفسار، كلّمنا من هنا.")}</p>
+                <p className="mt-1">{localized(locale, "Thank you for shopping with us ❤️", "شكرًا لتسوّقك معانا ❤️")}</p>
               </div>
             </div>
           )}
@@ -227,7 +245,7 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
                   "py-3 sm:py-3.5 text-xs sm:text-sm"
                 }
               >
-                <Package size={18} /> {localized(locale, "Track Order", "تتبّع الطلب")}
+                <Package size={18} /> {localized(locale, "Track Order", "تتبّعي الطلب")}
               </Link>
             )}
             <Link
@@ -237,7 +255,7 @@ export default function RsOrderConfirmationSection({ instance }: SectionRenderPr
                 "py-3 sm:py-3.5 text-xs sm:text-sm rtl:[&>svg]:rotate-180"
               }
             >
-              {continueText} <ArrowLeft size={14} />
+              <InlineEditable sectionId={sectionId} settingKey="continue_shopping_text" value={continueText} /> <ArrowLeft size={14} />
             </Link>
           </div>
         </motion.div>

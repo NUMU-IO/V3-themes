@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import {
   Link,
   useCustomer,
+  useLocale,
   Money,
   useOrders,
+  useResolvedSettings,
   useCustomerActions,
   useCustomerAddresses,
-  useLocale,
   type CustomerAddress,
 } from "@numueg/theme-sdk";
 import {
@@ -25,15 +26,22 @@ import {
   X,
 } from "lucide-react";
 import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
- * Rabbitsocks account / profile section.
+ * Mashkal account / profile section.
  *
- * Faithful port of the proven Vionne V3 profile page (sidebar with avatar +
- * stats + Orders/Addresses/Settings nav + logout, content area with the three
- * tabs — orders list, address book with add/edit/delete/set-default, settings
- * with profile + password forms, and the logged-out auth guard), re-mapped onto
- * Rabbitsocks's quiet-luxury palette via the `vn-*` token aliases in theme.css.
+ * Faithful port of the V2 profile page look re-plumbed on the V3 SDK.
+ *
+ * V2 sources mirrored:
+ *  - themes/sections/profile/ProfileSection.tsx (thin wrapper) +
+ *  - components/store/shared/BaseProfilePage.tsx (markup: breadcrumb, sidebar
+ *    [avatar, name/email, orders/spent stats, Orders/Addresses/Settings nav,
+ *    logout], content area with the three tabs — orders list, address book
+ *    with add/edit/delete/set-default form, settings with profile + password
+ *    forms, and the logged-out auth-guard state)
+ *  - components/store/shared/useProfileLogic.ts (state machine + the AR_I18N
+ *    label set, condensed to the labels actually rendered here)
  *
  * Data/actions are SDK-native:
  *  - useCustomer()         → identity (null ⇒ logged-out auth guard)
@@ -42,26 +50,28 @@ import { asString, localized, type SectionRenderProps } from "./_shared";
  *  - useCustomerActions()  → logout + updateProfile + changePassword
  *
  * Never blank / never crashes: logged-out renders the auth guard; logged-in but
- * empty renders the empty states; loading shows spinners.
+ * empty renders the V2 empty states (orders/addresses); loading shows spinners.
  */
 
 type Tab = "orders" | "addresses" | "settings";
 
-const statusLabels = (locale: string | undefined): Record<string, string> => ({
+/** Locale-aware order-status labels (keyed by the API status enum). */
+const buildStatusLabels = (locale: string | undefined): Record<string, string> => ({
   pending: localized(locale, "Pending", "قيد الانتظار"),
-  confirmed: localized(locale, "Confirmed", "اتأكد"),
+  confirmed: localized(locale, "Confirmed", "تم التأكيد"),
   processing: localized(locale, "Processing", "بنجهّز"),
-  shipped: localized(locale, "Shipped", "اتشحن"),
-  delivered: localized(locale, "Delivered", "اتسلّم"),
-  cancelled: localized(locale, "Cancelled", "اتلغى"),
-  refunded: localized(locale, "Refunded", "اترجّع"),
+  shipped: localized(locale, "Shipped", "تم الشحن"),
+  delivered: localized(locale, "Delivered", "تم التوصيل"),
+  cancelled: localized(locale, "Cancelled", "ملغي"),
+  refunded: localized(locale, "Refunded", "تم الاسترداد"),
 });
 
 const LABEL_ICON: Record<string, typeof Home> = { home: Home, work: Briefcase, other: MapPin };
-const labelNames = (locale: string | undefined): Record<string, string> => ({
-  home: localized(locale, "Home", "البيت"),
-  work: localized(locale, "Work", "الشغل"),
-  other: localized(locale, "Other", "تاني"),
+/** Locale-aware address-label names (home / work / other). */
+const buildLabelName = (locale: string | undefined): Record<string, string> => ({
+  home: localized(locale, "Home", "المنزل"),
+  work: localized(locale, "Work", "العمل"),
+  other: localized(locale, "Other", "أخرى"),
 });
 
 const EMPTY_ADDRESS: Partial<CustomerAddress> = {
@@ -73,11 +83,11 @@ const EMPTY_ADDRESS: Partial<CustomerAddress> = {
   label: "home",
 };
 
-export default function RsProfile({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
+export default function MashkalProfile({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
-  const LABEL_NAME = labelNames(locale);
-  const STATUS_LABELS = statusLabels(locale);
+  const STATUS_LABELS = buildStatusLabels(locale);
+  const LABEL_NAME = buildLabelName(locale);
+  const s = useResolvedSettings(instance);
   const title = asString(s.title) || localized(locale, "My account", "حسابي");
   const ordersTitle = asString(s.orders_title) || localized(locale, "My orders", "طلباتي");
   const addressesTitle = asString(s.addresses_title) || localized(locale, "My addresses", "عناويني");
@@ -121,7 +131,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
   const [form, setForm] = useState<Partial<CustomerAddress>>(EMPTY_ADDRESS);
   const [savingAddress, setSavingAddress] = useState(false);
 
-  // ── Logged-out auth guard ──────────────────────────────────────
+  // ── Logged-out auth guard (matches V2) ──────────────────────────
   if (!customer) {
     return (
       <div className="bg-background">
@@ -130,10 +140,10 @@ export default function RsProfile({ instance }: SectionRenderProps) {
             <User size={22} className="text-[var(--vn-muted)]" />
           </div>
           <p className="vn-heading text-lg text-[var(--vn-ink)] mb-1">
-            {localized(locale, "Login to view your account", "سجّل دخولك عشان تشوف حسابك")}
+            {localized(locale, "Login to view your account", "سجّلي دخول لعرض حسابك")}
           </p>
           <p className="text-xs text-[var(--vn-muted)] mb-6">
-            {localized(locale, "Track orders, manage addresses and settings", "تابع طلباتك وادير عناوينك وإعداداتك")}
+            {localized(locale, "Track orders, manage addresses and settings", "تابعي طلباتك وعناوينك وإعداداتك")}
           </p>
           <Link
             to="/auth?redirect=/profile"
@@ -238,7 +248,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 vn-label text-[10px] text-[var(--vn-muted)] mb-8">
           <Link to="/" className="hover:text-[var(--vn-ink)] transition-colors">
-            Home
+            {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
           <span className="text-[var(--vn-ink)]">{title}</span>
@@ -310,7 +320,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
             {/* ─── Orders ─── */}
             {activeTab === "orders" && (
               <div>
-                <h2 className={headingClass}>{ordersTitle}</h2>
+                <h2 className={headingClass}><InlineEditable sectionId={sectionId} settingKey="orders_title" value={ordersTitle} /></h2>
                 {loadingOrders ? (
                   <div className="flex justify-center py-16">
                     <Loader2 className="h-5 w-5 animate-spin text-[var(--vn-muted)]" />
@@ -318,15 +328,15 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                 ) : orders.length === 0 ? (
                   <div className="text-center py-16 border border-[var(--vn-border)] rounded-md">
                     <div className="w-10 h-px bg-[var(--vn-border)] mx-auto mb-5" />
-                    <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No orders yet", "مفيش طلبات لسه")}</p>
+                    <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No orders yet", "لا توجد طلبات بعد")}</p>
                     <p className="text-xs text-[var(--vn-muted)] mb-5">
-                      {localized(locale, "Your orders will appear here after your first purchase", "طلباتك هتظهر هنا بعد أول شراء")}
+                      {localized(locale, "Your orders will appear here after your first purchase", "طلباتك هتظهر هنا بعد أول عملية شراء")}
                     </p>
                     <Link
                       to="/products"
                       className="text-xs font-medium border-b border-[var(--vn-ink)] pb-0.5 hover:opacity-70 transition-opacity"
                     >
-                      {localized(locale, "Browse products", "تصفّح المنتجات")}
+                      {localized(locale, "Browse products", "تصفّحي المنتجات")}
                     </Link>
                   </div>
                 ) : (
@@ -353,7 +363,11 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                                   })
                                 : ""}
                               {order.item_count
-                                ? ` · ${order.item_count} ${localized(locale, order.item_count > 1 ? "items" : "item", "منتج")}`
+                                ? localized(
+                                    locale,
+                                    ` · ${order.item_count} item${order.item_count > 1 ? "s" : ""}`,
+                                    ` · ${order.item_count} منتج`,
+                                  )
                                 : ""}
                             </span>
                           </div>
@@ -377,7 +391,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
             {activeTab === "addresses" && (
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className={headingClass + " mb-0"}>{addressesTitle}</h2>
+                  <h2 className={headingClass + " mb-0"}><InlineEditable sectionId={sectionId} settingKey="addresses_title" value={addressesTitle} /></h2>
                   {!showAddressForm && (
                     <button
                       type="button"
@@ -385,7 +399,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                       className="flex items-center gap-1.5 text-xs font-medium text-[var(--vn-ink)] hover:opacity-70 transition-opacity"
                     >
                       <Plus size={13} />
-                      {localized(locale, "Add address", "أضف عنوان")}
+                      {localized(locale, "Add address", "أضيفي عنوان")}
                     </button>
                   )}
                 </div>
@@ -415,7 +429,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>{localized(locale, "Last name", "اسم العيلة")}</label>
+                        <label className={labelClass}>{localized(locale, "Last name", "اسم العائلة")}</label>
                         <input
                           value={form.last_name ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, last_name: e.target.value }))}
@@ -442,7 +456,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>{localized(locale, "Phone", "التليفون")}</label>
+                        <label className={labelClass}>{localized(locale, "Phone", "الموبايل")}</label>
                         <input
                           value={form.phone ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
@@ -507,16 +521,16 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                 ) : addresses.length === 0 && !showAddressForm ? (
                   <div className="text-center py-16 border border-[var(--vn-border)] rounded-md">
                     <div className="w-10 h-px bg-[var(--vn-border)] mx-auto mb-5" />
-                    <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No saved addresses", "مفيش عناوين محفوظة")}</p>
+                    <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No saved addresses", "لا توجد عناوين محفوظة")}</p>
                     <p className="text-xs text-[var(--vn-muted)] mb-5">
-                      {localized(locale, "Add an address to speed up checkout", "أضف عنوان عشان تسرّع الدفع")}
+                      {localized(locale, "Add an address to speed up checkout", "أضيفي عنوان علشان تخلّصي الدفع أسرع")}
                     </p>
                     <button
                       type="button"
                       onClick={openNewAddress}
                       className="text-xs font-medium border-b border-[var(--vn-ink)] pb-0.5 hover:opacity-70 transition-opacity"
                     >
-                      {localized(locale, "Add address", "أضف عنوان")}
+                      {localized(locale, "Add address", "أضيفي عنوان")}
                     </button>
                   </div>
                 ) : (
@@ -535,11 +549,11 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                             <div className="flex items-center gap-2">
                               <LabelIcon size={13} className="text-[var(--vn-muted)]" />
                               <span className="text-xs font-medium text-[var(--vn-ink)]">
-                                {LABEL_NAME[addr.label ?? "other"] || localized(locale, "Other", "تاني")}
+                                {LABEL_NAME[addr.label ?? "other"] || localized(locale, "Other", "أخرى")}
                               </span>
                               {addr.is_default && (
                                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--vn-band)] text-[var(--vn-ink)]/60">
-                                  {localized(locale, "Default", "افتراضي")}
+                                  {localized(locale, "Default", "الافتراضي")}
                                 </span>
                               )}
                             </div>
@@ -583,7 +597,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                               onClick={() => setDefaultAddress(addr.id)}
                               className="text-[10px] text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors mt-2 border-b border-current pb-px"
                             >
-                              {localized(locale, "Set as default", "اجعله الافتراضي")}
+                              {localized(locale, "Set as default", "اجعليه الافتراضي")}
                             </button>
                           )}
                         </div>
@@ -598,7 +612,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
             {activeTab === "settings" && (
               <div className="space-y-8">
                 <div>
-                  <h2 className={headingClass}>{settingsTitle}</h2>
+                  <h2 className={headingClass}><InlineEditable sectionId={sectionId} settingKey="settings_title" value={settingsTitle} /></h2>
                   <div className="border border-[var(--vn-border)] rounded-md p-5 space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
@@ -610,7 +624,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>{localized(locale, "Last name", "اسم العيلة")}</label>
+                        <label className={labelClass}>{localized(locale, "Last name", "اسم العائلة")}</label>
                         <input
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
@@ -628,7 +642,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>{localized(locale, "Phone", "التليفون")}</label>
+                      <label className={labelClass}>{localized(locale, "Phone", "الموبايل")}</label>
                       <input
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -643,16 +657,16 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                       disabled={savingProfile}
                       className="vn-btn vn-btn-filled disabled:opacity-50"
                     >
-                      {savingProfile ? <Loader2 size={14} className="animate-spin" /> : localized(locale, "Save changes", "حفظ التغييرات")}
+                      {savingProfile ? <Loader2 size={14} className="animate-spin" /> : localized(locale, "Save changes", "حفظ التعديلات")}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <h2 className={headingClass}>{localized(locale, "Change password", "تغيير كلمة السر")}</h2>
+                  <h2 className={headingClass}>{localized(locale, "Change password", "تغيير كلمة المرور")}</h2>
                   <div className="border border-[var(--vn-border)] rounded-md p-5 space-y-3">
                     <div>
-                      <label className={labelClass}>{localized(locale, "Current password", "كلمة السر الحالية")}</label>
+                      <label className={labelClass}>{localized(locale, "Current password", "كلمة المرور الحالية")}</label>
                       <input
                         type="password"
                         value={currentPw}
@@ -661,12 +675,12 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>{localized(locale, "New password", "كلمة سر جديدة")}</label>
+                      <label className={labelClass}>{localized(locale, "New password", "كلمة المرور الجديدة")}</label>
                       <input
                         type="password"
                         value={newPw}
                         onChange={(e) => setNewPw(e.target.value)}
-                        placeholder={localized(locale, "Min 8 characters", "٨ حروف على الأقل")}
+                        placeholder={localized(locale, "Min 8 characters", "٨ أحرف على الأقل")}
                         className={inputClass}
                       />
                     </div>
@@ -676,7 +690,7 @@ export default function RsProfile({ instance }: SectionRenderProps) {
                       disabled={changingPw || !currentPw || !newPw}
                       className="vn-btn vn-btn-filled disabled:opacity-50"
                     >
-                      {changingPw ? <Loader2 size={14} className="animate-spin" /> : localized(locale, "Change password", "تغيير كلمة السر")}
+                      {changingPw ? <Loader2 size={14} className="animate-spin" /> : localized(locale, "Change password", "تغيير كلمة المرور")}
                     </button>
                   </div>
                 </div>
