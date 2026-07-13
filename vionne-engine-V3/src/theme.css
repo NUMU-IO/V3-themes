@@ -780,3 +780,53 @@
   border-top: 1px solid var(--vn-border);
   margin: 2em 0;
 }
+
+/* ── Sheet / drawer entrance animations (mini-cart, added-to-bag) ──────────
+   Mobile: the panel rises as a bottom sheet; md+: it slides in from the end
+   (inline-aware via the RTL override). The backdrop fades. Items cascade in
+   with a tiny stagger for the "cool smooth" feel. Honors reduced motion. */
+@keyframes vn-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes vn-sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: none; }
+}
+@keyframes vn-sheet-end {
+  from { transform: translateX(100%); }
+  to   { transform: none; }
+}
+@keyframes vn-sheet-end-rtl {
+  from { transform: translateX(-100%); }
+  to   { transform: none; }
+}
+@keyframes vn-item-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+.vn-sheet-backdrop {
+  animation: vn-fade-in 0.25s ease-out both;
+}
+.vn-sheet-panel {
+  animation: vn-sheet-up 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform;
+}
+@media (min-width: 768px) {
+  .vn-sheet-panel { animation-name: vn-sheet-end; }
+  [dir="rtl"] .vn-sheet-panel { animation-name: vn-sheet-end-rtl; }
+}
+.vn-sheet-panel .vn-sheet-item {
+  animation: vn-item-in 0.3s ease-out both;
+}
+.vn-sheet-panel .vn-sheet-item:nth-child(2) { animation-delay: 0.05s; }
+.vn-sheet-panel .vn-sheet-item:nth-child(3) { animation-delay: 0.1s; }
+.vn-sheet-panel .vn-sheet-item:nth-child(4) { animation-delay: 0.15s; }
+.vn-sheet-panel .vn-sheet-item:nth-child(n + 5) { animation-delay: 0.2s; }
+@media (prefers-reduced-motion: reduce) {
+  .vn-sheet-backdrop,
+  .vn-sheet-panel,
+  .vn-sheet-panel .vn-sheet-item {
+    animation: none;
+  }
+}

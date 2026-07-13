@@ -123,6 +123,13 @@
       "label": "Show mobile bottom dock",
       "label_ar": "إظهار شريط التنقل السفلي للجوال",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mini_cart",
+      "label": "Open a cart sidebar from the cart icon (with suggestions)",
+      "label_ar": "فتح سلة جانبية من أيقونة السلة (مع اقتراحات)",
+      "default": true
     }
   ],
   "blocks": [

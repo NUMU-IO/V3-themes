@@ -34,6 +34,7 @@ import {
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
+import { MiniCartDrawer } from "./_mini-cart";
 
 interface NavLink {
   label: string;
@@ -148,6 +149,11 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
           ];
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // Mini-cart sidebar (AOV): the cart icon opens a slide-in bag with related
+  // products instead of navigating away. Merchant-toggleable; when off, the
+  // icon stays a plain /cart link.
+  const enableMiniCart = asBool(s.enable_mini_cart, true);
+  const [miniCartOpen, setMiniCartOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [condensed, setCondensed] = useState(false);
   const [dockRevealed, setDockRevealed] = useState(false);
@@ -330,18 +336,35 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
               </Link>
             )}
             {showCart && (
-              <Link
-                to="/cart"
-                aria-label={`Cart (${cartCount})`}
-                className="relative inline-flex items-center hover:opacity-80 transition-opacity"
-              >
-                <ShoppingBag size={18} />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -end-2 min-w-[16px] h-[16px] px-1 rounded-full bg-white text-[var(--vn-ink)] text-[9px] font-bold flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
+              enableMiniCart ? (
+                <button
+                  type="button"
+                  onClick={() => setMiniCartOpen(true)}
+                  aria-label={`Cart (${cartCount})`}
+                  data-testid="storefront-header-cart"
+                  className="relative inline-flex items-center hover:opacity-80 transition-opacity"
+                >
+                  <ShoppingBag size={18} />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -end-2 min-w-[16px] h-[16px] px-1 rounded-full bg-white text-[var(--vn-ink)] text-[9px] font-bold flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+              ) : (
+                <Link
+                  to="/cart"
+                  aria-label={`Cart (${cartCount})`}
+                  className="relative inline-flex items-center hover:opacity-80 transition-opacity"
+                >
+                  <ShoppingBag size={18} />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -end-2 min-w-[16px] h-[16px] px-1 rounded-full bg-white text-[var(--vn-ink)] text-[9px] font-bold flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+              )
             )}
           </div>
         </div>
@@ -439,13 +462,24 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
             <StoreIcon size={18} />
             {t("nav.shop", localized(locale, "Shop", "تسوّقي"))}
           </Link>
-          <Link to="/cart" className="vn-dock-btn">
-            <ShoppingBag size={18} />
-            {t("nav.cart", localized(locale, "Cart", "السلة"))}
-            {cartCount > 0 && <span className="vn-dock-badge">{cartCount}</span>}
-          </Link>
+          {enableMiniCart ? (
+            <button type="button" onClick={() => setMiniCartOpen(true)} className="vn-dock-btn">
+              <ShoppingBag size={18} />
+              {t("nav.cart", localized(locale, "Cart", "السلة"))}
+              {cartCount > 0 && <span className="vn-dock-badge">{cartCount}</span>}
+            </button>
+          ) : (
+            <Link to="/cart" className="vn-dock-btn">
+              <ShoppingBag size={18} />
+              {t("nav.cart", localized(locale, "Cart", "السلة"))}
+              {cartCount > 0 && <span className="vn-dock-badge">{cartCount}</span>}
+            </Link>
+          )}
         </div>
       )}
+
+      {/* Mini-cart sidebar (AOV) */}
+      <MiniCartDrawer open={miniCartOpen} onClose={() => setMiniCartOpen(false)} locale={locale} />
     </div>
   );
 }

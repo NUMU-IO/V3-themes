@@ -236,7 +236,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "vionne-v3", name: "Vionne (V3)", version: "0.5.0" },
+  manifest: { id: "vionne-v3", name: "Vionne (V3)", version: "0.6.0" },
   mount,
 };
 export default v3Handle;

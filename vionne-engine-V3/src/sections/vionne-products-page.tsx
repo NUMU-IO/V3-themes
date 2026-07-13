@@ -5,6 +5,7 @@ import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { asNumber, asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
 import { QuickAddButton } from "./_quick-add";
+import { PricePair } from "./_price";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -394,15 +395,8 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         <h3 className="text-sm font-medium text-[var(--vn-ink)] line-clamp-1">
           {product.name}
         </h3>
-        <div className="flex items-baseline gap-2 mt-1">
-          <span className="text-sm font-semibold text-[var(--vn-ink)]">
-            <Money amount={price} currency={product.currency} />
-          </span>
-          {hasDiscount && (
-            <span className="text-xs text-[var(--vn-muted)] line-through">
-              <Money amount={compareAt} currency={product.currency} />
-            </span>
-          )}
+        <div className="mt-1">
+          <PricePair price={price} compareAt={compareAt} currency={product.currency} size="sm" />
         </div>
       </div>
     </Link>

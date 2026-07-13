@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { QuickAddButton } from "./_quick-add";
+import { PricePair } from "./_price";
 
 const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) => {
   const { products } = useProducts();
@@ -100,10 +101,13 @@ const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) =
                     {product.name}
                   </h3>
 
-                  <div className="flex items-baseline gap-2 pt-0.5">
-                    <span className="text-sm font-semibold text-foreground">
-                      <Money amount={product.variants?.[0]?.price ?? product.price ?? 0} currency={product.currency} />
-                    </span>
+                  <div className="pt-0.5">
+                    <PricePair
+                      price={product.variants?.[0]?.price ?? product.price ?? 0}
+                      compareAt={product.variants?.[0]?.compare_at_price ?? product.compare_at_price}
+                      currency={product.currency}
+                      size="sm"
+                    />
                   </div>
                 </div>
               </Link>

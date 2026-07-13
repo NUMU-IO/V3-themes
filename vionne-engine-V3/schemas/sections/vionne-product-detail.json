@@ -173,6 +173,13 @@
       "label": "\"Recently viewed\" title",
       "label_ar": "عنوان «شفتيها قريب»",
       "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews",
+      "label": "Show customer reviews section",
+      "label_ar": "إظهار قسم آراء العملاء",
+      "default": true
     }
   ],
   "presets": [
