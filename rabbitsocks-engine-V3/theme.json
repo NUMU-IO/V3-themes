@@ -2,7 +2,7 @@
   "id": "rabbitsocks-v3",
   "name": "Mashkal",
   "author": "NUMU",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "layout": "single-column",
   "description": "The kaleidoscope gallery theme: products framed in arches, diamonds and circles, with a built-in bundle builder and size chart.",
   "error_template": "templates/error.html",

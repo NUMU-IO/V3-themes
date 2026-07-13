@@ -74,13 +74,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # v5/v6 majors run natively on the Node 24 runner (v4/v5 targeted the
+      # now-deprecated Node 20 and spammed every run with a deprecation warning).
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: "20"
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
@@ -206,10 +208,18 @@ jobs:
           SSH="ssh -i $RUNNER_TEMP/ssh_key -o StrictHostKeyChecking=no -o ConnectTimeout=20"
           SSH_EC2="ssh -i $RUNNER_TEMP/ec2_key -o StrictHostKeyChecking=no -o ConnectTimeout=20"
           WANT="${THEME_INPUT:-all}"
+          # Deferred/stub themes that intentionally do not build yet. They are
+          # skipped on 'all' runs so every push isn't annotated with a phantom
+          # failure; deploying one explicitly (theme=<dir>) still works and will
+          # surface its real build error. Remove an entry when its rebuild lands.
+          SKIP="street-engine-V3"
           ok=0; fail=0; failed=""
           for d in *-engine-V3/; do
             d="${d%/}"
             if [ "$WANT" != "all" ] && [ "$WANT" != "$d" ]; then continue; fi
+            if [ "$WANT" = "all" ] && printf '%s\n' $SKIP | grep -qx "$d"; then
+              echo "skipping $d (deferred stub — see SKIP list in deploy.yml)"; continue
+            fi
             echo "::group::$d"
             # Themes build with `vite build` (the @numueg/theme-plugin federation
             # plugin emits the full dist: theme.js/json, sections.json,
@@ -311,5 +321,12 @@ jobs:
             echo "no version changes to commit"
           else
             git commit -m "chore(themes): version bump from deploy run [skip ci]"
-            git push
+            # Two dispatched runs can race on this push (the second checked out
+            # main before the first pushed its bump). Rebase-and-retry so the
+            # bump always lands instead of failing the whole run.
+            for attempt in 1 2 3; do
+              if git push; then break; fi
+              echo "push rejected (attempt $attempt) — rebasing onto latest main"
+              git pull --rebase origin main
+            done
           fi
