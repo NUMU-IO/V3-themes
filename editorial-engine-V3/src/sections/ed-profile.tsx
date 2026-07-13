@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import {
   Link,
   useCustomer,
+  useLocale,
   Money,
   useOrders,
+  useResolvedSettings,
   useCustomerActions,
   useCustomerAddresses,
   type CustomerAddress,
@@ -23,36 +25,54 @@ import {
   Briefcase,
   X,
 } from "lucide-react";
-import { useLocale } from "@numueg/theme-sdk";
 import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
- * Editorial account / profile section.
+ * Manshet account / profile section.
  *
- * Ported from the proven Vionne V3 profile (sidebar with avatar/stats/nav +
- * orders / addresses CRUD / settings tabs, SDK-wired via useCustomer,
- * useOrders, useCustomerAddresses, useCustomerActions). The `vn-*` utility
- * classes + `--vn-*` tokens resolve to Editorial's palette via this theme's
- * src/theme.css.
+ * Faithful port of the V2 profile page look re-plumbed on the V3 SDK.
  *
- * Never blank / never crashes: logged-out renders the auth guard; logged-in
- * but empty renders the empty states; loading shows spinners.
+ * V2 sources mirrored:
+ *  - themes/sections/profile/ProfileSection.tsx (thin wrapper) +
+ *  - components/store/shared/BaseProfilePage.tsx (markup: breadcrumb, sidebar
+ *    [avatar, name/email, orders/spent stats, Orders/Addresses/Settings nav,
+ *    logout], content area with the three tabs — orders list, address book
+ *    with add/edit/delete/set-default form, settings with profile + password
+ *    forms, and the logged-out auth-guard state)
+ *  - components/store/shared/useProfileLogic.ts (state machine + the AR_I18N
+ *    label set, condensed to the labels actually rendered here)
+ *
+ * Data/actions are SDK-native:
+ *  - useCustomer()         → identity (null ⇒ logged-out auth guard)
+ *  - useOrders()           → order history (gated on the customer)
+ *  - useCustomerAddresses()→ address book + CRUD mutations
+ *  - useCustomerActions()  → logout + updateProfile + changePassword
+ *
+ * Never blank / never crashes: logged-out renders the auth guard; logged-in but
+ * empty renders the V2 empty states (orders/addresses); loading shows spinners.
  */
 
 type Tab = "orders" | "addresses" | "settings";
 
-const STATUS_LABELS: Record<string, string> = {
-  pending: "Pending",
-  confirmed: "Confirmed",
-  processing: "Processing",
-  shipped: "Shipped",
-  delivered: "Delivered",
-  cancelled: "Cancelled",
-  refunded: "Refunded",
-};
+/** Locale-aware order-status labels (keyed by the API status enum). */
+const buildStatusLabels = (locale: string | undefined): Record<string, string> => ({
+  pending: localized(locale, "Pending", "قيد الانتظار"),
+  confirmed: localized(locale, "Confirmed", "تم التأكيد"),
+  processing: localized(locale, "Processing", "بنجهّز"),
+  shipped: localized(locale, "Shipped", "تم الشحن"),
+  delivered: localized(locale, "Delivered", "تم التوصيل"),
+  cancelled: localized(locale, "Cancelled", "ملغي"),
+  refunded: localized(locale, "Refunded", "تم الاسترداد"),
+});
 
 const LABEL_ICON: Record<string, typeof Home> = { home: Home, work: Briefcase, other: MapPin };
-const LABEL_NAME: Record<string, string> = { home: "Home", work: "Work", other: "Other" };
+/** Locale-aware address-label names (home / work / other). */
+const buildLabelName = (locale: string | undefined): Record<string, string> => ({
+  home: localized(locale, "Home", "المنزل"),
+  work: localized(locale, "Work", "العمل"),
+  other: localized(locale, "Other", "أخرى"),
+});
 
 const EMPTY_ADDRESS: Partial<CustomerAddress> = {
   first_name: "",
@@ -63,26 +83,11 @@ const EMPTY_ADDRESS: Partial<CustomerAddress> = {
   label: "home",
 };
 
-const STATUS_LABELS_AR: Record<string, string> = {
-  pending: "قيد الانتظار",
-  confirmed: "تم التأكيد",
-  processing: "بيتجهّز",
-  shipped: "تم الشحن",
-  delivered: "تم التوصيل",
-  cancelled: "ملغي",
-  refunded: "تم الاسترجاع",
-};
-
-const LABEL_NAME_AR: Record<string, string> = { home: "المنزل", work: "العمل", other: "أخرى" };
-
-export default function EdProfile({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
+export default function ManshetProfile({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
-  const isAr = (locale || "").toLowerCase().startsWith("ar");
-  const statusLabel = (status: string) =>
-    (isAr ? STATUS_LABELS_AR[status] : STATUS_LABELS[status]) || status;
-  const addrLabelName = (l: string) =>
-    (isAr ? LABEL_NAME_AR[l] : LABEL_NAME[l]) || localized(locale, "Other", "أخرى");
+  const STATUS_LABELS = buildStatusLabels(locale);
+  const LABEL_NAME = buildLabelName(locale);
+  const s = useResolvedSettings(instance);
   const title = asString(s.title) || localized(locale, "My account", "حسابي");
   const ordersTitle = asString(s.orders_title) || localized(locale, "My orders", "طلباتي");
   const addressesTitle = asString(s.addresses_title) || localized(locale, "My addresses", "عناويني");
@@ -126,7 +131,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
   const [form, setForm] = useState<Partial<CustomerAddress>>(EMPTY_ADDRESS);
   const [savingAddress, setSavingAddress] = useState(false);
 
-  // ── Logged-out auth guard ────────────────────────────────────────
+  // ── Logged-out auth guard (matches V2) ──────────────────────────
   if (!customer) {
     return (
       <div className="bg-background">
@@ -135,10 +140,10 @@ export default function EdProfile({ instance }: SectionRenderProps) {
             <User size={22} className="text-[var(--vn-muted)]" />
           </div>
           <p className="vn-heading text-lg text-[var(--vn-ink)] mb-1">
-            {localized(locale, "Login to view your account", "سجّل دخولك علشان تشوف حسابك")}
+            {localized(locale, "Login to view your account", "سجّلي دخول لعرض حسابك")}
           </p>
           <p className="text-xs text-[var(--vn-muted)] mb-6">
-            {localized(locale, "Track orders, manage addresses and settings", "تابع طلباتك واتحكّم في عناوينك وإعداداتك")}
+            {localized(locale, "Track orders, manage addresses and settings", "تابعي طلباتك وعناوينك وإعداداتك")}
           </p>
           <Link
             to="/auth?redirect=/profile"
@@ -315,7 +320,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
             {/* ─── Orders ─── */}
             {activeTab === "orders" && (
               <div>
-                <h2 className={headingClass}>{ordersTitle}</h2>
+                <h2 className={headingClass}><InlineEditable sectionId={sectionId} settingKey="orders_title" value={ordersTitle} /></h2>
                 {loadingOrders ? (
                   <div className="flex justify-center py-16">
                     <Loader2 className="h-5 w-5 animate-spin text-[var(--vn-muted)]" />
@@ -323,7 +328,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                 ) : orders.length === 0 ? (
                   <div className="text-center py-16 border border-[var(--vn-border)] rounded-md">
                     <div className="w-10 h-px bg-[var(--vn-border)] mx-auto mb-5" />
-                    <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No orders yet", "مفيش طلبات لسه")}</p>
+                    <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No orders yet", "لا توجد طلبات بعد")}</p>
                     <p className="text-xs text-[var(--vn-muted)] mb-5">
                       {localized(locale, "Your orders will appear here after your first purchase", "طلباتك هتظهر هنا بعد أول عملية شراء")}
                     </p>
@@ -331,7 +336,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                       to="/products"
                       className="text-xs font-medium border-b border-[var(--vn-ink)] pb-0.5 hover:opacity-70 transition-opacity"
                     >
-                      {localized(locale, "Browse products", "تصفّح المنتجات")}
+                      {localized(locale, "Browse products", "تصفّحي المنتجات")}
                     </Link>
                   </div>
                 ) : (
@@ -358,7 +363,11 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                                   })
                                 : ""}
                               {order.item_count
-                                ? ` · ${order.item_count} ${localized(locale, order.item_count > 1 ? "items" : "item", "منتج")}`
+                                ? localized(
+                                    locale,
+                                    ` · ${order.item_count} item${order.item_count > 1 ? "s" : ""}`,
+                                    ` · ${order.item_count} منتج`,
+                                  )
                                 : ""}
                             </span>
                           </div>
@@ -367,7 +376,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                               <Money amount={order.total / 100} currency={order.currency} />
                             </span>
                             <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--vn-band)] text-[var(--vn-ink)]/70">
-                              {statusLabel(order.status)}
+                              {STATUS_LABELS[order.status] || order.status}
                             </span>
                           </div>
                         </div>
@@ -382,7 +391,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
             {activeTab === "addresses" && (
               <div>
                 <div className="flex items-center justify-between mb-5">
-                  <h2 className={headingClass + " mb-0"}>{addressesTitle}</h2>
+                  <h2 className={headingClass + " mb-0"}><InlineEditable sectionId={sectionId} settingKey="addresses_title" value={addressesTitle} /></h2>
                   {!showAddressForm && (
                     <button
                       type="button"
@@ -390,7 +399,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                       className="flex items-center gap-1.5 text-xs font-medium text-[var(--vn-ink)] hover:opacity-70 transition-opacity"
                     >
                       <Plus size={13} />
-                      {localized(locale, "Add address", "أضف عنوان")}
+                      {localized(locale, "Add address", "أضيفي عنوان")}
                     </button>
                   )}
                 </div>
@@ -420,7 +429,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>{localized(locale, "Last name", "اسم العيلة")}</label>
+                        <label className={labelClass}>{localized(locale, "Last name", "اسم العائلة")}</label>
                         <input
                           value={form.last_name ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, last_name: e.target.value }))}
@@ -447,7 +456,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>{localized(locale, "Phone", "رقم الموبايل")}</label>
+                        <label className={labelClass}>{localized(locale, "Phone", "الموبايل")}</label>
                         <input
                           value={form.phone ?? ""}
                           onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
@@ -474,7 +483,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                             }
                           >
                             <Icon size={12} />
-                            {addrLabelName(l)}
+                            {LABEL_NAME[l]}
                           </button>
                         );
                       })}
@@ -512,16 +521,16 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                 ) : addresses.length === 0 && !showAddressForm ? (
                   <div className="text-center py-16 border border-[var(--vn-border)] rounded-md">
                     <div className="w-10 h-px bg-[var(--vn-border)] mx-auto mb-5" />
-                    <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No saved addresses", "مفيش عناوين محفوظة")}</p>
+                    <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No saved addresses", "لا توجد عناوين محفوظة")}</p>
                     <p className="text-xs text-[var(--vn-muted)] mb-5">
-                      {localized(locale, "Add an address to speed up checkout", "أضف عنوان علشان تسرّع الدفع")}
+                      {localized(locale, "Add an address to speed up checkout", "أضيفي عنوان علشان تخلّصي الدفع أسرع")}
                     </p>
                     <button
                       type="button"
                       onClick={openNewAddress}
                       className="text-xs font-medium border-b border-[var(--vn-ink)] pb-0.5 hover:opacity-70 transition-opacity"
                     >
-                      {localized(locale, "Add address", "أضف عنوان")}
+                      {localized(locale, "Add address", "أضيفي عنوان")}
                     </button>
                   </div>
                 ) : (
@@ -540,11 +549,11 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                             <div className="flex items-center gap-2">
                               <LabelIcon size={13} className="text-[var(--vn-muted)]" />
                               <span className="text-xs font-medium text-[var(--vn-ink)]">
-                                {addrLabelName(addr.label ?? "other")}
+                                {LABEL_NAME[addr.label ?? "other"] || localized(locale, "Other", "أخرى")}
                               </span>
                               {addr.is_default && (
                                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--vn-band)] text-[var(--vn-ink)]/60">
-                                  {localized(locale, "Default", "افتراضي")}
+                                  {localized(locale, "Default", "الافتراضي")}
                                 </span>
                               )}
                             </div>
@@ -588,7 +597,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                               onClick={() => setDefaultAddress(addr.id)}
                               className="text-[10px] text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors mt-2 border-b border-current pb-px"
                             >
-                              {localized(locale, "Set as default", "اجعله افتراضي")}
+                              {localized(locale, "Set as default", "اجعليه الافتراضي")}
                             </button>
                           )}
                         </div>
@@ -603,7 +612,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
             {activeTab === "settings" && (
               <div className="space-y-8">
                 <div>
-                  <h2 className={headingClass}>{settingsTitle}</h2>
+                  <h2 className={headingClass}><InlineEditable sectionId={sectionId} settingKey="settings_title" value={settingsTitle} /></h2>
                   <div className="border border-[var(--vn-border)] rounded-md p-5 space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
@@ -615,7 +624,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                         />
                       </div>
                       <div>
-                        <label className={labelClass}>{localized(locale, "Last name", "اسم العيلة")}</label>
+                        <label className={labelClass}>{localized(locale, "Last name", "اسم العائلة")}</label>
                         <input
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
@@ -633,7 +642,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                       />
                     </div>
                     <div>
-                      <label className={labelClass}>{localized(locale, "Phone", "رقم الموبايل")}</label>
+                      <label className={labelClass}>{localized(locale, "Phone", "الموبايل")}</label>
                       <input
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -671,7 +680,7 @@ export default function EdProfile({ instance }: SectionRenderProps) {
                         type="password"
                         value={newPw}
                         onChange={(e) => setNewPw(e.target.value)}
-                        placeholder={localized(locale, "Min 8 characters", "٨ حروف على الأقل")}
+                        placeholder={localized(locale, "Min 8 characters", "٨ أحرف على الأقل")}
                         className={inputClass}
                       />
                     </div>

@@ -1,6 +1,6 @@
 {
   "type": "ed-profile",
-  "name": "Editorial Account Page",
+  "name": "Customer profile",
   "settings": [
     {
       "type": "header",
@@ -46,5 +46,19 @@
       "default": true
     }
   ],
-  "presets": []
+  "presets": [
+    {
+      "name": "Customer profile",
+      "locales": {
+        "en": {
+          "name": "Customer profile"
+        },
+        "ar": {
+          "name": "حساب العميل"
+        }
+      },
+      "settings": {}
+    }
+  ],
+  "name_ar": "حساب العميل"
 }

@@ -1,6 +1,6 @@
 {
   "type": "ed-categories",
-  "name": "Editorial Categories",
+  "name": "Categories",
   "settings": [
     {
       "type": "header",
@@ -28,5 +28,6 @@
       "step": 1
     }
   ],
-  "presets": []
+  "presets": [],
+  "name_ar": "الفئات"
 }

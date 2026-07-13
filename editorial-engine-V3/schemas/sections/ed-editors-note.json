@@ -1,0 +1,51 @@
+{
+  "type": "ed-editors-note",
+  "name": "Editor's Note",
+  "name_ar": "كلمة المحرر",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Kicker",
+      "label_ar": "العنوان التمهيدي",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "The note",
+      "label_ar": "النص",
+      "info": "Leave an empty line between paragraphs. The first letter prints as a drop cap.",
+      "info_ar": "اترك سطرًا فارغًا بين الفقرات. أول حرف يُطبع كحرف استهلالي كبير.",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "byline_name",
+      "label": "Byline name",
+      "label_ar": "اسم الكاتب",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "byline_role",
+      "label": "Byline role",
+      "label_ar": "صفة الكاتب",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editor's Note",
+      "locales": {
+        "en": {
+          "name": "Editor's Note"
+        },
+        "ar": {
+          "name": "كلمة المحرر"
+        }
+      },
+      "settings": {}
+    }
+  ]
+}

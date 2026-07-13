@@ -1,0 +1,152 @@
+{
+  "type": "ed-front-page",
+  "name": "The Front Page",
+  "name_ar": "الصفحة الأولى",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Masthead"
+    },
+    {
+      "type": "text",
+      "id": "issue_label",
+      "label": "Issue label",
+      "label_ar": "رقم العدد",
+      "info": "Shown in the dateline, e.g. \"Issue 01\" or \"Summer Edition\".",
+      "info_ar": "يظهر في سطر التاريخ، مثل «العدد ٠١» أو «عدد الصيف».",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Cover story"
+    },
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Kicker",
+      "label_ar": "العنوان التمهيدي",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "headline",
+      "label": "Headline",
+      "label_ar": "المانشيت",
+      "info": "Use a line break to control where the headline wraps.",
+      "info_ar": "استخدم سطرًا جديدًا للتحكم في تقسيم المانشيت.",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "standfirst",
+      "label": "Standfirst",
+      "label_ar": "المقدمة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Link text",
+      "label_ar": "نص الرابط",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Link",
+      "label_ar": "الرابط",
+      "default": "/products"
+    },
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "Cover image",
+      "label_ar": "صورة الغلاف",
+      "aspect_ratio": "16/10",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Briefs (side column)"
+    },
+    {
+      "type": "text",
+      "id": "brief_1_title",
+      "label": "Brief 1 title",
+      "label_ar": "عنوان الخبر 1",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "brief_1_text",
+      "label": "Brief 1 text",
+      "label_ar": "نص الخبر 1",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "brief_1_link",
+      "label": "Brief 1 link",
+      "label_ar": "رابط الخبر 1",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "brief_2_title",
+      "label": "Brief 2 title",
+      "label_ar": "عنوان الخبر 2",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "brief_2_text",
+      "label": "Brief 2 text",
+      "label_ar": "نص الخبر 2",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "brief_2_link",
+      "label": "Brief 2 link",
+      "label_ar": "رابط الخبر 2",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "brief_3_title",
+      "label": "Brief 3 title",
+      "label_ar": "عنوان الخبر 3",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "brief_3_text",
+      "label": "Brief 3 text",
+      "label_ar": "نص الخبر 3",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "brief_3_link",
+      "label": "Brief 3 link",
+      "label_ar": "رابط الخبر 3",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "The Front Page",
+      "locales": {
+        "en": {
+          "name": "The Front Page"
+        },
+        "ar": {
+          "name": "الصفحة الأولى"
+        }
+      },
+      "settings": {
+        "cta_link": "/products"
+      }
+    }
+  ]
+}

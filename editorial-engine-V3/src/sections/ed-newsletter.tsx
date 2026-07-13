@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useLocale } from "@numueg/theme-sdk";
 import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
  * Editorial newsletter — faithful port of V2
@@ -12,7 +13,7 @@ import { asString, localized, type SectionRenderProps } from "./_shared";
  * email state + submit so the section is self-contained in the bundle. All
  * className strings are verbatim.
  */
-export default function EdNewsletter({ instance }: SectionRenderProps) {
+export default function EdNewsletter({ instance, sectionId }: SectionRenderProps) {
   const s = instance.settings ?? {};
   const locale = useLocale();
   const title = asString(s.title) || localized(locale, "Subscribe to our newsletter", "اشترك في نشرتنا");
@@ -35,10 +36,10 @@ export default function EdNewsletter({ instance }: SectionRenderProps) {
     <section className="py-12 bg-[hsl(var(--ed-green))]">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-white font-black text-2xl md:text-3xl mb-3">
-          {title}
+          <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
         </h2>
-        <p className="text-white/60 text-sm mb-6 max-w-sm mx-auto">
-          {subtitle}
+        <p className="text-white/70 text-sm mb-6 max-w-sm mx-auto">
+          <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
         </p>
         <div className="flex gap-2 max-w-md mx-auto">
           <input
@@ -57,7 +58,11 @@ export default function EdNewsletter({ instance }: SectionRenderProps) {
             onClick={handleSubmit}
             className="px-6 h-12 bg-white text-[hsl(var(--ed-dark))] font-bold text-xs uppercase tracking-[0.15em] hover:bg-white/90 transition-colors"
           >
-            {submitted ? localized(locale, "Subscribed", "تم الاشتراك") : buttonText}
+            {submitted ? (
+              localized(locale, "Subscribed", "تم الاشتراك")
+            ) : (
+              <InlineEditable sectionId={sectionId} settingKey="button_text" value={buttonText} />
+            )}
           </button>
         </div>
       </div>

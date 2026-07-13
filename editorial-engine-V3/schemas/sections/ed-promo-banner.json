@@ -1,6 +1,6 @@
 {
   "type": "ed-promo-banner",
-  "name": "Editorial Promo Banner",
+  "name": "Promotional Banner",
   "settings": [
     {
       "type": "header",
@@ -24,7 +24,7 @@
       "type": "text",
       "id": "subtitle",
       "label": "Subtitle",
-      "label_ar": "العنوان الفرعي",
+      "label_ar": "عنوان فرعي",
       "default": ""
     },
     {
@@ -54,5 +54,21 @@
       "default": ""
     }
   ],
-  "presets": []
+  "presets": [
+    {
+      "name": "Promotional Banner",
+      "locales": {
+        "en": {
+          "name": "Promotional Banner"
+        },
+        "ar": {
+          "name": "بانر ترويجي"
+        }
+      },
+      "settings": {
+        "cta_link": "/products"
+      }
+    }
+  ],
+  "name_ar": "بانر ترويجي"
 }

@@ -1,6 +1,6 @@
 {
   "type": "ed-products-page-section",
-  "name": "Editorial Products Page",
+  "name": "Products page",
   "settings": [
     {
       "type": "header",
@@ -11,7 +11,14 @@
       "type": "checkbox",
       "label": "Show grid/list toggle",
       "label_ar": "إظهار زر تغيير العرض",
-      "default": false
+      "default": true
+    },
+    {
+      "id": "show_category_subtitle",
+      "type": "checkbox",
+      "label": "Show category subtitle",
+      "label_ar": "إظهار وصف القسم",
+      "default": true
     },
     {
       "id": "columns_desktop",
@@ -32,7 +39,59 @@
       "min": 1,
       "max": 3,
       "step": 1
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "label": "Page title",
+      "label_ar": "عنوان الصفحة",
+      "default": "",
+      "info": "Shown when no collection is selected. Falls back to “All products”."
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "label": "Subtitle / eyebrow",
+      "label_ar": "وصف علوي",
+      "default": ""
+    },
+    {
+      "id": "empty_heading",
+      "type": "text",
+      "label": "Empty-state heading",
+      "label_ar": "عنوان لا نتائج",
+      "default": ""
+    },
+    {
+      "id": "empty_text",
+      "type": "text",
+      "label": "Empty-state text",
+      "label_ar": "نص لا نتائج",
+      "default": ""
     }
   ],
-  "presets": []
+  "presets": [
+    {
+      "name": "Products page",
+      "locales": {
+        "en": {
+          "name": "Products page"
+        },
+        "ar": {
+          "name": "صفحة المنتجات"
+        }
+      },
+      "settings": {
+        "show_view_toggle": true,
+        "show_category_subtitle": true,
+        "columns_desktop": 4,
+        "columns_mobile": 2
+      }
+    }
+  ],
+  "name_ar": "صفحة المنتجات"
 }

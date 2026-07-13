@@ -1,6 +1,6 @@
 {
   "type": "ed-order-confirmation-section",
-  "name": "Editorial Order Confirmation",
+  "name": "Order confirmation",
   "settings": [
     {
       "type": "header",
@@ -50,22 +50,42 @@
       "type": "checkbox",
       "label": "Show progress tracker",
       "label_ar": "إظهار شريط التقدم",
-      "default": false
+      "default": true
     },
     {
       "id": "show_whatsapp",
       "type": "checkbox",
       "label": "Show WhatsApp message card",
       "label_ar": "إظهار بطاقة واتساب",
-      "default": false
+      "default": true
     },
     {
       "id": "show_track_order",
       "type": "checkbox",
       "label": "Show track order button",
       "label_ar": "إظهار زر تتبع الطلب",
-      "default": false
+      "default": true
     }
   ],
-  "presets": []
+  "presets": [
+    {
+      "name": "Order confirmation",
+      "locales": {
+        "en": {
+          "name": "Order confirmation"
+        },
+        "ar": {
+          "name": "تأكيد الطلب"
+        }
+      },
+      "settings": {
+        "show_emoji": false,
+        "show_progress": true,
+        "show_whatsapp": true,
+        "show_track_order": true,
+        "continue_shopping_link": "/"
+      }
+    }
+  ],
+  "name_ar": "تأكيد الطلب"
 }

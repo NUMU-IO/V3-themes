@@ -4,47 +4,134 @@
     "name_ar": "العلامة التجارية",
     "settings": [
       {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo",
+        "label_ar": "الشعار",
+        "info": "Shown in the header and footer. Leave empty to use the store name as a wordmark.",
+        "info_ar": "يظهر في الهيدر والفوتر. اتركه فارغًا لاستخدام اسم المتجر كنص.",
+        "default": ""
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo width",
+        "label_ar": "عرض الشعار",
+        "default": 120,
+        "min": 60,
+        "max": 260,
+        "step": 4,
+        "unit": "px"
+      },
+      {
+        "type": "select",
+        "id": "logo_shape",
+        "label": "Logo shape",
+        "label_ar": "شكل الشعار",
+        "default": "none",
+        "info": "Crops the logo into a shape. 'Original' keeps it untouched. Circle/Square/Triangle look best with a square logo.",
+        "options": [
+          {
+            "value": "none",
+            "label": "Original",
+            "label_ar": "الأصلي"
+          },
+          {
+            "value": "square",
+            "label": "Square",
+            "label_ar": "مربع"
+          },
+          {
+            "value": "rounded",
+            "label": "Rounded square",
+            "label_ar": "مربع بزوايا دائرية"
+          },
+          {
+            "value": "circle",
+            "label": "Circle",
+            "label_ar": "دائرة"
+          },
+          {
+            "value": "triangle",
+            "label": "Triangle",
+            "label_ar": "مثلث"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "logo_size",
+        "label": "Logo size",
+        "label_ar": "حجم الشعار",
+        "default": "small",
+        "info": "Applies when a logo shape is chosen.",
+        "options": [
+          {
+            "value": "small",
+            "label": "Small",
+            "label_ar": "صغير"
+          },
+          {
+            "value": "medium",
+            "label": "Medium",
+            "label_ar": "متوسط"
+          },
+          {
+            "value": "large",
+            "label": "Large",
+            "label_ar": "كبير"
+          }
+        ]
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon (browser tab icon)",
+        "label_ar": "أيقونة المتصفح",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "name_ar": "الألوان",
+    "settings": [
+      {
         "type": "color",
         "id": "primary_color",
-        "label": "Primary color",
-        "label_ar": "اللون الأساسي",
-        "default": "#2f6f52",
-        "info": "Signature green — hero, category blocks and primary brand surfaces.",
-        "info_ar": "اللون الأخضر المميز — البانر والفئات والأسطح الأساسية."
+        "label": "Editorial green",
+        "label_ar": "الأخضر الأساسي",
+        "info": "The signature drench color: hero band, highlights, cart badge.",
+        "default": "#2F6F52"
       },
       {
         "type": "color",
         "id": "background_color",
-        "label": "Background color",
-        "label_ar": "لون الخلفية",
-        "default": "#f0f1ec"
+        "label": "Paper background",
+        "label_ar": "خلفية الصفحة",
+        "default": "#F0F1EC"
       },
       {
         "type": "color",
         "id": "text_color",
-        "label": "Text color",
+        "label": "Ink (text)",
         "label_ar": "لون النص",
-        "default": "#1c1c1c",
-        "info": "Body text plus the dark footer and chips.",
-        "info_ar": "نص المحتوى بالإضافة إلى الفوتر الداكن والوسوم."
+        "default": "#1C1C1C"
       },
       {
         "type": "color",
         "id": "accent_color",
-        "label": "Accent color",
-        "label_ar": "لون التمييز",
-        "default": "#d4af37",
-        "info": "Focus rings and highlights.",
-        "info_ar": "حلقات التركيز والإبرازات."
+        "label": "Gold foil accent",
+        "label_ar": "لون التمييز الذهبي",
+        "info": "Used only for thin rules and highlights, like foil on a cover.",
+        "default": "#D4AF37"
       },
       {
         "type": "color",
         "id": "button_color",
-        "label": "Button color",
+        "label": "Buttons",
         "label_ar": "لون الأزرار",
-        "default": "#141414",
-        "info": "Primary button background.",
-        "info_ar": "خلفية الزر الأساسي."
+        "default": "#141414"
       }
     ]
   },
@@ -53,22 +140,181 @@
     "name_ar": "الخطوط",
     "settings": [
       {
-        "type": "font",
+        "type": "select",
         "id": "heading_font",
-        "label": "Heading font",
+        "label": "Headline font",
         "label_ar": "خط العناوين",
-        "default": "",
-        "info": "Display headings. Leave empty to use the theme's built-in typography.",
-        "info_ar": "عناوين العرض. اتركه فارغًا لاستخدام خط الثيم الافتراضي."
+        "default": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "options": [
+          {
+            "value": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "label": "Helvetica (Manshet default)",
+            "label_ar": "هيلفيتيكا (افتراضي)"
+          },
+          {
+            "value": "montserrat",
+            "label": "Montserrat (sans-serif)",
+            "label_ar": "مونتسيرات"
+          },
+          {
+            "value": "inter",
+            "label": "Inter (sans-serif)",
+            "label_ar": "إنتر"
+          },
+          {
+            "value": "playfair",
+            "label": "Playfair Display (serif)",
+            "label_ar": "بلايفير ديسبلاي"
+          },
+          {
+            "value": "cormorant",
+            "label": "Cormorant Garamond (serif)",
+            "label_ar": "كورمورانت جاراموند"
+          },
+          {
+            "value": "cairo",
+            "label": "Cairo (Arabic-first)",
+            "label_ar": "القاهرة"
+          }
+        ]
       },
       {
-        "type": "font",
+        "type": "select",
         "id": "body_font",
         "label": "Body font",
         "label_ar": "خط النص",
-        "default": "",
-        "info": "Body copy and UI text. Leave empty to use the theme's built-in typography.",
-        "info_ar": "نص المحتوى والواجهة. اتركه فارغًا لاستخدام خط الثيم الافتراضي."
+        "default": "Helvetica Neue, Helvetica, Arial, sans-serif",
+        "options": [
+          {
+            "value": "Helvetica Neue, Helvetica, Arial, sans-serif",
+            "label": "Helvetica (Manshet default)",
+            "label_ar": "هيلفيتيكا (افتراضي)"
+          },
+          {
+            "value": "inter",
+            "label": "Inter (sans-serif)",
+            "label_ar": "إنتر"
+          },
+          {
+            "value": "montserrat",
+            "label": "Montserrat (sans-serif)",
+            "label_ar": "مونتسيرات"
+          },
+          {
+            "value": "lora",
+            "label": "Lora (serif)",
+            "label_ar": "لورا"
+          },
+          {
+            "value": "cairo",
+            "label": "Cairo (Arabic-first)",
+            "label_ar": "القاهرة"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "base_font_size",
+        "label": "Base text size",
+        "label_ar": "حجم النص الأساسي",
+        "default": 16,
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "heading_tracking",
+        "label": "Headline letter-spacing",
+        "label_ar": "تباعد حروف العناوين",
+        "info": "Fine-tunes headline tracking relative to the Manshet default (0 = unchanged).",
+        "default": 0,
+        "min": -4,
+        "max": 6,
+        "step": 1,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "name_ar": "التخطيط",
+    "settings": [
+      {
+        "type": "range",
+        "id": "radius",
+        "label": "Corner radius",
+        "label_ar": "استدارة الزوايا",
+        "info": "Applies to cards, inputs and tiles. Manshet keeps sharp print corners (2px) by default.",
+        "info_ar": "يُطبّق على البطاقات والحقول. يحافظ مانشيت على زوايا حادة (2 بكسل) افتراضيًا.",
+        "default": 2,
+        "min": 0,
+        "max": 20,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "checkbox",
+        "id": "enableAnimations",
+        "label": "Enable motion & reveal animations",
+        "label_ar": "تفعيل الحركة وتأثيرات الظهور",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enableHideOnScroll",
+        "label": "Hide header on scroll down",
+        "label_ar": "إخفاء الهيدر عند التمرير للأسفل",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Social links",
+    "name_ar": "روابط التواصل",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram URL",
+        "label_ar": "رابط إنستجرام",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "TikTok URL",
+        "label_ar": "رابط تيك توك",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook URL",
+        "label_ar": "رابط فيسبوك",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_x",
+        "label": "X (Twitter) URL",
+        "label_ar": "رابط إكس (تويتر)",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_youtube",
+        "label": "YouTube URL",
+        "label_ar": "رابط يوتيوب",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_whatsapp",
+        "label": "WhatsApp number or link",
+        "label_ar": "رقم أو رابط واتساب",
+        "default": ""
       }
     ]
   }

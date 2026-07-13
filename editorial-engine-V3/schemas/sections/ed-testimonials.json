@@ -1,6 +1,6 @@
 {
   "type": "ed-testimonials",
-  "name": "Editorial Testimonials",
+  "name": "Pull-quote Testimonials",
   "settings": [
     {
       "type": "header",
@@ -119,5 +119,6 @@
       "step": 1
     }
   ],
-  "presets": []
+  "presets": [],
+  "name_ar": "آراء العملاء"
 }

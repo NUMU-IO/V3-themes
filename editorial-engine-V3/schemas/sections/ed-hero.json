@@ -1,6 +1,6 @@
 {
   "type": "ed-hero",
-  "name": "Editorial Hero",
+  "name": "Manshet Hero (front page)",
   "settings": [
     {
       "type": "header",
@@ -59,9 +59,12 @@
       "label": "Hero image (mobile)",
       "label_ar": "صورة البطل (جوال)",
       "aspect_ratio": "4/5",
-      "visible_if": { "use_mobile_image": true },
+      "visible_if": {
+        "use_mobile_image": true
+      },
       "default": ""
     }
   ],
-  "presets": []
+  "presets": [],
+  "name_ar": "هيرو مانشيت"
 }

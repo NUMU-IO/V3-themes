@@ -1,10 +1,10 @@
 {
   "id": "editorial-v3",
-  "name": "Editorial (V3)",
+  "name": "Manshet",
   "author": "NUMU",
-  "version": "0.3.13",
+  "version": "0.4.0",
   "layout": "single-column",
-  "description": "Editorial (V3) — bold fashion editorial with oversized typography and a dramatic green palette, ported faithfully from the V2 in-tree theme.",
+  "description": "Manshet (مانشيت) — the magazine theme. Front-page headlines in heavy uppercase type, editorial lookbook spreads, pull-quote testimonials and a newspaper masthead header, on warm paper with a deep editorial green and gold foil rules. For image-led fashion and lifestyle stores that want to read like a publication.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
@@ -13,11 +13,19 @@
         "name": "Home",
         "sections": [
           {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
             "type": "ed-hero",
             "settings": {
               "cta_link": "/products",
               "hero_image_url": ""
             }
+          },
+          {
+            "type": "ed-marquee",
+            "settings": {}
           },
           {
             "type": "ed-categories",
@@ -33,6 +41,10 @@
               "product_count": 8,
               "columns": 4
             }
+          },
+          {
+            "type": "ed-lookbook",
+            "settings": {}
           },
           {
             "type": "ed-promo-banner",
@@ -57,12 +69,20 @@
           {
             "type": "ed-newsletter",
             "settings": {}
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
           }
         ]
       },
       "product": {
         "name": "Product",
         "sections": [
+          {
+            "type": "ed-header",
+            "settings": {}
+          },
           {
             "type": "ed-product-detail-section",
             "settings": {
@@ -72,6 +92,10 @@
               "show_related_products": true,
               "related_products_count": 4
             }
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
           }
         ]
       },
@@ -79,12 +103,20 @@
         "name": "Products",
         "sections": [
           {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
             "type": "ed-products-page-section",
             "settings": {
               "show_view_toggle": false,
               "columns_desktop": 4,
               "columns_mobile": 2
             }
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
           }
         ]
       },
@@ -92,12 +124,101 @@
         "name": "Collection",
         "sections": [
           {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
             "type": "ed-products-page-section",
             "settings": {
               "show_view_toggle": false,
               "columns_desktop": 4,
               "columns_mobile": 2
             }
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "about": {
+        "name": "About",
+        "sections": [
+          {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
+            "type": "ed-about",
+            "settings": {}
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "contact": {
+        "name": "Contact",
+        "sections": [
+          {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
+            "type": "ed-contact",
+            "settings": {}
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "search": {
+        "name": "Search",
+        "sections": [
+          {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
+            "type": "ed-search-results",
+            "settings": {}
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "page": {
+        "name": "Content page",
+        "sections": [
+          {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "404": {
+        "name": "Not found",
+        "sections": [
+          {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
+            "type": "ed-not-found",
+            "settings": {}
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
           }
         ]
       },
@@ -105,22 +226,73 @@
         "name": "Profile",
         "sections": [
           {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
             "type": "ed-profile",
+            "settings": {}
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "account": {
+        "name": "Account",
+        "sections": [
+          {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
+            "type": "ed-profile",
+            "settings": {}
+          },
+          {
+            "type": "ed-footer",
             "settings": {}
           }
         ]
       },
       "cart": {
         "name": "Cart",
-        "sections": []
+        "sections": [
+          {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
+            "type": "ed-cart",
+            "settings": {}
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
+          }
+        ]
       },
       "checkout": {
         "name": "Checkout",
-        "sections": []
+        "sections": [
+          {
+            "type": "ed-header",
+            "settings": {}
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
+          }
+        ]
       },
       "order-confirmation": {
         "name": "Order confirmation",
         "sections": [
+          {
+            "type": "ed-header",
+            "settings": {}
+          },
           {
             "type": "ed-order-confirmation-section",
             "settings": {
@@ -129,6 +301,10 @@
               "show_whatsapp": false,
               "show_track_order": false
             }
+          },
+          {
+            "type": "ed-footer",
+            "settings": {}
           }
         ]
       }

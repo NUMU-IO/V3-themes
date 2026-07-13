@@ -1,6 +1,6 @@
 {
   "type": "ed-newsletter",
-  "name": "Editorial Newsletter",
+  "name": "Newsletter",
   "settings": [
     {
       "type": "header",
@@ -35,5 +35,6 @@
       "default": ""
     }
   ],
-  "presets": []
+  "presets": [],
+  "name_ar": "النشرة البريدية"
 }
