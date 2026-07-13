@@ -1,7 +1,8 @@
 "use client";
 import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
-import { motion } from "framer-motion";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
+import { Plate, useMotionOn } from "./_motion";
 
 /**
  * Editorial categories — faithful port of V2
@@ -12,8 +13,9 @@ import { asNumber, asString, localized, type SectionRenderProps } from "./_share
  * id/name/slug/image_url/product_count). Dramatic 4:5 image cards with a
  * bottom gradient + oversized uppercase label, exactly as V2.
  */
-export default function EdCategories({ instance }: SectionRenderProps) {
+export default function EdCategories({ instance, sectionId }: SectionRenderProps) {
   const { collections } = useCollections();
+  const on = useMotionOn();
   const isLoading = false;
   const s = instance.settings ?? {};
   const locale = useLocale();
@@ -29,7 +31,7 @@ export default function EdCategories({ instance }: SectionRenderProps) {
     <section className="py-10">
       <div className="container mx-auto px-4">
         <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-6">
-          {title}
+          <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
         </h2>
 
         {!isLoading && displayCategories.length === 0 ? (
@@ -39,12 +41,9 @@ export default function EdCategories({ instance }: SectionRenderProps) {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {displayCategories.map((cat, i) => (
-              <motion.div
-                key={cat.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
+              // Plates uncover in reading order, alternating wipe direction
+              // per column so the row reads like pages being turned.
+              <Plate key={cat.id} on={on} from={i % 2 === 0 ? "start" : "end"} delay={Math.min(i, 5) * 0.07}>
                 <Link
                   to={`/products?category=${cat.id}`}
                   className="group relative block overflow-hidden aspect-[4/5]"
@@ -69,7 +68,7 @@ export default function EdCategories({ instance }: SectionRenderProps) {
                     </p>
                   </div>
                 </Link>
-              </motion.div>
+              </Plate>
             ))}
           </div>
         )}

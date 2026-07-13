@@ -3,22 +3,19 @@
 @tailwind utilities;
 
 /* ───────────────────────────────────────────────────────────────
- * Ported verbatim from V2 Editorial (numu-egyptian-bazaar/src/themes/
- * editorial/styles.css). The only change: the V2 root selector
- * :root[data-theme="editorial"] is retargeted to the V3 mount element
- * [data-editorial-v3-app] so the --ed-* + HSL tokens reach the sections.
+ * Manshet (editorial-v3) — bold print-editorial theme.
+ * Identity: warm paper page, near-black ink, deep editorial green
+ * drench bands, gold used ONLY as thin foil rules and price accents.
+ * Oversized uppercase grotesk "manshet" headlines. Sharp corners.
+ * Root selector [data-editorial-v3-app] so the tokens reach sections.
  * ─────────────────────────────────────────────────────────────── */
-/* Theme: Editorial — Bold fashion editorial with dramatic green palette */
 
 [data-editorial-v3-app] {
   /* ── Merchant color scheme + fonts ──────────────────────────────────────
      The SDK writes --theme-color-<role> / --theme-font-<role> onto the mount
-     root from global_settings; these hex/stack bridge tokens consume them with
-     Editorial's own values as fallbacks, so an un-customized store renders
-     identically while the Brand + Typography pickers now re-paint the theme's
-     signature surfaces (see the .ed-* / .vn-* rules below). The theme's HSL
-     Tailwind tokens (--primary, --foreground, …) stay on their static values;
-     the brand-critical custom classes are rewired to these bridge tokens. */
+     root from global_settings; these bridge tokens consume them with
+     Manshet's own values as fallbacks, so an un-customized store renders
+     the shipped identity while the Brand + Typography pickers re-paint. */
   --ed-primary: var(--theme-color-primary, #2f6f52);
   --ed-ink: var(--theme-color-text, #1c1c1c);
   --ed-page-bg: var(--theme-color-background, #f0f1ec);
@@ -32,6 +29,9 @@
     --theme-font-body,
     var(--theme-body_font, "Helvetica Neue", Helvetica, Arial, sans-serif)
   );
+  /* Heading tracking ramp: additive nudge over the -0.02em default
+     (range stores a bare px number → multiply by 1px; 0 = unchanged). */
+  --ed-heading-tracking: calc(-0.02em + var(--theme-heading_tracking, 0) * 1px);
 
   --background: 90 10% 94%;
   --foreground: 0 0% 11%;
@@ -52,7 +52,9 @@
   --border: 90 6% 82%;
   --input: 90 5% 85%;
   --ring: 153 45% 30%;
-  --radius: 0.25rem;
+  /* Layout radius driven by the Layout global (range stores a bare number →
+     multiply by 1px; default 2 keeps Manshet's sharp print corners). */
+  --radius: calc(var(--theme-radius, 2) * 1px);
   --store-gradient: linear-gradient(135deg, hsl(153 45% 30%), hsl(153 30% 42%));
   --hero-bg: 153 45% 30%;
   --badge-bg: 153 45% 30%;
@@ -64,7 +66,7 @@
   --success: 153 50% 38%;
   --warning: 38 92% 50%;
 
-  /* Editorial-specific tokens */
+  /* Manshet-specific tokens */
   --ed-green: 153 45% 30%;
   --ed-green-light: 153 30% 72%;
   --ed-cream: 90 10% 94%;
@@ -89,57 +91,315 @@
   --sidebar-border: 90 6% 82%;
   --sidebar-ring: 153 45% 30%;
 
-  /* ── Vionne-derived `vn-*` token vocabulary, remapped to Editorial's
-   *    palette. The copied page-level sections (product-detail,
-   *    products-page, profile, order-confirmation) reference these tokens;
-   *    we keep the same token NAMES vionne uses but bind them to Editorial's
-   *    cream/green/near-black colour values so the pages read as Editorial. */
-  --vn-white: #FFFFFF;
-  --vn-band: hsl(90 8% 88%);        /* editorial --muted (light cream band) */
-  --vn-surface-dark: hsl(0 0% 8%);  /* editorial --ed-dark */
-  --vn-ink: hsl(0 0% 11%);          /* editorial --foreground (near-black) */
-  --vn-border: hsl(90 6% 82%);      /* editorial --border */
-  --vn-muted: hsl(0 0% 40%);        /* editorial --muted-foreground */
-  --vn-sale: hsl(0 72% 51%);        /* editorial --destructive */
-}
+  /* ── `vn-*` token vocabulary (shared with the ported page-level sections)
+   *    bound to Manshet's paper/ink/green/gold palette. Section markup uses
+   *    vionne's proven class SHAPES; the colours resolve through these. */
+  --vn-white: #ffffff;
+  --vn-band: hsl(90 8% 88%);          /* light paper band */
+  --vn-surface-dark: #141414;         /* ink — footer / dock surfaces */
+  --vn-ink: var(--ed-ink);
+  --vn-border: hsl(90 6% 82%);
+  --vn-muted: #55564e;                /* warm-gray, ≥4.5:1 on paper */
+  --vn-sale: hsl(0 72% 45%);
+  --vn-accent: var(--ed-accent-color); /* gold foil */
+  --vn-heading-tracking: var(--ed-heading-tracking);
 
-[data-editorial-v3-app] body {
+  /* Base text size ramp: default 16px == browser default. */
+  font-size: calc(var(--theme-base_font_size, 16) * 1px);
+  font-family: var(--body-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* The theme owns the whole canvas: paint the paper on the mount root and
+     fill the viewport so short pages never expose the host/browser default
+     background below the footer. Flex column so main.tsx can push the footer
+     to the bottom edge with an auto margin. */
   background: var(--ed-page-bg);
   color: var(--ed-ink);
-  font-family: var(--body-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Editorial giant heading style */
+/* The body slot grows; the footer rides the bottom edge on short pages. */
+[data-editorial-v3-app] > .ed-page-body {
+  flex: 1 0 auto;
+}
+
+/* ─── Manshet display typography ─── */
+
+/* Giant front-page headline — the theme's signature. */
 [data-editorial-v3-app] .ed-hero-title {
-  font-size: clamp(3rem, 10vw, 8rem);
+  font-family: var(--heading-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: clamp(3rem, 9vw, 6rem);
   font-weight: 900;
-  line-height: 0.9;
-  letter-spacing: -0.03em;
+  line-height: 0.92;
+  letter-spacing: var(--ed-heading-tracking, -0.02em);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/* Magazine nameplate (header masthead). */
+.ed-masthead {
+  font-family: var(--heading-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+/* Newspaper double rule — thick over thin. */
+.ed-rule-double {
+  border-top: 3px solid var(--vn-ink);
+  position: relative;
+}
+.ed-rule-double::after {
+  content: "";
+  display: block;
+  margin-top: 3px;
+  border-top: 1px solid var(--vn-ink);
+}
+
+/* Gold foil hairline — the ONLY place gold appears as decoration. */
+.ed-foil-rule {
+  height: 2px;
+  width: 100%;
+  background: var(--vn-accent);
+}
+
+/* ─── Motion materials (print-production interaction layer) ─── */
+
+/* Ink-draw underline: the line inks in from the reading edge on hover and
+   exits toward the far edge, like a pen stroke. Used on nav links and
+   inline text links. */
+.ed-ink-link {
+  position: relative;
+  text-decoration: none;
+}
+.ed-ink-link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -0.2em;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: var(--ed-ink-exit, right);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ed-ink-link:hover::after,
+.ed-ink-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: var(--ed-ink-enter, left);
+}
+[dir="rtl"] .ed-ink-link { --ed-ink-enter: right; --ed-ink-exit: left; }
+
+/* Press feedback for solid CTAs — quick mechanical push, like a platen.
+   (.vn-btn gets the same treatment in its own rule further down.) */
+.ed-press {
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ed-press:active {
+  transform: scale(0.97);
+}
+
+/* Cart badge re-stamp: fired by re-keying the badge on count change. */
+@keyframes ed-stamp-in {
+  0% { transform: scale(1.45) rotate(-6deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+.ed-badge-stamp {
+  animation: ed-stamp-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-ink-link::after { transition: none; }
+  .ed-press, .ed-press:active, .vn-btn, .vn-btn:active { transition: none; transform: none; }
+  .ed-badge-stamp { animation: none; }
+}
+
+/* ─── Front Page / Contents / Editor's Note (signature sections) ─── */
+
+/* Dateline: STORE · 13 July 2026 · Issue 01 — the row above the masthead rule. */
+.ed-dateline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--vn-muted);
+}
+
+/* Hairline column rule for the briefs column, print-style. Falls back to a
+   top rule on mobile where the column stacks. */
+.ed-column-rule {
+  border-top: 1px solid var(--vn-border);
+  padding-top: 1.5rem;
+}
+@media (min-width: 768px) {
+  .ed-column-rule {
+    border-top: 0;
+    padding-top: 0;
+    border-inline-start: 1px solid var(--vn-border);
+    padding-inline-start: 2.5rem;
+  }
+}
+
+/* Contents rows: 01  NAME ······· 12 */
+.ed-toc-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding-block: 1.1rem;
+  text-decoration: none;
+  color: inherit;
+}
+.ed-toc-number {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--vn-muted);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.25s ease;
+}
+.ed-toc-row:hover .ed-toc-number {
+  color: var(--ed-primary);
+}
+.ed-toc-name {
+  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+  text-transform: uppercase;
+}
+.ed-toc-leader {
+  flex: 1;
+  border-bottom: 2px dotted var(--vn-border);
+  transform: translateY(-0.3em);
+}
+.ed-toc-count {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--vn-muted);
+  font-variant-numeric: tabular-nums;
+}
+/* Row hover drives the name's ink underline (the span isn't the hover target). */
+.ed-toc-row:hover .ed-ink-link::after,
+.ed-toc-row:focus-visible .ed-ink-link::after {
+  transform: scaleX(1);
+  transform-origin: var(--ed-ink-enter, left);
+}
+
+/* Editor's note body: comfortable measure + the DROP CAP. */
+.ed-editors-body p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--vn-ink);
+  margin: 0 0 1.25em;
+}
+.ed-editors-body p:last-child {
+  margin-bottom: 0;
+}
+.ed-dropcap::first-letter {
+  font-family: var(--heading-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 900;
+  font-size: 3.4em;
+  line-height: 0.8;
+  /* Physical fallback first — Samsung Internet lacks float: inline-start. */
+  float: left;
+  float: inline-start;
+  padding-inline-end: 0.12em;
+  padding-top: 0.06em;
+  color: var(--ed-primary);
+}
+[dir="rtl"] .ed-dropcap::first-letter {
+  float: right;
+  float: inline-start;
+}
+
+/* Pull-quote (testimonials) — outsized quotation, hung marks. */
+.ed-pull-quote {
+  font-family: var(--heading-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.35rem, 3vw, 2.1rem);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.vn-heading {
+  font-family: var(--heading-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 800;
+  letter-spacing: var(--vn-heading-tracking, -0.02em);
+  line-height: 1.05;
   text-transform: uppercase;
 }
 
-/* Editorial category block */
-[data-editorial-v3-app] .ed-block {
-  position: relative;
-  overflow: hidden;
+.vn-eyebrow {
+  font-family: var(--body-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 11px;
+  color: var(--vn-muted);
+}
+
+.vn-label {
+  font-family: var(--body-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 11px;
+}
+
+/* ─── Buttons — solid, SHARP (print corners) ─── */
+
+.vn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 44px;
+  padding: 0 1.5rem;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 200ms ease, color 200ms ease, opacity 200ms ease;
+  cursor: pointer;
+}
+.vn-btn:active {
+  transform: scale(0.97);
+}
+
+.vn-btn-filled {
+  background: var(--ed-btn-bg);
+  color: var(--vn-white);
+}
+.vn-btn-filled:hover {
   background: var(--ed-primary);
 }
 
-[data-editorial-v3-app] .ed-block-light {
-  background: hsl(var(--ed-green-light));
+.vn-btn-outline-light {
+  background: transparent;
+  color: var(--vn-white);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+}
+.vn-btn-outline-light:hover {
+  background: var(--vn-white);
+  color: var(--vn-ink);
 }
 
-/* Minimal card with no shadows */
-[data-editorial-v3-app] .ed-card {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
-  transition: transform 0.3s ease;
+.vn-btn-outline-dark {
+  background: transparent;
+  color: var(--vn-ink);
+  border: 2px solid var(--vn-ink);
 }
-[data-editorial-v3-app] .ed-card:hover {
-  transform: translateY(-4px);
+.vn-btn-outline-dark:hover {
+  background: var(--vn-ink);
+  color: var(--vn-white);
 }
 
-/* Editorial button — solid, sharp */
+/* Legacy ed-btn kept for the original home sections. */
 [data-editorial-v3-app] .ed-btn {
   background: var(--ed-btn-bg);
   color: white;
@@ -170,19 +430,24 @@
   color: hsl(var(--background));
 }
 
-/* Editorial header — minimal */
-[data-editorial-v3-app] .ed-header {
-  background: hsl(var(--background));
-  border-bottom: 1px solid hsl(var(--border));
-}
+/* ─── Legacy Manshet blocks (original home sections) ─── */
 
-/* Editorial footer — dark */
-[data-editorial-v3-app] .ed-footer {
-  background: var(--ed-ink);
-  color: hsl(90 10% 85%);
+[data-editorial-v3-app] .ed-block {
+  position: relative;
+  overflow: hidden;
+  background: var(--ed-primary);
 }
-
-/* Chip / tag */
+[data-editorial-v3-app] .ed-block-light {
+  background: hsl(var(--ed-green-light));
+}
+[data-editorial-v3-app] .ed-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  transition: transform 0.3s ease;
+}
+[data-editorial-v3-app] .ed-card:hover {
+  transform: translateY(-4px);
+}
 [data-editorial-v3-app] .ed-chip {
   border: 1px solid hsl(var(--border));
   font-size: 0.75rem;
@@ -195,8 +460,6 @@
   color: white;
   border-color: var(--ed-ink);
 }
-
-/* Inset input */
 [data-editorial-v3-app] .ed-inset {
   background: hsl(var(--background));
   border: 1px solid hsl(var(--border));
@@ -206,101 +469,255 @@
   outline: none;
   box-shadow: 0 0 0 2px hsl(153 45% 30% / 0.15);
 }
-
-/* Section divider */
 [data-editorial-v3-app] .ed-divider {
   height: 1px;
   background: hsl(var(--border));
 }
-
-/* Force editorial palette for shared page classes */
 [data-editorial-v3-app] .store-gradient {
   background: linear-gradient(135deg, hsl(153 45% 30%), hsl(153 30% 42%)) !important;
 }
 
-/* ───────────────────────────────────────────────────────────────
- * `vn-*` utility vocabulary — copied from V2 Vionne's theme.css and
- * re-bound to Editorial's tokens above. These back the copied page-level
- * sections (product-detail / products-page / profile / order-confirmation)
- * which were ported from Vionne's proven SDK-wired versions. The class
- * SHAPES are vionne's; the colours resolve through Editorial's --vn-*
- * tokens so the pages render in Editorial's palette.
- * ─────────────────────────────────────────────────────────────── */
+/* ─── Header (masthead) ─── */
+/* Newspaper masthead: PAPER surface with ink type (not the vionne dark bar),
+   heavy double rule under the nav. Hide/condense behavior kept. */
 
-/* ─── Typography ─── */
-
-.vn-heading {
-  font-family: var(--heading-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.05;
+.vn-header {
+  background: var(--ed-page-bg);
+  color: var(--vn-ink);
+  border-bottom: 1px solid var(--vn-ink);
+  transition: transform 300ms ease, background-color 300ms ease, box-shadow 300ms ease;
+  will-change: transform;
 }
 
-.vn-eyebrow {
-  font-family: var(--body-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 11px;
-  color: var(--vn-muted);
+.vn-header.is-hidden {
+  transform: translateY(-100%);
 }
 
-.vn-label {
-  font-family: var(--body-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-size: 11px;
+.vn-header.is-condensed {
+  background: color-mix(in srgb, var(--ed-page-bg) 92%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* ─── Buttons ─── */
+.vn-header a,
+.vn-header button {
+  color: inherit;
+}
 
-.vn-btn {
-  display: inline-flex;
+/* ─── Announcement marquee (header strip) ─── */
+
+.vn-marquee {
+  background: var(--ed-primary);
+  color: var(--vn-white);
+  height: 40px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.vn-marquee-track {
+  display: flex;
+  align-items: center;
+  /* flex-shrink: 0 is critical — without it the browser squashes
+     `width: max-content` back to the parent's width and the translateX
+     animation only travels a fraction of its distance. */
+  flex-shrink: 0;
+  width: max-content;
+  will-change: transform;
+  animation: vn-marquee-scroll var(--vn-marquee-duration, 25s) linear infinite;
+}
+
+.vn-marquee:hover .vn-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes vn-marquee-scroll {
+  from { transform: translateX(0); }
+  /* -50% works because the track renders content twice (A + A). */
+  to { transform: translateX(-50%); }
+}
+
+[dir="rtl"] .vn-marquee-track {
+  animation-direction: reverse;
+}
+
+/* ─── Standalone marquee/ticker section ─── */
+
+.vn-marquee-section {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: var(--vn-marquee-bg, var(--ed-primary));
+  color: var(--vn-marquee-fg, var(--vn-white));
+  border-block: 1px solid var(--vn-marquee-border, transparent);
+}
+
+.vn-marquee-section .vn-marquee-track {
+  animation: vn-marquee-scroll var(--vn-marquee-section-duration, 30s) linear infinite;
+}
+
+.vn-marquee-section[data-direction="right"] .vn-marquee-track {
+  animation-direction: reverse;
+}
+
+[dir="rtl"] .vn-marquee-section[data-direction="right"] .vn-marquee-track {
+  animation-direction: normal;
+}
+
+.vn-marquee-section[data-pause-on-hover="true"]:hover .vn-marquee-track {
+  animation-play-state: paused;
+}
+
+.vn-marquee-section[data-size="sm"] { font-size: 11px; letter-spacing: 0.22em; }
+.vn-marquee-section[data-size="md"] { font-size: 14px; letter-spacing: 0.18em; }
+.vn-marquee-section[data-size="lg"] { font-size: 18px; letter-spacing: 0.14em; }
+.vn-marquee-section[data-size="xl"] { font-size: 24px; letter-spacing: 0.10em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-marquee-track,
+  .vn-marquee-section .vn-marquee-track {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Merchant "Enable animations" toggle (Layout global) — static ticker. */
+.vn-marquee-section[data-animate="false"] .vn-marquee-track {
+  animation: none;
+  transform: none;
+}
+
+/* ─── Mobile drawer ─── */
+
+.vn-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.vn-drawer-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 5, 0);
+  transition: background-color 280ms ease;
+  pointer-events: none;
+}
+
+.vn-drawer.is-open .vn-drawer-overlay {
+  background: rgba(5, 5, 5, 0.45);
+  pointer-events: auto;
+}
+
+.vn-drawer-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  inset-inline-start: 0;
+  width: min(86vw, 360px);
+  background: var(--ed-page-bg);
+  color: var(--vn-ink);
+  transform: translateX(-100%);
+  transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+[dir="rtl"] .vn-drawer-panel {
+  transform: translateX(100%);
+}
+
+.vn-drawer.is-open .vn-drawer-panel {
+  transform: translateX(0);
+}
+
+.vn-drawer-item {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 280ms ease, transform 280ms ease;
+}
+
+.vn-drawer.is-open .vn-drawer-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Mobile bottom dock ─── */
+
+.vn-dock {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--vn-surface-dark);
+  color: var(--vn-white);
+  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  transform: translateY(100%);
+  transition: transform 320ms ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.vn-dock.is-revealed {
+  transform: translateY(0);
+}
+
+.vn-dock-btn {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  height: 44px;
-  padding: 0 1.25rem;
-  border-radius: 0;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
+  gap: 4px;
+  padding: 6px 4px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  transition: transform 200ms ease, background-color 200ms ease, color 200ms ease, opacity 200ms ease;
+  background: transparent;
+  color: var(--vn-white);
+  border: none;
   cursor: pointer;
+  position: relative;
 }
 
-.vn-btn-filled {
-  background: var(--ed-btn-bg);
-  color: var(--vn-white);
-}
-.vn-btn-filled:hover {
-  background: var(--ed-primary);
-  opacity: 1;
-}
-
-.vn-btn-outline-light {
-  background: transparent;
-  color: var(--vn-white);
-  border: 2px solid rgba(255, 255, 255, 0.85);
-}
-.vn-btn-outline-light:hover {
-  background: var(--vn-white);
+.vn-dock-btn .vn-dock-badge {
+  position: absolute;
+  top: 2px;
+  inset-inline-end: calc(50% - 18px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--vn-accent);
   color: var(--vn-ink);
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.vn-btn-outline-dark {
-  background: transparent;
-  color: var(--vn-ink);
-  border: 2px solid var(--vn-ink);
-}
-.vn-btn-outline-dark:hover {
-  background: var(--vn-ink);
-  color: var(--vn-white);
+@media (min-width: 768px) {
+  .vn-dock {
+    display: none;
+  }
 }
 
-/* ─── Product Card hover ─── */
+/* Reserve room for the fixed bottom dock on mobile. */
+[data-editorial-v3-app] [data-testid="storefront-layout"] main {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+  [data-editorial-v3-app] [data-testid="storefront-layout"] main {
+    padding-bottom: 0;
+  }
+}
+
+/* ─── Product card hover ─── */
 
 .vn-product-card .vn-product-image {
   transition: transform 600ms ease, opacity 280ms ease;
@@ -324,10 +741,71 @@
   opacity: 1;
 }
 
+.vn-product-card .vn-quick-view {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--vn-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0);
+  transition: transform 220ms ease, background-color 200ms ease;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.vn-product-card:hover .vn-quick-view {
+  transform: scale(1);
+}
+
+.vn-product-card .vn-quick-view:hover {
+  background: var(--vn-ink);
+  color: var(--vn-white);
+}
+
+.vn-product-card .vn-add-cta {
+  position: absolute;
+  inset-inline: 12px;
+  bottom: 12px;
+  transform: translateY(120%);
+  transition: transform 280ms ease;
+}
+
+.vn-product-card:hover .vn-add-cta {
+  transform: translateY(0);
+}
+
+/* ─── Reveal-on-scroll helper ─── */
+
+.vn-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+.vn-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* ─── Shimmer (lazy media placeholder) ─── */
 
 .vn-shimmer {
-  background: linear-gradient(90deg, #E2E5DC 0%, #ECEEE7 40%, #E2E5DC 80%);
+  background: linear-gradient(90deg, #e2e5dc 0%, #eceee7 40%, #e2e5dc 80%);
   background-size: 200% 100%;
   animation: vn-shimmer 1400ms ease-in-out infinite;
 }
@@ -341,7 +819,33 @@
   .vn-shimmer { animation: none; }
 }
 
+/* ─── Footer — ink "back page" ─── */
+
+.vn-footer {
+  background: var(--vn-surface-dark);
+  color: hsl(90 10% 88%);
+}
+
+.vn-footer a {
+  color: hsl(90 8% 72%);
+  transition: color 200ms ease;
+}
+
+.vn-footer a:hover {
+  color: #ffffff;
+}
+
 /* ─── Misc helpers ─── */
+
+.vn-divider {
+  height: 1px;
+  width: 100%;
+  background: var(--vn-border);
+}
+
+.vn-band {
+  background: var(--vn-band);
+}
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
@@ -349,4 +853,203 @@
 .scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
+}
+
+/* ─── Prose (CMS pages / policies) ─── */
+
+.vn-prose h1,
+.vn-prose h2,
+.vn-prose h3,
+.vn-prose h4 {
+  font-family: var(--heading-font), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: var(--vn-ink);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.vn-prose h1 { font-size: 1.75rem; }
+.vn-prose h2 { font-size: 1.35rem; }
+.vn-prose h3 { font-size: 1.15rem; }
+.vn-prose h4 { font-size: 1rem; }
+.vn-prose p {
+  margin-bottom: 1em;
+  color: var(--vn-ink);
+}
+.vn-prose a {
+  color: var(--vn-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: opacity 200ms ease;
+}
+.vn-prose a:hover {
+  opacity: 0.7;
+}
+.vn-prose ul,
+.vn-prose ol {
+  padding-inline-start: 1.25rem;
+  margin-bottom: 1em;
+}
+.vn-prose li {
+  margin-bottom: 0.35em;
+}
+.vn-prose ul li {
+  list-style: disc;
+}
+.vn-prose ol li {
+  list-style: decimal;
+}
+.vn-prose strong {
+  font-weight: 700;
+}
+.vn-prose blockquote {
+  border-inline-start: 2px solid var(--vn-ink);
+  padding-inline-start: 1rem;
+  color: var(--vn-muted);
+  margin: 1em 0;
+}
+.vn-prose hr {
+  border: none;
+  border-top: 1px solid var(--vn-border);
+  margin: 2em 0;
+}
+
+/* ── Sheet / drawer entrance animations (mini-cart, added-to-bag) ──────────
+   Mobile: bottom sheet; md+: slides in from the inline end (RTL-aware).
+   Items cascade with a tiny stagger. Honors reduced motion. */
+@keyframes vn-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes vn-sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: none; }
+}
+@keyframes vn-sheet-end {
+  from { transform: translateX(100%); }
+  to   { transform: none; }
+}
+@keyframes vn-sheet-end-rtl {
+  from { transform: translateX(-100%); }
+  to   { transform: none; }
+}
+@keyframes vn-item-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+.vn-sheet-backdrop {
+  animation: vn-fade-in 0.25s ease-out both;
+}
+.vn-sheet-panel {
+  animation: vn-sheet-up 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform;
+}
+@media (min-width: 768px) {
+  .vn-sheet-panel { animation-name: vn-sheet-end; }
+  [dir="rtl"] .vn-sheet-panel { animation-name: vn-sheet-end-rtl; }
+}
+.vn-sheet-panel .vn-sheet-item {
+  animation: vn-item-in 0.3s ease-out both;
+}
+.vn-sheet-panel .vn-sheet-item:nth-child(2) { animation-delay: 0.05s; }
+.vn-sheet-panel .vn-sheet-item:nth-child(3) { animation-delay: 0.1s; }
+.vn-sheet-panel .vn-sheet-item:nth-child(4) { animation-delay: 0.15s; }
+.vn-sheet-panel .vn-sheet-item:nth-child(n + 5) { animation-delay: 0.2s; }
+@media (prefers-reduced-motion: reduce) {
+  .vn-sheet-backdrop,
+  .vn-sheet-panel,
+  .vn-sheet-panel .vn-sheet-item {
+    animation: none;
+  }
+}
+
+/* ─── Lookbook (editorial spread) ─── */
+
+.ed-lookbook-figure {
+  position: relative;
+  overflow: hidden;
+}
+.ed-lookbook-figure img {
+  transition: transform 700ms ease;
+}
+.ed-lookbook-figure:hover img {
+  transform: scale(1.04);
+}
+/* Curtain reveal: a paper panel wipes away as the figure scrolls into view. */
+.ed-curtain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ed-page-bg);
+  transform-origin: top;
+  transition: transform 900ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.ed-curtain.is-visible::after {
+  transform: scaleY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ed-curtain::after {
+    display: none;
+  }
+}
+.ed-lookbook-caption {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--vn-muted);
+}
+
+/* ━━━ Inline-editor affordances ━━━
+ * The customizer wraps editable text in <InlineEditable> (class prefix
+ * `ed-inline-edit`). Dashed green frame + gold pencil glyph on hover INSIDE
+ * the editor iframe only (`--armed` gates on isInsideEditor). Live shoppers
+ * never see them. */
+.ed-inline-edit {
+  position: relative;
+  display: inline;
+}
+.ed-inline-edit--armed {
+  cursor: text;
+  border-radius: 2px;
+  transition: outline-color 160ms ease, background-color 160ms ease;
+  outline: 1px dashed transparent;
+  outline-offset: 3px;
+}
+.ed-inline-edit--armed:hover {
+  outline-color: var(--ed-primary);
+  background-color: rgba(47, 111, 82, 0.08);
+}
+.ed-inline-edit--armed::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 14px;
+  height: 14px;
+  background-color: var(--ed-primary);
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 9px 9px;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 160ms ease, transform 160ms ease;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+.ed-inline-edit--armed:hover::after,
+.ed-inline-edit--editing::after {
+  opacity: 1;
+  transform: scale(1);
+}
+.ed-inline-edit--editing {
+  outline-color: hsl(var(--foreground)) !important;
+  outline-style: solid;
+  outline-width: 1px;
+  background-color: rgba(0, 0, 0, 0.03);
+  cursor: text;
+}
+.ed-inline-edit--editing[contenteditable="true"] {
+  caret-color: hsl(var(--foreground));
 }

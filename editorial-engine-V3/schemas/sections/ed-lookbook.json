@@ -1,0 +1,230 @@
+{
+  "type": "ed-lookbook",
+  "name": "Lookbook (editorial spread)",
+  "name_ar": "اللوك بوك",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro text",
+      "label_ar": "نص المقدمة",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Look 1",
+      "content_ar": "إطلالة 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "look_1_image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "aspect_ratio": "3/4",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "look_1_caption",
+      "label": "Caption",
+      "label_ar": "التعليق",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "look_1_link",
+      "label": "Link",
+      "label_ar": "الرابط",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "look_1_link_label",
+      "label": "Link label",
+      "label_ar": "نص الرابط",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Look 2",
+      "content_ar": "إطلالة 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "look_2_image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "aspect_ratio": "3/4",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "look_2_caption",
+      "label": "Caption",
+      "label_ar": "التعليق",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "look_2_link",
+      "label": "Link",
+      "label_ar": "الرابط",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "look_2_link_label",
+      "label": "Link label",
+      "label_ar": "نص الرابط",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Look 3",
+      "content_ar": "إطلالة 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "look_3_image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "aspect_ratio": "3/4",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "look_3_caption",
+      "label": "Caption",
+      "label_ar": "التعليق",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "look_3_link",
+      "label": "Link",
+      "label_ar": "الرابط",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "look_3_link_label",
+      "label": "Link label",
+      "label_ar": "نص الرابط",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Look 4",
+      "content_ar": "إطلالة 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "look_4_image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "aspect_ratio": "3/4",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "look_4_caption",
+      "label": "Caption",
+      "label_ar": "التعليق",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "look_4_link",
+      "label": "Link",
+      "label_ar": "الرابط",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "look_4_link_label",
+      "label": "Link label",
+      "label_ar": "نص الرابط",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Look 5",
+      "content_ar": "إطلالة 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "look_5_image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "aspect_ratio": "3/4",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "look_5_caption",
+      "label": "Caption",
+      "label_ar": "التعليق",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "look_5_link",
+      "label": "Link",
+      "label_ar": "الرابط",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "look_5_link_label",
+      "label": "Link label",
+      "label_ar": "نص الرابط",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Look 6",
+      "content_ar": "إطلالة 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "look_6_image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "aspect_ratio": "3/4",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "look_6_caption",
+      "label": "Caption",
+      "label_ar": "التعليق",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "look_6_link",
+      "label": "Link",
+      "label_ar": "الرابط",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "look_6_link_label",
+      "label": "Link label",
+      "label_ar": "نص الرابط",
+      "default": ""
+    }
+  ],
+  "presets": []
+}

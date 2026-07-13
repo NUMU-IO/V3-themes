@@ -1,0 +1,45 @@
+{
+  "type": "ed-contents",
+  "name": "Contents (collections index)",
+  "name_ar": "الفهرس (فهرس التشكيلات)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "max_items",
+      "label": "Collections to list",
+      "label_ar": "عدد التشكيلات",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "show_counts",
+      "label": "Show product counts",
+      "label_ar": "إظهار عدد المنتجات",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contents (collections index)",
+      "locales": {
+        "en": {
+          "name": "Contents (collections index)"
+        },
+        "ar": {
+          "name": "الفهرس (فهرس التشكيلات)"
+        }
+      },
+      "settings": {}
+    }
+  ]
+}
