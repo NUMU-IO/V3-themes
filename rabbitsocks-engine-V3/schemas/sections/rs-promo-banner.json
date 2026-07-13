@@ -1,75 +1,74 @@
 {
   "type": "rs-promo-banner",
-  "name": "Promo Banner (Rabbitsocks)",
+  "name": "Promotional Banner",
   "settings": [
     {
       "type": "header",
-      "content": "Journal card"
+      "content": "Content"
     },
     {
-      "id": "journal_label",
       "type": "text",
-      "label": "Journal label",
-      "label_ar": "عنوان المدونة الفرعي",
+      "id": "badge_text",
+      "label": "Badge text",
+      "label_ar": "نص الشارة",
       "default": ""
     },
     {
-      "id": "journal_title",
       "type": "text",
-      "label": "Journal title",
-      "label_ar": "عنوان المدونة",
+      "id": "headline",
+      "label": "Headline",
+      "label_ar": "العنوان",
       "default": ""
     },
     {
-      "id": "journal_link",
-      "type": "url",
-      "label": "Journal link",
-      "label_ar": "رابط المدونة",
-      "default": "/blog"
-    },
-    {
-      "type": "header",
-      "content": "Editorial"
-    },
-    {
-      "id": "edit_label",
       "type": "text",
-      "label": "Editorial title",
-      "label_ar": "عنوان المقال",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "label_ar": "عنوان فرعي",
       "default": ""
     },
     {
-      "id": "edit_text",
-      "type": "textarea",
-      "label": "Editorial text",
-      "label_ar": "نص المقال",
-      "default": ""
-    },
-    {
-      "id": "edit_link",
-      "type": "url",
-      "label": "Editorial link",
-      "label_ar": "رابط المقال",
-      "default": "/products"
-    },
-    {
+      "type": "text",
       "id": "cta_text",
-      "type": "text",
       "label": "Button text",
       "label_ar": "نص الزر",
       "default": ""
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
     },
     {
       "type": "header",
       "content": "Media"
     },
     {
-      "id": "product_image",
       "type": "image_picker",
-      "label": "Editorial image (optional)",
-      "label_ar": "صورة المقال (اختياري)",
-      "default": "",
-      "aspect_ratio": "4/3"
+      "id": "image_url",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "aspect_ratio": "1/1",
+      "default": ""
     }
-  ]
+  ],
+  "presets": [
+    {
+      "name": "Promotional Banner",
+      "locales": {
+        "en": {
+          "name": "Promotional Banner"
+        },
+        "ar": {
+          "name": "بانر ترويجي"
+        }
+      },
+      "settings": {
+        "cta_link": "/products"
+      }
+    }
+  ],
+  "name_ar": "بانر ترويجي"
 }

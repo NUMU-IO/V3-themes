@@ -1,6 +1,6 @@
 {
   "type": "rs-profile",
-  "name": "Account Page (Rabbitsocks)",
+  "name": "Customer profile",
   "settings": [
     {
       "type": "header",
@@ -45,5 +45,20 @@
       "label_ar": "إظهار إحصائيات الحساب",
       "default": true
     }
-  ]
+  ],
+  "presets": [
+    {
+      "name": "Customer profile",
+      "locales": {
+        "en": {
+          "name": "Customer profile"
+        },
+        "ar": {
+          "name": "حساب العميل"
+        }
+      },
+      "settings": {}
+    }
+  ],
+  "name_ar": "حساب العميل"
 }

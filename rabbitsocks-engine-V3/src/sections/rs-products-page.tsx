@@ -1,29 +1,53 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
+import { QuickAddButton } from "./_quick-add";
+import { PricePair } from "./_price";
+import { InlineEditable } from "./_inline-editable";
 
 /**
- * Rabbitsocks products-listing (PLP) section.
+ * Mashkal products-listing (PLP) section.
  *
- * Faithful port of the proven Vionne V3 products page (breadcrumb, page title,
- * underlined search, category tab strip, toolbar with product count + sort +
- * grid/list toggle, animated grid, empty state) re-plumbed on the V3 SDK and
- * re-mapped onto Rabbitsocks's quiet-luxury palette via the `vn-*` token
- * aliases in theme.css.
+ * Faithful port of the V2 Mashkal products page look re-plumbed on the V3 SDK.
  *
- * Empty-safe: zero products → the V2-style empty state, never a blank page; a
- * still-loading list shows shimmer placeholders.
+ * V2 sources mirrored:
+ *  - themes/sections/products-page/ProductsPageSection.tsx (settings →
+ *    columns_desktop / columns_mobile / show_view_toggle mapping)
+ *  - components/store/shared/BaseProductsPage.tsx (markup: breadcrumb, page
+ *    title, underlined search, scrollable category tab strip, toolbar with
+ *    product count + sort <select> + grid/list view toggle, animated grid,
+ *    empty state)
+ *  - components/store/manshet/MashkalProductCard.tsx (inline card markup:
+ *    vn-product-card / vn-product-image / vn-product-image-secondary + sale
+ *    badge classes)
+ *
+ * Data: `useProducts()` returns the SSR-prefetched catalog (the host passes
+ * `page.data.products` on the products route). Category chips are derived
+ * client-side from `product.category` (the SDK product carries a category
+ * string but there's no separate categories hook on the listing route); search,
+ * sort and the grid/list toggle are all client-side, matching V2.
+ *
+ * Empty-safe: zero products → the V2-style empty state (hairline + message),
+ * never a blank page; a still-loading list shows shimmer placeholders.
  */
-export default function RsProductsPage({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
-
+export default function MashkalProductsPage({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
+  const { t } = useTranslation();
+  const s = useResolvedSettings(instance);
+
   const colsDesktop = asNumber(s.columns_desktop, 4);
   const colsMobile = asNumber(s.columns_mobile, 2);
   const showViewToggle = s.show_view_toggle ?? true;
+  const showSubtitle = s.show_category_subtitle !== false;
+  const pageTitle = asString(s.title) || localized(locale, "All products", "كل المنتجات");
+  const subtitle = asString(s.subtitle);
+  const emptyHeading = asString(s.empty_heading) || localized(locale, "No results", "لا توجد نتائج");
+  const emptyText =
+    asString(s.empty_text) ||
+    localized(locale, "Try adjusting your search or filter", "جرّبي تعدّلي البحث أو الفلتر");
 
   const { products, loading } = useProducts();
 
@@ -32,6 +56,8 @@ export default function RsProductsPage({ instance }: SectionRenderProps) {
   const [sort, setSort] = useState("default");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
+  // Derive the category chips from the catalog (V2 read them from a categories
+  // endpoint; on the V3 listing route we infer them from product.category).
   const categories = useMemo(() => {
     const seen = new Set<string>();
     for (const p of products) {
@@ -52,7 +78,7 @@ export default function RsProductsPage({ instance }: SectionRenderProps) {
         (p) =>
           p.name.toLowerCase().includes(q) ||
           (p.description ?? "").toLowerCase().includes(q) ||
-          (p.tags ?? []).some((t) => t.toLowerCase().includes(q)),
+          (p.tags ?? []).some((tag: string) => tag.toLowerCase().includes(q)),
       );
     }
 
@@ -88,9 +114,19 @@ export default function RsProductsPage({ instance }: SectionRenderProps) {
           <span className="text-[var(--vn-ink)]">{category ?? localized(locale, "Shop", "المتجر")}</span>
         </div>
 
-        {/* Title */}
+        {/* Subtitle / eyebrow (toggle via show_category_subtitle) */}
+        {showSubtitle && subtitle && (
+          <span className="vn-eyebrow block mb-2">
+            <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} />
+          </span>
+        )}
+        {/* Title — the collection name when filtered, else the editable page title */}
         <h1 className="vn-heading text-2xl md:text-4xl text-[var(--vn-ink)] mb-8">
-          {category ?? localized(locale, "All products", "كل المنتجات")}
+          {category ? (
+            category
+          ) : (
+            <InlineEditable sectionId={sectionId} settingKey="title" value={pageTitle} />
+          )}
         </h1>
 
         {/* Search */}
@@ -101,7 +137,7 @@ export default function RsProductsPage({ instance }: SectionRenderProps) {
           />
           <input
             type="text"
-            placeholder={localized(locale, "Search products", "ابحث عن منتجات")}
+            placeholder={localized(locale, "Search products", "ابحثي عن منتج")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full h-10 ps-7 pe-7 text-sm bg-transparent border-b border-[var(--vn-border)] focus:border-[var(--vn-ink)] focus:outline-none transition-colors placeholder:text-[var(--vn-muted)]"
@@ -176,8 +212,8 @@ export default function RsProductsPage({ instance }: SectionRenderProps) {
               data-testid="storefront-products-sort"
             >
               <option value="default">{localized(locale, "Sort by", "ترتيب حسب")}</option>
-              <option value="price-asc">{localized(locale, "Price: Low", "السعر: الأقل")}</option>
-              <option value="price-desc">{localized(locale, "Price: High", "السعر: الأعلى")}</option>
+              <option value="price-asc">{localized(locale, "Price: Low", "السعر: من الأقل")}</option>
+              <option value="price-desc">{localized(locale, "Price: High", "السعر: من الأعلى")}</option>
               <option value="name">{localized(locale, "Name", "الاسم")}</option>
             </select>
             {showViewToggle && (
@@ -229,9 +265,11 @@ export default function RsProductsPage({ instance }: SectionRenderProps) {
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-12 h-px bg-[var(--vn-border)] mx-auto mb-6" />
-            <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No results", "مفيش نتايج")}</p>
+            <p className="text-sm text-[var(--vn-muted)] mb-1">
+              <InlineEditable sectionId={sectionId} settingKey="empty_heading" value={emptyHeading} />
+            </p>
             <p className="text-xs text-[var(--vn-muted)]">
-              {localized(locale, "Try adjusting your search or filter", "جرّب تغيّر البحث أو الفلتر")}
+              <InlineEditable sectionId={sectionId} settingKey="empty_text" value={emptyText} />
             </p>
           </div>
         ) : (
@@ -270,29 +308,24 @@ export default function RsProductsPage({ instance }: SectionRenderProps) {
   );
 }
 
-/** Product + optional backend extras not yet on the SDK type. */
-type ProductExtras = Product & {
-  /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
-  label?: { key?: string; text_en?: string; text_ar?: string } | null;
-};
-
-/** Inline Rabbitsocks product card — mirrors the related-rail card markup. */
+/** Inline Mashkal product card — mirrors MashkalProductCard's markup/classes. */
 function ProductCard({ product, list }: { product: Product; list?: boolean }) {
   const locale = useLocale();
-  const p = product as ProductExtras;
+  const { t } = useTranslation();
+  // ENG-1: listing price MUST match the PDP's default-variant precedence
+  // (variants[0].price ?? price) so the grid never shows base-vs-variant
+  // divergence. Keep in lockstep with rs-product-detail-section.
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
   const outOfStock = product.in_stock === false;
-  const primary = product.images?.[0]?.url;
+  const primary = productImage(product);
   const secondary = product.images?.[1]?.url;
-  // Merchant label wins the top-start badge slot over the auto tag badge;
-  // the Sale badge is independent and untouched.
-  const isArabic = (locale || "").toLowerCase().startsWith("ar");
-  const merchantLabel =
-    p.label && p.label.key
-      ? ((isArabic ? p.label.text_ar || p.label.text_en : p.label.text_en) || "")
-      : "";
+  // Merchant label wins the top-start pill over tags[0]. Sale + label
+  // coexist in one stacked column (sale on top — it was the dominant badge
+  // in the original overlapping layout) so a discounted+labeled product
+  // shows both instead of the sale pill painting over the label.
+  const merchantLabel = merchantLabelText(product, locale);
 
   return (
     <Link
@@ -328,24 +361,31 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
           />
         )}
 
-        {merchantLabel && !outOfStock ? (
-          <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
-            {merchantLabel}
-          </span>
-        ) : product.tags?.[0] && !outOfStock ? (
-          <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
-            {product.tags[0]}
-          </span>
-        ) : null}
-        {hasDiscount && !outOfStock && (
-          <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-[var(--vn-sale)] text-white rounded-full text-[10px]">
-            {localized(locale, "Sale", "تخفيض")}
-          </span>
+        {/* A8 — one-tap quick-add (single-variant products only). */}
+        <QuickAddButton product={product} locale={locale} />
+
+        {!outOfStock && (hasDiscount || merchantLabel || product.tags?.[0]) && (
+          <div className="absolute top-3 start-3 flex flex-col items-start gap-1.5">
+            {hasDiscount && (
+              <span className="vn-label px-2.5 py-1 bg-[var(--vn-sale)] text-white rounded-full text-[10px]">
+                {t("common.sale", localized(locale, "Sale", "تخفيض"))}
+              </span>
+            )}
+            {merchantLabel ? (
+              <span className="vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+                {merchantLabel}
+              </span>
+            ) : product.tags?.[0] ? (
+              <span className="vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+                {product.tags[0]}
+              </span>
+            ) : null}
+          </div>
         )}
         {outOfStock && (
           <div className="absolute inset-0 bg-white/65 flex items-center justify-center">
             <span className="vn-label text-[var(--vn-ink)] text-[11px] bg-white px-3 py-1.5 rounded-full border border-[var(--vn-border)]">
-              {localized(locale, "Sold out", "خلص من المخزن")}
+              {t("common.sold_out", localized(locale, "Sold out", "خلص المخزون"))}
             </span>
           </div>
         )}
@@ -355,15 +395,8 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         <h3 className="text-sm font-medium text-[var(--vn-ink)] line-clamp-1">
           {product.name}
         </h3>
-        <div className="flex items-baseline gap-2 mt-1">
-          <span className="text-sm font-semibold text-[var(--vn-ink)]">
-            <Money amount={price} currency={product.currency} />
-          </span>
-          {hasDiscount && (
-            <span className="text-xs text-[var(--vn-muted)] line-through">
-              <Money amount={compareAt} currency={product.currency} />
-            </span>
-          )}
+        <div className="mt-1">
+          <PricePair price={price} compareAt={compareAt} currency={product.currency} size="sm" />
         </div>
       </div>
     </Link>

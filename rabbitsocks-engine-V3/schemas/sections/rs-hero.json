@@ -1,49 +1,90 @@
 {
   "type": "rs-hero",
-  "name": "Hero (Rabbitsocks)",
+  "name": "Mashkal Hero (shape pane)",
+  "name_ar": "هيرو مشكال",
   "settings": [
     {
       "type": "header",
       "content": "Content"
     },
     {
-      "id": "badge_text",
       "type": "text",
-      "label": "Collection label",
-      "label_ar": "عنوان التشكيلة",
+      "id": "spec_label",
+      "label": "Small label",
+      "label_ar": "التسمية الصغيرة",
+      "info": "Optional plaque line above the headline, e.g. \"No. 01 - the first drop\".",
+      "info_ar": "سطر صغير فوق العنوان، مثل «№ ٠١ — أول إصدار».",
       "default": ""
     },
     {
+      "type": "textarea",
       "id": "headline",
-      "type": "textarea",
       "label": "Headline",
-      "label_ar": "العنوان الرئيسي",
+      "label_ar": "العنوان",
+      "info": "Use a line break to control the wrap.",
+      "info_ar": "استخدم سطرًا جديدًا للتحكم في التقسيم.",
       "default": ""
     },
     {
-      "id": "subtitle",
       "type": "textarea",
+      "id": "subtitle",
       "label": "Subtitle",
-      "label_ar": "الوصف",
+      "label_ar": "العنوان الفرعي",
       "default": ""
     },
     {
-      "type": "header",
-      "content": "Call to action"
-    },
-    {
-      "id": "cta_text",
       "type": "text",
+      "id": "cta_text",
       "label": "Button text",
       "label_ar": "نص الزر",
       "default": ""
     },
     {
-      "id": "cta_link",
       "type": "url",
+      "id": "cta_link",
       "label": "Button link",
       "label_ar": "رابط الزر",
       "default": "/products"
+    },
+    {
+      "type": "header",
+      "content": "Shapes"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_main",
+      "label": "Arch image",
+      "label_ar": "صورة القوس",
+      "info": "The tall arched pane. Falls back to your first product.",
+      "info_ar": "اللوحة المقوّسة الكبيرة، ويفضَّل صورة طولية.",
+      "aspect_ratio": "3/4",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "image_accent",
+      "label": "Diamond image",
+      "label_ar": "صورة المعيّن",
+      "info": "The small overlapping diamond pane.",
+      "info_ar": "اللوحة الصغيرة على شكل معيّن.",
+      "aspect_ratio": "1/1",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mashkal Hero (shape pane)",
+      "locales": {
+        "en": {
+          "name": "Mashkal Hero (shape pane)"
+        },
+        "ar": {
+          "name": "هيرو مشكال"
+        }
+      },
+      "settings": {
+        "cta_link": "/products"
+      }
     }
   ]
 }

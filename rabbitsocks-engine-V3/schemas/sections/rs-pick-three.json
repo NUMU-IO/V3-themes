@@ -1,0 +1,66 @@
+{
+  "type": "rs-pick-three",
+  "name": "Pick 3 (bundle builder)",
+  "name_ar": "اختار ٣ (مكوّن الباكدج)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "deal_note",
+      "label": "Deal note",
+      "label_ar": "وصف العرض",
+      "info": "State the deal, e.g. \"any 3 pairs for 299\". The discount itself comes from your promotions setup.",
+      "info_ar": "اكتب العرض، مثل «أي ٣ أزواج بـ٢٩٩». الخصم نفسه يأتي من إعدادات العروض.",
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "bundle_size",
+      "label": "Set size",
+      "label_ar": "حجم الطقم",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Products offered",
+      "label_ar": "عدد المنتجات المعروضة",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "text",
+      "id": "add_label",
+      "label": "Add button label",
+      "label_ar": "نص زر الإضافة",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pick 3 (bundle builder)",
+      "locales": {
+        "en": {
+          "name": "Pick 3 (bundle builder)"
+        },
+        "ar": {
+          "name": "اختار ٣ (مكوّن الباكدج)"
+        }
+      },
+      "settings": {
+        "bundle_size": 3
+      }
+    }
+  ]
+}

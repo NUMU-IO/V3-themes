@@ -1,89 +1,94 @@
 "use client";
-import { Link, useProducts, useLocale } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { useEffect, useState } from "react";
+import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
-const RsPromoBanner = ({ instance }: SectionRenderProps) => {
-  const { products } = useProducts();
+export default function PromoBanner({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
-  const s = instance.settings ?? {};
+  const s = useResolvedSettings(instance);
+  const badge = asString(s.badge_text);
+  const headline = asString(s.headline) || localized(locale, "Special Offer", "عرض خاص");
+  const subtitle = asString(s.subtitle) || localized(locale, "Shop our latest collection", "اكتشفي أحدث تشكيلة");
+  const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوّق دلوقتي");
+  const ctaLink = asString(s.cta_link) || "/products";
+  // image_picker stores either a plain URL (legacy) or an `{ url, transform }`
+  // object (once the merchant uses Adjust/focal). asString returns "" for the
+  // object shape, which flipped imageError on and showed the placeholder bag
+  // even though an image was set — use asImageUrl so both shapes render.
+  const imageUrl = asImageUrl(s.image_url);
+  const imageTransform = asImageTransform(s.image_url);
 
-  // Journal card settings
-  const journalLabel = asString(s.journal_label) || localized(locale, "READ THE JOURNAL", "اقرا المجلة");
-  const journalTitle = asString(s.journal_title) || localized(locale, "Volume IV: The Art of Stillness", "العدد الرابع: فن السكون");
-  const journalLink = asString(s.journal_link, "/blog");
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(!imageUrl);
 
-  // Product / editorial settings
-  const editLabel = asString(s.edit_label) || localized(locale, "Curated Comfort", "راحة منتقاة");
-  const editText = asString(s.edit_text) || localized(
-    locale,
-    "A collection of objects and garments that define the modern daily ritual.",
-    "مجموعة من القطع والملابس اللي بتعرّف طقوس يومك العصري.",
-  );
-  const editLink = asString(s.edit_link, "/products");
-  const shopText = asString(s.cta_text) || localized(locale, "SHOP NOW", "تسوّق دلوقتي");
-
-  // Use the 5th product image (index 4) as the editorial product.
-  const featuredProduct = products[4] ?? products[0];
-  const productImage = asString(s.product_image) || featuredProduct?.images?.[0]?.url || "";
-  const productImageTransform = asImageTransform(s.product_image);
+  // `imageError`/`imageLoading` are seeded from `useState` on FIRST render only.
+  // In the live editor the section re-renders (applyDraft) when the merchant
+  // picks an image — without this the stale `imageError` stayed `true` and the
+  // placeholder bag kept showing even though `image_url` was now set (the image
+  // "not being set" bug). Re-sync both whenever the resolved URL changes.
+  useEffect(() => {
+    if (imageUrl) {
+      setImageError(false);
+      setImageLoading(true);
+    } else {
+      setImageError(true);
+      setImageLoading(false);
+    }
+  }, [imageUrl]);
 
   return (
-    <section className="rs-bento-section px-6 md:px-10 max-w-[1440px] mx-auto">
-      <div className="rs-bento-grid">
-
-        {/* Left — journal card with floating card inside */}
-        <div className="rs-bento-main">
-          <div className="rs-bento-main-media">
-            <div className="rs-journal-card">
-              <p className="rs-label mb-5">{journalLabel}</p>
-              <h3 className="rs-headline-md text-[hsl(var(--rs-primary))] mb-6">
-                {journalTitle}
+    <section className="py-6">
+      <div className="container mx-auto px-4">
+        <div className="relative rounded-2xl overflow-hidden bg-primary/5 border border-primary/20">
+          <div className="flex flex-col md:flex-row items-center gap-6 p-6 md:p-10">
+            <div className="flex-1 text-center md:text-right">
+              {badge && (
+                <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-3">
+                  <InlineEditable sectionId={sectionId} settingKey="badge_text" value={badge} />
+                </span>
+              )}
+              <h3 className="text-2xl md:text-3xl font-black mb-2 text-foreground">
+                <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
               </h3>
-              <Link
-                to={journalLink}
-                className="inline-flex items-center gap-2 text-[hsl(var(--rs-primary))] transition-opacity hover:opacity-60"
-                aria-label="Read journal"
-              >
-                <span className="material-symbols-outlined text-base">arrow_forward</span>
+              <p className="text-muted-foreground text-sm mb-4">
+                <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
+              </p>
+              <Link to={ctaLink} className="vn-btn vn-btn-filled shadow-md">
+                <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
+                <ArrowLeft size={16} className="rtl:rotate-180" />
               </Link>
+            </div>
+            <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl overflow-hidden shadow-lg shrink-0">
+              {imageError ? (
+                <div className="w-full h-full store-gradient flex items-center justify-center">
+                  <ShoppingBag className="h-16 w-16 text-white/60" />
+                </div>
+              ) : (
+                <>
+                  {imageLoading && (
+                    <div className="absolute inset-0 bg-muted animate-pulse rounded-2xl" />
+                  )}
+                  <img
+                    src={imageUrl}
+                    alt=""
+                    className={`w-full h-full object-cover transition-opacity duration-300 ${
+                      imageLoading ? "opacity-0" : "opacity-100"
+                    }`}
+                    style={applyImageTransform(imageTransform, "cover")}
+                    onLoad={() => setImageLoading(false)}
+                    onError={() => {
+                      setImageLoading(false);
+                      setImageError(true);
+                    }}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>
-
-        {/* Right — product image + editorial text stacked */}
-        <div className="rs-bento-side flex flex-col">
-          {/* Product image */}
-          <div className="rs-bento-side-media flex-1">
-            {productImage ? (
-              <img
-                src={productImage}
-                alt={featuredProduct?.name ?? ""}
-                className={`max-h-[260px] w-auto object-contain ${productImageTransform ? "" : "rs-img-zoom"}`}
-                style={applyImageTransform(productImageTransform, "contain")}
-                loading="lazy"
-              />
-            ) : (
-              <div className="w-full h-full bg-[hsl(var(--rs-surface-high))]" />
-            )}
-          </div>
-
-          {/* Editorial copy */}
-          <div className="p-8 md:p-10">
-            <h3 className="rs-headline-md text-[hsl(var(--rs-primary))] mb-4">
-              {editLabel}
-            </h3>
-            <p className="rs-body text-[hsl(var(--rs-primary)/0.6)] mb-6">
-              {editText}
-            </p>
-            <Link to={editLink} className="rs-btn-ghost inline-block">
-              {shopText}
-            </Link>
-          </div>
-        </div>
-
       </div>
     </section>
   );
-};
-
-export default RsPromoBanner;
+}
