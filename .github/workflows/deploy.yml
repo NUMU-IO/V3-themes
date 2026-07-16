@@ -272,7 +272,7 @@ jobs:
             if [ "$SEED_TEST" = "true" ]; then
               if ! seed_theme; then
                 echo "::warning::test seed failed for $d; ensuring $CONTAINER is up and retrying once"
-                $SSH "$DROPLET" "docker start $CONTAINER >/dev/null 2>&1 || true; sleep 8"
+                $SSH "$DROPLET" "docker start $CONTAINER >/dev/null 2>&1 || true; sleep 8" || true
                 if ! seed_theme; then
                   echo "::error::test seed failed for $d (api container kept stopping — check droplet memory/swap)"
                   theme_failed=1
@@ -285,7 +285,7 @@ jobs:
             if [ "$SEED_PROD" = "true" ]; then
               if ! seed_theme_ec2; then
                 echo "::warning::prod (EC2) seed failed for $d; ensuring api is up and retrying once"
-                $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose start api >/dev/null 2>&1 || true; sleep 8"
+                $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose start api >/dev/null 2>&1 || true; sleep 8" || true
                 if ! seed_theme_ec2; then
                   echo "::error::prod seed failed for $d (check EC2 api container / Supabase reachability)"
                   theme_failed=1
