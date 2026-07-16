@@ -1,0 +1,123 @@
+{
+  "type": "skeu-materials",
+  "name": "Materials & Care",
+  "name_ar": "الخامة والعناية",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "guarantee_text",
+      "label": "Guarantee line (next to the seal)",
+      "label_ar": "سطر الضمان (جنب الختم)",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Rows"
+    },
+    {
+      "type": "text",
+      "id": "row_1_term",
+      "label": "Row 1 — term",
+      "label_ar": "صف 1 — البند",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "row_1_desc",
+      "label": "Row 1 — description",
+      "label_ar": "صف 1 — الوصف",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "row_2_term",
+      "label": "Row 2 — term",
+      "label_ar": "صف 2 — البند",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "row_2_desc",
+      "label": "Row 2 — description",
+      "label_ar": "صف 2 — الوصف",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "row_3_term",
+      "label": "Row 3 — term",
+      "label_ar": "صف 3 — البند",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "row_3_desc",
+      "label": "Row 3 — description",
+      "label_ar": "صف 3 — الوصف",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "row_4_term",
+      "label": "Row 4 — term",
+      "label_ar": "صف 4 — البند",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "row_4_desc",
+      "label": "Row 4 — description",
+      "label_ar": "صف 4 — الوصف",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "row_5_term",
+      "label": "Row 5 — term",
+      "label_ar": "صف 5 — البند",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "row_5_desc",
+      "label": "Row 5 — description",
+      "label_ar": "صف 5 — الوصف",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "row_6_term",
+      "label": "Row 6 — term",
+      "label_ar": "صف 6 — البند",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "row_6_desc",
+      "label": "Row 6 — description",
+      "label_ar": "صف 6 — الوصف",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Materials & Care",
+      "locales": {
+        "en": {
+          "name": "Materials & Care"
+        },
+        "ar": {
+          "name": "الخامة والعناية"
+        }
+      },
+      "settings": {}
+    }
+  ]
+}

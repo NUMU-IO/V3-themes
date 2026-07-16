@@ -15,14 +15,14 @@ import { asNumber, asString, localized, merchantLabelText, usePageData, type Sec
 import { InlineEditable } from "./_inline-editable";
 
 /**
- * ed-search-results — body for the `search` template. Seeds its query from
+ * skeu-search-results — body for the `search` template. Seeds its query from
  * the storefront /search route (`usePageData().data.query`) and renders a live,
- * underlined search field in the Manshet voice plus an animated results grid.
+ * underlined search field in the Warsha voice plus an animated results grid.
  * Filters the SSR-prefetched catalog (`useProducts()`) by name/description/tag.
  * Without it, manshet's /search rendered blank (the host ships no search
- * backstop). Cards mirror the Manshet product card.
+ * backstop). Cards mirror the Warsha product card.
  */
-export default function ManshetSearchResults({ instance, sectionId }: SectionRenderProps) {
+export default function WarshaSearchResults({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
   const { products } = useProducts();
@@ -69,7 +69,7 @@ export default function ManshetSearchResults({ instance, sectionId }: SectionRen
           )}
         </h1>
 
-        {/* Underlined search field — Manshet signature */}
+        {/* Underlined search field — Warsha signature */}
         <div className="relative h-10 mb-10 max-w-md mx-auto">
           <Search
             size={16}
@@ -140,7 +140,7 @@ export default function ManshetSearchResults({ instance, sectionId }: SectionRen
   );
 }
 
-/** Compact Manshet product card — mirrors vn-product-card classes. */
+/** Compact Warsha product card — mirrors vn-product-card classes. */
 function SearchCard({ product }: { product: Product }) {
   const locale = useLocale();
   const price = product.variants?.[0]?.price ?? product.price ?? 0;

@@ -1,13 +1,13 @@
 /**
- * Tailwind config for the Skeuomorphic V3 theme bundle (Tailwind-in-bundle —
- * see vionne's config for the full rationale). Skeuomorphic's V2 sections are
- * authored in Tailwind utility classes (`py-8 md:py-14`, `grid grid-cols-[...]`,
- * `bg-background`, `text-muted-foreground`, arbitrary values like
- * `text-[hsl(var(--warning))]`) + custom `skeu-*` classes. src/main.tsx imports
- * src/theme.css; Vite's PostCSS step compiles these into dist/theme.css.
+ * Tailwind config for the Editorial V3 theme bundle (Tailwind-in-bundle — see
+ * bazar/vionne configs for the full rationale). Editorial's V2 sections are
+ * authored in Tailwind utility classes (`py-10 md:py-14`, `grid grid-cols-[...]`,
+ * `bg-[hsl(var(--ed-green))]`, `text-muted-foreground`) + custom `ed-*` classes.
+ * src/main.tsx imports src/theme.css; Vite's PostCSS step compiles these into
+ * dist/theme.css.
  *
  * The `colors` extend maps shadcn semantic names to the HSL channel vars that
- * src/theme.css (ported from V2 skeuomorphic styles.css) defines, so
+ * src/theme.css (ported from V2 editorial styles.css) defines, so
  * `bg-background` / `text-foreground` / `bg-muted` etc. from the ported
  * sections resolve.
  */
@@ -36,7 +36,6 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        whatsapp: "hsl(var(--whatsapp))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -65,6 +64,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        whatsapp: {
+          DEFAULT: "hsl(var(--whatsapp))",
+          foreground: "hsl(var(--whatsapp-foreground))",
+        },
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -72,9 +77,9 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--body-font)", "Cairo", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
-        heading: ["var(--heading-font)", "var(--body-font)", "Cairo", "sans-serif"],
-        body: ["var(--body-font)", "Cairo", "Helvetica Neue", "sans-serif"],
+        sans: ["var(--body-font)", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+        heading: ["var(--heading-font)", "var(--body-font)", "sans-serif"],
+        body: ["var(--body-font)", "Helvetica Neue", "sans-serif"],
       },
     },
   },

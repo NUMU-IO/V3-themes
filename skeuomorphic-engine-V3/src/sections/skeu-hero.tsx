@@ -1,191 +1,107 @@
 "use client";
-import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
-import { motion } from "framer-motion";
-import { ArrowLeft, Truck, ShieldCheck, CreditCard } from "lucide-react";
-import { asImageAlt, asImageTransform, asString, asImageUrl, localized, type SectionRenderProps } from "./_shared";
+import { Link, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
+import {
+  asImageAlt,
+  asImageUrl,
+  asString,
+  localized,
+  productImage,
+  useDemo,
+  useInsideEditor,
+  type SectionRenderProps,
+} from "./_shared";
+import { InlineEditable } from "./_inline-editable";
+import { Develop, Emboss, Rise, Stamp, useMotionOn } from "./_motion";
 
-const TEXT_SHADOW = "0 2px 0 hsl(35 30% 100% / 0.5), 0 -1px 0 hsl(25 20% 50% / 0.1)";
-const TRUST_BORDER = "2px solid hsl(35 15% 82%)";
-const TRUST_SHADOW = "0 1px 0 hsl(35 30% 100% / 0.5)";
-
-const SkeuHero = ({ instance }: SectionRenderProps) => {
-  const s = instance.settings ?? {};
+/**
+ * Warsha hero — the workbench. Kraft surface with grain, a slab letterpress
+ * headline (Emboss), and the product photo sitting as a white-bordered PRINT
+ * set down at a slight tilt, held by a wax seal stamped over its corner —
+ * the maker's guarantee, front and centre. Falls back to the store's first
+ * product for imagery so a fresh store is never empty.
+ */
+export default function SkeuHero({ instance, sectionId }: SectionRenderProps) {
+  const s = useResolvedSettings(instance);
   const locale = useLocale();
-  const badge = asString(s.badge_text) || localized(locale, "🎉 Up to 25% off", "🎉 خصومات تصل لـ ٢٥٪");
-  const headline = asString(s.headline) || localized(locale, "Discover great products at the best prices", "اكتشف أحلى المنتجات بأفضل الأسعار");
+  const { products } = useProducts();
+  const demo = useDemo();
+  const inEditor = useInsideEditor();
+  const on = useMotionOn();
+
+  const headline =
+    asString(s.headline) ||
+    localized(locale, "Made by hand,\nmade to last", "شغل إيد،\nمعمول يعيش");
   const subtitle =
     asString(s.subtitle) ||
-    localized(locale, "A curated edit of clothing and accessories, delivered across Egypt. Premium quality at fair prices.", "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.");
-  const ctaText = asString(s.cta_text) || localized(locale, "Shop now", "تسوق الآن");
+    localized(
+      locale,
+      "Every piece leaves this workshop checked, stitched and signed. No two are exactly alike — that's the point.",
+      "كل قطعة بتخرج من الورشة متفحوصة ومخيّطة وموقّعة. مفيش قطعتين زي بعض، ودي الفكرة.",
+    );
+  const ctaText = asString(s.cta_text) || localized(locale, "Browse the workshop", "اتفرج على الشغل");
   const ctaLink = asString(s.cta_link) || "/products";
-  const secondaryText = asString(s.secondary_text) || localized(locale, "New arrivals", "الملابس الجديدة");
-  const secondaryLink = asString(s.secondary_link) || "/products?category=clothing";
-  const showTrust = s.show_trust_strip !== false;
-  const img1 = asImageUrl(s.hero_image_url);
-  const img2 = asImageUrl(s.hero_image_2);
-  const img3 = asImageUrl(s.hero_image_3);
-  const img4 = asImageUrl(s.hero_image_4);
-  const img1Transform = asImageTransform(s.hero_image_url);
-  const img2Transform = asImageTransform(s.hero_image_2);
-  const img3Transform = asImageTransform(s.hero_image_3);
-  const img4Transform = asImageTransform(s.hero_image_4);
-  const img1Alt = asImageAlt(s.hero_image_url);
-  const img2Alt = asImageAlt(s.hero_image_2);
-  const img3Alt = asImageAlt(s.hero_image_3);
-  const img4Alt = asImageAlt(s.hero_image_4);
-  // Mobile hero (user-approved): the 4-image mosaic stays desktop-only; on mobile
-  // show one image full-width — the dedicated mobile image, else the main image.
-  const mobileEnabled = s.use_mobile_image === true;
-  const heroImageMobile = mobileEnabled ? asImageUrl(s.hero_image_mobile) || undefined : undefined;
-  const heroImageMobileTransform = asImageTransform(s.hero_image_mobile);
+  const sealText = asString(s.seal_text) || localized(locale, "HAND\nMADE", "شغل\nإيد");
+
+  const showPlaceholders = demo || inEditor;
+  const image =
+    asImageUrl(s.hero_image) ||
+    productImage(products[0]) ||
+    (showPlaceholders ? "https://picsum.photos/seed/warsha-bench/900/1100" : "");
+  const alt = asImageAlt(s.hero_image) || headline.replace(/\n/g, " ");
+
+  const headlineLines = headline.split("\n").filter((l) => l.trim().length > 0);
+  const emboss = on && !inEditor;
 
   return (
-    <>
-      {/* Hero — textured, dimensional skeuomorphic */}
-      <section className="skeu-section relative overflow-hidden">
-        <div className="container mx-auto px-4 py-14 md:py-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              {badge && (
-                <span className="inline-block px-4 py-1.5 rounded-lg text-sm font-bold mb-4 skeu-badge-new">
-                  {badge}
-                </span>
+    <section
+      className="relative overflow-hidden bg-[hsl(var(--background))]"
+      style={{ backgroundImage: "var(--skeu-texture)" }}
+    >
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-12 items-center gap-y-12 md:gap-x-10 py-14 md:py-20 min-h-[64vh]">
+          {/* Copy side */}
+          <div className="md:col-span-6">
+            <h1 className="skeu-hero-title text-[hsl(var(--foreground))] mb-5">
+              {emboss ? (
+                <Emboss on lines={headlineLines} delay={0.1} />
+              ) : (
+                <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} multiline />
               )}
-              <h1
-                className="text-3xl md:text-5xl lg:text-6xl font-black text-foreground mb-4 leading-tight"
-                style={{ textShadow: TEXT_SHADOW }}
-              >
-                {headline}
-              </h1>
-              <p className="text-muted-foreground text-base md:text-lg mb-8 max-w-md">
-                {subtitle}
+            </h1>
+            <Rise on={on} delay={0.45}>
+              <p className="text-base md:text-lg text-[var(--vn-muted)] max-w-[48ch] leading-relaxed mb-8">
+                <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
               </p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  to={ctaLink}
-                  className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl skeu-btn text-sm"
+            </Rise>
+            <Rise on={on} delay={0.58} className="flex flex-wrap items-center gap-4">
+              <Link to={ctaLink} className="vn-btn vn-btn-filled">
+                <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
+              </Link>
+            </Rise>
+          </div>
+
+          {/* Print side — the product photo set down on the bench */}
+          {image && (
+            <div className="md:col-span-6 flex justify-center md:justify-end">
+              <div className="relative w-full max-w-[440px]">
+                <Develop on={on} inView={false} delay={0.3} className="skeu-print rotate-[1.5deg]">
+                  <img src={image} alt={alt} className="w-full aspect-[4/5] object-cover" />
+                </Develop>
+                {/* Wax seal over the corner — the maker's mark */}
+                <Stamp
+                  on={on}
+                  delay={0.9}
+                  className="absolute -top-5 -end-4 rotate-[8deg]"
                 >
-                  {ctaText}
-                  <ArrowLeft size={18} />
-                </Link>
-                {secondaryText && (
-                  <Link
-                    to={secondaryLink}
-                    className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl skeu-btn-secondary text-sm"
-                  >
-                    {secondaryText}
-                  </Link>
-                )}
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="hidden md:grid grid-cols-2 gap-4"
-            >
-              <div className="space-y-4">
-                {img1 && (
-                  <div className="skeu-img-frame rounded-xl overflow-hidden aspect-[3/4]">
-                    <HeroMedia
-                      src={img1}
-                      alt={img1Alt}
-                      transform={img1Transform}
-                      fit="contain"
-                      priority
-                      className="w-full h-full"
-                    />
-                  </div>
-                )}
-                {img2 && (
-                  <div className="skeu-img-frame rounded-xl overflow-hidden aspect-square">
-                    <HeroMedia
-                      src={img2}
-                      alt={img2Alt}
-                      transform={img2Transform}
-                      fit="contain"
-                      priority={false}
-                      className="w-full h-full"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="space-y-4 mt-8">
-                {img3 && (
-                  <div className="skeu-img-frame rounded-xl overflow-hidden aspect-square">
-                    <HeroMedia
-                      src={img3}
-                      alt={img3Alt}
-                      transform={img3Transform}
-                      fit="contain"
-                      priority={false}
-                      className="w-full h-full"
-                    />
-                  </div>
-                )}
-                {img4 && (
-                  <div className="skeu-img-frame rounded-xl overflow-hidden aspect-[3/4]">
-                    <HeroMedia
-                      src={img4}
-                      alt={img4Alt}
-                      transform={img4Transform}
-                      fit="contain"
-                      priority={false}
-                      className="w-full h-full"
-                    />
-                  </div>
-                )}
-              </div>
-            </motion.div>
-
-            {/* Mobile hero — the desktop mosaic is hidden on phones; show one
-                image full-width (user-approved mobile-hero addition). */}
-            {(heroImageMobile || img1) && (
-              <div className="md:hidden skeu-img-frame rounded-xl overflow-hidden aspect-[4/5]">
-                <HeroMedia
-                  src={heroImageMobile || img1}
-                  alt={img1Alt}
-                  transform={heroImageMobile ? heroImageMobileTransform : img1Transform}
-                  fit="contain"
-                  priority
-                  className="w-full h-full"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Strip (skeu-styled) */}
-      {showTrust && (
-        <section
-          className="py-4 md:hidden"
-          style={{ borderBottom: TRUST_BORDER, boxShadow: TRUST_SHADOW }}
-        >
-          <div className="container mx-auto px-4">
-            <div className="flex gap-6 overflow-x-auto scrollbar-hide">
-              {[
-                { icon: Truck, label: localized(locale, "Fast shipping", "شحن سريع") },
-                { icon: ShieldCheck, label: localized(locale, "Quality guarantee", "ضمان الجودة") },
-                { icon: CreditCard, label: localized(locale, "Secure payment", "دفع آمن") },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-2 shrink-0">
-                  <item.icon size={16} className="text-primary" />
-                  <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">
-                    {item.label}
+                  <span className="skeu-seal text-center text-[10px] font-extrabold leading-tight tracking-[0.14em] whitespace-pre-line">
+                    <InlineEditable sectionId={sectionId} settingKey="seal_text" value={sealText} multiline />
                   </span>
-                </div>
-              ))}
+                </Stamp>
+              </div>
             </div>
-          </div>
-        </section>
-      )}
-    </>
+          )}
+        </div>
+      </div>
+    </section>
   );
-};
-
-export default SkeuHero;
+}

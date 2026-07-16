@@ -1,40 +1,37 @@
 "use client";
 import { Link, useCollections, useLocale } from "@numueg/theme-sdk";
-import { motion } from "framer-motion";
-import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
+import { Develop, useMotionOn } from "./_motion";
 
-const HEADING_SHADOW = "0 1px 0 hsl(35 30% 100% / 0.6)";
-const LABEL_SHADOW = "0 1px 3px rgba(0,0,0,0.6)";
-
-const SkeuCategories = ({ instance }: SectionRenderProps) => {
-  const { collections, loading: isLoading } = useCollections();
+/**
+ * Editorial categories — faithful port of V2
+ * themes/editorial/sections/categories/SkeuCategories.tsx.
+ *
+ * V2 read `useProducts().{ categories, isLoading }`; on V3 the catalog
+ * categories come from the SDK's `useCollections()` (collections carry
+ * id/name/slug/image_url/product_count). Dramatic 4:5 image cards with a
+ * bottom gradient + oversized uppercase label, exactly as V2.
+ */
+export default function SkeuCategories({ instance, sectionId }: SectionRenderProps) {
+  const { collections } = useCollections();
+  const on = useMotionOn();
+  const isLoading = false;
   const s = instance.settings ?? {};
   const locale = useLocale();
-  const title = asString(s.title) || localized(locale, "Shop by category", "تسوق حسب الفئة");
-  const colsDesktop = asNumber(s.columns_desktop, 5);
-  const colsMobile = asNumber(s.columns_mobile, 3);
+  const title = asString(s.title) || localized(locale, "Shop by Category", "تسوق حسب الفئة");
   const maxItems = asNumber(s.max_items, 0);
+
   const displayCategories = maxItems > 0 ? collections.slice(0, maxItems) : collections;
 
   // Hide section if no categories
   if (!isLoading && displayCategories.length === 0) return null;
 
-  const cssVars = {
-    "--cols-mobile": colsMobile,
-    "--cols-desktop": colsDesktop,
-  } as React.CSSProperties;
-
-  const gridClassName =
-    "grid gap-3 grid-cols-[repeat(var(--cols-mobile),minmax(0,1fr))] md:grid-cols-[repeat(var(--cols-desktop),minmax(0,1fr))]";
-
   return (
-    <section className="py-8">
+    <section className="py-10">
       <div className="container mx-auto px-4">
-        <h2
-          className="text-xl font-bold mb-5"
-          style={{ textShadow: HEADING_SHADOW }}
-        >
-          {title}
+        <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-6">
+          <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
         </h2>
 
         {!isLoading && displayCategories.length === 0 ? (
@@ -42,53 +39,41 @@ const SkeuCategories = ({ instance }: SectionRenderProps) => {
             {localized(locale, "No categories yet", "لا توجد فئات بعد")}
           </p>
         ) : (
-          <div className={gridClassName} style={cssVars}>
+          // Workshop drawers: each category is a raised kraft card that
+          // physically presses down when grabbed (the theme's hallmark).
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
             {displayCategories.map((cat, i) => (
-              <motion.div
-                key={cat.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08 }}
-              >
+              <Develop key={cat.id} on={on} delay={Math.min(i, 5) * 0.08}>
                 <Link
-                  to={`/products?category=${cat.slug || cat.id}`}
-                  className="group relative block rounded-xl overflow-hidden aspect-square skeu-img-frame"
+                  to={`/products?category=${cat.id}`}
+                  className="skeu-card group block overflow-hidden transition-shadow duration-150 active:shadow-[var(--skeu-shadow-pressed)] active:translate-y-[1px]"
                 >
-                  {cat.image_url ? (
-                    <img
-                      src={cat.image_url}
-                      alt={cat.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-full h-full vn-shimmer" />
-                  )}
-                  <div
-                    className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"
-                    style={{ margin: "4px" }}
-                  />
-                  <div className="absolute bottom-1 right-1 left-1 p-2.5">
-                    <span
-                      className="text-white font-bold text-sm"
-                      style={{ textShadow: LABEL_SHADOW }}
-                    >
-                      {cat.name}
-                    </span>
-                    {typeof cat.product_count === "number" && cat.product_count > 0 && (
-                      <span className="text-white/70 text-[10px] block">
-                        {cat.product_count} {localized(locale, "products", "منتج")}
-                      </span>
+                  <div className="relative aspect-[4/5] overflow-hidden">
+                    {cat.image_url ? (
+                      <img
+                        src={cat.image_url}
+                        alt={cat.name}
+                        className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-[hsl(var(--skeu-kraft-low))]" />
                     )}
                   </div>
+                  <div className="flex items-baseline justify-between gap-2 px-4 py-3 border-t border-[var(--vn-border)]">
+                    <span className="vn-heading text-base line-clamp-1 group-hover:text-[hsl(var(--skeu-leather))] transition-colors">
+                      {cat.name}
+                    </span>
+                    <span className="text-xs font-bold text-[var(--vn-muted)] whitespace-nowrap">
+                      {cat.product_count} {localized(locale, "pcs", "قطعة")}
+                    </span>
+                  </div>
                 </Link>
-              </motion.div>
+              </Develop>
             ))}
           </div>
         )}
       </div>
     </section>
   );
-};
-
-export default SkeuCategories;
+}

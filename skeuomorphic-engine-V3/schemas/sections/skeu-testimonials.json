@@ -7,10 +7,10 @@
       "content": "Content"
     },
     {
-      "id": "title",
       "type": "text",
-      "label": "Section Title",
-      "label_ar": "عنوان القسم",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
       "default": ""
     },
     {
@@ -18,31 +18,31 @@
       "content": "Review 1"
     },
     {
+      "type": "text",
       "id": "review_1_name",
-      "type": "text",
-      "label": "Reviewer 1 Name",
-      "label_ar": "اسم المراجع ١",
+      "label": "Name",
+      "label_ar": "الاسم",
       "default": ""
     },
     {
+      "type": "text",
       "id": "review_1_city",
-      "type": "text",
-      "label": "Reviewer 1 City",
-      "label_ar": "مدينة المراجع ١",
+      "label": "City",
+      "label_ar": "المدينة",
       "default": ""
     },
     {
-      "id": "review_1_text",
       "type": "textarea",
-      "label": "Review 1 Text",
-      "label_ar": "نص التقييم ١",
+      "id": "review_1_text",
+      "label": "Review",
+      "label_ar": "التقييم",
       "default": ""
     },
     {
-      "id": "review_1_rating",
       "type": "range",
-      "label": "Review 1 Rating",
-      "label_ar": "تقييم ١",
+      "id": "review_1_rating",
+      "label": "Rating",
+      "label_ar": "النجوم",
       "default": 5,
       "min": 1,
       "max": 5,
@@ -53,31 +53,31 @@
       "content": "Review 2"
     },
     {
+      "type": "text",
       "id": "review_2_name",
-      "type": "text",
-      "label": "Reviewer 2 Name",
-      "label_ar": "اسم المراجع ٢",
+      "label": "Name",
+      "label_ar": "الاسم",
       "default": ""
     },
     {
+      "type": "text",
       "id": "review_2_city",
-      "type": "text",
-      "label": "Reviewer 2 City",
-      "label_ar": "مدينة المراجع ٢",
+      "label": "City",
+      "label_ar": "المدينة",
       "default": ""
     },
     {
-      "id": "review_2_text",
       "type": "textarea",
-      "label": "Review 2 Text",
-      "label_ar": "نص التقييم ٢",
+      "id": "review_2_text",
+      "label": "Review",
+      "label_ar": "التقييم",
       "default": ""
     },
     {
-      "id": "review_2_rating",
       "type": "range",
-      "label": "Review 2 Rating",
-      "label_ar": "تقييم ٢",
+      "id": "review_2_rating",
+      "label": "Rating",
+      "label_ar": "النجوم",
       "default": 5,
       "min": 1,
       "max": 5,
@@ -88,35 +88,37 @@
       "content": "Review 3"
     },
     {
+      "type": "text",
       "id": "review_3_name",
-      "type": "text",
-      "label": "Reviewer 3 Name",
-      "label_ar": "اسم المراجع ٣",
+      "label": "Name",
+      "label_ar": "الاسم",
       "default": ""
     },
     {
+      "type": "text",
       "id": "review_3_city",
-      "type": "text",
-      "label": "Reviewer 3 City",
-      "label_ar": "مدينة المراجع ٣",
+      "label": "City",
+      "label_ar": "المدينة",
       "default": ""
     },
     {
-      "id": "review_3_text",
       "type": "textarea",
-      "label": "Review 3 Text",
-      "label_ar": "نص التقييم ٣",
+      "id": "review_3_text",
+      "label": "Review",
+      "label_ar": "التقييم",
       "default": ""
     },
     {
-      "id": "review_3_rating",
       "type": "range",
-      "label": "Review 3 Rating",
-      "label_ar": "تقييم ٣",
+      "id": "review_3_rating",
+      "label": "Rating",
+      "label_ar": "النجوم",
       "default": 5,
       "min": 1,
       "max": 5,
       "step": 1
     }
-  ]
+  ],
+  "presets": [],
+  "name_ar": "آراء العملاء"
 }

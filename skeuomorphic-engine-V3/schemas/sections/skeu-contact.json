@@ -1,6 +1,6 @@
 {
   "type": "skeu-contact",
-  "name": "Contact Page",
+  "name": "Contact page",
   "settings": [
     {
       "type": "header",
@@ -134,5 +134,23 @@
       "label_ar": "رابط الخريطة",
       "default": ""
     }
-  ]
+  ],
+  "presets": [
+    {
+      "name": "Contact page",
+      "locales": {
+        "en": {
+          "name": "Contact page"
+        },
+        "ar": {
+          "name": "صفحة تواصل معنا"
+        }
+      },
+      "settings": {
+        "show_working_hours": true,
+        "show_map": false
+      }
+    }
+  ],
+  "name_ar": "صفحة تواصل معنا"
 }

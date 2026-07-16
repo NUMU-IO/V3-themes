@@ -1,122 +1,80 @@
 {
   "type": "skeu-hero",
-  "name": "Hero Banner",
+  "name": "Warsha Hero (workbench)",
+  "name_ar": "هيرو الورشة",
   "settings": [
     {
       "type": "header",
       "content": "Content"
     },
     {
-      "id": "badge_text",
-      "type": "text",
-      "label": "Badge Text",
-      "label_ar": "نص الشارة",
-      "default": ""
-    },
-    {
-      "id": "headline",
-      "type": "text",
-      "label": "Headline",
-      "label_ar": "العنوان الرئيسي",
-      "default": ""
-    },
-    {
-      "id": "subtitle",
       "type": "textarea",
+      "id": "headline",
+      "label": "Headline",
+      "label_ar": "العنوان",
+      "info": "Use a line break to control the wrap.",
+      "info_ar": "استخدم سطرًا جديدًا للتحكم في التقسيم.",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
       "label": "Subtitle",
       "label_ar": "العنوان الفرعي",
       "default": ""
     },
     {
-      "id": "cta_text",
       "type": "text",
-      "label": "Primary Button Text",
-      "label_ar": "نص الزر الرئيسي",
+      "id": "cta_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
       "default": ""
     },
     {
-      "id": "cta_link",
       "type": "url",
-      "label": "Primary Button Link",
-      "label_ar": "رابط الزر الرئيسي",
+      "id": "cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
       "default": "/products"
     },
     {
-      "id": "secondary_text",
-      "type": "text",
-      "label": "Secondary Button Text",
-      "label_ar": "نص الزر الثانوي",
-      "default": ""
-    },
-    {
-      "id": "secondary_link",
-      "type": "url",
-      "label": "Secondary Button Link",
-      "label_ar": "رابط الزر الثانوي",
-      "default": "/products?category=clothing"
-    },
-    {
       "type": "header",
-      "content": "Media"
+      "content": "The print"
     },
     {
-      "id": "hero_image_url",
       "type": "image_picker",
-      "label": "Hero Image (Main)",
-      "label_ar": "الصورة الرئيسية",
-      "aspect_ratio": "3/4",
-      "default": ""
-    },
-    {
-      "id": "hero_image_2",
-      "type": "image_picker",
-      "label": "Hero Image 2",
-      "label_ar": "صورة ٢",
-      "aspect_ratio": "1/1",
-      "default": ""
-    },
-    {
-      "id": "hero_image_3",
-      "type": "image_picker",
-      "label": "Hero Image 3",
-      "label_ar": "صورة ٣",
-      "aspect_ratio": "1/1",
-      "default": ""
-    },
-    {
-      "id": "hero_image_4",
-      "type": "image_picker",
-      "label": "Hero Image 4",
-      "label_ar": "صورة ٤",
-      "aspect_ratio": "3/4",
-      "default": ""
-    },
-    {
-      "id": "use_mobile_image",
-      "type": "checkbox",
-      "label": "Use a dedicated image on mobile",
-      "label_ar": "استخدام صورة مخصّصة على الجوال",
-      "default": false
-    },
-    {
-      "id": "hero_image_mobile",
-      "type": "image_picker",
-      "label": "Hero image (mobile)",
-      "label_ar": "الصورة الرئيسية (جوال)",
+      "id": "hero_image",
+      "label": "Photo",
+      "label_ar": "الصورة",
+      "info": "Sits as a white-bordered print on the bench. Falls back to your first product.",
+      "info_ar": "بتظهر كصورة مطبوعة بإطار أبيض. لو فاضية بنعرض أول منتج.",
       "aspect_ratio": "4/5",
-      "visible_if": { "use_mobile_image": true },
       "default": ""
     },
     {
-      "type": "header",
-      "content": "Layout"
-    },
+      "type": "text",
+      "id": "seal_text",
+      "label": "Wax-seal text",
+      "label_ar": "نص الختم",
+      "info": "Two short words work best, one per line.",
+      "info_ar": "كلمتان قصيرتان، كل واحدة في سطر.",
+      "default": ""
+    }
+  ],
+  "presets": [
     {
-      "id": "show_trust_strip",
-      "type": "checkbox",
-      "label": "Show Trust Strip (Mobile)",
-      "label_ar": "إظهار شريط الثقة",
-      "default": true
+      "name": "Warsha Hero (workbench)",
+      "locales": {
+        "en": {
+          "name": "Warsha Hero (workbench)"
+        },
+        "ar": {
+          "name": "هيرو الورشة"
+        }
+      },
+      "settings": {
+        "cta_link": "/products"
+      }
     }
   ]
 }

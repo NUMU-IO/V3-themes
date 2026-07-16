@@ -2,71 +2,70 @@
 import { useState } from "react";
 import { useLocale } from "@numueg/theme-sdk";
 import { asString, localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
-const HEADING_SHADOW = "0 1px 0 hsl(35 30% 100% / 0.6)";
-
-const SkeuNewsletter = ({ instance }: SectionRenderProps) => {
+/**
+ * Editorial newsletter — faithful port of V2
+ * themes/editorial/sections/newsletter/SkeuNewsletter.tsx.
+ *
+ * Green full-bleed band, centered white copy, inline email input + button.
+ * V2 used the shared `useNewsletterSubmit` hook; here we keep equivalent local
+ * email state + submit so the section is self-contained in the bundle. All
+ * className strings are verbatim.
+ */
+export default function SkeuNewsletter({ instance, sectionId }: SectionRenderProps) {
   const s = instance.settings ?? {};
   const locale = useLocale();
-  const title = asString(s.title) || localized(locale, "Join our newsletter 📬", "اشترك في نشرتنا 📬");
+  const title = asString(s.title) || localized(locale, "Subscribe to our newsletter", "اشترك في نشرتنا");
   const subtitle =
-    asString(s.subtitle) || localized(locale, "Be the first to know about new drops and offers", "اعرف أول واحد عن العروض والمنتجات الجديدة");
+    asString(s.subtitle) ||
+    localized(locale, "Be the first to hear about new products and exclusive offers", "اعرف أول واحد عن العروض والمنتجات الجديدة");
   const buttonText = asString(s.button_text) || localized(locale, "Subscribe", "اشترك");
-  const placeholder = asString(s.placeholder) || localized(locale, "Email address", "البريد الإلكتروني");
+  const placeholder = asString(s.placeholder) || localized(locale, "Your email address", "البريد الإلكتروني");
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = () => {
-    if (!email.trim()) return;
-    // Newsletter capture is wired by the host on the real storefront; here we
-    // just acknowledge the submission so the section behaves end-to-end.
+    if (!email) return;
     setSubmitted(true);
+    setEmail("");
   };
 
   return (
-    <section className="py-10">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-md mx-auto">
-          <h2
-            className="text-xl font-bold mb-2"
-            style={{ textShadow: HEADING_SHADOW }}
+    <section className="py-12 bg-[hsl(var(--skeu-leather))]">
+      <div className="container mx-auto px-4 text-center">
+        <h2 className="text-white font-black text-2xl md:text-3xl mb-3">
+          <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
+        </h2>
+        <p className="text-white/70 text-sm mb-6 max-w-sm mx-auto">
+          <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
+        </p>
+        <div className="flex gap-2 max-w-md mx-auto">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSubmit();
+            }}
+            placeholder={placeholder}
+            dir="ltr"
+            className="flex-1 h-12 px-4 bg-white/10 text-white placeholder:text-white/40 text-sm border border-white/20 focus:outline-none focus:border-white/50"
+          />
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="px-6 h-12 bg-white text-[hsl(var(--skeu-walnut))] font-bold text-xs uppercase tracking-[0.15em] hover:bg-white/90 transition-colors"
           >
-            {title}
-          </h2>
-          <p className="text-sm text-muted-foreground mb-4">{subtitle}</p>
-          {submitted ? (
-            <div className="skeu-card rounded-xl p-5">
-              <p className="text-sm font-bold text-foreground relative z-[1]">
-                {localized(locale, "Thanks for subscribing! ✅", "شكراً لاشتراكك! ✅")}
-              </p>
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSubmit();
-                }}
-                placeholder={placeholder}
-                dir="ltr"
-                className="flex-1 h-12 px-4 rounded-xl skeu-inset text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="px-6 h-12 rounded-xl skeu-btn text-sm"
-              >
-                {buttonText}
-              </button>
-            </div>
-          )}
+            {submitted ? (
+              localized(locale, "Subscribed", "تم الاشتراك")
+            ) : (
+              <InlineEditable sectionId={sectionId} settingKey="button_text" value={buttonText} />
+            )}
+          </button>
         </div>
       </div>
     </section>
   );
-};
-
-export default SkeuNewsletter;
+}

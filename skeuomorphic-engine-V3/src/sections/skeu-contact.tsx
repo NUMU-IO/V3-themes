@@ -1,12 +1,15 @@
 "use client";
 import { useState } from "react";
-import { Link, useShop, useLocale } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
 import { ChevronRight, MessageCircle, Phone, Mail, Instagram, Clock } from "lucide-react";
-import { asString, localized, type SectionRenderProps } from "./_shared";
+import { localized, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
 
 /**
  * Normalise a merchant-provided Instagram value into a { handle, url } pair.
- * Ported verbatim from V2 `useContactInfo.normalizeInstagram`.
+ * Ported verbatim from V2 `useContactInfo.normalizeInstagram` — accepts a bare
+ * handle, "@handle", or a full profile URL and returns a canonical handle (no
+ * "@") plus a working URL, never a broken double-prefixed link.
  */
 function normalizeInstagram(raw: string | null | undefined): { handle: string; url: string } {
   const trimmed = (raw || "").trim();
@@ -24,15 +27,14 @@ function normalizeInstagram(raw: string | null | undefined): { handle: string; u
   return { handle, url: handle ? `https://instagram.com/${handle}` : "" };
 }
 
-/**
- * Skeuomorphic Contact section. Ported from the Vionne V3 Contact, re-skinned to
- * the skeuomorphic look. Pulls channels from the merchant-configured
- * `social_links`; never invents placeholder numbers/emails — unconfigured
- * channels are hidden.
- */
-const SkeuContact = ({ instance }: SectionRenderProps) => {
-  const s = instance.settings ?? {};
+const WarshaContact = ({ instance, sectionId }: SectionRenderProps) => {
   const locale = useLocale();
+  const s = useResolvedSettings(instance);
+  // Pull channels from the merchant-configured contact info (Contact tab in the
+  // dashboard → falls back to social_links / footer overrides). Never invent
+  // placeholder numbers, emails, or handles — if a merchant didn't configure a
+  // channel, we must hide it instead of advertising a fake link. In V3 the
+  // configured channels reach the theme via the store's `social_links` map.
   const shop = useShop();
   const socials = (shop?.social_links ?? {}) as Record<string, string>;
   const pick = (...keys: string[]): string => {
@@ -51,6 +53,7 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
 
   const whatsappDigits = (contact.whatsapp || "").replace(/\D/g, "");
   const phoneDigits = (contact.phone || contact.whatsapp || "").replace(/\D/g, "");
+  // Display Egyptian numbers as 0XXXXXXXXXX for readability, leave others as-is.
   const formatPhoneForDisplay = (digits: string) =>
     digits.startsWith("20") ? `0${digits.slice(2)}` : digits;
   const { handle: instagramHandle, url: instagramUrl } = normalizeInstagram(
@@ -58,22 +61,22 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
   );
   const email = contact.email || "";
 
-  const eyebrow = asString(s.eyebrow) || localized(locale, "Get in touch", "تواصل معنا");
-  const title = asString(s.title) || localized(locale, "Contact us", "اتصل بنا");
-  const subtitle = asString(s.subtitle);
-  const nameLabel = asString(s.name_label) || localized(locale, "Name", "الاسم");
-  const phoneLabel = asString(s.phone_label) || localized(locale, "Phone number", "رقم الهاتف");
-  const messageLabel = asString(s.message_label) || localized(locale, "Your message", "رسالتك");
-  const submitText = asString(s.submit_text) || localized(locale, "Send", "إرسال");
-  const successTitle = asString(s.success_title) || localized(locale, "Thanks for reaching out", "شكراً لتواصلك معنا");
-  const successMessage = asString(s.success_message) || localized(locale, "We'll get back to you as soon as possible.", "سنرد عليك في أقرب وقت ممكن.");
+  const eyebrow = (s.eyebrow as string) || localized(locale, "GET IN TOUCH", "تواصل معنا معنا");
+  const title = (s.title as string) || localized(locale, "Contact us", "اتصلي بينا");
+  const subtitle = (s.subtitle as string) ?? "";
+  const nameLabel = (s.name_label as string) || localized(locale, "Name", "الاسم");
+  const phoneLabel = (s.phone_label as string) || localized(locale, "Phone number", "رقم الموبايل");
+  const messageLabel = (s.message_label as string) || localized(locale, "Your message", "رسالتك");
+  const submitText = (s.submit_text as string) || localized(locale, "Send", "إرسال");
+  const successTitle = (s.success_title as string) || localized(locale, "Thanks for reaching out", "شكرًا لتواصلك معانا");
+  const successMessage = (s.success_message as string) || localized(locale, "We'll get back to you as soon as possible.", "هنرد عليكي في أقرب وقت.");
   const showWorkingHours = s.show_working_hours !== false;
-  const weekdaysLabel = asString(s.hours_weekdays_label) || localized(locale, "Sat – Thu", "السبت – الخميس");
-  const weekdaysValue = asString(s.hours_weekdays_value) || localized(locale, "9 AM – 9 PM", "9 ص – 9 م");
-  const fridayLabel = asString(s.hours_friday_label) || localized(locale, "Friday", "الجمعة");
-  const fridayValue = asString(s.hours_friday_value) || localized(locale, "2 PM – 9 PM", "2 م – 9 م");
+  const weekdaysLabel = (s.hours_weekdays_label as string) || localized(locale, "Saturday – Thursday", "السبت – الخميس");
+  const weekdaysValue = (s.hours_weekdays_value as string) || localized(locale, "9 AM – 9 PM", "٩ ص – ٩ م");
+  const fridayLabel = (s.hours_friday_label as string) || localized(locale, "Friday", "الجمعة");
+  const fridayValue = (s.hours_friday_value as string) || localized(locale, "2 PM – 9 PM", "٢ م – ٩ م");
   const showMap = s.show_map === true;
-  const mapEmbedUrl = asString(s.map_embed_url);
+  const mapEmbedUrl = (s.map_embed_url as string) ?? "";
 
   const [form, setForm] = useState({ name: "", phone: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
@@ -87,7 +90,7 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
   if (whatsappDigits) {
     methods.push({
       icon: MessageCircle,
-      label: localized(locale, "WhatsApp", "واتساب"),
+      label: "WhatsApp",
       value: formatPhoneForDisplay(whatsappDigits),
       href: `https://wa.me/${whatsappDigits}`,
     });
@@ -95,18 +98,18 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
   if (phoneDigits) {
     methods.push({
       icon: Phone,
-      label: localized(locale, "Call us", "اتصل بنا"),
+      label: localized(locale, "Call us", "اتصلي بينا"),
       value: formatPhoneForDisplay(phoneDigits),
       href: `tel:+${phoneDigits}`,
     });
   }
   if (email) {
-    methods.push({ icon: Mail, label: localized(locale, "Email", "البريد"), value: email, href: `mailto:${email}` });
+    methods.push({ icon: Mail, label: "Email", value: email, href: `mailto:${email}` });
   }
   if (instagramHandle) {
     methods.push({
       icon: Instagram,
-      label: localized(locale, "Instagram", "إنستجرام"),
+      label: "Instagram",
       value: `@${instagramHandle}`,
       href: instagramUrl,
     });
@@ -123,19 +126,17 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
           <span className="text-[var(--vn-ink)]">{title}</span>
         </nav>
 
-        {eyebrow && <span className="vn-eyebrow block mb-2">{eyebrow}</span>}
-        <h1 className="vn-heading text-3xl md:text-4xl mb-3">{title}</h1>
-        {subtitle && <p className="text-sm md:text-base text-[var(--vn-muted)] mb-8 md:mb-10 max-w-xl">{subtitle}</p>}
+        {eyebrow && <span className="vn-eyebrow block mb-2"><InlineEditable sectionId={sectionId} settingKey="eyebrow" value={eyebrow} /></span>}
+        <h1 className="vn-heading text-3xl md:text-4xl mb-3"><InlineEditable sectionId={sectionId} settingKey="title" value={title} /></h1>
+        {subtitle && <p className="text-sm md:text-base text-[var(--vn-muted)] mb-8 md:mb-10 max-w-xl"><InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline /></p>}
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 mt-8 md:mt-12">
           {/* Form */}
           <div>
             {submitted ? (
-              <div className="skeu-card rounded-xl p-8 text-center">
-                <div className="relative z-[1]">
-                  <h3 className="vn-heading text-lg mb-1.5">{successTitle}</h3>
-                  <p className="text-sm text-[var(--vn-muted)]">{successMessage}</p>
-                </div>
+              <div className="bg-[var(--vn-band)] rounded-md p-8 text-center">
+                <h3 className="vn-heading text-lg mb-1.5">{successTitle}</h3>
+                <p className="text-sm text-[var(--vn-muted)]">{successMessage}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -145,7 +146,7 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full h-11 px-3 rounded-xl skeu-inset focus:outline-none focus:ring-2 focus:ring-ring transition-colors text-base md:text-sm"
+                    className="w-full h-11 bg-transparent border-b border-[var(--vn-border)] focus:border-[var(--vn-ink)] focus:outline-none transition-colors text-base md:text-sm"
                   />
                 </div>
                 <div>
@@ -155,7 +156,7 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     dir="ltr"
-                    className="w-full h-11 px-3 rounded-xl skeu-inset focus:outline-none focus:ring-2 focus:ring-ring transition-colors text-base md:text-sm"
+                    className="w-full h-11 bg-transparent border-b border-[var(--vn-border)] focus:border-[var(--vn-ink)] focus:outline-none transition-colors text-base md:text-sm"
                   />
                 </div>
                 <div>
@@ -165,7 +166,7 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     rows={4}
-                    className="w-full px-3 py-2 rounded-xl skeu-inset focus:outline-none focus:ring-2 focus:ring-ring transition-colors text-base md:text-sm resize-none"
+                    className="w-full bg-transparent border-b border-[var(--vn-border)] focus:border-[var(--vn-ink)] focus:outline-none transition-colors text-base md:text-sm resize-none py-2"
                   />
                 </div>
                 <button type="submit" className="vn-btn vn-btn-filled mt-2">
@@ -185,7 +186,7 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 py-3.5 border-b border-[var(--vn-border)] hover:border-[var(--vn-ink)] transition-colors group"
               >
-                <m.icon size={18} className="shrink-0 text-primary" />
+                <m.icon size={18} className="shrink-0 text-[var(--vn-muted)] group-hover:text-[var(--vn-ink)] transition-colors" />
                 <div className="flex-1 min-w-0">
                   <p className="vn-eyebrow text-[10px]">{m.label}</p>
                   <p className="text-sm text-[var(--vn-ink)] truncate" dir="ltr">{m.value}</p>
@@ -197,15 +198,15 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
               <div className="pt-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Clock size={14} className="text-[var(--vn-muted)]" />
-                  <span className="vn-eyebrow text-[10px]">{localized(locale, "Working hours", "ساعات العمل")}</span>
+                  <span className="vn-eyebrow text-[10px]">{localized(locale, "Business hours", "مواعيد العمل")}</span>
                 </div>
                 <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 xs:gap-4 text-sm text-[var(--vn-muted)]">
                   <div>
-                    <p className="font-bold text-[var(--vn-ink)] mb-0.5">{weekdaysLabel}</p>
+                    <p className="font-medium text-[var(--vn-ink)] mb-0.5">{weekdaysLabel}</p>
                     <p>{weekdaysValue}</p>
                   </div>
                   <div>
-                    <p className="font-bold text-[var(--vn-ink)] mb-0.5">{fridayLabel}</p>
+                    <p className="font-medium text-[var(--vn-ink)] mb-0.5">{fridayLabel}</p>
                     <p>{fridayValue}</p>
                   </div>
                 </div>
@@ -216,8 +217,8 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
               <div className="pt-6">
                 <iframe
                   src={mapEmbedUrl}
-                  title={localized(locale, "Store location map", "خريطة موقع المتجر")}
-                  className="w-full h-64 skeu-img-frame rounded-xl"
+                  title="Store location map"
+                  className="w-full h-64 border border-[var(--vn-border)] rounded-md"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
@@ -230,4 +231,4 @@ const SkeuContact = ({ instance }: SectionRenderProps) => {
   );
 };
 
-export default SkeuContact;
+export default WarshaContact;

@@ -1,50 +1,84 @@
+@import url("https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ───────────────────────────────────────────────────────────────
- * Ported verbatim from V2 Skeuomorphic (numu-egyptian-bazaar/src/
- * themes/skeuomorphic/styles.css). The only change: the V2 root
- * selector :root[data-theme="skeuomorphic"] is retargeted to the V3
- * mount element [data-skeuomorphic-v3-app] so the --skeu-* + HSL
- * tokens reach the sections.
+ * Warsha (ورشة) — skeuomorphic-v3. The workshop theme for handmade
+ * & artisan sellers. Identity: kraft-paper warmth, saddle-leather
+ * primary, brass accents earned by price + action, REAL tactile
+ * depth (the fleet's only theme with weight): layered shadows,
+ * pressed states, noise grain, stitched borders, wax-seal badges.
+ * Slab-serif headings — type that looks tool-stamped, not printed.
+ * Root selector [data-skeuomorphic-v3-app] so the tokens reach sections.
  * ─────────────────────────────────────────────────────────────── */
-/* Theme: Skeuomorphic — Physical, tactile 3D interface */
 
-/* ===== CSS Variables ===== */
 [data-skeuomorphic-v3-app] {
-  --background: 35 30% 93%;
-  --foreground: 25 30% 12%;
-  --card: 35 25% 96%;
-  --card-foreground: 25 30% 12%;
-  --popover: 35 25% 96%;
-  --popover-foreground: 25 30% 12%;
-  --primary: 210 65% 48%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 35 20% 88%;
-  --secondary-foreground: 25 30% 12%;
-  --muted: 35 15% 85%;
-  --muted-foreground: 25 15% 42%;
-  --accent: 210 40% 90%;
-  --accent-foreground: 210 65% 30%;
-  --destructive: 0 75% 55%;
+  /* ── Merchant color scheme + fonts ──────────────────────────────────────
+     The SDK writes --theme-color-<role> / --theme-font-<role> onto the mount
+     root from global_settings; these bridge tokens consume them with
+     Warsha's own values as fallbacks, so an un-customized store renders
+     the shipped identity while the Brand + Typography pickers re-paint. */
+  --skeu-primary: var(--theme-color-primary, #7c4a21);
+  --skeu-ink: var(--theme-color-text, #2b1d12);
+  --skeu-page-bg: var(--theme-color-background, #efe9df);
+  --skeu-accent-color: var(--theme-color-accent, #a86414);
+  --skeu-btn-bg: var(--theme-color-button, #7c4a21);
+  --heading-font: var(
+    --theme-font-heading,
+    var(--theme-heading_font, "Zilla Slab", "Noto Kufi Arabic", Georgia, serif)
+  );
+  --body-font: var(
+    --theme-font-body,
+    var(--theme-body_font, "Manrope", "Noto Sans Arabic", "Segoe UI", sans-serif)
+  );
+  /* Heading tracking ramp: slab serif sits at 0 by default
+     (range stores a bare px number → multiply by 1px; 0 = unchanged). */
+  --skeu-heading-tracking: calc(0em + var(--theme-heading_tracking, 0) * 1px);
+
+  --background: 40 33% 91%;
+  --foreground: 27 41% 12%;
+  --card: 40 30% 94%;
+  --card-foreground: 27 41% 12%;
+  --popover: 40 30% 94%;
+  --popover-foreground: 27 41% 12%;
+  --primary: 27 58% 31%;
+  --primary-foreground: 40 33% 96%;
+  --secondary: 33 25% 45%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 40 24% 85%;
+  --muted-foreground: 27 22% 32%;
+  --accent: 40 26% 87%;
+  --accent-foreground: 27 58% 24%;
+  --destructive: 0 72% 45%;
   --destructive-foreground: 0 0% 100%;
-  --border: 35 15% 78%;
-  --input: 35 10% 80%;
-  --ring: 210 65% 48%;
-  --radius: 0.75rem;
-  --store-gradient: linear-gradient(180deg, hsl(210 65% 55%), hsl(210 65% 42%));
-  --hero-bg: 35 25% 90%;
-  --badge-bg: 210 65% 48%;
+  --border: 36 20% 74%;
+  --input: 36 18% 78%;
+  --ring: 27 58% 31%;
+  /* Layout radius driven by the Layout global (range stores a bare number →
+     multiply by 1px; default 10 keeps Warsha's soft tactile corners). */
+  --radius: calc(var(--theme-radius, 10) * 1px);
+  --store-gradient: linear-gradient(180deg, hsl(27 58% 38%), hsl(27 58% 26%));
+  --hero-bg: 40 33% 89%;
+  --badge-bg: 27 58% 31%;
   --badge-fg: 0 0% 100%;
   --whatsapp: 142 70% 40%;
   --whatsapp-foreground: 0 0% 100%;
-  --announcement-bg: 25 25% 25%;
-  --announcement-fg: 35 30% 95%;
-  --success: 142 60% 38%;
+  --announcement-bg: 27 41% 14%;
+  --announcement-fg: 40 33% 93%;
+  --success: 142 55% 32%;
   --warning: 38 92% 50%;
 
-  /* Skeuomorphic-specific tokens */
+  /* Warsha-specific tokens */
+  --skeu-leather: 27 58% 31%;         /* saddle leather #7c4a21 */
+  --skeu-brass: 33 79% 37%;           /* brass #a86414 — price/action accents */
+  --skeu-kraft: 40 33% 91%;           /* kraft paper page */
+  --skeu-kraft-low: 40 26% 86%;       /* recessed kraft */
+  --skeu-walnut: 27 41% 12%;          /* walnut ink #2b1d12 */
+
+  /* ── The tactile system (the fleet's ONLY theme with real depth) ──
+     Layered drop shadows with a white inset highlight = raised surface;
+     inset shadows = pressed/recessed. Grain via an SVG noise tile. */
   --skeu-shadow-sm:
     0 1px 2px hsl(var(--foreground) / 0.15),
     0 1px 0 hsl(0 0% 100% / 0.4) inset;
@@ -64,347 +98,665 @@
     inset 0 1px 2px hsl(var(--foreground) / 0.15);
   --skeu-highlight: hsl(0 0% 100% / 0.5);
   --skeu-surface: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
-  --skeu-surface-dark: linear-gradient(180deg, hsl(var(--muted)) 0%, hsl(var(--border)) 100%);
-  --skeu-btn-gradient: linear-gradient(180deg, color-mix(in srgb, hsl(var(--primary)), white 18%) 0%, hsl(var(--primary)) 100%);
-  --skeu-btn-gradient-hover: linear-gradient(180deg, color-mix(in srgb, hsl(var(--primary)), white 25%) 0%, color-mix(in srgb, hsl(var(--primary)), white 5%) 100%);
-  --skeu-texture: url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  --skeu-btn-gradient: linear-gradient(180deg, hsl(27 58% 38%) 0%, hsl(27 58% 28%) 100%);
+  --skeu-btn-gradient-hover: linear-gradient(180deg, hsl(27 58% 42%) 0%, hsl(27 58% 31%) 100%);
+  --skeu-texture: url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   --skeu-depth: 1;
 
-  --sidebar-background: 35 25% 92%;
-  --sidebar-foreground: 25 30% 12%;
-  --sidebar-primary: 210 65% 48%;
+  --sidebar-background: 40 26% 88%;
+  --sidebar-foreground: 27 41% 12%;
+  --sidebar-primary: 27 58% 31%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 210 40% 90%;
-  --sidebar-accent-foreground: 210 65% 30%;
-  --sidebar-border: 35 15% 78%;
-  --sidebar-ring: 210 65% 48%;
+  --sidebar-accent: 40 26% 87%;
+  --sidebar-accent-foreground: 27 58% 24%;
+  --sidebar-border: 36 20% 74%;
+  --sidebar-ring: 27 58% 31%;
+
+  /* ── `vn-*` token vocabulary (shared with the ported page-level sections)
+   *    bound to Warsha's kraft/leather/brass palette. Section markup uses
+   *    the fleet's proven class SHAPES; colours resolve through these. */
+  --vn-white: #ffffff;
+  --vn-band: hsl(40 26% 86%);         /* recessed kraft band */
+  --vn-surface-dark: #2b1d12;         /* walnut — footer / dock surfaces */
+  --vn-ink: var(--skeu-ink);
+  --vn-border: hsl(36 20% 74%);
+  --vn-muted: #5d4c3c;                /* warm leather-gray, ≥4.5:1 on kraft */
+  --vn-sale: hsl(var(--skeu-brass));  /* sale price wears the brass */
+  --vn-accent: var(--skeu-accent-color); /* brass */
+  --vn-heading-tracking: var(--skeu-heading-tracking);
+
+  /* Base text size ramp: default 16px == browser default. */
+  font-size: calc(var(--theme-base_font_size, 16) * 1px);
+  font-family: var(--body-font), "Manrope", "Noto Sans Arabic", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* The theme owns the whole canvas: paint the paper on the mount root and
+     fill the viewport so short pages never expose the host/browser default
+     background below the footer. Flex column so main.tsx can push the footer
+     to the bottom edge with an auto margin. */
+  background: var(--skeu-page-bg);
+  color: var(--skeu-ink);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Texture on body */
-[data-skeuomorphic-v3-app] body,
-[data-skeuomorphic-v3-app] {
-  background-image: var(--skeu-texture);
-  background-repeat: repeat;
+/* The body slot grows; the footer rides the bottom edge on short pages. */
+[data-skeuomorphic-v3-app] > .skeu-page-body {
+  flex: 1 0 auto;
 }
 
-/* ===== COMPONENT STYLES ===== */
+/* ─── Warsha display typography ─── */
 
-/* Card - physical object feel */
-[data-skeuomorphic-v3-app] .skeu-card {
-  background: var(--skeu-surface);
-  border: 1px solid hsl(var(--border));
-  border-bottom: 2px solid color-mix(in srgb, hsl(var(--border)), hsl(var(--foreground)) 15%);
-  box-shadow: var(--skeu-shadow-md);
-  position: relative;
-}
-[data-skeuomorphic-v3-app] .skeu-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background-image: var(--skeu-texture);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Elevated card */
-[data-skeuomorphic-v3-app] .skeu-elevated {
-  box-shadow: var(--skeu-shadow-lg);
-  border-bottom: 3px solid color-mix(in srgb, hsl(var(--border)), hsl(var(--foreground)) 20%);
-}
-
-/* Inset - embedded feel for inputs */
-[data-skeuomorphic-v3-app] .skeu-inset {
-  background: hsl(var(--muted));
-  border: 1px solid hsl(var(--border));
-  box-shadow: var(--skeu-shadow-inset);
-}
-
-/* Button - tactile, pressable */
-[data-skeuomorphic-v3-app] .skeu-btn {
-  background: var(--skeu-btn-gradient);
-  border: 1px solid color-mix(in srgb, hsl(var(--primary)), black 25%);
-  border-bottom: 3px solid color-mix(in srgb, hsl(var(--primary)), black 35%);
-  box-shadow:
-    0 1px 3px hsl(var(--primary) / 0.3),
-    0 1px 0 hsl(0 0% 100% / 0.3) inset;
-  color: white;
+/* Display headline — Zilla Slab, sentence case, tool-stamped weight with a
+   subtle letterpress emboss (light above, shade below). */
+[data-skeuomorphic-v3-app] .skeu-hero-title {
+  font-family: var(--heading-font), "Zilla Slab", "Noto Kufi Arabic", Georgia, serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 700;
-  text-shadow: 0 1px 2px hsl(var(--primary) / 0.4);
-  transition: all 0.1s ease;
-  position: relative;
-}
-[data-skeuomorphic-v3-app] .skeu-btn:hover {
-  background: var(--skeu-btn-gradient-hover);
-  border-bottom-width: 3px;
-}
-[data-skeuomorphic-v3-app] .skeu-btn:active {
-  border-bottom-width: 1px;
-  transform: translateY(2px);
-  box-shadow:
-    0 0 1px hsl(var(--primary) / 0.3),
-    inset 0 2px 4px hsl(var(--primary) / 0.3);
+  line-height: 1.06;
+  letter-spacing: var(--skeu-heading-tracking, 0em);
+  text-wrap: balance;
+  text-shadow: 0 1px 0 hsl(0 0% 100% / 0.55), 0 -1px 0 hsl(var(--foreground) / 0.12);
 }
 
-/* Secondary button */
-[data-skeuomorphic-v3-app] .skeu-btn-secondary {
-  background: var(--skeu-surface);
-  border: 1px solid hsl(var(--border));
-  border-bottom: 3px solid color-mix(in srgb, hsl(var(--border)), hsl(var(--foreground)) 15%);
-  box-shadow:
-    0 1px 3px hsl(var(--foreground) / 0.15),
-    0 1px 0 hsl(0 0% 100% / 0.5) inset;
-  color: hsl(var(--foreground));
-  font-weight: 700;
-  transition: all 0.1s ease;
-}
-[data-skeuomorphic-v3-app] .skeu-btn-secondary:hover {
-  background: var(--skeu-surface-dark);
-}
-[data-skeuomorphic-v3-app] .skeu-btn-secondary:active {
-  border-bottom-width: 1px;
-  transform: translateY(2px);
-  box-shadow: var(--skeu-shadow-pressed);
-}
-
-/* Badge / tag */
-[data-skeuomorphic-v3-app] .skeu-badge {
-  background: linear-gradient(180deg, color-mix(in srgb, hsl(var(--destructive)), white 15%) 0%, hsl(var(--destructive)) 100%);
-  border: 1px solid color-mix(in srgb, hsl(var(--destructive)), black 20%);
-  border-bottom: 2px solid color-mix(in srgb, hsl(var(--destructive)), black 30%);
-  box-shadow: 0 2px 4px hsl(var(--destructive) / 0.3);
-  color: white;
-  text-shadow: 0 1px 1px hsl(var(--destructive) / 0.4);
-}
-
-/* New badge */
-[data-skeuomorphic-v3-app] .skeu-badge-new {
-  background: linear-gradient(180deg, color-mix(in srgb, hsl(var(--primary)), white 15%) 0%, hsl(var(--primary)) 100%);
-  border: 1px solid color-mix(in srgb, hsl(var(--primary)), black 25%);
-  border-bottom: 2px solid color-mix(in srgb, hsl(var(--primary)), black 35%);
-  box-shadow: 0 2px 4px hsl(var(--primary) / 0.3);
-  color: white;
-  text-shadow: 0 1px 1px hsl(var(--primary) / 0.4);
-}
-
-/* Header - shelf/bar feel */
-[data-skeuomorphic-v3-app] .skeu-header {
-  background: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
-  border-bottom: 2px solid hsl(var(--border));
-  box-shadow:
-    0 2px 8px hsl(var(--foreground) / 0.15),
-    0 1px 0 hsl(0 0% 100% / 0.6) inset;
-}
-
-/* Toggle / switch */
-[data-skeuomorphic-v3-app] .skeu-toggle {
-  background: hsl(var(--muted));
-  border: 1px solid hsl(var(--border));
-  box-shadow: var(--skeu-shadow-inset);
-}
-[data-skeuomorphic-v3-app] .skeu-toggle-active {
-  background: var(--skeu-btn-gradient);
-  border-color: color-mix(in srgb, hsl(var(--primary)), black 25%);
-  box-shadow:
-    0 1px 0 hsl(0 0% 100% / 0.3) inset;
-  color: white;
-  text-shadow: 0 1px 1px hsl(var(--primary) / 0.3);
-}
-
-/* Footer - heavy base */
-[data-skeuomorphic-v3-app] .skeu-footer {
-  background: linear-gradient(180deg, hsl(var(--foreground)) 0%, color-mix(in srgb, hsl(var(--foreground)), black 30%) 100%);
-  border-top: 3px solid color-mix(in srgb, hsl(var(--foreground)), white 15%);
-  box-shadow:
-    0 -2px 8px hsl(var(--foreground) / 0.3),
-    0 1px 0 hsl(0 0% 100% / 0.1) inset;
-  color: hsl(var(--background));
-}
-
-/* Product image frame */
-[data-skeuomorphic-v3-app] .skeu-img-frame {
-  border: 3px solid hsl(var(--border));
-  border-bottom: 4px solid color-mix(in srgb, hsl(var(--border)), hsl(var(--foreground)) 15%);
-  box-shadow:
-    var(--skeu-shadow-md),
-    inset 0 0 0 1px hsl(0 0% 100% / 0.3);
-  background: hsl(var(--card));
-  padding: 4px;
-}
-
-/* Chip/category pill */
-[data-skeuomorphic-v3-app] .skeu-chip {
-  background: var(--skeu-surface);
-  border: 1px solid hsl(var(--border));
-  border-bottom: 2px solid color-mix(in srgb, hsl(var(--border)), hsl(var(--foreground)) 15%);
-  box-shadow: 0 1px 3px hsl(var(--foreground) / 0.12);
-  transition: all 0.1s ease;
-}
-[data-skeuomorphic-v3-app] .skeu-chip:active {
-  border-bottom-width: 1px;
-  transform: translateY(1px);
-}
-[data-skeuomorphic-v3-app] .skeu-chip-active {
-  background: var(--skeu-btn-gradient);
-  border-color: color-mix(in srgb, hsl(var(--primary)), black 25%);
-  color: white;
-  text-shadow: 0 1px 1px hsl(var(--primary) / 0.3);
-}
-
-/* Announcement bar */
-[data-skeuomorphic-v3-app] .skeu-announcement {
-  background: linear-gradient(180deg, hsl(var(--announcement-bg)) 0%, color-mix(in srgb, hsl(var(--announcement-bg)), black 20%) 100%);
-  border-bottom: 2px solid color-mix(in srgb, hsl(var(--announcement-bg)), black 40%);
-  box-shadow: 0 1px 0 hsl(0 0% 100% / 0.1) inset;
-  color: hsl(var(--announcement-fg));
-  text-shadow: 0 1px 2px hsl(var(--foreground) / 0.5);
-}
-
-/* Rating star */
-[data-skeuomorphic-v3-app] .skeu-star {
-  filter: drop-shadow(0 1px 1px hsl(var(--warning) / 0.4));
-}
-
-/* Divider */
-[data-skeuomorphic-v3-app] .skeu-divider {
-  height: 2px;
-  background: linear-gradient(
-    180deg,
-    hsl(var(--border)) 0%,
-    color-mix(in srgb, hsl(var(--border)), white 10%) 50%,
-    hsl(var(--card)) 100%
-  );
-  border: none;
-}
-
-/* Section with subtle texture */
-[data-skeuomorphic-v3-app] .skeu-section {
-  background: hsl(var(--muted));
-  border-top: 1px solid hsl(var(--border));
-  border-bottom: 1px solid hsl(var(--border));
-  box-shadow:
-    inset 0 1px 3px hsl(var(--foreground) / 0.08),
-    inset 0 -1px 0 hsl(0 0% 100% / 0.4);
-}
-
-
-/* Force skeuomorphic palette for shared page classes */
-[data-skeuomorphic-v3-app] .store-gradient {
-  background: linear-gradient(180deg, hsl(210 65% 55%), hsl(210 65% 42%)) !important;
-}
-
-/* ───────────────────────────────────────────────────────────────
- * V3 PAGE-LEVEL SECTIONS (product-detail / products-page / profile /
- * order-confirmation, ported from the proven Vionne V3 sections).
- *
- * Those sections are authored against Vionne's `vn-*` utility classes
- * and `--vn-*` tokens. To keep them visually coherent with the
- * Skeuomorphic theme rather than dropping in Vionne's grayscale, the
- * `--vn-*` tokens below are RE-MAPPED to the Skeuomorphic palette
- * (warm beige surfaces, near-black ink, blue accent) and the buttons
- * are re-skinned to the skeuomorphic tactile look.
- * ─────────────────────────────────────────────────────────────── */
-
-[data-skeuomorphic-v3-app] {
-  --vn-white: hsl(35 25% 96%);
-  --vn-band: hsl(35 20% 88%);
-  --vn-surface-dark: hsl(25 30% 12%);
-  --vn-ink: hsl(25 30% 12%);
-  --vn-border: hsl(35 15% 78%);
-  --vn-muted: hsl(25 15% 42%);
-  --vn-sale: hsl(0 75% 50%);
-}
-
-/* ─── Typography ─── */
-
-[data-skeuomorphic-v3-app] .vn-heading {
-  font-family: var(--heading-font, "Cairo"), "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  line-height: 1.1;
-  text-shadow: 0 1px 0 hsl(35 30% 100% / 0.5);
-}
-
-[data-skeuomorphic-v3-app] .vn-eyebrow {
-  font-family: var(--body-font, "Cairo"), "Helvetica Neue", Helvetica, Arial, sans-serif;
+/* Wordmark (header) — slab caps, burned-in-stamp feel. */
+.skeu-masthead {
+  font-family: var(--heading-font), "Zilla Slab", "Noto Kufi Arabic", Georgia, serif;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-shadow: 0 1px 0 hsl(0 0% 100% / 0.5);
+}
+
+/* Section seam: a stitched saddle line — Warsha's section-header mark
+   (restyles the class the ported sections wrap in RuleDraw). */
+.skeu-rule-double {
+  border-top: 2px dashed hsl(var(--skeu-leather) / 0.65);
+  position: relative;
+}
+.skeu-rule-double::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  inset-inline-start: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: hsl(var(--skeu-brass));
+  box-shadow: var(--skeu-shadow-sm);
+}
+
+/* Gold foil hairline — the ONLY place gold appears as decoration. */
+.skeu-foil-rule {
+  height: 2px;
+  width: 100%;
+  background: var(--vn-accent);
+}
+
+/* ─── Motion materials (print-production interaction layer) ─── */
+
+/* Ink-draw underline: the line inks in from the reading edge on hover and
+   exits toward the far edge, like a pen stroke. Used on nav links and
+   inline text links. */
+.skeu-ink-link {
+  position: relative;
+  text-decoration: none;
+}
+.skeu-ink-link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -0.2em;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: var(--skeu-ink-exit, right);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.skeu-ink-link:hover::after,
+.skeu-ink-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: var(--skeu-ink-enter, left);
+}
+[dir="rtl"] .skeu-ink-link { --skeu-ink-enter: right; --skeu-ink-exit: left; }
+
+/* Press feedback for solid CTAs — quick mechanical push, like a platen.
+   (.vn-btn gets the same treatment in its own rule further down.) */
+.skeu-press {
+  transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.skeu-press:active {
+  transform: scale(0.97);
+}
+
+/* Cart badge re-stamp: fired by re-keying the badge on count change. */
+@keyframes skeu-stamp-in {
+  0% { transform: scale(1.45) rotate(-6deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+.skeu-badge-stamp {
+  animation: skeu-stamp-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeu-ink-link::after { transition: none; }
+  .skeu-press, .skeu-press:active, .vn-btn, .vn-btn:active { transition: none; transform: none; }
+  .skeu-badge-stamp { animation: none; }
+}
+
+/* ─── Workshop kit (Warsha signature components) ─── */
+
+/* Raised kraft card — the theme's basic tactile surface. */
+.skeu-card {
+  background: var(--skeu-surface);
+  background-image: var(--skeu-texture);
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) + 2px);
+  box-shadow: var(--skeu-shadow-md);
+}
+
+/* Recessed well — pressed INTO the bench (inputs, slots, quotes). */
+.skeu-well {
+  background: hsl(var(--skeu-kraft-low));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  box-shadow: var(--skeu-shadow-inset);
+}
+
+/* Stitched border — saddle stitching around a panel. */
+.skeu-stitch {
+  border: 2px dashed hsl(var(--skeu-leather) / 0.55);
+  border-radius: calc(var(--radius) + 2px);
+}
+
+/* Brass tag — the little riveted number/label plate (process steps). */
+.skeu-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding-inline: 0.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, hsl(36 70% 52%), hsl(33 79% 34%));
+  color: #fff;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  box-shadow: var(--skeu-shadow-md);
+  text-shadow: 0 -1px 0 hsl(27 60% 20% / 0.5);
+}
+
+/* Wax seal — the guarantee mark. Pure CSS: pressed disc + serrated edge. */
+.skeu-seal {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 30%, hsl(27 62% 40%), hsl(27 60% 26%) 65%);
+  color: hsl(40 45% 92%);
+  box-shadow:
+    0 3px 8px hsl(var(--foreground) / 0.3),
+    inset 0 2px 3px hsl(0 0% 100% / 0.25),
+    inset 0 -3px 6px hsl(27 60% 14% / 0.55);
+}
+.skeu-seal::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  border: 1.5px dashed hsl(40 45% 92% / 0.55);
+}
+
+/* Materials & care table — bench-card rows with hairline seams. */
+.skeu-care-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding-block: 0.9rem;
+  border-top: 1px solid hsl(var(--border));
+}
+.skeu-care-row:first-child { border-top: 0; }
+.skeu-care-term {
+  flex: 0 0 34%;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: hsl(var(--skeu-leather));
+}
+
+/* Paper photo — product/process shots sit like prints taped to the bench. */
+.skeu-print {
+  background: #fff;
+  padding: 0.5rem 0.5rem 0.75rem;
+  border-radius: 4px;
+  box-shadow: var(--skeu-shadow-md);
+}
+.skeu-print > img { border-radius: 2px; }
+
+/* Pull-quote (testimonials) — slab italic, a customer note pinned to the bench. */
+.skeu-pull-quote {
+  font-family: var(--heading-font), "Zilla Slab", "Noto Kufi Arabic", Georgia, serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.vn-heading {
+  font-family: var(--heading-font), "Zilla Slab", "Noto Kufi Arabic", Georgia, serif;
+  font-weight: 700;
+  letter-spacing: var(--vn-heading-tracking, 0em);
+  line-height: 1.1;
+}
+
+.vn-eyebrow {
+  font-family: var(--body-font), "Manrope", "Noto Sans Arabic", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
   font-size: 11px;
   color: var(--vn-muted);
 }
 
-[data-skeuomorphic-v3-app] .vn-label {
-  font-family: var(--body-font, "Cairo"), "Helvetica Neue", Helvetica, Arial, sans-serif;
+.vn-label {
+  font-family: var(--body-font), "Manrope", "Noto Sans Arabic", sans-serif;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.15em;
   font-size: 11px;
 }
 
-/* ─── Buttons — skinned to the skeuomorphic tactile look ─── */
+/* ─── Buttons — solid, SHARP (print corners) ─── */
 
-[data-skeuomorphic-v3-app] .vn-btn {
+.vn-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  height: 44px;
-  padding: 0 1.25rem;
+  height: 46px;
+  padding: 0 1.5rem;
   border-radius: var(--radius);
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: var(--skeu-shadow-md);
+  transition: box-shadow 0.15s ease, transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 200ms ease, color 200ms ease, opacity 200ms ease;
+  cursor: pointer;
+}
+/* Pressing a Warsha button PHYSICALLY presses it: shadow inverts to inset
+   and the face drops a pixel — the whole theme's signature interaction. */
+.vn-btn:active {
+  transform: translateY(1px);
+  box-shadow: var(--skeu-shadow-pressed);
+}
+
+.vn-btn-filled {
+  background: var(--skeu-btn-gradient);
+  color: var(--vn-white);
+  text-shadow: 0 -1px 0 hsl(27 60% 18% / 0.45);
+}
+.vn-btn-filled:hover {
+  background: var(--skeu-btn-gradient-hover);
+  background: var(--skeu-primary);
+}
+
+.vn-btn-outline-light {
+  background: transparent;
+  color: var(--vn-white);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+}
+.vn-btn-outline-light:hover {
+  background: var(--vn-white);
+  color: var(--vn-ink);
+}
+
+.vn-btn-outline-dark {
+  background: transparent;
+  color: var(--vn-ink);
+  border: 2px solid var(--vn-ink);
+}
+.vn-btn-outline-dark:hover {
+  background: var(--vn-ink);
+  color: var(--vn-white);
+}
+
+/* Legacy skeu-btn kept for the original home sections. */
+[data-skeuomorphic-v3-app] .skeu-btn {
+  background: var(--skeu-btn-bg);
+  color: white;
   font-weight: 700;
-  transition: all 0.1s ease;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 0.875rem 2rem;
+  transition: all 0.2s ease;
+}
+[data-skeuomorphic-v3-app] .skeu-btn:hover {
+  background: var(--skeu-primary);
+}
+
+[data-skeuomorphic-v3-app] .skeu-btn-outline {
+  background: transparent;
+  color: hsl(var(--foreground));
+  border: 2px solid hsl(var(--foreground));
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 0.875rem 2rem;
+  transition: all 0.2s ease;
+}
+[data-skeuomorphic-v3-app] .skeu-btn-outline:hover {
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+}
+
+/* ─── Legacy Manshet blocks (original home sections) ─── */
+
+[data-skeuomorphic-v3-app] .skeu-block {
+  position: relative;
+  overflow: hidden;
+  background: var(--skeu-primary);
+}
+[data-skeuomorphic-v3-app] .skeu-block-light {
+  background: hsl(var(--skeu-leather-light));
+}
+[data-skeuomorphic-v3-app] .skeu-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  transition: transform 0.3s ease;
+}
+[data-skeuomorphic-v3-app] .skeu-card:hover {
+  transform: translateY(-4px);
+}
+[data-skeuomorphic-v3-app] .skeu-chip {
+  border: 1px solid hsl(var(--border));
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  transition: all 0.2s ease;
+}
+[data-skeuomorphic-v3-app] .skeu-chip-active {
+  background: var(--skeu-ink);
+  color: white;
+  border-color: var(--skeu-ink);
+}
+[data-skeuomorphic-v3-app] .skeu-inset {
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+}
+[data-skeuomorphic-v3-app] .skeu-inset:focus {
+  border-color: var(--skeu-accent-color);
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(153 45% 30% / 0.15);
+}
+[data-skeuomorphic-v3-app] .skeu-divider {
+  height: 1px;
+  background: hsl(var(--border));
+}
+[data-skeuomorphic-v3-app] .store-gradient {
+  background: linear-gradient(135deg, hsl(153 45% 30%), hsl(153 30% 42%)) !important;
+}
+
+/* ─── Header (masthead) ─── */
+/* Newspaper masthead: PAPER surface with ink type (not the vionne dark bar),
+   heavy double rule under the nav. Hide/condense behavior kept. */
+
+.vn-header {
+  background: var(--skeu-page-bg);
+  color: var(--vn-ink);
+  border-bottom: 1px solid var(--vn-ink);
+  transition: transform 300ms ease, background-color 300ms ease, box-shadow 300ms ease;
+  will-change: transform;
+}
+
+.vn-header.is-hidden {
+  transform: translateY(-100%);
+}
+
+.vn-header.is-condensed {
+  background: color-mix(in srgb, var(--skeu-page-bg) 92%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+}
+
+.vn-header a,
+.vn-header button {
+  color: inherit;
+}
+
+/* ─── Announcement marquee (header strip) ─── */
+
+.vn-marquee {
+  background: var(--skeu-primary);
+  color: var(--vn-white);
+  height: 40px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.vn-marquee-track {
+  display: flex;
+  align-items: center;
+  /* flex-shrink: 0 is critical — without it the browser squashes
+     `width: max-content` back to the parent's width and the translateX
+     animation only travels a fraction of its distance. */
+  flex-shrink: 0;
+  width: max-content;
+  will-change: transform;
+  animation: vn-marquee-scroll var(--vn-marquee-duration, 25s) linear infinite;
+}
+
+.vn-marquee:hover .vn-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes vn-marquee-scroll {
+  from { transform: translateX(0); }
+  /* -50% works because the track renders content twice (A + A). */
+  to { transform: translateX(-50%); }
+}
+
+[dir="rtl"] .vn-marquee-track {
+  animation-direction: reverse;
+}
+
+/* ─── Standalone marquee/ticker section ─── */
+
+.vn-marquee-section {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: var(--vn-marquee-bg, var(--skeu-primary));
+  color: var(--vn-marquee-fg, var(--vn-white));
+  border-block: 1px solid var(--vn-marquee-border, transparent);
+}
+
+.vn-marquee-section .vn-marquee-track {
+  animation: vn-marquee-scroll var(--vn-marquee-section-duration, 30s) linear infinite;
+}
+
+.vn-marquee-section[data-direction="right"] .vn-marquee-track {
+  animation-direction: reverse;
+}
+
+[dir="rtl"] .vn-marquee-section[data-direction="right"] .vn-marquee-track {
+  animation-direction: normal;
+}
+
+.vn-marquee-section[data-pause-on-hover="true"]:hover .vn-marquee-track {
+  animation-play-state: paused;
+}
+
+.vn-marquee-section[data-size="sm"] { font-size: 11px; letter-spacing: 0.22em; }
+.vn-marquee-section[data-size="md"] { font-size: 14px; letter-spacing: 0.18em; }
+.vn-marquee-section[data-size="lg"] { font-size: 18px; letter-spacing: 0.14em; }
+.vn-marquee-section[data-size="xl"] { font-size: 24px; letter-spacing: 0.10em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-marquee-track,
+  .vn-marquee-section .vn-marquee-track {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Merchant "Enable animations" toggle (Layout global) — static ticker. */
+.vn-marquee-section[data-animate="false"] .vn-marquee-track {
+  animation: none;
+  transform: none;
+}
+
+/* ─── Mobile drawer ─── */
+
+.vn-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.vn-drawer-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 5, 0);
+  transition: background-color 280ms ease;
+  pointer-events: none;
+}
+
+.vn-drawer.is-open .vn-drawer-overlay {
+  background: rgba(5, 5, 5, 0.45);
+  pointer-events: auto;
+}
+
+.vn-drawer-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  inset-inline-start: 0;
+  width: min(86vw, 360px);
+  background: var(--skeu-page-bg);
+  color: var(--vn-ink);
+  transform: translateX(-100%);
+  transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+[dir="rtl"] .vn-drawer-panel {
+  transform: translateX(100%);
+}
+
+.vn-drawer.is-open .vn-drawer-panel {
+  transform: translateX(0);
+}
+
+.vn-drawer-item {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 280ms ease, transform 280ms ease;
+}
+
+.vn-drawer.is-open .vn-drawer-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Mobile bottom dock ─── */
+
+.vn-dock {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--vn-surface-dark);
+  color: var(--vn-white);
+  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  transform: translateY(100%);
+  transition: transform 320ms ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.vn-dock.is-revealed {
+  transform: translateY(0);
+}
+
+.vn-dock-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--vn-white);
+  border: none;
   cursor: pointer;
   position: relative;
 }
 
-[data-skeuomorphic-v3-app] .vn-btn-filled {
-  background: var(--skeu-btn-gradient);
-  border: 1px solid color-mix(in srgb, hsl(var(--primary)), black 25%);
-  border-bottom: 3px solid color-mix(in srgb, hsl(var(--primary)), black 35%);
-  box-shadow:
-    0 1px 3px hsl(var(--primary) / 0.3),
-    0 1px 0 hsl(0 0% 100% / 0.3) inset;
-  color: white;
-  text-shadow: 0 1px 2px hsl(var(--primary) / 0.4);
-}
-[data-skeuomorphic-v3-app] .vn-btn-filled:hover {
-  background: var(--skeu-btn-gradient-hover);
-}
-[data-skeuomorphic-v3-app] .vn-btn-filled:active {
-  border-bottom-width: 1px;
-  transform: translateY(2px);
-}
-
-[data-skeuomorphic-v3-app] .vn-btn-outline-dark {
-  background: var(--skeu-surface);
-  border: 1px solid hsl(var(--border));
-  border-bottom: 3px solid color-mix(in srgb, hsl(var(--border)), hsl(var(--foreground)) 15%);
-  box-shadow:
-    0 1px 3px hsl(var(--foreground) / 0.15),
-    0 1px 0 hsl(0 0% 100% / 0.5) inset;
-  color: hsl(var(--foreground));
+.vn-dock-btn .vn-dock-badge {
+  position: absolute;
+  top: 2px;
+  inset-inline-end: calc(50% - 18px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--vn-accent);
+  color: var(--vn-ink);
+  font-size: 9px;
   font-weight: 700;
-}
-[data-skeuomorphic-v3-app] .vn-btn-outline-dark:hover {
-  background: var(--skeu-surface-dark);
-}
-[data-skeuomorphic-v3-app] .vn-btn-outline-dark:active {
-  border-bottom-width: 1px;
-  transform: translateY(2px);
-  box-shadow: var(--skeu-shadow-pressed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ─── Product card hover (related rail + PLP) ─── */
+@media (min-width: 768px) {
+  .vn-dock {
+    display: none;
+  }
+}
 
-[data-skeuomorphic-v3-app] .vn-product-card .vn-product-image {
-  transition: transform 500ms ease, opacity 280ms ease;
+/* Reserve room for the fixed bottom dock on mobile. */
+[data-skeuomorphic-v3-app] [data-testid="storefront-layout"] main {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
 }
-[data-skeuomorphic-v3-app] .vn-product-card:hover .vn-product-image {
-  transform: scale(1.04);
+
+@media (min-width: 768px) {
+  [data-skeuomorphic-v3-app] [data-testid="storefront-layout"] main {
+    padding-bottom: 0;
+  }
 }
-[data-skeuomorphic-v3-app] .vn-product-card .vn-product-image-secondary {
+
+/* ─── Product card hover ─── */
+
+.vn-product-card .vn-product-image {
+  transition: transform 600ms ease, opacity 280ms ease;
+}
+
+.vn-product-card:hover .vn-product-image {
+  transform: scale(1.05);
+}
+
+.vn-product-card .vn-product-image-secondary {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -413,29 +765,320 @@
   opacity: 0;
   transition: opacity 320ms ease;
 }
-[data-skeuomorphic-v3-app] .vn-product-card:hover .vn-product-image-secondary {
+
+.vn-product-card:hover .vn-product-image-secondary {
   opacity: 1;
+}
+
+.vn-product-card .vn-quick-view {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--vn-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0);
+  transition: transform 220ms ease, background-color 200ms ease;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.vn-product-card:hover .vn-quick-view {
+  transform: scale(1);
+}
+
+.vn-product-card .vn-quick-view:hover {
+  background: var(--vn-ink);
+  color: var(--vn-white);
+}
+
+.vn-product-card .vn-add-cta {
+  position: absolute;
+  inset-inline: 12px;
+  bottom: 12px;
+  transform: translateY(120%);
+  transition: transform 280ms ease;
+}
+
+.vn-product-card:hover .vn-add-cta {
+  transform: translateY(0);
+}
+
+/* ─── Reveal-on-scroll helper ─── */
+
+.vn-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+.vn-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vn-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 /* ─── Shimmer (lazy media placeholder) ─── */
 
-[data-skeuomorphic-v3-app] .vn-shimmer {
-  background: linear-gradient(90deg, hsl(35 15% 85%) 0%, hsl(35 25% 92%) 40%, hsl(35 15% 85%) 80%);
+.vn-shimmer {
+  background: linear-gradient(90deg, #e2e5dc 0%, #eceee7 40%, #e2e5dc 80%);
   background-size: 200% 100%;
-  animation: skeu-shimmer 1400ms ease-in-out infinite;
+  animation: vn-shimmer 1400ms ease-in-out infinite;
 }
 
-@keyframes skeu-shimmer {
+@keyframes vn-shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .vn-shimmer { animation: none; }
+}
+
+/* ─── Footer — ink "back page" ─── */
+
+.vn-footer {
+  background: var(--vn-surface-dark);
+  color: hsl(90 10% 88%);
+}
+
+.vn-footer a {
+  color: hsl(90 8% 72%);
+  transition: color 200ms ease;
+}
+
+.vn-footer a:hover {
+  color: #ffffff;
+}
+
 /* ─── Misc helpers ─── */
 
-[data-skeuomorphic-v3-app] .scrollbar-hide::-webkit-scrollbar {
+.vn-divider {
+  height: 1px;
+  width: 100%;
+  background: var(--vn-border);
+}
+
+.vn-band {
+  background: var(--vn-band);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-[data-skeuomorphic-v3-app] .scrollbar-hide {
+.scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
+}
+
+/* ─── Prose (CMS pages / policies) ─── */
+
+.vn-prose h1,
+.vn-prose h2,
+.vn-prose h3,
+.vn-prose h4 {
+  font-family: var(--heading-font), "Manrope", "Noto Sans Arabic", sans-serif;
+  color: var(--vn-ink);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+.vn-prose h1 { font-size: 1.75rem; }
+.vn-prose h2 { font-size: 1.35rem; }
+.vn-prose h3 { font-size: 1.15rem; }
+.vn-prose h4 { font-size: 1rem; }
+.vn-prose p {
+  margin-bottom: 1em;
+  color: var(--vn-ink);
+}
+.vn-prose a {
+  color: var(--vn-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: opacity 200ms ease;
+}
+.vn-prose a:hover {
+  opacity: 0.7;
+}
+.vn-prose ul,
+.vn-prose ol {
+  padding-inline-start: 1.25rem;
+  margin-bottom: 1em;
+}
+.vn-prose li {
+  margin-bottom: 0.35em;
+}
+.vn-prose ul li {
+  list-style: disc;
+}
+.vn-prose ol li {
+  list-style: decimal;
+}
+.vn-prose strong {
+  font-weight: 700;
+}
+.vn-prose blockquote {
+  border-inline-start: 2px solid var(--vn-ink);
+  padding-inline-start: 1rem;
+  color: var(--vn-muted);
+  margin: 1em 0;
+}
+.vn-prose hr {
+  border: none;
+  border-top: 1px solid var(--vn-border);
+  margin: 2em 0;
+}
+
+/* ── Sheet / drawer entrance animations (mini-cart, added-to-bag) ──────────
+   Mobile: bottom sheet; md+: slides in from the inline end (RTL-aware).
+   Items cascade with a tiny stagger. Honors reduced motion. */
+@keyframes vn-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes vn-sheet-up {
+  from { transform: translateY(100%); }
+  to   { transform: none; }
+}
+@keyframes vn-sheet-end {
+  from { transform: translateX(100%); }
+  to   { transform: none; }
+}
+@keyframes vn-sheet-end-rtl {
+  from { transform: translateX(-100%); }
+  to   { transform: none; }
+}
+@keyframes vn-item-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+.vn-sheet-backdrop {
+  animation: vn-fade-in 0.25s ease-out both;
+}
+.vn-sheet-panel {
+  animation: vn-sheet-up 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform;
+}
+@media (min-width: 768px) {
+  .vn-sheet-panel { animation-name: vn-sheet-end; }
+  [dir="rtl"] .vn-sheet-panel { animation-name: vn-sheet-end-rtl; }
+}
+.vn-sheet-panel .vn-sheet-item {
+  animation: vn-item-in 0.3s ease-out both;
+}
+.vn-sheet-panel .vn-sheet-item:nth-child(2) { animation-delay: 0.05s; }
+.vn-sheet-panel .vn-sheet-item:nth-child(3) { animation-delay: 0.1s; }
+.vn-sheet-panel .vn-sheet-item:nth-child(4) { animation-delay: 0.15s; }
+.vn-sheet-panel .vn-sheet-item:nth-child(n + 5) { animation-delay: 0.2s; }
+@media (prefers-reduced-motion: reduce) {
+  .vn-sheet-backdrop,
+  .vn-sheet-panel,
+  .vn-sheet-panel .vn-sheet-item {
+    animation: none;
+  }
+}
+
+/* ─── Lookbook (editorial spread) ─── */
+
+.skeu-lookbook-figure {
+  position: relative;
+  overflow: hidden;
+}
+.skeu-lookbook-figure img {
+  transition: transform 700ms ease;
+}
+.skeu-lookbook-figure:hover img {
+  transform: scale(1.04);
+}
+/* Curtain reveal: a paper panel wipes away as the figure scrolls into view. */
+.skeu-curtain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--skeu-page-bg);
+  transform-origin: top;
+  transition: transform 900ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.skeu-curtain.is-visible::after {
+  transform: scaleY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeu-curtain::after {
+    display: none;
+  }
+}
+.skeu-lookbook-caption {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--vn-muted);
+}
+
+/* ━━━ Inline-editor affordances ━━━
+ * The customizer wraps editable text in <InlineEditable> (class prefix
+ * `skeu-inline-edit`). Dashed green frame + gold pencil glyph on hover INSIDE
+ * the editor iframe only (`--armed` gates on isInsideEditor). Live shoppers
+ * never see them. */
+.skeu-inline-edit {
+  position: relative;
+  display: inline;
+}
+.skeu-inline-edit--armed {
+  cursor: text;
+  border-radius: 2px;
+  transition: outline-color 160ms ease, background-color 160ms ease;
+  outline: 1px dashed transparent;
+  outline-offset: 3px;
+}
+.skeu-inline-edit--armed:hover {
+  outline-color: var(--skeu-primary);
+  background-color: rgba(47, 111, 82, 0.08);
+}
+.skeu-inline-edit--armed::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 14px;
+  height: 14px;
+  background-color: var(--skeu-primary);
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 9px 9px;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 160ms ease, transform 160ms ease;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+.skeu-inline-edit--armed:hover::after,
+.skeu-inline-edit--editing::after {
+  opacity: 1;
+  transform: scale(1);
+}
+.skeu-inline-edit--editing {
+  outline-color: hsl(var(--foreground)) !important;
+  outline-style: solid;
+  outline-width: 1px;
+  background-color: rgba(0, 0, 0, 0.03);
+  cursor: text;
+}
+.skeu-inline-edit--editing[contenteditable="true"] {
+  caret-color: hsl(var(--foreground));
 }

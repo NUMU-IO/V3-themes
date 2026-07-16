@@ -1,38 +1,63 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
+import { QuickAddButton } from "./_quick-add";
+import { PricePair } from "./_price";
+import { InlineEditable } from "./_inline-editable";
 
 /**
- * Skeuomorphic products-listing (PLP) section.
+ * Warsha products-listing (PLP) section.
  *
- * Ported from the proven Vionne V3 PLP (breadcrumb, page title, search,
- * category tab strip, toolbar with count + sort + grid/list toggle, animated
- * grid, empty state), re-skinned to the skeuomorphic look via the `vn-*`
- * utility classes that theme.css re-maps + an inline framed product card.
+ * Faithful port of the V2 Warsha products page look re-plumbed on the V3 SDK.
+ *
+ * V2 sources mirrored:
+ *  - themes/sections/products-page/ProductsPageSection.tsx (settings →
+ *    columns_desktop / columns_mobile / show_view_toggle mapping)
+ *  - components/store/shared/BaseProductsPage.tsx (markup: breadcrumb, page
+ *    title, underlined search, scrollable category tab strip, toolbar with
+ *    product count + sort <select> + grid/list view toggle, animated grid,
+ *    empty state)
+ *  - components/store/manshet/WarshaProductCard.tsx (inline card markup:
+ *    vn-product-card / vn-product-image / vn-product-image-secondary + sale
+ *    badge classes)
  *
  * Data: `useProducts()` returns the SSR-prefetched catalog (the host passes
  * `page.data.products` on the products route). Category chips are derived
- * client-side from `product.category`; search, sort and the grid/list toggle
- * are all client-side, matching V2.
+ * client-side from `product.category` (the SDK product carries a category
+ * string but there's no separate categories hook on the listing route); search,
+ * sort and the grid/list toggle are all client-side, matching V2.
+ *
+ * Empty-safe: zero products → the V2-style empty state (hairline + message),
+ * never a blank page; a still-loading list shows shimmer placeholders.
  */
-export default function SkeuProductsPage({ instance }: SectionRenderProps) {
-  const s = instance.settings ?? {};
+export default function WarshaProductsPage({ instance, sectionId }: SectionRenderProps) {
+  const locale = useLocale();
+  const { t } = useTranslation();
+  const s = useResolvedSettings(instance);
 
   const colsDesktop = asNumber(s.columns_desktop, 4);
   const colsMobile = asNumber(s.columns_mobile, 2);
   const showViewToggle = s.show_view_toggle ?? true;
+  const showSubtitle = s.show_category_subtitle !== false;
+  const pageTitle = asString(s.title) || localized(locale, "All products", "كل المنتجات");
+  const subtitle = asString(s.subtitle);
+  const emptyHeading = asString(s.empty_heading) || localized(locale, "No results", "لا توجد نتائج");
+  const emptyText =
+    asString(s.empty_text) ||
+    localized(locale, "Try adjusting your search or filter", "جرّبي تعدّلي البحث أو الفلتر");
 
   const { products, loading } = useProducts();
-  const locale = useLocale();
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | null>(null);
   const [sort, setSort] = useState("default");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
+  // Derive the category chips from the catalog (V2 read them from a categories
+  // endpoint; on the V3 listing route we infer them from product.category).
   const categories = useMemo(() => {
     const seen = new Set<string>();
     for (const p of products) {
@@ -53,7 +78,7 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
         (p) =>
           p.name.toLowerCase().includes(q) ||
           (p.description ?? "").toLowerCase().includes(q) ||
-          (p.tags ?? []).some((t) => t.toLowerCase().includes(q)),
+          (p.tags ?? []).some((tag: string) => tag.toLowerCase().includes(q)),
       );
     }
 
@@ -86,34 +111,44 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
             {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
-          <span className="text-[var(--vn-ink)]">{category ?? localized(locale, "Store", "المتجر")}</span>
+          <span className="text-[var(--vn-ink)]">{category ?? localized(locale, "Shop", "المتجر")}</span>
         </div>
 
-        {/* Title */}
+        {/* Subtitle / eyebrow (toggle via show_category_subtitle) */}
+        {showSubtitle && subtitle && (
+          <span className="vn-eyebrow block mb-2">
+            <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} />
+          </span>
+        )}
+        {/* Title — the collection name when filtered, else the editable page title */}
         <h1 className="vn-heading text-2xl md:text-4xl text-[var(--vn-ink)] mb-8">
-          {category ?? localized(locale, "All products", "كل المنتجات")}
+          {category ? (
+            category
+          ) : (
+            <InlineEditable sectionId={sectionId} settingKey="title" value={pageTitle} />
+          )}
         </h1>
 
         {/* Search */}
-        <div className="relative mb-6 max-w-md">
+        <div className="relative h-10 mb-6 max-w-md">
           <Search
             size={16}
-            className="absolute start-3 top-1/2 -translate-y-1/2 text-[var(--vn-muted)] z-[1]"
+            className="absolute start-0 inset-y-0 my-auto text-[var(--vn-muted)]"
           />
           <input
             type="text"
-            placeholder={localized(locale, "Search products", "ابحث عن منتجات")}
+            placeholder={localized(locale, "Search products", "ابحثي عن منتج")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-11 ps-9 pe-9 text-sm rounded-xl skeu-inset focus:outline-none focus:ring-2 focus:ring-ring transition-colors"
+            className="w-full h-10 ps-7 pe-7 text-sm bg-transparent border-b border-[var(--vn-border)] focus:border-[var(--vn-ink)] focus:outline-none transition-colors placeholder:text-[var(--vn-muted)]"
             data-testid="storefront-products-search"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch("")}
-              aria-label={localized(locale, "Clear search", "مسح البحث")}
-              className="absolute end-3 top-1/2 -translate-y-1/2 text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors z-[1]"
+              aria-label="Clear search"
+              className="absolute end-0 inset-y-0 my-auto text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors"
             >
               <X size={14} />
             </button>
@@ -123,15 +158,17 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
         {/* Category tabs */}
         {categories.length > 0 && (
           <div
-            className="flex gap-2 overflow-x-auto pb-1 mb-6 scrollbar-hide"
+            className="flex gap-6 overflow-x-auto pb-0 mb-6 border-b border-[var(--vn-border)]"
             data-testid="storefront-products-categories"
           >
             <button
               type="button"
               onClick={() => setCategory(null)}
               className={
-                "skeu-chip rounded-lg px-4 py-2 text-sm whitespace-nowrap font-bold transition-all " +
-                (!category ? "skeu-chip-active" : "text-foreground")
+                "pb-2 text-sm whitespace-nowrap transition-colors " +
+                (!category
+                  ? "text-[var(--vn-ink)] border-b-2 border-[var(--vn-ink)] font-medium"
+                  : "text-[var(--vn-muted)] hover:text-[var(--vn-ink)]")
               }
               data-testid="storefront-products-category"
               data-category-id="all"
@@ -144,8 +181,10 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
                 type="button"
                 onClick={() => setCategory(cat)}
                 className={
-                  "skeu-chip rounded-lg px-4 py-2 text-sm whitespace-nowrap font-bold transition-all " +
-                  (category === cat ? "skeu-chip-active" : "text-foreground")
+                  "pb-2 text-sm whitespace-nowrap transition-colors " +
+                  (category === cat
+                    ? "text-[var(--vn-ink)] border-b-2 border-[var(--vn-ink)] font-medium"
+                    : "text-[var(--vn-muted)] hover:text-[var(--vn-ink)]")
                 }
                 data-testid="storefront-products-category"
                 data-category-id={cat}
@@ -168,13 +207,13 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              aria-label={localized(locale, "Sort products", "ترتيب المنتجات")}
-              className="text-xs px-3 py-2 rounded-lg skeu-inset focus:outline-none focus:ring-2 focus:ring-ring transition-colors cursor-pointer"
+              aria-label="Sort products"
+              className="text-xs px-2 py-1.5 bg-transparent border-b border-[var(--vn-border)] focus:border-[var(--vn-ink)] focus:outline-none transition-colors cursor-pointer"
               data-testid="storefront-products-sort"
             >
               <option value="default">{localized(locale, "Sort by", "ترتيب حسب")}</option>
-              <option value="price-asc">{localized(locale, "Price: low to high", "السعر: الأقل")}</option>
-              <option value="price-desc">{localized(locale, "Price: high to low", "السعر: الأعلى")}</option>
+              <option value="price-asc">{localized(locale, "Price: Low", "السعر: من الأقل")}</option>
+              <option value="price-desc">{localized(locale, "Price: High", "السعر: من الأعلى")}</option>
               <option value="name">{localized(locale, "Name", "الاسم")}</option>
             </select>
             {showViewToggle && (
@@ -182,10 +221,12 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
                 <button
                   type="button"
                   onClick={() => setViewMode("grid")}
-                  aria-label={localized(locale, "Grid view", "عرض شبكي")}
+                  aria-label="Grid view"
                   className={
-                    "p-2 rounded-lg skeu-chip transition-all " +
-                    (viewMode === "grid" ? "skeu-chip-active" : "text-foreground")
+                    "p-1.5 transition-colors " +
+                    (viewMode === "grid"
+                      ? "text-[var(--vn-ink)]"
+                      : "text-[var(--vn-muted)] hover:text-[var(--vn-ink)]")
                   }
                 >
                   <Grid3X3 size={15} />
@@ -193,10 +234,12 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
                 <button
                   type="button"
                   onClick={() => setViewMode("list")}
-                  aria-label={localized(locale, "List view", "عرض قائمة")}
+                  aria-label="List view"
                   className={
-                    "p-2 rounded-lg skeu-chip transition-all " +
-                    (viewMode === "list" ? "skeu-chip-active" : "text-foreground")
+                    "p-1.5 transition-colors " +
+                    (viewMode === "list"
+                      ? "text-[var(--vn-ink)]"
+                      : "text-[var(--vn-muted)] hover:text-[var(--vn-ink)]")
                   }
                 >
                   <LayoutList size={15} />
@@ -216,15 +259,17 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
             }}
           >
             {Array.from({ length: colsDesktop * 2 }).map((_, i) => (
-              <div key={i} className="aspect-[3/4] vn-shimmer rounded-xl" />
+              <div key={i} className="aspect-[3/4] vn-shimmer rounded" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <div className="w-12 h-px bg-[var(--vn-border)] mx-auto mb-6" />
-            <p className="text-sm text-[var(--vn-muted)] mb-1">{localized(locale, "No results", "لا توجد نتائج")}</p>
+            <p className="text-sm text-[var(--vn-muted)] mb-1">
+              <InlineEditable sectionId={sectionId} settingKey="empty_heading" value={emptyHeading} />
+            </p>
             <p className="text-xs text-[var(--vn-muted)]">
-              {localized(locale, "Try adjusting your search or filter", "جرّب تعديل البحث أو الفلتر")}
+              <InlineEditable sectionId={sectionId} settingKey="empty_text" value={emptyText} />
             </p>
           </div>
         ) : (
@@ -263,27 +308,24 @@ export default function SkeuProductsPage({ instance }: SectionRenderProps) {
   );
 }
 
-/** Product + optional merchant-assigned label (first-class `label`, bilingual). */
-type ProductExtras = Product & {
-  label?: { key?: string; text_en?: string; text_ar?: string } | null;
-};
-
-/** Inline skeuomorphic product card (framed image + tactile info block). */
+/** Inline Warsha product card — mirrors WarshaProductCard's markup/classes. */
 function ProductCard({ product, list }: { product: Product; list?: boolean }) {
   const locale = useLocale();
-  const p = product as ProductExtras;
+  const { t } = useTranslation();
+  // ENG-1: listing price MUST match the PDP's default-variant precedence
+  // (variants[0].price ?? price) so the grid never shows base-vs-variant
+  // divergence. Keep in lockstep with skeu-product-detail-section.
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
   const outOfStock = product.in_stock === false;
-  const primary = product.images?.[0]?.url;
-  // Merchant label wins the top-start tag-badge slot; the "Sale" badge is untouched.
-  const merchantLabel =
-    p.label && p.label.key
-      ? ((locale || "").toLowerCase().startsWith("ar")
-          ? p.label.text_ar || p.label.text_en
-          : p.label.text_en) || ""
-      : "";
+  const primary = productImage(product);
+  const secondary = product.images?.[1]?.url;
+  // Merchant label wins the top-start pill over tags[0]. Sale + label
+  // coexist in one stacked column (sale on top — it was the dominant badge
+  // in the original overlapping layout) so a discounted+labeled product
+  // shows both instead of the sale pill painting over the label.
+  const merchantLabel = merchantLabelText(product, locale);
 
   return (
     <Link
@@ -296,7 +338,7 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
     >
       <div
         className={
-          "relative overflow-hidden skeu-img-frame rounded-xl aspect-[3/4] " +
+          "relative overflow-hidden bg-[var(--vn-band)] aspect-[3/4] " +
           (list ? "sm:w-40 sm:shrink-0" : "")
         }
       >
@@ -310,43 +352,51 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         ) : (
           <div className="absolute inset-0 vn-shimmer" />
         )}
+        {secondary && (
+          <img
+            src={secondary}
+            alt=""
+            className="vn-product-image-secondary"
+            loading="lazy"
+          />
+        )}
 
-        {merchantLabel && !outOfStock ? (
-          <span className="absolute top-2 start-2 skeu-chip px-2.5 py-1 rounded-lg text-[10px] font-bold text-foreground">
-            {merchantLabel}
-          </span>
-        ) : product.tags?.[0] && !outOfStock ? (
-          <span className="absolute top-2 start-2 skeu-chip px-2.5 py-1 rounded-lg text-[10px] font-bold text-foreground">
-            {product.tags[0]}
-          </span>
-        ) : null}
-        {hasDiscount && !outOfStock && (
-          <span className="absolute top-2 start-2 skeu-badge px-2.5 py-1 rounded-lg text-[10px] font-bold">
-            {localized(locale, "Sale", "خصم")}
-          </span>
+        {/* A8 — one-tap quick-add (single-variant products only). */}
+        <QuickAddButton product={product} locale={locale} />
+
+        {!outOfStock && (hasDiscount || merchantLabel || product.tags?.[0]) && (
+          <div className="absolute top-3 start-3 flex flex-col items-start gap-1.5">
+            {hasDiscount && (
+              <span className="vn-label px-2.5 py-1 bg-[var(--vn-sale)] text-white rounded-full text-[10px]">
+                {t("common.sale", localized(locale, "Sale", "تخفيض"))}
+              </span>
+            )}
+            {merchantLabel ? (
+              <span className="vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+                {merchantLabel}
+              </span>
+            ) : product.tags?.[0] ? (
+              <span className="vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+                {product.tags[0]}
+              </span>
+            ) : null}
+          </div>
         )}
         {outOfStock && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <span className="skeu-chip text-foreground text-[11px] px-3 py-1.5 rounded-lg font-bold">
-              {localized(locale, "Sold out", "نفذت الكمية")}
+          <div className="absolute inset-0 bg-white/65 flex items-center justify-center">
+            <span className="vn-label text-[var(--vn-ink)] text-[11px] bg-white px-3 py-1.5 rounded-full border border-[var(--vn-border)]">
+              {t("common.sold_out", localized(locale, "Sold out", "خلص المخزون"))}
             </span>
           </div>
         )}
       </div>
 
       <div className={list ? "mt-3 sm:mt-0 flex-1" : "mt-3 px-1"}>
-        <h3 className="text-sm font-bold text-[var(--vn-ink)] line-clamp-1">
+        <h3 className="text-sm font-medium text-[var(--vn-ink)] line-clamp-1">
           {product.name}
         </h3>
-        <div className="flex items-baseline gap-2 mt-1">
-          <span className="text-sm font-bold text-primary">
-            <Money amount={price} currency={product.currency} />
-          </span>
-          {hasDiscount && (
-            <span className="text-xs text-[var(--vn-muted)] line-through">
-              <Money amount={compareAt} currency={product.currency} />
-            </span>
-          )}
+        <div className="mt-1">
+          <PricePair price={price} compareAt={compareAt} currency={product.currency} size="sm" />
         </div>
       </div>
     </Link>

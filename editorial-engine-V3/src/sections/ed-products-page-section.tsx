@@ -130,10 +130,10 @@ export default function ManshetProductsPage({ instance, sectionId }: SectionRend
         </h1>
 
         {/* Search */}
-        <div className="relative mb-6 max-w-md">
+        <div className="relative h-10 mb-6 max-w-md">
           <Search
             size={16}
-            className="absolute start-0 top-1/2 -translate-y-1/2 text-[var(--vn-muted)]"
+            className="absolute start-0 inset-y-0 my-auto text-[var(--vn-muted)]"
           />
           <input
             type="text"
@@ -148,7 +148,7 @@ export default function ManshetProductsPage({ instance, sectionId }: SectionRend
               type="button"
               onClick={() => setSearch("")}
               aria-label="Clear search"
-              className="absolute end-0 top-1/2 -translate-y-1/2 text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors"
+              className="absolute end-0 inset-y-0 my-auto text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors"
             >
               <X size={14} />
             </button>

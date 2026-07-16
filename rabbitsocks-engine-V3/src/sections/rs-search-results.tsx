@@ -70,10 +70,10 @@ export default function MashkalSearchResults({ instance, sectionId }: SectionRen
         </h1>
 
         {/* Underlined search field — Mashkal signature */}
-        <div className="relative mb-10 max-w-md mx-auto">
+        <div className="relative h-10 mb-10 max-w-md mx-auto">
           <Search
             size={16}
-            className="absolute start-0 top-1/2 -translate-y-1/2 text-[var(--vn-muted)]"
+            className="absolute start-0 inset-y-0 my-auto text-[var(--vn-muted)]"
           />
           <input
             type="search"
@@ -88,7 +88,7 @@ export default function MashkalSearchResults({ instance, sectionId }: SectionRen
               type="button"
               onClick={() => setSearch("")}
               aria-label="Clear search"
-              className="absolute end-0 top-1/2 -translate-y-1/2 text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors"
+              className="absolute end-0 inset-y-0 my-auto text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors"
             >
               <X size={14} />
             </button>
