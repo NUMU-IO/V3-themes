@@ -1,0 +1,165 @@
+{
+  "type": "skeu-process",
+  "name": "How It's Made",
+  "name_ar": "رحلة الصنعة",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro",
+      "label_ar": "المقدمة",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Step 1"
+    },
+    {
+      "type": "text",
+      "id": "step_1_title",
+      "label": "Step 1 title",
+      "label_ar": "عنوان الخطوة 1",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "step_1_text",
+      "label": "Step 1 text",
+      "label_ar": "نص الخطوة 1",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "step_1_image",
+      "label": "Step 1 photo",
+      "label_ar": "صورة الخطوة 1",
+      "aspect_ratio": "7/5",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Step 2"
+    },
+    {
+      "type": "text",
+      "id": "step_2_title",
+      "label": "Step 2 title",
+      "label_ar": "عنوان الخطوة 2",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "step_2_text",
+      "label": "Step 2 text",
+      "label_ar": "نص الخطوة 2",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "step_2_image",
+      "label": "Step 2 photo",
+      "label_ar": "صورة الخطوة 2",
+      "aspect_ratio": "7/5",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Step 3"
+    },
+    {
+      "type": "text",
+      "id": "step_3_title",
+      "label": "Step 3 title",
+      "label_ar": "عنوان الخطوة 3",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "step_3_text",
+      "label": "Step 3 text",
+      "label_ar": "نص الخطوة 3",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "step_3_image",
+      "label": "Step 3 photo",
+      "label_ar": "صورة الخطوة 3",
+      "aspect_ratio": "7/5",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Step 4"
+    },
+    {
+      "type": "text",
+      "id": "step_4_title",
+      "label": "Step 4 title",
+      "label_ar": "عنوان الخطوة 4",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "step_4_text",
+      "label": "Step 4 text",
+      "label_ar": "نص الخطوة 4",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "step_4_image",
+      "label": "Step 4 photo",
+      "label_ar": "صورة الخطوة 4",
+      "aspect_ratio": "7/5",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Step 5"
+    },
+    {
+      "type": "text",
+      "id": "step_5_title",
+      "label": "Step 5 title",
+      "label_ar": "عنوان الخطوة 5",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "step_5_text",
+      "label": "Step 5 text",
+      "label_ar": "نص الخطوة 5",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "step_5_image",
+      "label": "Step 5 photo",
+      "label_ar": "صورة الخطوة 5",
+      "aspect_ratio": "7/5",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "How It's Made",
+      "locales": {
+        "en": {
+          "name": "How It's Made"
+        },
+        "ar": {
+          "name": "رحلة الصنعة"
+        }
+      },
+      "settings": {}
+    }
+  ]
+}

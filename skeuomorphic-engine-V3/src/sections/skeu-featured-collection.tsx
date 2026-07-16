@@ -1,164 +1,144 @@
 "use client";
-import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
-import { ArrowLeft } from "lucide-react";
-import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
+import { Link, Money, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
+import { ArrowRight } from "lucide-react";
+import { asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
+import { InlineEditable } from "./_inline-editable";
+import { QuickAddButton } from "./_quick-add";
+import { PricePair } from "./_price";
+import { Rise, RuleDraw, useMotionOn } from "./_motion";
 
-const HEADING_SHADOW = "0 1px 0 hsl(35 30% 100% / 0.6)";
-
-const SkeuFeaturedCollection = ({ instance }: SectionRenderProps) => {
-  const { products, loading: isLoading } = useProducts();
-  const s = instance.settings ?? {};
+const WarshaFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) => {
+  const { products } = useProducts();
   const locale = useLocale();
-  const title = asString(s.title) || localized(locale, "New arrivals ✨", "وصل حديثاً ✨");
+  const on = useMotionOn();
+  const isLoading = false;
+  const s = useResolvedSettings(instance);
+  const tag = asString(s.collection_tag) || "new";
+  // Default title follows the collection tag so two instances on one page
+  // (new + bestseller) don't both read "New Arrivals".
+  const defaultTitle = /best/i.test(tag)
+    ? localized(locale, "Best Sellers", "الأكثر مبيعًا")
+    : localized(locale, "New Arrivals", "وصل حديثًا");
+  const title = asString(s.title) || defaultTitle;
   const subtitle = asString(s.subtitle);
-  const viewAllLink = asString(s.view_all_link) || "/products";
-  const count = asNumber(s.product_count, 4);
-  const cols = asNumber(s.columns, 4);
   const viewAllText = asString(s.view_all_text) || localized(locale, "View all", "عرض الكل");
-
-  // Optional manual product selection, else the SSR-prefetched catalog.
+  const viewAllLink = asString(s.view_all_link) || "/products";
+  const count = Number(s.product_count ?? 8);
+  const cols = Number(s.columns ?? 4);
   const manualIds = Array.isArray(s.product_ids)
     ? (s.product_ids as unknown[]).filter((x): x is string => typeof x === "string" && x.length > 0)
     : [];
+
+  const tagged = products;
+  const autoProducts = tagged.length > 0 ? tagged : products;
+
   const collectionProducts = manualIds.length > 0
     ? manualIds
         .map((id) => products.find((p) => p.id === id || p.slug === id))
         .filter((p): p is NonNullable<typeof p> => !!p)
-    : products;
+    : autoProducts;
 
   const displayProducts = collectionProducts.slice(0, count);
 
-  // Hide entire section if no products
   if (!isLoading && displayProducts.length === 0) return null;
 
   const cssVars = {
     "--cols-mobile": 2,
+    "--cols-tablet": Math.min(3, cols),
     "--cols-desktop": cols,
   } as React.CSSProperties;
 
   const gridClassName =
-    "grid gap-3 md:gap-4 grid-cols-[repeat(var(--cols-mobile),minmax(0,1fr))] md:grid-cols-[repeat(var(--cols-desktop),minmax(0,1fr))]";
+    "grid gap-4 md:gap-5 grid-cols-[repeat(var(--cols-mobile),minmax(0,1fr))] sm:grid-cols-[repeat(var(--cols-tablet),minmax(0,1fr))] md:grid-cols-[repeat(var(--cols-desktop),minmax(0,1fr))]";
 
   return (
-    <section className="py-6">
+    <section className="py-10 md:py-14 bg-background">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-5">
-          <div>
-            <h2
-              className="text-xl font-bold"
-              style={{ textShadow: HEADING_SHADOW }}
-            >
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="text-sm text-muted-foreground mt-0.5">
-                {subtitle}
-              </p>
-            )}
-          </div>
-          <Link
-            to={viewAllLink}
-            className="text-sm font-bold flex items-center gap-1 skeu-chip px-4 py-2 rounded-lg text-primary"
-          >
-            {viewAllText} <ArrowLeft size={14} />
-          </Link>
+        <div className="mb-6 md:mb-8">
+          {/* Section header rules itself in like a newspaper department head. */}
+          <RuleDraw on={on} className="skeu-rule-double mb-4">
+            <span aria-hidden="true" />
+          </RuleDraw>
+          {subtitle && (
+            <span className="vn-eyebrow block mb-1.5">
+              <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} />
+            </span>
+          )}
+          <h2 className="vn-heading text-2xl md:text-3xl">
+            <InlineEditable sectionId={sectionId} settingKey="title" value={title} />
+          </h2>
         </div>
 
         {isLoading ? (
           <div className={gridClassName} style={cssVars}>
             {Array.from({ length: cols }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-2xl bg-muted aspect-[3/4] animate-pulse"
-              />
+              <div key={i} className="aspect-[3/4] vn-shimmer rounded" />
             ))}
           </div>
         ) : (
           <div className={gridClassName} style={cssVars}>
-            {displayProducts.map((product) => (
-              <SkeuProductCard key={product.id} product={product} />
+            {displayProducts.map((product, i) => (
+              <Rise key={product.id} on={on} inView delay={Math.min(i % cols, 5) * 0.07} y={22}>
+              <Link
+                to={`/product/${product.slug || product.id}`}
+                className="vn-product-card group block"
+                data-testid="storefront-product-card"
+              >
+                {/* Image */}
+                <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-3 group-hover:scale-[1.02] transition-transform duration-500">
+                  {productImage(product) ? (
+                    <img
+                      src={productImage(product)}
+                      alt={product.name}
+                      className="vn-product-image w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 vn-shimmer" />
+                  )}
+                  {/* A8 — one-tap quick-add (single-variant products only). */}
+                  <QuickAddButton product={product} locale={locale} />
+                  {/* Merchant label — same pill as the PLP card's top-start slot. */}
+                  {merchantLabelText(product, locale) && (
+                    <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
+                      {merchantLabelText(product, locale)}
+                    </span>
+                  )}
+                </div>
+
+                {/* Info */}
+                <div className="space-y-1">
+                  <h3 className="text-[13px] font-medium text-foreground/90 line-clamp-1 group-hover:text-foreground transition-colors">
+                    {product.name}
+                  </h3>
+
+                  <div className="pt-0.5">
+                    <PricePair
+                      price={product.variants?.[0]?.price ?? product.price ?? 0}
+                      compareAt={product.variants?.[0]?.compare_at_price ?? product.compare_at_price}
+                      currency={product.currency}
+                      size="sm"
+                    />
+                  </div>
+                </div>
+              </Link>
+              </Rise>
             ))}
           </div>
         )}
+
+        {/* VIEW ALL sits AFTER the products (B1): the natural reading order is
+            see the items → want more → view all. A top-right link before the
+            grid asked for a click before the customer had a reason to give it. */}
+        <div className="mt-8 md:mt-10 text-center">
+          <Link to={viewAllLink} className="vn-btn vn-btn-outline-dark">
+            <InlineEditable sectionId={sectionId} settingKey="view_all_text" value={viewAllText} />
+            <ArrowRight size={14} className="rtl:rotate-180" />
+          </Link>
+        </div>
       </div>
     </section>
   );
 };
 
-/** Product + optional merchant-assigned label (first-class `label`, bilingual). */
-type ProductExtras = Product & {
-  label?: { key?: string; text_en?: string; text_ar?: string } | null;
-};
-
-/** Inline skeuomorphic product card — framed image + tactile info block. */
-function SkeuProductCard({ product }: { product: Product }) {
-  const locale = useLocale();
-  const p = product as ProductExtras;
-  const price = product.variants?.[0]?.price ?? product.price ?? 0;
-  const compareAt = product.compare_at_price;
-  const hasDiscount = typeof compareAt === "number" && compareAt > price;
-  const outOfStock = product.in_stock === false;
-  const primary = product.images?.[0]?.url;
-  // Merchant label badge — top-end so it coexists with the "Sale" badge (top-start).
-  const merchantLabel =
-    p.label && p.label.key
-      ? ((locale || "").toLowerCase().startsWith("ar")
-          ? p.label.text_ar || p.label.text_en
-          : p.label.text_en) || ""
-      : "";
-
-  return (
-    <Link
-      to={`/product/${product.slug || product.id}`}
-      className="vn-product-card group block"
-      data-testid="storefront-product-card"
-    >
-      <div className="relative skeu-img-frame rounded-xl overflow-hidden aspect-[3/4]">
-        {primary ? (
-          <img
-            src={primary}
-            alt={product.name}
-            className="vn-product-image w-full h-full object-cover"
-            loading="lazy"
-          />
-        ) : (
-          <div className="absolute inset-0 vn-shimmer" />
-        )}
-        {merchantLabel && !outOfStock ? (
-          <span className="absolute top-2 end-2 skeu-badge px-2.5 py-1 rounded-lg text-[10px] font-bold">
-            {merchantLabel}
-          </span>
-        ) : null}
-        {hasDiscount && !outOfStock && (
-          <span className="absolute top-2 start-2 skeu-badge px-2.5 py-1 rounded-lg text-[10px] font-bold">
-            {localized(locale, "Sale", "خصم")}
-          </span>
-        )}
-        {outOfStock && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <span className="skeu-chip text-foreground text-[11px] px-3 py-1.5 rounded-lg font-bold">
-              {localized(locale, "Sold out", "نفذت الكمية")}
-            </span>
-          </div>
-        )}
-      </div>
-      <div className="mt-3 px-1">
-        <h3 className="text-sm font-bold text-foreground line-clamp-1">
-          {product.name}
-        </h3>
-        <div className="flex items-baseline gap-2 mt-1">
-          <span className="text-sm font-bold text-primary">
-            <Money amount={price} currency={product.currency} />
-          </span>
-          {hasDiscount && (
-            <span className="text-xs text-muted-foreground line-through">
-              <Money amount={compareAt} currency={product.currency} />
-            </span>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-export default SkeuFeaturedCollection;
+export default WarshaFeaturedCollection;

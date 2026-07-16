@@ -1,16 +1,16 @@
 {
   "type": "skeu-categories",
-  "name": "Category Grid",
+  "name": "Category drawers",
   "settings": [
     {
       "type": "header",
       "content": "Content"
     },
     {
-      "id": "title",
       "type": "text",
-      "label": "Section Title",
-      "label_ar": "عنوان القسم",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
       "default": ""
     },
     {
@@ -18,35 +18,16 @@
       "content": "Layout"
     },
     {
-      "id": "columns_desktop",
       "type": "range",
-      "label": "Columns (Desktop)",
-      "label_ar": "أعمدة (ديسكتوب)",
-      "default": 5,
-      "min": 3,
-      "max": 6,
-      "step": 1
-    },
-    {
-      "id": "columns_mobile",
-      "type": "range",
-      "label": "Columns (Mobile)",
-      "label_ar": "أعمدة (موبايل)",
-      "default": 3,
-      "min": 2,
-      "max": 4,
-      "step": 1
-    },
-    {
       "id": "max_items",
-      "type": "range",
-      "label": "Max Categories",
-      "label_ar": "أقصى عدد فئات",
+      "label": "Max categories (0 = all)",
+      "label_ar": "أقصى عدد للفئات (0 = الكل)",
       "default": 0,
       "min": 0,
       "max": 12,
-      "step": 1,
-      "info": "0 = show all"
+      "step": 1
     }
-  ]
+  ],
+  "presets": [],
+  "name_ar": "أقسام المتجر"
 }

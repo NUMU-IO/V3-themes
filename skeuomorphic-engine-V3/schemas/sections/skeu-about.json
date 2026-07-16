@@ -1,6 +1,6 @@
 {
   "type": "skeu-about",
-  "name": "About Page",
+  "name": "About page",
   "settings": [
     {
       "type": "header",
@@ -50,42 +50,36 @@
       "id": "value_1_title",
       "type": "text",
       "label": "Value 1 title",
-      "label_ar": "عنوان القيمة ١",
       "default": ""
     },
     {
       "id": "value_1_text",
       "type": "textarea",
       "label": "Value 1 text",
-      "label_ar": "نص القيمة ١",
       "default": ""
     },
     {
       "id": "value_2_title",
       "type": "text",
       "label": "Value 2 title",
-      "label_ar": "عنوان القيمة ٢",
       "default": ""
     },
     {
       "id": "value_2_text",
       "type": "textarea",
       "label": "Value 2 text",
-      "label_ar": "نص القيمة ٢",
       "default": ""
     },
     {
       "id": "value_3_title",
       "type": "text",
       "label": "Value 3 title",
-      "label_ar": "عنوان القيمة ٣",
       "default": ""
     },
     {
       "id": "value_3_text",
       "type": "textarea",
       "label": "Value 3 text",
-      "label_ar": "نص القيمة ٣",
       "default": ""
     },
     {
@@ -96,29 +90,55 @@
       "id": "cta_text",
       "type": "text",
       "label": "Primary CTA Text",
-      "label_ar": "نص الزر الرئيسي",
       "default": ""
     },
     {
       "id": "cta_link",
       "type": "url",
       "label": "Primary CTA Link",
-      "label_ar": "رابط الزر الرئيسي",
       "default": "/products"
     },
     {
       "id": "contact_cta_text",
       "type": "text",
       "label": "Secondary CTA Text",
-      "label_ar": "نص الزر الثانوي",
       "default": ""
     },
     {
       "id": "contact_cta_link",
       "type": "url",
       "label": "Secondary CTA Link",
-      "label_ar": "رابط الزر الثانوي",
       "default": "/contact"
     }
-  ]
+  ],
+  "presets": [
+    {
+      "name": "About page",
+      "locales": {
+        "en": {
+          "name": "About page"
+        },
+        "ar": {
+          "name": "صفحة من نحن"
+        }
+      },
+      "settings": {
+        "eyebrow": "ABOUT VIONNE",
+        "headline": "Made for the way you dress",
+        "quote": "Quietly tailored. Refined. Made to be lived in.",
+        "description": "Vionne is built around modest fashion that doesn't compromise on cut, fabric, or the way a piece moves with you. Each release is small, considered, and shipped worldwide.",
+        "value_1_title": "Crafted small",
+        "value_1_text": "Limited drops, considered every season.",
+        "value_2_title": "Honest fabric",
+        "value_2_text": "Modal, chiffon and silk-blends — sourced from mills we know.",
+        "value_3_title": "Worldwide",
+        "value_3_text": "Now shipping to over forty countries.",
+        "cta_text": "Explore the edit",
+        "cta_link": "/products",
+        "contact_cta_text": "Get in touch",
+        "contact_cta_link": "/contact"
+      }
+    }
+  ],
+  "name_ar": "صفحة من نحن"
 }

@@ -1,0 +1,69 @@
+{
+  "type": "skeu-made-to-order",
+  "name": "Made-to-Order card",
+  "name_ar": "كارت بيتعمل بالطلب",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "lead_time_text",
+      "label": "Lead time",
+      "label_ar": "مدة التنفيذ",
+      "info": "e.g. \"Ready in 5-7 working days\".",
+      "info_ar": "مثال: «جاهزة في ٥–٧ أيام شغل».",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "personalization_text",
+      "label": "Personalization",
+      "label_ar": "التخصيص",
+      "info": "What can be customised (names, sizes, colors...).",
+      "info_ar": "إيه اللي ممكن يتخصص (أسماء، مقاسات، ألوان...).",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp number",
+      "label_ar": "رقم واتساب",
+      "info": "International format, e.g. 201001234567.",
+      "info_ar": "بالصيغة الدولية، مثل 201001234567.",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "label_ar": "نص الزر",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "note",
+      "label": "Small note",
+      "label_ar": "ملاحظة صغيرة",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Made-to-Order card",
+      "locales": {
+        "en": {
+          "name": "Made-to-Order card"
+        },
+        "ar": {
+          "name": "كارت بيتعمل بالطلب"
+        }
+      },
+      "settings": {}
+    }
+  ]
+}
