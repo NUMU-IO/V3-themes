@@ -130,6 +130,27 @@
       "label": "Open a cart sidebar from the cart icon (with suggestions)",
       "label_ar": "فتح سلة جانبية من أيقونة السلة (مع اقتراحات)",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "drawer_collection_images",
+      "label": "Show collections as image cards in the mobile menu",
+      "label_ar": "عرض التشكيلات كبطاقات بصور في قائمة الجوال",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "drawer_collections_limit",
+      "label": "Collections shown in the mobile menu (rest behind “All collections”)",
+      "label_ar": "عدد التشكيلات الظاهرة في قائمة الجوال (الباقي خلف «كل التشكيلات»)",
+      "default": 6
+    },
+    {
+      "type": "checkbox",
+      "id": "drawer_show_offer",
+      "label": "Show the best active offer inside the mobile menu",
+      "label_ar": "عرض أفضل عرض نشط داخل قائمة الجوال",
+      "default": true
     }
   ],
   "blocks": [

@@ -15,15 +15,18 @@ import {
   useTranslation,
 } from "@numueg/theme-sdk";
 import {
+  ArrowRight,
   ChevronDown,
   Home,
   Menu,
   Search,
   ShoppingBag,
   Store as StoreIcon,
+  Tag,
   User,
   X,
 } from "lucide-react";
+import { bestCartNudge, useActivePromotions } from "./_promotions";
 import {
   asBool,
   asImageUrl,
@@ -153,6 +156,25 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
   // products instead of navigating away. Merchant-toggleable; when off, the
   // icon stays a plain /cart link.
   const enableMiniCart = asBool(s.enable_mini_cart, true);
+
+  // Drawer collections presentation (CRO): image cards instead of a flat
+  // text list, capped so the menu stays scannable; the overflow tile routes
+  // to /collections. Merchant-tunable from the editor.
+  const drawerCollectionImages = asBool(s.drawer_collection_images, true);
+  const drawerCollectionsLimit = Math.max(2, asNumber(s.drawer_collections_limit, 6));
+  // Drawer offer nudge (AOV): surface the store's best active auto-discount
+  // inside the menu — the shopper sees "spend X, unlock Y" before browsing.
+  const showDrawerOffer = asBool(s.drawer_show_offer, true);
+  const activePromos = useActivePromotions("cart", locale);
+  const drawerNudge = showDrawerOffer
+    ? bestCartNudge(
+        activePromos?.auto_discounts,
+        cart?.subtotal ?? 0,
+        cart?.currency || "EGP",
+        locale,
+        false,
+      )
+    : null;
   const [miniCartOpen, setMiniCartOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [condensed, setCondensed] = useState(false);
@@ -249,22 +271,30 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                   />
                 </button>
                 {collectionsOpen && (
-                  <div className="absolute top-full start-0 mt-2 min-w-[200px] bg-white text-[var(--vn-ink)] shadow-lg border border-[var(--vn-border)] overflow-hidden z-50">
+                  <div className="absolute top-full start-0 mt-2 min-w-[240px] bg-white text-[var(--vn-ink)] shadow-lg border border-[var(--vn-border)] overflow-hidden z-50">
                     <Link
                       to="/collections"
                       className="block px-4 py-3 vn-label text-[11px] border-b border-[var(--vn-border)] hover:bg-[var(--vn-band)] transition-colors"
                     >
                       {t("nav.all_collections", localized(locale, "All collections", "كل التشكيلات"))}
                     </Link>
-                    {collections.map((cat) => (
-                      <Link
-                        key={cat.id}
-                        to={`/collections/${cat.slug}`}
-                        className="block px-4 py-2 text-sm font-medium hover:bg-[var(--vn-band)] transition-colors"
-                      >
-                        {cat.name}
-                      </Link>
-                    ))}
+                    {/* Long catalogs scroll instead of stretching past the fold. */}
+                    <div className="max-h-[60vh] overflow-y-auto overscroll-contain">
+                      {collections.map((cat) => (
+                        <Link
+                          key={cat.id}
+                          to={`/collections/${cat.slug}`}
+                          className="flex items-baseline justify-between gap-4 px-4 py-2 text-sm font-medium hover:bg-[var(--vn-band)] transition-colors"
+                        >
+                          <span className="truncate">{cat.name}</span>
+                          {cat.product_count > 0 && (
+                            <span className="text-[10px] tabular-nums text-[var(--vn-muted,#6b6b6b)] shrink-0">
+                              {cat.product_count.toLocaleString(locale === "ar" ? "ar-EG" : "en")}
+                            </span>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -388,7 +418,7 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
               <X size={20} />
             </button>
           </div>
-          <nav className="flex flex-col p-5 gap-1">
+          <nav className="flex flex-col p-5 gap-1 flex-1 overflow-y-auto overscroll-contain">
             {nav.map((link, i) => (
               <Link
                 key={`drawer-${link.to}-${link.label}-${i}`}
@@ -400,28 +430,135 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                 {link.label}
               </Link>
             ))}
+
+            {/* AOV nudge — the store's best live auto-discount, right in the
+                menu, with a progress meter when the rule is spend-based. */}
+            {drawerNudge && (
+              <div
+                className="vn-drawer-item mt-4 border border-[var(--vn-border)] px-3.5 py-3"
+                style={{ transitionDelay: drawerOpen ? "280ms" : "0ms" }}
+              >
+                <div className="flex items-start gap-2.5">
+                  <Tag size={14} className="mt-0.5 shrink-0 text-[var(--vn-sale)]" aria-hidden />
+                  <p className="text-xs leading-relaxed flex-1">{drawerNudge.message}</p>
+                </div>
+                {drawerNudge.progressPct != null && (
+                  <div
+                    className="mt-2.5 h-1 bg-[var(--vn-band)]"
+                    role="progressbar"
+                    aria-valuenow={Math.round(drawerNudge.progressPct)}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                  >
+                    <div
+                      className="h-full bg-[var(--vn-ink)] transition-[width] duration-500"
+                      style={{ width: `${Math.min(100, drawerNudge.progressPct)}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Collections — an editorial visual index instead of an endless
+                text list: capped image cards, overflow routed to /collections. */}
             {hasCollections && (
-              <div className="vn-drawer-item mt-3" style={{ transitionDelay: drawerOpen ? "320ms" : "0ms" }}>
-                <span className="vn-eyebrow block mb-2">{collectionsLabel}</span>
-                <div className="flex flex-col gap-1">
+              <div className="vn-drawer-item mt-5" style={{ transitionDelay: drawerOpen ? "340ms" : "0ms" }}>
+                <div className="flex items-baseline justify-between mb-3">
+                  <span className="vn-eyebrow">{collectionsLabel}</span>
                   <Link
                     to="/collections"
                     onClick={() => setDrawerOpen(false)}
-                    className="text-sm py-1.5 hover:opacity-70"
+                    className="vn-label text-[10px] inline-flex items-center gap-1 hover:opacity-70"
                   >
-                    {t("nav.all_collections", localized(locale, "All collections", "كل التشكيلات"))}
+                    {t("nav.view_all", localized(locale, "View all", "عرض الكل"))}
+                    <ArrowRight size={11} className="rtl:rotate-180" aria-hidden />
                   </Link>
-                  {collections.map((cat) => (
+                </div>
+                {drawerCollectionImages ? (
+                  (() => {
+                    const overflowing = collections.length > drawerCollectionsLimit;
+                    const visible = overflowing
+                      ? collections.slice(0, drawerCollectionsLimit - 1)
+                      : collections;
+                    const overflowCount = collections.length - visible.length;
+                    return (
+                      <div className="grid grid-cols-2 gap-2.5">
+                        {visible.map((cat) => (
+                          <Link
+                            key={cat.id}
+                            to={`/collections/${cat.slug}`}
+                            onClick={() => setDrawerOpen(false)}
+                            className="group relative block aspect-[4/5] overflow-hidden bg-[var(--vn-band)]"
+                          >
+                            {cat.image_url ? (
+                              <img
+                                src={cat.image_url}
+                                alt={cat.name}
+                                loading="lazy"
+                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                            ) : (
+                              <span
+                                aria-hidden
+                                className="absolute inset-0 flex items-center justify-center vn-heading text-4xl text-[var(--vn-ink)] opacity-15 uppercase"
+                              >
+                                {cat.name.charAt(0)}
+                              </span>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+                            <span className="absolute inset-x-0 bottom-2.5 px-2 text-center text-white uppercase tracking-[0.18em] text-[10px] font-semibold leading-tight">
+                              {cat.name}
+                            </span>
+                            {cat.product_count > 0 && (
+                              <span className="absolute top-2 end-2 text-[9px] tabular-nums text-white/90 bg-black/35 px-1.5 py-0.5">
+                                {cat.product_count.toLocaleString(locale === "ar" ? "ar-EG" : "en")}
+                              </span>
+                            )}
+                          </Link>
+                        ))}
+                        {overflowCount > 0 && (
+                          <Link
+                            to="/collections"
+                            onClick={() => setDrawerOpen(false)}
+                            className="relative flex flex-col items-center justify-center gap-1 aspect-[4/5] border border-[var(--vn-border)] bg-[var(--vn-band)] text-center hover:opacity-80 transition-opacity"
+                          >
+                            <span className="vn-heading text-xl">
+                              +{overflowCount.toLocaleString(locale === "ar" ? "ar-EG" : "en")}
+                            </span>
+                            <span className="vn-label text-[9px] px-2">
+                              {t("nav.all_collections", localized(locale, "All collections", "كل التشكيلات"))}
+                            </span>
+                          </Link>
+                        )}
+                      </div>
+                    );
+                  })()
+                ) : (
+                  <div className="flex flex-col gap-1">
                     <Link
-                      key={cat.id}
-                      to={`/collections/${cat.slug}`}
+                      to="/collections"
                       onClick={() => setDrawerOpen(false)}
                       className="text-sm py-1.5 hover:opacity-70"
                     >
-                      {cat.name}
+                      {t("nav.all_collections", localized(locale, "All collections", "كل التشكيلات"))}
                     </Link>
-                  ))}
-                </div>
+                    {collections.slice(0, drawerCollectionsLimit).map((cat) => (
+                      <Link
+                        key={cat.id}
+                        to={`/collections/${cat.slug}`}
+                        onClick={() => setDrawerOpen(false)}
+                        className="flex items-baseline justify-between gap-3 text-sm py-1.5 hover:opacity-70"
+                      >
+                        <span className="truncate">{cat.name}</span>
+                        {cat.product_count > 0 && (
+                          <span className="text-[10px] tabular-nums opacity-60 shrink-0">
+                            {cat.product_count.toLocaleString(locale === "ar" ? "ar-EG" : "en")}
+                          </span>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </nav>
