@@ -1,0 +1,24 @@
+{
+  "type": "vionne-collections-index",
+  "name": "Collections Index",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "All Collections"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "label_ar": "العنوان الفرعي",
+      "default": "Explore the full edit"
+    }
+  ]
+}
