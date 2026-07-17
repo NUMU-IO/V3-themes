@@ -195,8 +195,12 @@ jobs:
           EC2: ${{ secrets.PROD_EC2_USER }}@${{ secrets.PROD_EC2_HOST }}
           THEME_INPUT: ${{ github.event.inputs.theme }}
           STRICT: ${{ github.event.inputs.strict }}
-          # Empty (push trigger) → seed both. Only an explicit 'false' opts out.
-          SEED_TEST: ${{ github.event.inputs.seed_test != 'false' }}
+          # PROD is the priority target. On an AUTO push (merge to main) we skip
+          # the TEST/droplet seed entirely — that box's SSH key is chronically
+          # dead, and its failure used to abort the whole job and take the PROD
+          # seed down with it (that's why merged theme PRs silently never went
+          # live). Manual dispatch can still seed test by leaving seed_test unset.
+          SEED_TEST: ${{ github.event_name != 'push' && github.event.inputs.seed_test != 'false' }}
           SEED_PROD: ${{ github.event.inputs.seed_prod != 'false' }}
           CONTAINER: numu-api-test
           # PROD api lives as the `api` compose service in /opt/numu-api on EC2.
@@ -259,25 +263,30 @@ jobs:
 
             theme_failed=0
 
+            # TEST seed is best-effort: a droplet SSH/auth failure must NEVER
+            # fail the run (it does not gate prod). Every bare $SSH here is
+            # `|| true`-guarded so an exit-255 auth failure can't trip `-e`.
             if [ "$SEED_TEST" = "true" ]; then
               if ! seed_theme; then
                 echo "::warning::test seed failed for $d; ensuring $CONTAINER is up and retrying once"
-                $SSH "$DROPLET" "docker start $CONTAINER >/dev/null 2>&1 || true; sleep 8"
+                $SSH "$DROPLET" "docker start $CONTAINER >/dev/null 2>&1 || true; sleep 8" || true
                 if ! seed_theme; then
-                  echo "::error::test seed failed for $d (api container kept stopping — check droplet memory/swap)"
-                  theme_failed=1
+                  echo "::warning::test seed failed for $d (droplet unreachable/OOM) — not fatal, continuing to prod"
                 fi
               fi
             else
-              echo "seed_test=false — skipping TEST seed for $d"
+              echo "seed_test skipped for $d (auto-push or seed_test=false)"
             fi
 
+            # PROD is the target that gates the run. A prod-seed failure marks
+            # the theme failed; the bare retry-prep SSH is guarded so only the
+            # seed's own exit status (via `if !`) decides success.
             if [ "$SEED_PROD" = "true" ]; then
               if ! seed_theme_ec2; then
                 echo "::warning::prod (EC2) seed failed for $d; ensuring api is up and retrying once"
-                $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose start api >/dev/null 2>&1 || true; sleep 8"
+                $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose start api >/dev/null 2>&1 || true; sleep 8" || true
                 if ! seed_theme_ec2; then
-                  echo "::error::prod seed failed for $d (check EC2 api container / Supabase reachability)"
+                  echo "::error::prod seed failed for $d (check EC2 api container / prod DB reachability)"
                   theme_failed=1
                 fi
               fi
