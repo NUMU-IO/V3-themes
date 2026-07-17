@@ -167,12 +167,11 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
   };
   const helpColumn: FooterColumn = {
     title: helpTitle,
+    // Default Help column links to routes that actually exist. Shipping /
+    // Returns / Privacy / Terms / FAQ were removed — those CMS pages don't
+    // exist on most stores yet, so the links 404'd. Merchants that add those
+    // pages can restore the links via a footer menu or editor `column` blocks.
     links: [
-      { label: t("footer.shipping", localized(locale, "Shipping", "الشحن")), href: "/pages/shipping" },
-      { label: t("footer.returns", localized(locale, "Returns", "الإرجاع")), href: "/pages/returns" },
-      { label: t("footer.privacy", localized(locale, "Privacy", "الخصوصية")), href: "/pages/privacy" },
-      { label: t("footer.terms", localized(locale, "Terms", "الشروط")), href: "/pages/terms" },
-      { label: t("footer.faq", localized(locale, "FAQ", "الأسئلة الشائعة")), href: "/pages/faq" },
       { label: t("footer.contact", localized(locale, "Contact", "تواصلي")), href: "/contact" },
       { label: t("footer.track_order", localized(locale, "Track order", "تتبع الطلب")), href: "/track" },
     ],
