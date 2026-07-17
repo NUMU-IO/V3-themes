@@ -40,6 +40,7 @@ import VionneCart from "./sections/vionne-cart";
 import VionneProfile from "./sections/vionne-profile";
 import VionneSearchResults from "./sections/vionne-search-results";
 import VionneNotFound from "./sections/vionne-not-found";
+import VionneCollectionsIndex from "./sections/vionne-collections-index";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
@@ -67,6 +68,7 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "vionne-profile": VionneProfile,
   "vionne-search-results": VionneSearchResults,
   "vionne-not-found": VionneNotFound,
+  "vionne-collections-index": VionneCollectionsIndex,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);

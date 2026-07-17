@@ -364,22 +364,22 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         {/* A8 — one-tap quick-add (single-variant products only). */}
         <QuickAddButton product={product} locale={locale} />
 
-        {!outOfStock && (hasDiscount || merchantLabel || product.tags?.[0]) && (
+        {/* Badges: SALE + an intentional merchant label only. The generic
+            tags[0] pill (the collection name) was removed — it covered the
+            product photo and, on a collection page, just repeats the heading.
+            Let the image sell. */}
+        {!outOfStock && (hasDiscount || merchantLabel) && (
           <div className="absolute top-3 start-3 flex flex-col items-start gap-1.5">
             {hasDiscount && (
               <span className="vn-label px-2.5 py-1 bg-[var(--vn-sale)] text-white rounded-full text-[10px]">
                 {t("common.sale", localized(locale, "Sale", "تخفيض"))}
               </span>
             )}
-            {merchantLabel ? (
+            {merchantLabel && (
               <span className="vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
                 {merchantLabel}
               </span>
-            ) : product.tags?.[0] ? (
-              <span className="vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
-                {product.tags[0]}
-              </span>
-            ) : null}
+            )}
           </div>
         )}
         {outOfStock && (
