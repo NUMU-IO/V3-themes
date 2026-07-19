@@ -7,7 +7,6 @@ import {
   asImageTransform,
   asImageUrl,
   asString,
-  demoOrPlaceholder,
   localized,
   useDemo,
   type SectionRenderProps,
@@ -40,11 +39,9 @@ const BzPromoBanner = ({ instance, sectionId }: SectionRenderProps) => {
   // The large card's overline uses the live store name (uppercased) so the
   // editorial banner always reflects the merchant's brand without extra setup.
   const storeName = (shop?.name || "BAZAR").toUpperCase();
-  // Demo placeholderize the store-name overline only when the merchant truly
-  // has no store name in context.
-  const overline = demoOrPlaceholder(demo || Boolean(shop?.name), [
-    { name: storeName },
-  ])[0].name || "BAZAR";
+  // storeName already falls back to "BAZAR", so it covers both the real store
+  // and the no-store-name case on its own.
+  const overline = storeName;
 
   return (
     <section className="py-12 md:py-16 lg:py-24 bg-[var(--bz-cream)]">
