@@ -198,9 +198,7 @@
           },
           {
             "type": "gilded-order-confirmation",
-            "settings": {
-              "show_guarantees": true
-            }
+            "settings": {}
           },
           {
             "type": "gilded-footer",
