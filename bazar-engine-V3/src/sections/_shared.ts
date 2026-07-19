@@ -8,7 +8,7 @@
  * only the CSS prefix (`by-` → `bz-`) and the placeholder palette differ.
  */
 
-import { createContext, useContext, type CSSProperties } from "react";
+import { createContext, useContext } from "react";
 import type { SectionInstance } from "@numueg/theme-sdk";
 
 export interface SectionRenderProps {
@@ -191,56 +191,14 @@ export function productHref(slugOrId: string | undefined | null): string {
   return `/products/${slugOrId}`;
 }
 
-// ── Non-destructive image transform (focal / zoom / rotation) ───────────────
-//
-// An image setting value may carry optional `transform` metadata
-// (`{ url, alt, transform }`). The original asset is never modified — the
-// storefront reproduces the framing purely from these numbers via CSS, so the
-// SAME uploaded image can be framed differently per placement (hero vs card).
-//
-// ⚠ This is a MIRROR of the merchant-hub editor's
-// `numo-merchant-hub/src/features/theme-editor-v3/components/inputs/imageTransform.ts`
-// — `applyImageTransform` MUST stay equivalent so the editor preview matches the
-// storefront render exactly. (Phase 2 hoists this into @numueg/theme-sdk so every
-// theme imports one copy.)
-export interface ImageTransform {
-  v: 1;
-  focal?: { x: number; y: number }; // 0..1, default center
-  zoom?: number;                    // 1..4, default 1
-  rotation?: number;                // degrees, default 0
-  fit?: "cover" | "contain";
-}
-
-const _clampT = (n: number, lo: number, hi: number): number =>
-  Math.min(hi, Math.max(lo, Number.isFinite(n) ? n : lo));
-
-/** Read the transform off an image setting value (string | {url,alt,transform}). */
-export function asImageTransform(v: unknown): ImageTransform | undefined {
-  if (v && typeof v === "object" && "transform" in v) {
-    const t = (v as { transform?: unknown }).transform;
-    if (t && typeof t === "object") return t as ImageTransform;
-  }
-  return undefined;
-}
-
-/** CSS reproducing the transform on an <img> filling a fixed-aspect,
- *  overflow-hidden container. Empty object when there is no transform → the
- *  image renders exactly as before (full backward compatibility). */
-export function applyImageTransform(
-  t: ImageTransform | undefined | null,
-  fit: "cover" | "contain" = "cover",
-): CSSProperties {
-  if (!t) return {};
-  const fx = Math.round(_clampT(t.focal?.x ?? 0.5, 0, 1) * 1e4) / 100;
-  const fy = Math.round(_clampT(t.focal?.y ?? 0.5, 0, 1) * 1e4) / 100;
-  const zoom = _clampT(t.zoom ?? 1, 1, 4);
-  const rot = ((t.rotation ?? 0) % 360 + 360) % 360;
-  const effFit = t.fit ?? fit;
-  const style: CSSProperties = {
-    transform: `scale(${zoom}) rotate(${rot}deg)`,
-    transformOrigin: `${fx}% ${fy}%`,
-    objectFit: effFit,
-  };
-  if (effFit === "cover") style.objectPosition = `${fx}% ${fy}%`;
-  return style;
-}
+// ── Non-destructive image transform (focal / zoom / rotation) ────────────────
+// Now provided by the SDK (@numueg/theme-sdk >= 0.11.0) instead of a local
+// copy that had to be hand-synced with the merchant-hub editor and 13 other
+// themes. Re-exported from here so every section keeps importing it from
+// "./_shared" unchanged. The SDK build is pinned against the previous local
+// implementation by a parity suite, so this swap is render-identical.
+export {
+  applyImageTransform,
+  asImageTransform,
+  type ImageTransform,
+} from "@numueg/theme-sdk";
