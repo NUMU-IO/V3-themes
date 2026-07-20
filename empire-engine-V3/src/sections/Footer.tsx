@@ -1,9 +1,7 @@
 import {
   useEffect,
   useState } from "react";
-import { useShop,
-  useCollections,
-} from "@numueg/theme-sdk";
+import { collectionHref, useCollections, useShop } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { useT } from "../lib/i18n";
@@ -108,7 +106,7 @@ export default function Footer({ id, settings }: EmpSectionProps) {
             <div className="empire-footer__links">
               <a href="/products">{t("All products", "كل المنتجات")}</a>
               {collections.slice(0, 5).map((c) => (
-                <a key={c.id} href={`/collections/${c.slug}`}>
+                <a key={c.id} href={collectionHref(c)}>
                   {c.name}
                 </a>
               ))}

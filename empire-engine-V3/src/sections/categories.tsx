@@ -1,4 +1,4 @@
-import { useCollections } from "@numueg/theme-sdk";
+import { collectionHref, useCollections } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { useT } from "../lib/i18n";
@@ -37,7 +37,7 @@ export default function Categories({ id, settings }: EmpSectionProps) {
           style={{ ["--cols" as string]: cols }}
         >
           {collections.map((c) => (
-            <a key={c.id} className="empire-cat" href={`/collections/${c.slug}`}>
+            <a key={c.id} className="empire-cat" href={collectionHref(c)}>
               <div className="empire-cat__media">
                 {c.image_url ? (
                   <img src={c.image_url} alt={c.name} loading="lazy" />

@@ -1,15 +1,6 @@
 "use client";
 import { useState } from "react";
-import {
-  Link,
-  useCollections,
-  useLocale,
-  useNavigation,
-  useResolvedSettings,
-  useShop,
-  useThemeSettings,
-  useTranslation,
-} from "@numueg/theme-sdk";
+import { Link, collectionHref, useCollections, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation } from "@numueg/theme-sdk";
 import { Facebook, Instagram, Mail, Music2, Phone, Twitter, Youtube } from "lucide-react";
 import {
   asString,
@@ -161,7 +152,7 @@ export default function ManshetFooter({ instance, sectionId }: SectionRenderProp
       { label: t("nav.all_products", localized(locale, "All products", "كل المنتجات")), href: "/products" },
       ...collections.slice(0, 5).map((cat) => ({
         label: cat.name,
-        href: `/collections/${cat.slug}`,
+        href: collectionHref(cat),
       })),
     ],
   };

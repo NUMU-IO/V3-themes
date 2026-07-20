@@ -1,17 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import {
-  Link,
-  logoImgStyle,
-  useCart,
-  useCollections,
-  useLocale,
-  useNavigation,
-  useResolvedSettings,
-  useShop,
-  useThemeSettings,
-} from "@numueg/theme-sdk";
+import { Link, collectionHref, logoImgStyle, useCart, useCollections, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings } from "@numueg/theme-sdk";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import {
   asImageUrl,
@@ -107,7 +97,7 @@ export default function LuxHeader({ instance, sectionId }: SectionRenderProps) {
             .filter((n) => n.label)
         : collections.map((cat) => ({
             label: cat.name,
-            href: `/collections/${cat.slug}`,
+            href: collectionHref(cat),
           }));
 
   const [menuOpen, setMenuOpen] = useState(false);
