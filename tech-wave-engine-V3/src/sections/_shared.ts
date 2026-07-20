@@ -1,6 +1,6 @@
 // Shared guards from @numueg/theme-kit (import+re-export: local binding + public export).
-import { localized, asString, asNumber, asArray } from "@numueg/theme-kit";
-export { localized, asString, asNumber, asArray };
+import { asArray, asImageAlt, asImageUrl, asNumber, asString, localized } from "@numueg/theme-kit";
+export { asArray, asImageAlt, asImageUrl, asNumber, asString, localized };
 
 import type { SectionInstance } from "@numueg/theme-sdk";
 
@@ -11,32 +11,6 @@ export interface SectionRenderProps {
 
 
 
-
-/**
- * Read an image-picker value. The editor stores image_picker settings as
- * either a plain URL string (legacy) or an `{ url, alt }` object (current).
- * Always returns a usable URL string — without this, sections that did
- * `src={s.image}` rendered `[object Object]` once a merchant uploaded an
- * image (the object shape), so the picture silently never appeared.
- */
-export function asImageUrl(v: unknown, fallback = ""): string {
-  if (typeof v === "string") return v;
-  if (v && typeof v === "object") {
-    const r = v as Record<string, unknown>;
-    if (typeof r.url === "string") return r.url;
-    if (typeof r.src === "string") return r.src;
-  }
-  return fallback;
-}
-
-/** Alt text for an image-picker value (only present on the object shape). */
-export function asImageAlt(v: unknown, fallback = ""): string {
-  if (v && typeof v === "object") {
-    const r = v as Record<string, unknown>;
-    if (typeof r.alt === "string") return r.alt;
-  }
-  return fallback;
-}
 
 /**
  * ENG-3: pick the locale-appropriate default copy. The active visitor locale
