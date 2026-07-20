@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Link,
-  useCollections,
-  useLocale,
-  useResolvedSettings,
-  useShop,
-  useThemeSettings,
-} from "@numueg/theme-sdk";
+import { Link, collectionHref, useCollections, useLocale, useResolvedSettings, useShop, useThemeSettings } from "@numueg/theme-sdk";
 import type { ComponentType } from "react";
 import { Facebook, MessageCircle, Music2, Twitter, Youtube } from "lucide-react";
 import {
@@ -193,7 +186,7 @@ export default function GildedFooter({ instance, sectionId }: SectionRenderProps
         { label: localized(locale, "All Products", "كل المنتجات"), href: "/products" },
         ...collections.slice(0, 3).map((cat) => ({
           label: cat.name,
-          href: `/collections/${cat.slug}`,
+          href: collectionHref(cat),
         })),
       ],
     },

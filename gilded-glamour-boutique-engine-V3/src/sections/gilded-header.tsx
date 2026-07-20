@@ -1,18 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Link,
-  Logo,
-  useCart,
-  useCollections,
-  useCustomer,
-  useLocale,
-  useNavigation,
-  useResolvedSettings,
-  useShop,
-  useThemeSettings,
-} from "@numueg/theme-sdk";
+import { Link, Logo, collectionHref, useCart, useCollections, useCustomer, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings } from "@numueg/theme-sdk";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Home, Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import {
@@ -237,7 +226,7 @@ export default function GildedHeader({ instance, sectionId }: SectionRenderProps
                           collections.map((cat) => (
                             <Link
                               key={cat.id}
-                              to={`/collections/${cat.slug}`}
+                              to={collectionHref(cat)}
                               className="block px-4 py-2 text-xs tracking-[0.1em] uppercase text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                             >
                               {cat.name}
@@ -355,7 +344,7 @@ export default function GildedHeader({ instance, sectionId }: SectionRenderProps
                             {collections.map((cat) => (
                               <Link
                                 key={cat.id}
-                                to={`/collections/${cat.slug}`}
+                                to={collectionHref(cat)}
                                 onClick={() => setMenuOpen(false)}
                                 className="block py-2 text-xs tracking-[0.1em] uppercase text-muted-foreground"
                               >

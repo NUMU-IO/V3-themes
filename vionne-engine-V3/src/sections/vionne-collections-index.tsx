@@ -1,5 +1,5 @@
 "use client";
-import { Link, useCollections, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, collectionHref, useCollections, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
@@ -46,7 +46,7 @@ export default function VionneCollectionsIndex({ instance, sectionId }: SectionR
             {items.map((cat) => (
               <Link
                 key={cat.id}
-                to={`/collections/${cat.slug}`}
+                to={collectionHref(cat)}
                 className="group relative block aspect-[4/5] overflow-hidden rounded-lg bg-[var(--vn-band)]"
               >
                 {cat.image_url ? (

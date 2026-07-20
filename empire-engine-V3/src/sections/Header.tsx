@@ -2,14 +2,7 @@ import {
   useEffect,
   useRef,
   useState } from "react";
-import {
-  useCart,
-  useLocalization,
-  useNavigation,
-  useCollections,
-  useCurrency,
-  useShop,
-} from "@numueg/theme-sdk";
+import { collectionHref, useCart, useCollections, useCurrency, useLocalization, useNavigation, useShop } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { useCartOpen, openCart, closeCart } from "../lib/cartUI";
@@ -152,7 +145,7 @@ export default function Header({
                             <a
                               key={c.id}
                               className="empire-mega__link"
-                              href={`/collections/${c.slug}`}
+                              href={collectionHref(c)}
                             >
                               {c.name}
                             </a>
@@ -163,7 +156,7 @@ export default function Header({
                             <a
                               key={c.id}
                               className="empire-mega__card"
-                              href={`/collections/${c.slug}`}
+                              href={collectionHref(c)}
                             >
                               <span className="empire-mega__cardmedia">
                                 {c.image_url ? (
@@ -275,7 +268,7 @@ export default function Header({
             {collections.slice(0, 5).map((c) => (
               <a
                 key={c.id}
-                href={`/collections/${c.slug}`}
+                href={collectionHref(c)}
                 onClick={() => setMenuOpen(false)}
                 style={{ paddingInlineStart: "1rem", fontWeight: 400 }}
               >

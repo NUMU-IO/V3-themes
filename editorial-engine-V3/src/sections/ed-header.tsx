@@ -1,19 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Link,
-  logoImgStyle,
-  useCart,
-  useCollections,
-  useCustomer,
-  useLocale,
-  useNavigation,
-  useResolvedSettings,
-  useShop,
-  useThemeSettings,
-  useTranslation,
-} from "@numueg/theme-sdk";
+import { Link, collectionHref, logoImgStyle, useCart, useCollections, useCustomer, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation } from "@numueg/theme-sdk";
 import {
   ChevronDown,
   Home,
@@ -259,7 +247,7 @@ export default function EdHeader({ instance, sectionId }: SectionRenderProps) {
                     {collections.map((cat) => (
                       <Link
                         key={cat.id}
-                        to={`/collections/${cat.slug}`}
+                        to={collectionHref(cat)}
                         className="block px-4 py-2 text-sm font-medium hover:bg-[var(--vn-band)] transition-colors"
                       >
                         {cat.name}
@@ -419,7 +407,7 @@ export default function EdHeader({ instance, sectionId }: SectionRenderProps) {
                   {collections.map((cat) => (
                     <Link
                       key={cat.id}
-                      to={`/collections/${cat.slug}`}
+                      to={collectionHref(cat)}
                       onClick={() => setDrawerOpen(false)}
                       className="text-sm py-1.5 hover:opacity-70"
                     >

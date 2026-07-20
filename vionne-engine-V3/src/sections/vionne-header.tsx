@@ -1,19 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Link,
-  logoImgStyle,
-  useCart,
-  useCollections,
-  useCustomer,
-  useLocale,
-  useNavigation,
-  useResolvedSettings,
-  useShop,
-  useThemeSettings,
-  useTranslation,
-} from "@numueg/theme-sdk";
+import { Link, collectionHref, logoImgStyle, useCart, useCollections, useCustomer, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation } from "@numueg/theme-sdk";
 import {
   ArrowRight,
   ChevronDown,
@@ -283,7 +271,7 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                       {collections.map((cat) => (
                         <Link
                           key={cat.id}
-                          to={`/collections/${cat.slug}`}
+                          to={collectionHref(cat)}
                           className="flex items-baseline justify-between gap-4 px-4 py-2 text-sm font-medium hover:bg-[var(--vn-band)] transition-colors"
                         >
                           <span className="truncate">{cat.name}</span>
@@ -486,7 +474,7 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                         {visible.map((cat) => (
                           <Link
                             key={cat.id}
-                            to={`/collections/${cat.slug}`}
+                            to={collectionHref(cat)}
                             onClick={() => setDrawerOpen(false)}
                             className="group relative block aspect-[4/5] overflow-hidden bg-[var(--vn-band)]"
                           >
@@ -545,7 +533,7 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                     {collections.slice(0, drawerCollectionsLimit).map((cat) => (
                       <Link
                         key={cat.id}
-                        to={`/collections/${cat.slug}`}
+                        to={collectionHref(cat)}
                         onClick={() => setDrawerOpen(false)}
                         className="flex items-baseline justify-between gap-3 text-sm py-1.5 hover:opacity-70"
                       >
