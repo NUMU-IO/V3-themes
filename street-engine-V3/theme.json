@@ -2,25 +2,111 @@
   "id": "street-v3",
   "name": "Street (V3)",
   "author": "NUMU",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "layout": "single-column",
-  "description": "Street (V3) — migrated from V2.",
+  "description": "Street (V3) — bold urban streetwear: yellow, navy and hot pink on cream, topographic grounds and 900-weight uppercase type.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
-    "templates": {
-      "home": {
-        "name": "Home",
+    "section_groups": {
+      "header": {
         "sections": [
           {
-            "type": "st-street-product-detail-section",
-            "settings": {}
-          },
-          {
-            "type": "st-street-products-page-section",
-            "settings": {}
+            "type": "st-header",
+            "settings": {
+              "marquee_text": "FREE SHIPPING OVER 1000 EGP",
+              "marquee_text_ar": "شحن مجاني فوق ١٠٠٠ جنيه"
+            }
           }
         ]
+      },
+      "footer": {
+        "sections": [
+          {
+            "type": "st-footer",
+            "settings": {
+              "tagline": "Streetwear made in Egypt.",
+              "tagline_ar": "ستريت وير صناعة مصرية."
+            }
+          }
+        ]
+      }
+    },
+    "templates": {
+      "home": {
+        "sections": [
+          {
+            "type": "st-hero",
+            "settings": {
+              "eyebrow": "New drop",
+              "eyebrow_ar": "دروب جديد",
+              "headline": "Built for the street",
+              "headline_ar": "مصنوع للشارع",
+              "body": "Limited runs, honest prices, delivered across Egypt.",
+              "body_ar": "كميات محدودة وأسعار عادلة، بتوصل لكل مصر.",
+              "cta_label": "Shop now",
+              "cta_label_ar": "تسوق دلوقتي",
+              "cta_href": "/products",
+              "secondary_label": "Browse collections",
+              "secondary_label_ar": "تصفح التشكيلات",
+              "secondary_href": "/collections"
+            }
+          },
+          {
+            "type": "st-product-grid",
+            "settings": {
+              "title": "New arrivals",
+              "title_ar": "وصل حديثاً",
+              "columns_desktop": 3,
+              "show_search": false,
+              "show_sort": false
+            }
+          }
+        ]
+      },
+      "products": {
+        "sections": [
+          {
+            "type": "st-product-grid"
+          }
+        ]
+      },
+      "collection": {
+        "sections": [
+          {
+            "type": "st-product-grid"
+          }
+        ]
+      },
+      "collections": {
+        "sections": [
+          {
+            "type": "st-product-grid"
+          }
+        ]
+      },
+      "product": {
+        "sections": [
+          {
+            "type": "st-product-detail"
+          }
+        ]
+      },
+      "search": {
+        "sections": [
+          {
+            "type": "st-product-grid"
+          }
+        ]
+      },
+      "page": {
+        "sections": []
+      },
+      "cart": {
+        "sections": []
+      },
+      "404": {
+        "sections": []
       }
     }
   }

@@ -1,3 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Street's own tokens + component classes. `styles.css` at the theme root is
+   kept as the contract artefact; THIS file is what src/main.tsx imports and
+   what Vite compiles into dist/theme.css. */
+
 /* ═══════════════════════════════════════════════════════════════
    STREET VIBES THEME — Bold Urban / Mob Links Inspired
    ═══════════════════════════════════════════════════════════════

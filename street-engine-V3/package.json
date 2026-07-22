@@ -1,6 +1,6 @@
 {
   "name": "street-v3",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Street (V3) (V3 port)",
   "type": "module",
@@ -10,7 +10,7 @@
     "preview": "vite preview --port 5173"
   },
   "dependencies": {
-    "@numueg/theme-sdk": "^0.6.1",
+    "@numueg/theme-sdk": "^0.12.0",
     "framer-motion": "^11.11.0",
     "lucide-react": "^0.454.0",
     "react": "^18.3.1",
