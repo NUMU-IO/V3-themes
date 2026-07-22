@@ -16,7 +16,7 @@ import themeManifest from "../theme.json";
 // styles into dist/theme.css (see vite.config.ts / tailwind.config.js).
 import "./theme.css";
 import {
-  selectTemplateSections, type MaybeOrderedTemplate,
+  resolveSections, selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
 // Sections are imported EAGERLY (not React.lazy): lazy sections can't be
@@ -36,6 +36,9 @@ import BoutiqueProfile from "./sections/boutique-profile";
 import BoutiqueAbout from "./sections/boutique-about";
 import BoutiqueContact from "./sections/boutique-contact";
 import BoutiqueOrderConfirmationSection from "./sections/boutique-order-confirmation-section";
+// Chrome — the theme's own header/footer (G2: no host fallback strip).
+import BoutiqueHeader from "./sections/boutique-header";
+import BoutiqueFooter from "./sections/boutique-footer";
 
 interface MountResult {
   cleanup: () => void;
@@ -57,7 +60,20 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "boutique-about": BoutiqueAbout,
   "boutique-contact": BoutiqueContact,
   "boutique-order-confirmation-section": BoutiqueOrderConfirmationSection,
+  // Chrome. Aliased to the GENERIC "header"/"footer" types too, so chrome
+  // delivered via section_groups (prefixed OR generic type) always resolves.
+  "boutique-header": BoutiqueHeader,
+  "boutique-footer": BoutiqueFooter,
+  header: BoutiqueHeader,
+  footer: BoutiqueFooter,
 };
+
+const HEADER_TYPES = new Set(["boutique-header", "header"]);
+const FOOTER_TYPES = new Set(["boutique-footer", "footer"]);
+
+const BUILTIN_GROUPS = (
+  themeManifest as unknown as { presets?: { section_groups?: Record<string, MaybeOrderedTemplate> } }
+).presets?.section_groups ?? {};
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
 
@@ -91,10 +107,47 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const hostTemplate = settings.templates?.[currentTemplate] as MaybeOrderedTemplate | undefined;
   const builtinTemplate = BUILTIN_TEMPLATES[currentTemplate];
   const sections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
+
+  // Chrome reaches us in TWO places: (1) the engine's section_groups.header /
+  // .footer (what the V3 customizer writes), or (2) inline in the template's
+  // section list. Read BOTH, prefer the host's groups, fall back to the
+  // theme.json preset groups so chrome NEVER silently vanishes.
+  const groups = settings.section_groups as Record<string, MaybeOrderedTemplate> | undefined;
+  const pickGroup = (key: "header" | "footer") => {
+    const fromHost = resolveSections(groups?.[key]).filter(({ instance }) =>
+      isKnownType(instance.type),
+    );
+    if (fromHost.length > 0) return fromHost;
+    return resolveSections(BUILTIN_GROUPS[key]).filter(({ instance }) =>
+      isKnownType(instance.type),
+    );
+  };
+
+  const inlineHeader = sections.filter(({ instance }) => HEADER_TYPES.has(instance.type));
+  const inlineFooter = sections.filter(({ instance }) => FOOTER_TYPES.has(instance.type));
+  const body = sections.filter(
+    ({ instance }) =>
+      !HEADER_TYPES.has(instance.type) && !FOOTER_TYPES.has(instance.type),
+  );
+  const groupHeader = pickGroup("header");
+  const groupFooter = pickGroup("footer");
+  const header = groupHeader.length > 0 ? groupHeader : inlineHeader;
+  const footer = groupFooter.length > 0 ? groupFooter : inlineFooter;
+
+  // a11y: chrome renders its own <header>/<footer> landmarks OUTSIDE the single
+  // <main> landmark; body sections live inside it.
   return (
     <div data-boutique-v3-app data-theme="boutique-v3">
-      {sections.map(({ id, instance }) => (
-        <RenderSection key={id} sectionId={id} instance={instance} />
+      {header.map(({ id, instance }) => (
+        <RenderSection key={`hdr-${id}`} sectionId={id} instance={instance} groupId="header" />
+      ))}
+      <main>
+        {body.map(({ id, instance }) => (
+          <RenderSection key={id} sectionId={id} instance={instance} />
+        ))}
+      </main>
+      {footer.map(({ id, instance }) => (
+        <RenderSection key={`ftr-${id}`} sectionId={id} instance={instance} groupId="footer" />
       ))}
     </div>
   );
@@ -139,7 +192,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "boutique-v3", name: "Boutique (V3)", version: "0.3.3" },
+  manifest: { id: "boutique-v3", name: "Boutique (V3)", version: "0.4.0" },
   mount,
 };
 export default v3Handle;

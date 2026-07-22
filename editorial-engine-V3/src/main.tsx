@@ -7,15 +7,17 @@
 import { useMemo, type ComponentType } from "react";
 import {
   Section, useThemeSettings, useLocale, sanitizeHtml, defineThemeEntry,
-  type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
+  resolveSections, selectTemplateSections,
+  type Cart, type Customer, type MaybeOrderedTemplate,
+  type SectionInstance, type Store, type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 // Tailwind-in-bundle: compiles @tailwind directives + Manshet styles into
 // dist/theme.css (see vite.config.ts / tailwind.config.js).
 import "./theme.css";
-import {
-  resolveSections, selectTemplateSections, type MaybeOrderedTemplate,
-} from "./sections/_template-utils";
+// Template + section-group resolution now comes from the SDK (was a byte-
+// identical per-theme `_template-utils.ts` copy across the fleet). Headless:
+// decides which sections render, never how they look.
 import { DemoContext, PageDataContext, usePageData, type MountPageData } from "./sections/_shared";
 
 // Sections are imported EAGERLY (not React.lazy): lazy sections can't be

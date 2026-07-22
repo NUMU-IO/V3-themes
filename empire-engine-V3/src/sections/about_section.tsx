@@ -4,6 +4,7 @@ import {
 } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
+import { PLACEHOLDER_IMG, useDemo } from "../lib/demo";
 
 interface AboutSettings {
   eyebrow?: string;
@@ -24,6 +25,7 @@ export default function AboutSection({
   blockOrder,
 }: EmpSectionProps) {
   const s = settings as AboutSettings;
+  const demo = useDemo();
 
   const stats = (blockOrder ?? [])
     .map((bid) => ({ bid, block: blocks?.[bid] }))
@@ -93,7 +95,9 @@ export default function AboutSection({
             settingId="image"
             src={
               s.image ||
-              "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1200"
+              (demo
+                ? "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1200"
+                : PLACEHOLDER_IMG)
             }
             alt={(s.title as string) || ""}
           />

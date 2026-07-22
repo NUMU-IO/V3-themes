@@ -222,6 +222,119 @@
   border-top: 4px solid hsl(var(--primary));
 }
 
+/* ===== CHROME — header nav / icon buttons / dropdown / drawer ===== */
+/* Same language as .nb-chip / .nb-btn: 3px black border, hard offset
+   shadow, uppercase heavy type, press-in on :active. */
+
+[data-neo-brutalism-v3-app] .nb-wordmark {
+  background: hsl(var(--card));
+  border: var(--nb-border);
+  box-shadow: var(--nb-shadow-sm);
+  color: hsl(var(--foreground));
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+[data-neo-brutalism-v3-app] .nb-navlink {
+  color: hsl(var(--foreground));
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 3px solid transparent;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+}
+[data-neo-brutalism-v3-app] .nb-navlink:hover {
+  background: hsl(var(--card));
+  border: var(--nb-border);
+  box-shadow: var(--nb-shadow-sm);
+  transform: translate(-1px, -1px);
+}
+[data-neo-brutalism-v3-app] .nb-navlink:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+[data-neo-brutalism-v3-app] .nb-icon-btn {
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  border: var(--nb-border);
+  box-shadow: var(--nb-shadow-sm);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+[data-neo-brutalism-v3-app] .nb-icon-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--nb-shadow);
+}
+[data-neo-brutalism-v3-app] .nb-icon-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: var(--nb-shadow-active);
+}
+
+[data-neo-brutalism-v3-app] .nb-dropdown {
+  background: hsl(var(--card));
+  border: var(--nb-border);
+  box-shadow: var(--nb-shadow-lg);
+}
+
+[data-neo-brutalism-v3-app] .nb-drawer {
+  background: hsl(var(--background));
+  border-top: var(--nb-border);
+  box-shadow: 0 6px 0 hsl(var(--foreground));
+}
+
+/* Keyboard focus is loud on purpose — matches the theme's hard edges. */
+[data-neo-brutalism-v3-app] .nb-navlink:focus-visible,
+[data-neo-brutalism-v3-app] .nb-icon-btn:focus-visible,
+[data-neo-brutalism-v3-app] .nb-footer-link:focus-visible,
+[data-neo-brutalism-v3-app] .nb-social:focus-visible,
+[data-neo-brutalism-v3-app] .nb-wordmark:focus-visible {
+  outline: 3px solid hsl(var(--accent));
+  outline-offset: 2px;
+}
+
+/* ===== CHROME — footer bits ===== */
+
+[data-neo-brutalism-v3-app] .nb-footer-heading {
+  color: hsl(var(--primary));
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+[data-neo-brutalism-v3-app] .nb-footer-link {
+  color: hsl(var(--background));
+  text-decoration: none;
+  transition: color 0.12s ease, transform 0.12s ease;
+}
+[data-neo-brutalism-v3-app] .nb-footer-link:hover {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+[data-neo-brutalism-v3-app] .nb-social {
+  background: hsl(var(--primary));
+  color: hsl(var(--foreground));
+  border: 3px solid hsl(var(--background));
+  box-shadow: 3px 3px 0 hsl(var(--background));
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+[data-neo-brutalism-v3-app] .nb-social:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 hsl(var(--background));
+}
+[data-neo-brutalism-v3-app] .nb-social:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 hsl(var(--background));
+}
+
+[data-neo-brutalism-v3-app] .nb-footer-bottom {
+  border-top: 3px solid hsl(var(--primary));
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+}
+
 /* ===== ANNOUNCEMENT ===== */
 [data-neo-brutalism-v3-app] .nb-announcement {
   background: hsl(var(--foreground));

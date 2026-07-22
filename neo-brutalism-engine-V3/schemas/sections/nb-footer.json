@@ -1,0 +1,91 @@
+{
+  "type": "nb-footer",
+  "tag": "footer",
+  "limit": 1,
+  "name": "Footer",
+  "name_ar": "الفوتر",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name (blank = store name)",
+      "label_ar": "اسم العلامة (سيبه فاضي = اسم المتجر)",
+      "default": ""
+    },
+    {
+      "id": "tagline",
+      "type": "textarea",
+      "label": "Tagline",
+      "label_ar": "جملة تعريفية",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Contact"
+    },
+    {
+      "id": "contact_email",
+      "type": "text",
+      "label": "Contact email",
+      "label_ar": "إيميل التواصل",
+      "default": ""
+    },
+    {
+      "id": "contact_phone",
+      "type": "text",
+      "label": "Contact phone",
+      "label_ar": "تليفون التواصل",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Link columns — one link per line as: Label | /url"
+    },
+    {
+      "id": "column_1_title",
+      "type": "text",
+      "label": "Column 1 title",
+      "label_ar": "عنوان العمود الأول",
+      "default": ""
+    },
+    {
+      "id": "column_1_links",
+      "type": "textarea",
+      "label": "Column 1 links",
+      "label_ar": "روابط العمود الأول",
+      "default": ""
+    },
+    {
+      "id": "column_2_title",
+      "type": "text",
+      "label": "Column 2 title",
+      "label_ar": "عنوان العمود التاني",
+      "default": ""
+    },
+    {
+      "id": "column_2_links",
+      "type": "textarea",
+      "label": "Column 2 links",
+      "label_ar": "روابط العمود التاني",
+      "default": ""
+    },
+    {
+      "id": "column_3_title",
+      "type": "text",
+      "label": "Column 3 title",
+      "label_ar": "عنوان العمود التالت",
+      "default": ""
+    },
+    {
+      "id": "column_3_links",
+      "type": "textarea",
+      "label": "Column 3 links",
+      "label_ar": "روابط العمود التالت",
+      "default": ""
+    }
+  ]
+}

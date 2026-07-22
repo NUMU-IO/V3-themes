@@ -1,0 +1,105 @@
+{
+  "type": "elegant-header",
+  "tag": "header",
+  "limit": 1,
+  "name": "Elegant Header",
+  "name_ar": "ترويسة إيليجانت",
+  "locales": {
+    "ar": {
+      "name": "ترويسة إيليجانت"
+    }
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "id": "logo_url",
+      "type": "image_picker",
+      "label": "Logo image",
+      "label_ar": "صورة الشعار",
+      "info": "Leave empty to show the store name as a serif wordmark.",
+      "info_ar": "سيبها فاضية علشان يظهر اسم المتجر بخط سيريف."
+    },
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name (blank = store name)",
+      "label_ar": "اسم العلامة (فاضي = اسم المتجر)",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Announcement bar"
+    },
+    {
+      "id": "show_announcement",
+      "type": "checkbox",
+      "label": "Show announcement bar",
+      "label_ar": "إظهار شريط الإعلان",
+      "default": true
+    },
+    {
+      "id": "announcement_text",
+      "type": "text",
+      "label": "Announcement text",
+      "label_ar": "نص الإعلان",
+      "info": "Leave empty to use the theme's bilingual default message.",
+      "info_ar": "سيبها فاضية علشان تظهر الرسالة الافتراضية بالعربي والإنجليزي.",
+      "default": ""
+    },
+    {
+      "id": "announcement_link",
+      "type": "url",
+      "label": "Announcement link",
+      "label_ar": "رابط الإعلان",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "id": "menu_handle",
+      "type": "text",
+      "label": "Menu handle",
+      "label_ar": "معرّف القائمة",
+      "info": "Menu from the store's Navigation manager. Falls back to Home / Shop / Collections / About / Contact.",
+      "info_ar": "القائمة من مدير التنقل. لو مفيش، هيظهر: الرئيسية / تسوق / التشكيلات / من إحنا / كلمنا.",
+      "default": "main-menu"
+    },
+    {
+      "id": "sticky",
+      "type": "checkbox",
+      "label": "Stick to top on scroll",
+      "label_ar": "تثبيت الترويسة أعلى الصفحة",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Actions"
+    },
+    {
+      "id": "show_search",
+      "type": "checkbox",
+      "label": "Show search",
+      "label_ar": "إظهار البحث",
+      "default": true
+    },
+    {
+      "id": "show_account",
+      "type": "checkbox",
+      "label": "Show account",
+      "label_ar": "إظهار الحساب",
+      "default": true
+    },
+    {
+      "id": "show_cart",
+      "type": "checkbox",
+      "label": "Show cart",
+      "label_ar": "إظهار السلة",
+      "default": true
+    }
+  ]
+}

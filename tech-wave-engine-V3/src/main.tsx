@@ -19,12 +19,14 @@ import themeManifest from "../theme.json";
 // styles into dist/theme.css (see vite.config.ts / tailwind.config.js).
 import "./theme.css";
 import {
-  selectTemplateSections, type MaybeOrderedTemplate,
+  resolveSections, selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
 // Eager section imports (no React.lazy): sections bundle into theme.js so the
 // whole page renders in one commit — no chunk-download flash, SSR-safe.
 import TwAnnouncementBar from "./sections/tw-announcement-bar";
+import TechWaveHeader from "./sections/tech-wave-header";
+import TechWaveFooter from "./sections/tech-wave-footer";
 import TechWaveHero from "./sections/tech-wave-hero";
 import TechWaveCategories from "./sections/tech-wave-categories";
 import TechWaveFeaturedCollection from "./sections/tech-wave-featured-collection";
@@ -45,6 +47,12 @@ interface MountResult {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
+  // Chrome. Aliased to the GENERIC "header"/"footer" types too, so chrome
+  // delivered via section_groups (prefixed OR generic type) always resolves.
+  "tech-wave-header": TechWaveHeader,
+  "tech-wave-footer": TechWaveFooter,
+  header: TechWaveHeader,
+  footer: TechWaveFooter,
   // Home sections (faithful ports of the V2 in-tree tech-wave sections)
   "tw-announcement-bar": TwAnnouncementBar,
   "tech-wave-hero": TechWaveHero,
@@ -64,9 +72,19 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
 
-const BUILTIN_TEMPLATES = (
-  themeManifest as unknown as { presets?: { templates?: Record<string, MaybeOrderedTemplate> } }
-).presets?.templates ?? {};
+const MANIFEST_PRESETS = (
+  themeManifest as unknown as {
+    presets?: {
+      templates?: Record<string, MaybeOrderedTemplate>;
+      section_groups?: Record<string, MaybeOrderedTemplate>;
+    };
+  }
+).presets;
+const BUILTIN_TEMPLATES = MANIFEST_PRESETS?.templates ?? {};
+const BUILTIN_GROUPS = MANIFEST_PRESETS?.section_groups ?? {};
+
+const HEADER_TYPES = new Set(["tech-wave-header", "header"]);
+const FOOTER_TYPES = new Set(["tech-wave-footer", "footer"]);
 
 function RenderSection({ instance, sectionId, groupId }: {
   instance: SectionInstance; sectionId: string; groupId?: string;
@@ -94,10 +112,47 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const hostTemplate = settings.templates?.[currentTemplate] as MaybeOrderedTemplate | undefined;
   const builtinTemplate = BUILTIN_TEMPLATES[currentTemplate];
   const sections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
+
+  // Chrome (header/footer) reaches us in TWO places: (1) the engine's
+  // section_groups.header/.footer — what the V3 customizer writes — or
+  // (2) inline in the template's section list. Read BOTH, prefer the
+  // customizer's groups, and fall back to the theme.json preset groups so
+  // a store that has never been customised still gets real navigation.
+  const groups = settings.section_groups as
+    | Record<string, MaybeOrderedTemplate>
+    | undefined;
+  const known = ({ instance }: { instance: SectionInstance }) =>
+    isKnownType(instance.type);
+  const pickGroup = (key: "header" | "footer") => {
+    const fromHost = resolveSections(groups?.[key]).filter(known);
+    if (fromHost.length > 0) return fromHost;
+    return resolveSections(BUILTIN_GROUPS[key]).filter(known);
+  };
+
+  const inlineHeader = sections.filter(({ instance }) => HEADER_TYPES.has(instance.type));
+  const inlineFooter = sections.filter(({ instance }) => FOOTER_TYPES.has(instance.type));
+  const body = sections.filter(
+    ({ instance }) =>
+      !HEADER_TYPES.has(instance.type) && !FOOTER_TYPES.has(instance.type),
+  );
+  const groupHeader = pickGroup("header");
+  const groupFooter = pickGroup("footer");
+  const header = groupHeader.length > 0 ? groupHeader : inlineHeader;
+  const footer = groupFooter.length > 0 ? groupFooter : inlineFooter;
+
+  // a11y: chrome renders its own <header>/<footer> landmarks OUTSIDE <main>.
   return (
     <div data-tech-wave-v3-app data-theme="tech-wave-v3">
-      {sections.map(({ id, instance }) => (
-        <RenderSection key={id} sectionId={id} instance={instance} />
+      {header.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="header" />
+      ))}
+      <main>
+        {body.map(({ id, instance }) => (
+          <RenderSection key={id} sectionId={id} instance={instance} />
+        ))}
+      </main>
+      {footer.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="footer" />
       ))}
     </div>
   );
@@ -138,7 +193,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "tech-wave-v3", name: "Tech wave (V3)", version: "0.3.3" },
+  manifest: { id: "tech-wave-v3", name: "Tech wave (V3)", version: "0.4.0" },
   mount,
 };
 export default v3Handle;

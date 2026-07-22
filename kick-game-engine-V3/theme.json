@@ -2,12 +2,43 @@
   "id": "kick-game-v3",
   "name": "Kick game (V3)",
   "author": "NUMU",
-  "version": "0.3.13",
+  "version": "0.4.0",
   "layout": "single-column",
   "description": "Kick Game (V3) — warm minimalist luxury streetwear, dense editorial grid, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
+    "section_groups": {
+      "header": {
+        "name": "Header",
+        "sections": [
+          {
+            "type": "kg-header",
+            "settings": {
+              "menu_handle": "main-menu",
+              "sticky": true,
+              "show_search": true,
+              "show_account": true,
+              "show_cart": true,
+              "show_announcement": true
+            }
+          }
+        ]
+      },
+      "footer": {
+        "name": "Footer",
+        "sections": [
+          {
+            "type": "kg-footer",
+            "settings": {
+              "show_logo": false,
+              "column_1_menu": "footer",
+              "column_2_menu": "footer-secondary"
+            }
+          }
+        ]
+      }
+    },
     "templates": {
       "home": {
         "name": "Home",

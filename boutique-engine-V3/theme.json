@@ -2,12 +2,43 @@
   "id": "boutique-v3",
   "name": "Boutique (V3)",
   "author": "NUMU",
-  "version": "0.3.11",
+  "version": "0.4.0",
   "layout": "single-column",
   "description": "Boutique (V3) — vibrant pink/magenta fashion-forward storefront, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
+    "section_groups": {
+      "header": {
+        "name": "Header",
+        "sections": [
+          {
+            "type": "boutique-header",
+            "settings": {
+              "menu_handle": "main-menu",
+              "show_search": true,
+              "show_account": true,
+              "show_cart": true,
+              "sticky": true,
+              "show_announcement": true,
+              "announcement_text": "Free shipping on orders over 1000 EGP",
+              "announcement_text_ar": "شحن مجاني للطلبات فوق ١٠٠٠ جنيه"
+            }
+          }
+        ]
+      },
+      "footer": {
+        "name": "Footer",
+        "sections": [
+          {
+            "type": "boutique-footer",
+            "settings": {
+              "menu_handle": "footer"
+            }
+          }
+        ]
+      }
+    },
     "templates": {
       "home": {
         "name": "Home",

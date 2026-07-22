@@ -6,6 +6,7 @@ import {
   type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import manifest from "../theme.json";
+import { DemoContext } from "./lib/demo";
 
 import Header from "./sections/Header";
 import Footer from "./sections/Footer";
@@ -241,8 +242,12 @@ export default function Theme({ themeSettings, currentTemplate }: ThemeProps) {
 }
 
 // ── Entry: ONE definition → mount (client/hydrate) + createApp (SSR) ────────
-const entry = defineThemeEntry(({ themeSettings, currentTemplate }) => (
-  <Theme themeSettings={themeSettings} currentTemplate={currentTemplate} />
+// `demo` gates the sections' stock-photo fallbacks: marketplace preview only,
+// never a real installed store (see src/lib/demo.ts).
+const entry = defineThemeEntry(({ themeSettings, currentTemplate, demo }) => (
+  <DemoContext.Provider value={demo}>
+    <Theme themeSettings={themeSettings} currentTemplate={currentTemplate} />
+  </DemoContext.Provider>
 ));
 
 export const mount = entry.mount;
