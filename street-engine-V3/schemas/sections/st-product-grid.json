@@ -1,0 +1,55 @@
+{
+  "name": "Product grid",
+  "name_ar": "شبكة المنتجات",
+  "settings": [
+    {
+      "id": "title",
+      "type": "text",
+      "label": "Title (English)",
+      "label_ar": "العنوان (إنجليزي)",
+      "default": "",
+      "info": "Only used on the all-products page — a collection page uses the collection's own name.",
+      "info_ar": "بيظهر في صفحة كل المنتجات بس — صفحة التصنيف بتستخدم اسم التصنيف."
+    },
+    {
+      "id": "title_ar",
+      "type": "text",
+      "label": "Title (Arabic)",
+      "label_ar": "العنوان (عربي)",
+      "info": "Shown to Arabic visitors. Falls back to the English title.",
+      "info_ar": "بتظهر للزوار العرب. لو فاضية بيظهر النص الإنجليزي.",
+      "default": ""
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "label": "Subtitle",
+      "label_ar": "الوصف",
+      "default": ""
+    },
+    {
+      "id": "columns_desktop",
+      "type": "range",
+      "label": "Columns (desktop)",
+      "label_ar": "الأعمدة (كمبيوتر)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "id": "show_search",
+      "type": "checkbox",
+      "label": "Show search",
+      "label_ar": "إظهار البحث",
+      "default": true
+    },
+    {
+      "id": "show_sort",
+      "type": "checkbox",
+      "label": "Show sort",
+      "label_ar": "إظهار الترتيب",
+      "default": true
+    }
+  ]
+}

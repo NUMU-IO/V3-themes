@@ -7,6 +7,7 @@ import {
   useCustomerAddresses,
   useLocalization,
 } from "@numueg/theme-sdk";
+import { centsToMajor } from "../lib/money";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 
@@ -228,7 +229,10 @@ function OrdersTab() {
             </p>
           </div>
           <span className="empire-orders__total">
-            {formatMoney(o.total, o.currency)}
+            {/* `useOrders` returns integer CENTS (unlike useCart, which is
+                already major units) — render without this and every order in
+                the list shows 100x its real value. */}
+            {formatMoney(centsToMajor(o.total), o.currency)}
           </span>
         </a>
       ))}

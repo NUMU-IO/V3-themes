@@ -2,6 +2,7 @@ import { EditableImage } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { useT } from "../lib/i18n";
+import { PLACEHOLDER_IMG, useDemo } from "../lib/demo";
 
 interface PromoSettings {
   badge_text?: string;
@@ -19,6 +20,7 @@ interface PromoSettings {
 export default function PromoBanner({ id, settings }: EmpSectionProps) {
   const s = settings as PromoSettings;
   const t = useT();
+  const demo = useDemo();
   const badge = s.badge_text ?? t("Limited offer", "عرض محدود");
   const headline = s.headline ?? t("25% off all accessories", "خصم ٢٥٪ على كل الإكسسوارات");
   const subtitle = s.subtitle ?? t("Ends this month — don't miss out!", "العرض ساري لنهاية الشهر. متفوتش الفرصة!");
@@ -35,7 +37,9 @@ export default function PromoBanner({ id, settings }: EmpSectionProps) {
               settingId="image_url"
               src={
                 s.image_url ||
-                "https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600"
+                (demo
+                  ? "https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600"
+                  : PLACEHOLDER_IMG)
               }
               alt=""
             />

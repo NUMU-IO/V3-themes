@@ -1,0 +1,110 @@
+{
+  "type": "modern-header",
+  "name": "Header",
+  "name_ar": "الترويسة",
+  "tag": "header",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name",
+      "label_ar": "اسم المتجر",
+      "default": "",
+      "info": "Leave empty to use the store name."
+    },
+    {
+      "id": "logo_url",
+      "type": "image_picker",
+      "label": "Logo",
+      "label_ar": "الشعار",
+      "info": "Falls back to the store logo, then to the brand name text."
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "id": "menu_handle",
+      "type": "text",
+      "label": "Menu handle",
+      "label_ar": "معرّف القائمة",
+      "default": "main-menu",
+      "info": "Which navigation menu to show. Defaults to main-menu."
+    },
+    {
+      "type": "header",
+      "content": "Announcement bar"
+    },
+    {
+      "id": "show_announcement",
+      "type": "checkbox",
+      "label": "Show announcement bar",
+      "label_ar": "إظهار شريط الإعلان",
+      "default": true
+    },
+    {
+      "id": "announcement_text",
+      "type": "text",
+      "label": "Announcement text",
+      "label_ar": "نص الإعلان",
+      "default": ""
+    },
+    {
+      "id": "announcement_text_ar",
+      "type": "text",
+      "label": "Announcement text (Arabic)",
+      "label_ar": "نص الإعلان (عربي)",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Actions"
+    },
+    {
+      "id": "show_search",
+      "type": "checkbox",
+      "label": "Show search",
+      "label_ar": "إظهار البحث",
+      "default": true
+    },
+    {
+      "id": "show_account",
+      "type": "checkbox",
+      "label": "Show account link",
+      "label_ar": "إظهار رابط الحساب",
+      "default": true
+    },
+    {
+      "id": "show_cart",
+      "type": "checkbox",
+      "label": "Show cart",
+      "label_ar": "إظهار السلة",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header",
+      "locales": {
+        "en": {
+          "name": "Header"
+        },
+        "ar": {
+          "name": "الترويسة"
+        }
+      },
+      "settings": {
+        "menu_handle": "main-menu",
+        "show_announcement": true,
+        "show_search": true,
+        "show_account": true,
+        "show_cart": true
+      }
+    }
+  ]
+}

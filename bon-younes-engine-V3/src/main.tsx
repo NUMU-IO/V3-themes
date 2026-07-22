@@ -76,7 +76,13 @@ function UnknownSection({ type }: { type: string }) {
   );
 }
 
-import { selectTemplateSections, type MaybeOrderedTemplate } from "./sections/_template-utils";
+// Template + chrome resolution comes from the SDK — the local
+// `_template-utils.ts` was the same engine policy copy-pasted.
+import {
+  selectChromeSections,
+  selectTemplateSections,
+  type MaybeOrderedTemplate,
+} from "@numueg/theme-sdk";
 
 const BUILTIN_TEMPLATES = (
   themeManifest as unknown as {
@@ -85,6 +91,12 @@ const BUILTIN_TEMPLATES = (
 ).presets?.templates ?? {};
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
+
+// Chrome section types. Aliased to the generic names too, so chrome
+// delivered through section_groups resolves whichever form the customizer
+// wrote.
+const HEADER_TYPES = new Set(["by-header", "header"]);
+const FOOTER_TYPES = new Set(["by-footer", "footer"]);
 
 function RenderSection({
   instance,
@@ -129,10 +141,63 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
     isKnownType,
   );
 
+  // This theme used to render ONE flat list, so header and footer only ever
+  // appeared because every preset template happens to include them inline.
+  // A route the theme ships no template for — /blogs, say — resolved to zero
+  // sections and therefore rendered no navigation at all: no logo, no menu,
+  // no cart, no footer, no way back into the store.
+  const inlineHeader = sections.filter(({ instance }) =>
+    HEADER_TYPES.has(instance.type),
+  );
+  const inlineFooter = sections.filter(({ instance }) =>
+    FOOTER_TYPES.has(instance.type),
+  );
+  const body = sections.filter(
+    ({ instance }) =>
+      !HEADER_TYPES.has(instance.type) && !FOOTER_TYPES.has(instance.type),
+  );
+
+  const groups = settings.section_groups as
+    | Record<string, MaybeOrderedTemplate>
+    | undefined;
+  const chromeCandidates = [
+    (settings.templates as Record<string, MaybeOrderedTemplate> | undefined)
+      ?.home,
+    BUILTIN_TEMPLATES.home,
+    ...Object.values(
+      (settings.templates ?? {}) as Record<string, MaybeOrderedTemplate>,
+    ),
+    ...Object.values(BUILTIN_TEMPLATES),
+  ];
+  const chrome = (
+    inline: typeof inlineHeader,
+    group: MaybeOrderedTemplate | undefined,
+    types: Set<string>,
+  ) =>
+    selectChromeSections({
+      hostGroup: group,
+      inline,
+      templates: chromeCandidates,
+      isChrome: (t) => types.has(t),
+      isKnown: isKnownType,
+    });
+  const header = chrome(inlineHeader, groups?.header, HEADER_TYPES);
+  const footer = chrome(inlineFooter, groups?.footer, FOOTER_TYPES);
+
   return (
     <div data-bon-younes-v3-app data-theme="bon-younes">
-      {sections.map(({ id, instance }) => (
-        <RenderSection key={id} sectionId={id} instance={instance} />
+      {header.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="header" />
+      ))}
+      {/* Exactly one <main> landmark. It is also the slot the host fills with
+          the page body on routes this theme has no template for. */}
+      <main>
+        {body.map(({ id, instance }) => (
+          <RenderSection key={id} sectionId={id} instance={instance} />
+        ))}
+      </main>
+      {footer.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="footer" />
       ))}
     </div>
   );

@@ -2,6 +2,8 @@ import {
   useMemo,
   useState } from "react";
 import {
+  useListingHeading,
+  useLocale,
   usePage,
   useProducts,
   type Product,
@@ -29,7 +31,16 @@ type SortKey = "featured" | "price_asc" | "price_desc" | "name";
 export default function ProductGrid({ id, settings }: EmpSectionProps) {
   const s = settings as GridSettings;
   const cols = Math.max(2, Math.min(5, s.columns_desktop ?? 4));
-  const title = s.title ?? "كل المنتجات";
+  // Was hardcoded Arabic-only AND blind to the collection: an English shopper
+  // on /collections/bags saw "كل المنتجات" above a filtered grid. The
+  // collection names the page; the section setting is the unscoped wording.
+  const locale = useLocale();
+  const isAr = (locale || "").toLowerCase().startsWith("ar");
+  const listing = useListingHeading({
+    title: s.title,
+    defaultTitle: isAr ? "كل المنتجات" : "All products",
+  });
+  const title = listing.title;
 
   const page = usePage();
   const ssr = (page?.data?.products as Product[] | undefined) ?? [];

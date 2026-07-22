@@ -1,0 +1,89 @@
+{
+  "name": "Header",
+  "name_ar": "الهيدر",
+  "tag": "header",
+  "settings": [
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name",
+      "label_ar": "اسم البراند",
+      "default": "",
+      "info": "Leave empty to use the store name.",
+      "info_ar": "سيبها فاضية علشان يظهر اسم المتجر."
+    },
+    {
+      "id": "logo_url",
+      "type": "image_picker",
+      "label": "Logo",
+      "label_ar": "اللوجو"
+    },
+    {
+      "id": "menu_handle",
+      "type": "text",
+      "label": "Menu handle",
+      "label_ar": "معرّف القائمة",
+      "default": "main-menu"
+    },
+    {
+      "id": "show_search",
+      "type": "checkbox",
+      "label": "Show search",
+      "label_ar": "إظهار البحث",
+      "default": true
+    },
+    {
+      "id": "show_account",
+      "type": "checkbox",
+      "label": "Show account",
+      "label_ar": "إظهار الحساب",
+      "default": true
+    },
+    {
+      "id": "show_cart",
+      "type": "checkbox",
+      "label": "Show cart",
+      "label_ar": "إظهار السلة",
+      "default": true
+    },
+    {
+      "id": "show_announcement",
+      "type": "checkbox",
+      "label": "Show announcement bar",
+      "label_ar": "إظهار شريط الإعلان",
+      "default": true
+    },
+    {
+      "id": "announcement_text",
+      "type": "text",
+      "label": "Announcement text (English)",
+      "label_ar": "نص الإعلان (إنجليزي)",
+      "default": "",
+      "info": "Leave empty to show no announcement in the header.",
+      "info_ar": "سيبها فاضية علشان ميظهرش إعلان في الهيدر."
+    },
+    {
+      "id": "announcement_text_ar",
+      "type": "text",
+      "label": "Announcement text (Arabic)",
+      "label_ar": "نص الإعلان (عربي)",
+      "default": ""
+    },
+    {
+      "id": "marquee_text",
+      "type": "text",
+      "label": "Marquee text (English)",
+      "label_ar": "نص الشريط المتحرك (إنجليزي)",
+      "default": "",
+      "info": "The scrolling strip under the header. Empty hides it.",
+      "info_ar": "الشريط المتحرك تحت الهيدر. لو فاضي مش هيظهر."
+    },
+    {
+      "id": "marquee_text_ar",
+      "type": "text",
+      "label": "Marquee text (Arabic)",
+      "label_ar": "نص الشريط المتحرك (عربي)",
+      "default": ""
+    }
+  ]
+}
