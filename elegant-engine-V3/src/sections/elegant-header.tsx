@@ -66,6 +66,7 @@ const ElegantHeader = ({ instance, sectionId }: SectionRenderProps) => {
   const { cart } = useCart();
   const themeSettings = useThemeSettings();
   const locale = useLocale();
+  const isAr = (locale || "").toLowerCase().startsWith("ar");
 
   const globals = (themeSettings.global_settings ?? {}) as Record<string, unknown>;
 
@@ -87,13 +88,16 @@ const ElegantHeader = ({ instance, sectionId }: SectionRenderProps) => {
   const sticky = s.sticky !== false;
   const showAnnouncement = s.show_announcement !== false;
 
-  const announcementText =
-    asString(s.announcement_text) ||
-    localized(
-      locale,
-      "Complimentary shipping on orders over 1000 EGP",
-      "الشحن مجاني للطلبات فوق ١٠٠٠ جنيه",
-    );
+  // NO invented fallback. The HOST already renders the merchant's configured
+  // announcement bar above the theme, so a hardcoded default here stacked a
+  // second bar underneath it saying something the merchant never wrote. The
+  // render below is gated on this being non-empty — which the old fallback
+  // made permanently true, so the gate never actually gated anything.
+  // Also read the AR field: it was ignored entirely, so an Arabic shopper got
+  // the English string even when the merchant had filled in Arabic copy.
+  const announcementText = isAr
+    ? asString(s.announcement_text_ar) || asString(s.announcement_text)
+    : asString(s.announcement_text) || asString(s.announcement_text_ar);
   const announcementLink = asString(s.announcement_link);
 
   const menuHandle = asString(s.menu_handle) || "main-menu";

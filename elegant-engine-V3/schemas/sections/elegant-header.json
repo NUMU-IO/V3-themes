@@ -43,10 +43,19 @@
     {
       "id": "announcement_text",
       "type": "text",
-      "label": "Announcement text",
-      "label_ar": "نص الإعلان",
-      "info": "Leave empty to use the theme's bilingual default message.",
-      "info_ar": "سيبها فاضية علشان تظهر الرسالة الافتراضية بالعربي والإنجليزي.",
+      "label": "Announcement text (English)",
+      "label_ar": "نص الإعلان (إنجليزي)",
+      "info": "Leave empty to show no announcement in the header.",
+      "info_ar": "سيبها فاضية علشان ميظهرش إعلان في الهيدر.",
+      "default": ""
+    },
+    {
+      "id": "announcement_text_ar",
+      "type": "text",
+      "label": "Announcement text (Arabic)",
+      "label_ar": "نص الإعلان (عربي)",
+      "info": "Shown to Arabic visitors. Falls back to the English text.",
+      "info_ar": "بتظهر للزوار العرب. لو فاضية بيظهر النص الإنجليزي.",
       "default": ""
     },
     {

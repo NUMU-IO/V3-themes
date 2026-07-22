@@ -82,14 +82,14 @@
       "type": "text",
       "label": "Announcement text (English)",
       "label_ar": "نص الإعلان (إنجليزي)",
-      "default": "Free shipping on orders over 1000 EGP"
+      "default": ""
     },
     {
       "id": "announcement_text_ar",
       "type": "text",
       "label": "Announcement text (Arabic)",
       "label_ar": "نص الإعلان (عربي)",
-      "default": "شحن مجاني للطلبات فوق ١٠٠٠ جنيه"
+      "default": ""
     }
   ]
 }

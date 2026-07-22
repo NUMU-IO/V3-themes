@@ -89,13 +89,14 @@ export default function ModernHeader({
   const announcementText = isAr
     ? asString(s.announcement_text_ar) || asString(s.announcement_text)
     : asString(s.announcement_text) || asString(s.announcement_text_ar);
-  const announcement =
-    announcementText ||
-    localized(
-      locale,
-      "Free shipping on orders over 1000 EGP",
-      "شحن مجاني للطلبات فوق ١٠٠٠ جنيه",
-    );
+  // NO invented fallback. The HOST already renders the merchant's configured
+  // announcement bar above the theme, so a hardcoded default here stacked a
+  // second bar underneath it saying something the merchant never wrote —
+  // "Free shipping over EGP 500" (theirs) directly above "Free shipping on
+  // orders over 1000 EGP" (ours), contradicting each other. The strip is for
+  // merchants who set announcement copy in THIS section's settings; when they
+  // haven't, there is nothing to say.
+  const announcement = announcementText;
 
   const menu = useNavigation(asString(s.menu_handle) || "main-menu");
   const nav: NavLink[] =

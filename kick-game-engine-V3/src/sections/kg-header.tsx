@@ -91,14 +91,17 @@ const KGHeader = ({ instance, sectionId }: SectionRenderProps) => {
   const showCart = s.show_cart !== false;
 
   // Kick Game ships no separate announcement-bar section, so the strip lives
-  // here. Blank merchant copy falls back to a neutral bilingual line rather
-  // than collapsing the bar while the toggle is on.
+  // here. Blank merchant copy collapses the bar — see below.
   const showAnnouncement = s.show_announcement !== false;
+  // NO invented fallback. The HOST already renders the merchant's configured
+  // announcement bar above the theme, so a hardcoded default here stacked a
+  // second bar underneath it saying something the merchant never wrote. The
+  // strip is for merchants who set announcement copy in THIS section's
+  // settings; when they haven't, there is nothing to say.
   const announcement =
     (isAr ? asString(s.announcement_text_ar) : "") ||
     asString(s.announcement_text) ||
-    asString(s.announcement_text_ar) ||
-    localized(locale, "NEW DROPS EVERY WEEK", "دروبات جديدة كل أسبوع");
+    asString(s.announcement_text_ar);
 
   const menuHandle = asString(s.menu_handle) || "main-menu";
   const menu = useNavigation(menuHandle);

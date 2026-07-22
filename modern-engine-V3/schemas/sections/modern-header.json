@@ -52,14 +52,14 @@
       "type": "text",
       "label": "Announcement text",
       "label_ar": "نص الإعلان",
-      "default": "Free shipping on orders over 1000 EGP"
+      "default": ""
     },
     {
       "id": "announcement_text_ar",
       "type": "text",
       "label": "Announcement text (Arabic)",
       "label_ar": "نص الإعلان (عربي)",
-      "default": "شحن مجاني للطلبات فوق ١٠٠٠ جنيه"
+      "default": ""
     },
     {
       "type": "header",
@@ -91,8 +91,12 @@
     {
       "name": "Header",
       "locales": {
-        "en": { "name": "Header" },
-        "ar": { "name": "الترويسة" }
+        "en": {
+          "name": "Header"
+        },
+        "ar": {
+          "name": "الترويسة"
+        }
       },
       "settings": {
         "menu_handle": "main-menu",

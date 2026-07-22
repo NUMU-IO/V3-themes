@@ -91,13 +91,12 @@ const BoutiqueHeader = ({ instance, sectionId }: SectionRenderProps) => {
   const announcementText = isAr
     ? asString(s.announcement_text_ar) || asString(s.announcement_text)
     : asString(s.announcement_text) || asString(s.announcement_text_ar);
-  const announcement =
-    announcementText ||
-    localized(
-      locale,
-      "Free shipping on orders over 1000 EGP",
-      "شحن مجاني للطلبات فوق ١٠٠٠ جنيه",
-    );
+  // NO invented fallback. The HOST already renders the merchant's configured
+  // announcement bar above the theme, so a hardcoded default here stacked a
+  // second bar underneath it saying something the merchant never wrote. The
+  // strip is for merchants who set announcement copy in THIS section's
+  // settings; when they haven't, there is nothing to say.
+  const announcement = announcementText;
 
   // Nav: merchant menu first (the SDK already drops links to hidden CMS pages),
   // then the bilingual default set.
