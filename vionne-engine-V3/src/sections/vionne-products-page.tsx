@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useListingHeading, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { asNumber, asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
@@ -42,8 +42,20 @@ export default function VionneProductsPage({ instance, sectionId }: SectionRende
   const colsMobile = asNumber(s.columns_mobile, 2);
   const showViewToggle = s.show_view_toggle ?? true;
   const showSubtitle = s.show_category_subtitle !== false;
-  const pageTitle = asString(s.title) || localized(locale, "All products", "كل المنتجات");
-  const subtitle = asString(s.subtitle);
+  // A collection page is named after its collection. The merchant's
+  // section title is the wording for the UNSCOPED listing, so it must not
+  // outrank the collection the shopper actually clicked into.
+  const listing = useListingHeading({
+    title: asString(s.title),
+    description: asString(s.subtitle),
+    defaultTitle: localized(locale, "All products", "كل المنتجات"),
+  });
+  const pageTitle = listing.title;
+  // `show_category_subtitle` was named for this and never delivered it: the
+  // subtitle only ever showed the merchant's static text. On a collection
+  // page the collection's own description is the more useful line, so it
+  // takes precedence (see useListingHeading).
+  const subtitle = listing.description;
   const emptyHeading = asString(s.empty_heading) || localized(locale, "No results", "لا توجد نتائج");
   const emptyText =
     asString(s.empty_text) ||

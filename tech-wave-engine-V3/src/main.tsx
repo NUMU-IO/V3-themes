@@ -11,8 +11,15 @@
 
 import { type ComponentType } from "react";
 import {
-  Section, useThemeSettings, defineThemeEntry,
-  type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
+  defineThemeEntry,
+  Section,
+  selectChromeSections,
+  useThemeSettings,
+  type Cart,
+  type Customer,
+  type SectionInstance,
+  type Store,
+  type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 // Tailwind-in-bundle: compiles @tailwind directives + ported V2 tech-wave
@@ -137,8 +144,44 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   );
   const groupHeader = pickGroup("header");
   const groupFooter = pickGroup("footer");
-  const header = groupHeader.length > 0 ? groupHeader : inlineHeader;
-  const footer = groupFooter.length > 0 ? groupFooter : inlineFooter;
+  // Chrome, in priority order: the customizer's section_groups, then the
+  // header/footer sections sitting inline in THIS template.
+  //
+  // Third tier: borrow. A route this theme ships no template for — /blogs was
+  // the one that surfaced it — resolves to zero sections, so both tiers above
+  // are empty and the shopper got correct content wrapped in nothing: no logo,
+  // no menu, no cart, no footer, no way back into the store except Back.
+  // Borrowing the chrome the theme already renders on every other page is
+  // strictly better than rendering none, and it stays real editable sections
+  // rather than a synthetic strip.
+  const chromeCandidates = [
+    (settings.templates as Record<string, MaybeOrderedTemplate> | undefined)?.home,
+    BUILTIN_TEMPLATES.home,
+    ...Object.values(
+      (settings.templates ?? {}) as Record<string, MaybeOrderedTemplate>,
+    ),
+    ...Object.values(BUILTIN_TEMPLATES as Record<string, MaybeOrderedTemplate>),
+  ];
+  const header =
+    groupHeader.length > 0
+      ? groupHeader
+      : inlineHeader.length > 0
+        ? inlineHeader
+        : selectChromeSections({
+            templates: chromeCandidates,
+            isChrome: (t) => HEADER_TYPES.has(t),
+            isKnown: isKnownType,
+          });
+  const footer =
+    groupFooter.length > 0
+      ? groupFooter
+      : inlineFooter.length > 0
+        ? inlineFooter
+        : selectChromeSections({
+            templates: chromeCandidates,
+            isChrome: (t) => FOOTER_TYPES.has(t),
+            isKnown: isKnownType,
+          });
 
   // a11y: chrome renders its own <header>/<footer> landmarks OUTSIDE <main>.
   return (

@@ -1,14 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  useCollectionOptional,
-  useCurrentTemplate,
-  useLocale,
-  useProducts,
-  useResolvedSettings,
-  type Product,
-} from "@numueg/theme-sdk";
+import { useCollectionOptional, useCurrentTemplate, useListingHeading, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { motion } from "framer-motion";
 import { asNumber, asString, localized, usePageData, type SectionRenderProps } from "./_shared";
@@ -71,12 +64,14 @@ export default function GildedProductsPage({ instance, sectionId }: SectionRende
   const colsDesktop = Math.max(2, Math.min(5, asNumber(s.columns_desktop, 5)));
   const colsMobile = Math.max(1, Math.min(3, asNumber(s.columns_mobile, 2)));
 
-  // Optional static title override; otherwise the collection name / "ALL PRODUCTS".
-  const titleOverride = asString(s.title);
-  const heroTitle =
-    titleOverride ||
-    (isCollection && collection?.name) ||
-    localized(locale, "ALL PRODUCTS", "كل المنتجات");
+  // Collection FIRST. The section setting is the wording for the unscoped
+  // listing; letting it win meant one static title masked every collection
+  // name, because this same section renders /products AND /collections/*.
+  const listing = useListingHeading({
+    title: asString(s.title),
+    defaultTitle: localized(locale, "ALL PRODUCTS", "كل المنتجات"),
+  });
+  const heroTitle = listing.title;
 
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);

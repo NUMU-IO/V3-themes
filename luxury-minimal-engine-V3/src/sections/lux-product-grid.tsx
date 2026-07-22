@@ -1,17 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  AddToCartButton,
-  Link,
-  Money,
-  useCollectionOptional,
-  useCurrentTemplate,
-  useLocale,
-  useProducts,
-  useResolvedSettings,
-  type Product,
-} from "@numueg/theme-sdk";
+import { AddToCartButton, Link, Money, useCollectionOptional, useCurrentTemplate, useListingHeading, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ShoppingCart, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -63,14 +53,14 @@ export default function LuxProductGrid({ instance, sectionId }: SectionRenderPro
   const showCategorySubtitle = asBool(s.show_category_subtitle, false);
   const perPage = asNumber(s.products_per_page, 24);
 
-  // Optional static title override; otherwise the collection name / generic.
-  const titleOverride = asString(s.title);
-  const pageTitle =
-    titleOverride ||
-    (isCollection && collection?.name) ||
-    localized(locale, "All Products", "جميع المنتجات");
-  const collectionSubtitle =
-    isCollection && showCategorySubtitle ? asString(collection?.description) : "";
+  // Collection FIRST — see useListingHeading. A static section title used to
+  // mask every collection name because this section renders both listings.
+  const listing = useListingHeading({
+    title: asString(s.title),
+    defaultTitle: localized(locale, "All Products", "جميع المنتجات"),
+  });
+  const pageTitle = listing.title;
+  const collectionSubtitle = showCategorySubtitle ? listing.description : "";
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | null>(null);
