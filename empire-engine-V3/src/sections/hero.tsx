@@ -5,6 +5,7 @@ import { HeroMedia } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { useT } from "../lib/i18n";
+import { useDemo } from "../lib/demo";
 
 interface HeroSettings {
   headline?: string;
@@ -30,6 +31,7 @@ interface HeroSettings {
 export default function Hero({ id, settings }: EmpSectionProps) {
   const s = settings as HeroSettings;
   const t = useT();
+  const demo = useDemo();
   const headline = s.headline ?? t("Discover the new collection", "اكتشف التشكيلة الجديدة");
   const subtitle = s.subtitle ?? t("Shop now", "تسوق الآن");
   const ctaText = s.cta_text ?? t("Shop", "تسوق");
@@ -47,7 +49,9 @@ export default function Hero({ id, settings }: EmpSectionProps) {
     { d: imgUrl(s.image_2), m: mobileEnabled ? imgUrl(s.image_2_mobile) : "" },
     { d: imgUrl(s.image_3), m: mobileEnabled ? imgUrl(s.image_3_mobile) : "" },
   ].filter((x) => x.d);
-  if (slides.length === 0) {
+  if (slides.length === 0 && demo) {
+    // Marketplace preview only — a real store with no hero images renders
+    // the copy overlay alone, never stock photography.
     slides.push({
       d: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600",
       m: "",

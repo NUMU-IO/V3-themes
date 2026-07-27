@@ -1,0 +1,13 @@
+{
+  "name": "Product detail",
+  "name_ar": "تفاصيل المنتج",
+  "settings": [
+    {
+      "id": "show_description",
+      "type": "checkbox",
+      "label": "Show description",
+      "label_ar": "إظهار الوصف",
+      "default": true
+    }
+  ]
+}

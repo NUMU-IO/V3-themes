@@ -23,6 +23,7 @@ import themeManifest from "../theme.json";
 // styles into dist/theme.css (see vite.config.ts / tailwind.config.js).
 import "./theme.css";
 import {
+  resolveSections,
   selectTemplateSections,
   type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
@@ -44,6 +45,8 @@ import KgProfile from "./sections/kg-profile";
 import KgOrderConfirmation from "./sections/kg-order-confirmation";
 import KgAbout from "./sections/kg-about";
 import KgContact from "./sections/kg-contact";
+import KgHeader from "./sections/kg-header";
+import KgFooter from "./sections/kg-footer";
 
 /**
  * MountResult shape. The published @numueg/theme-sdk@0.1.0 doesn't re-export
@@ -71,7 +74,20 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "kg-order-confirmation": KgOrderConfirmation,
   "kg-about": KgAbout,
   "kg-contact": KgContact,
+  // Chrome. Aliased to the GENERIC "header"/"footer" types too, so chrome
+  // delivered via section_groups (prefixed OR generic) always resolves.
+  "kg-header": KgHeader,
+  "kg-footer": KgFooter,
+  header: KgHeader,
+  footer: KgFooter,
 };
+
+const HEADER_TYPES = new Set(["kg-header", "header"]);
+const FOOTER_TYPES = new Set(["kg-footer", "footer"]);
+
+const BUILTIN_GROUPS = (
+  themeManifest as unknown as { presets?: { section_groups?: Record<string, MaybeOrderedTemplate> } }
+).presets?.section_groups ?? {};
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
 
@@ -105,10 +121,52 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const hostTemplate = settings.templates?.[currentTemplate] as MaybeOrderedTemplate | undefined;
   const builtinTemplate = BUILTIN_TEMPLATES[currentTemplate];
   const sections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
+
+  // Chrome (header/footer) can reach us from three places, in priority order:
+  //   1. the engine's section_groups.header / .footer — what the V3 customizer
+  //      writes. Present-but-empty means the merchant deliberately removed it,
+  //      so we do NOT resurrect it from the preset;
+  //   2. inline in the template's section list (legacy/seeded customizations);
+  //   3. theme.json presets.section_groups — the bundled default, which covers
+  //      every template at once on a fresh install.
+  const groups = settings.section_groups as
+    | Record<string, MaybeOrderedTemplate>
+    | undefined;
+  const chrome = (key: "header" | "footer", types: Set<string>) => {
+    const hostGroup = groups?.[key];
+    if (hostGroup) {
+      return resolveSections(hostGroup).filter(({ instance }) =>
+        isKnownType(instance.type),
+      );
+    }
+    const inline = sections.filter(({ instance }) => types.has(instance.type));
+    if (inline.length > 0) return inline;
+    return resolveSections(BUILTIN_GROUPS[key]).filter(({ instance }) =>
+      isKnownType(instance.type),
+    );
+  };
+  const header = chrome("header", HEADER_TYPES);
+  const footer = chrome("footer", FOOTER_TYPES);
+
+  // a11y: exactly one main landmark. The chrome sections render their own
+  // banner / contentinfo landmarks OUTSIDE it, never nested inside content.
+  const body = sections.filter(
+    ({ instance }) =>
+      !HEADER_TYPES.has(instance.type) && !FOOTER_TYPES.has(instance.type),
+  );
+
   return (
     <div data-kick-game-v3-app data-theme="kick-game-v3">
-      {sections.map(({ id, instance }) => (
-        <RenderSection key={id} sectionId={id} instance={instance} />
+      {header.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="header" />
+      ))}
+      <main>
+        {body.map(({ id, instance }) => (
+          <RenderSection key={id} sectionId={id} instance={instance} />
+        ))}
+      </main>
+      {footer.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="footer" />
       ))}
     </div>
   );
@@ -138,7 +196,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "kick-game-v3", name: "Kick game (V3)", version: "0.3.5" },
+  manifest: { id: "kick-game-v3", name: "Kick game (V3)", version: "0.4.0" },
   mount,
 };
 export default v3Handle;

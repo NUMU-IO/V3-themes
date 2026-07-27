@@ -1,0 +1,95 @@
+{
+  "type": "tech-wave-footer",
+  "tag": "footer",
+  "limit": 1,
+  "name": "Tech Wave Footer",
+  "name_ar": "تذييل تك ويف",
+  "locales": {
+    "ar": {
+      "name": "تذييل تك ويف"
+    }
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name (blank = store name)",
+      "label_ar": "اسم العلامة (سيبه فاضي = اسم المتجر)",
+      "default": ""
+    },
+    {
+      "id": "tagline",
+      "type": "textarea",
+      "label": "Tagline",
+      "label_ar": "الجملة التعريفية",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Link columns"
+    },
+    {
+      "id": "column_1_title",
+      "type": "text",
+      "label": "Column 1 title",
+      "label_ar": "عنوان العمود الأول",
+      "default": ""
+    },
+    {
+      "id": "column_1_links",
+      "type": "textarea",
+      "label": "Column 1 links",
+      "label_ar": "روابط العمود الأول",
+      "info": "One link per line, as: Label | /path",
+      "default": ""
+    },
+    {
+      "id": "column_2_title",
+      "type": "text",
+      "label": "Column 2 title",
+      "label_ar": "عنوان العمود التاني",
+      "default": ""
+    },
+    {
+      "id": "column_2_links",
+      "type": "textarea",
+      "label": "Column 2 links",
+      "label_ar": "روابط العمود التاني",
+      "info": "One link per line, as: Label | /path",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Contact"
+    },
+    {
+      "id": "contact_email",
+      "type": "text",
+      "label": "Contact email (blank = store email)",
+      "label_ar": "الإيميل (سيبه فاضي = إيميل المتجر)",
+      "default": ""
+    },
+    {
+      "id": "contact_phone",
+      "type": "text",
+      "label": "Contact phone (blank = store phone)",
+      "label_ar": "رقم التليفون (سيبه فاضي = رقم المتجر)",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Bottom bar"
+    },
+    {
+      "id": "show_powered_by",
+      "type": "checkbox",
+      "label": "Show \"Powered by NUMU\"",
+      "label_ar": "إظهار \"مدعوم من NUMU\"",
+      "default": true
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "type": "elegant-footer",
+  "tag": "footer",
+  "limit": 1,
+  "name": "Elegant Footer",
+  "name_ar": "تذييل إيليجانت",
+  "locales": {
+    "ar": {
+      "name": "تذييل إيليجانت"
+    }
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Identity"
+    },
+    {
+      "id": "logo_url",
+      "type": "image_picker",
+      "label": "Footer logo",
+      "label_ar": "شعار التذييل",
+      "info": "Leave empty to show the store name as a serif wordmark.",
+      "info_ar": "سيبها فاضية علشان يظهر اسم المتجر بخط سيريف."
+    },
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name (blank = store name)",
+      "label_ar": "اسم العلامة (فاضي = اسم المتجر)",
+      "default": ""
+    },
+    {
+      "id": "tagline",
+      "type": "textarea",
+      "label": "Tagline",
+      "label_ar": "الجملة التعريفية",
+      "info": "Leave empty to use the theme's bilingual default.",
+      "info_ar": "سيبها فاضية علشان تظهر الجملة الافتراضية.",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Contact"
+    },
+    {
+      "id": "contact_email",
+      "type": "text",
+      "label": "Contact email",
+      "label_ar": "البريد الإلكتروني",
+      "default": ""
+    },
+    {
+      "id": "contact_phone",
+      "type": "text",
+      "label": "Contact phone",
+      "label_ar": "رقم التليفون",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Link columns"
+    },
+    {
+      "id": "menu_handle",
+      "type": "text",
+      "label": "Footer menu handle",
+      "label_ar": "معرّف قائمة التذييل",
+      "info": "A nested menu (parents with children) becomes the link columns when the columns below are empty.",
+      "info_ar": "القائمة المتفرعة بتتحول لأعمدة روابط لما الأعمدة تحت تكون فاضية.",
+      "default": "footer"
+    },
+    {
+      "id": "column_1_title",
+      "type": "text",
+      "label": "Column 1 title",
+      "label_ar": "عنوان العمود الأول",
+      "default": ""
+    },
+    {
+      "id": "column_1_link_1_label",
+      "type": "text",
+      "label": "Column 1 · link 1 label",
+      "label_ar": "العمود الأول · نص الرابط ١",
+      "default": ""
+    },
+    {
+      "id": "column_1_link_1_href",
+      "type": "url",
+      "label": "Column 1 · link 1 URL",
+      "label_ar": "العمود الأول · رابط ١",
+      "default": ""
+    },
+    {
+      "id": "column_1_link_2_label",
+      "type": "text",
+      "label": "Column 1 · link 2 label",
+      "label_ar": "العمود الأول · نص الرابط ٢",
+      "default": ""
+    },
+    {
+      "id": "column_1_link_2_href",
+      "type": "url",
+      "label": "Column 1 · link 2 URL",
+      "label_ar": "العمود الأول · رابط ٢",
+      "default": ""
+    },
+    {
+      "id": "column_1_link_3_label",
+      "type": "text",
+      "label": "Column 1 · link 3 label",
+      "label_ar": "العمود الأول · نص الرابط ٣",
+      "default": ""
+    },
+    {
+      "id": "column_1_link_3_href",
+      "type": "url",
+      "label": "Column 1 · link 3 URL",
+      "label_ar": "العمود الأول · رابط ٣",
+      "default": ""
+    },
+    {
+      "id": "column_2_title",
+      "type": "text",
+      "label": "Column 2 title",
+      "label_ar": "عنوان العمود التاني",
+      "default": ""
+    },
+    {
+      "id": "column_2_link_1_label",
+      "type": "text",
+      "label": "Column 2 · link 1 label",
+      "label_ar": "العمود التاني · نص الرابط ١",
+      "default": ""
+    },
+    {
+      "id": "column_2_link_1_href",
+      "type": "url",
+      "label": "Column 2 · link 1 URL",
+      "label_ar": "العمود التاني · رابط ١",
+      "default": ""
+    },
+    {
+      "id": "column_2_link_2_label",
+      "type": "text",
+      "label": "Column 2 · link 2 label",
+      "label_ar": "العمود التاني · نص الرابط ٢",
+      "default": ""
+    },
+    {
+      "id": "column_2_link_2_href",
+      "type": "url",
+      "label": "Column 2 · link 2 URL",
+      "label_ar": "العمود التاني · رابط ٢",
+      "default": ""
+    },
+    {
+      "id": "column_2_link_3_label",
+      "type": "text",
+      "label": "Column 2 · link 3 label",
+      "label_ar": "العمود التاني · نص الرابط ٣",
+      "default": ""
+    },
+    {
+      "id": "column_2_link_3_href",
+      "type": "url",
+      "label": "Column 2 · link 3 URL",
+      "label_ar": "العمود التاني · رابط ٣",
+      "default": ""
+    }
+  ]
+}

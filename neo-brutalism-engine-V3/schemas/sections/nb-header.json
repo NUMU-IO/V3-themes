@@ -1,0 +1,70 @@
+{
+  "type": "nb-header",
+  "tag": "header",
+  "limit": 1,
+  "name": "Header",
+  "name_ar": "الهيدر",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name (blank = store name)",
+      "label_ar": "اسم العلامة (سيبه فاضي = اسم المتجر)",
+      "default": ""
+    },
+    {
+      "id": "logo_url",
+      "type": "image_picker",
+      "label": "Logo image",
+      "label_ar": "صورة اللوجو",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "id": "menu_handle",
+      "type": "text",
+      "label": "Menu handle",
+      "label_ar": "معرّف القائمة",
+      "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "id": "sticky",
+      "type": "checkbox",
+      "label": "Stick to top on scroll",
+      "label_ar": "يفضل ثابت فوق مع النزول",
+      "default": true
+    },
+    {
+      "id": "show_search",
+      "type": "checkbox",
+      "label": "Show search",
+      "label_ar": "إظهار البحث",
+      "default": true
+    },
+    {
+      "id": "show_account",
+      "type": "checkbox",
+      "label": "Show account",
+      "label_ar": "إظهار الحساب",
+      "default": true
+    },
+    {
+      "id": "show_cart",
+      "type": "checkbox",
+      "label": "Show cart",
+      "label_ar": "إظهار السلة",
+      "default": true
+    }
+  ]
+}

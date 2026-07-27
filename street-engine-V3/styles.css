@@ -1,8 +1,17 @@
 /* ═══════════════════════════════════════════════════════════════
    STREET VIBES THEME — Bold Urban / Mob Links Inspired
+   ═══════════════════════════════════════════════════════════════
+
+   Scoping note (this was the bug that made the theme render unstyled):
+   the tokens lived on `:root[data-theme="street"]`, a V2 convention. In V3
+   the host mounts the theme into a container and the theme's OWN root div
+   carries `data-theme`, so `:root[data-theme=…]` matched nothing and every
+   var(--st-*) resolved to nothing. Tokens and component classes are scoped
+   to `[data-street-v3-app]` — the same shape every other V3 theme uses —
+   which also stops these generic `.st-*` names leaking onto host chrome.
    ═══════════════════════════════════════════════════════════════ */
 
-:root[data-theme="street"] {
+[data-street-v3-app] {
   /* ─── Color Tokens ─── */
   --primary:   45 100% 51%;      /* vibrant yellow #FFC107 */
   --primary-foreground: 0 0% 8%;
@@ -35,7 +44,7 @@
 }
 
 /* ─── Topographic background pattern ─── */
-.st-topo-bg {
+[data-street-v3-app] .st-topo-bg {
   background-color: var(--st-topo-bg);
   background-image:
     radial-gradient(ellipse 80% 60% at 50% 50%, hsl(44 100% 98% / 0.12) 0%, transparent 70%),
@@ -45,7 +54,7 @@
   background-size: 100% 100%;
 }
 
-.st-topo-lines {
+[data-street-v3-app] .st-topo-lines {
   background-color: var(--st-topo-bg);
   background-image:
     repeating-radial-gradient(
@@ -88,17 +97,17 @@
 }
 
 /* ─── Blob wave divider ─── */
-.st-wave-top {
+[data-street-v3-app] .st-wave-top {
   clip-path: ellipse(60% 60% at 50% 100%);
 }
 
 /* ─── Header ─── */
-.st-header {
+[data-street-v3-app] .st-header {
   background: var(--st-yellow);
   border-bottom: 3px solid var(--st-dark);
 }
 
-.st-header-nav-link {
+[data-street-v3-app] .st-header-nav-link {
   font-size: 0.75rem;
   font-weight: 900;
   letter-spacing: 0.15em;
@@ -106,9 +115,9 @@
   color: var(--st-dark);
   transition: opacity 0.15s;
 }
-.st-header-nav-link:hover { opacity: 0.65; }
+[data-street-v3-app] .st-header-nav-link:hover { opacity: 0.65; }
 
-.st-logo-text {
+[data-street-v3-app] .st-logo-text {
   font-size: 1.5rem;
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -117,7 +126,7 @@
 }
 
 /* ─── Buttons ─── */
-.st-btn {
+[data-street-v3-app] .st-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -134,10 +143,10 @@
   cursor: pointer;
   transition: transform 0.15s, background 0.15s, color 0.15s;
 }
-.st-btn:hover { background: var(--st-yellow); color: var(--st-dark); transform: scale(1.03); }
-.st-btn:active { transform: scale(0.97); }
+[data-street-v3-app] .st-btn:hover { background: var(--st-yellow); color: var(--st-dark); transform: scale(1.03); }
+[data-street-v3-app] .st-btn:active { transform: scale(0.97); }
 
-.st-btn-outline {
+[data-street-v3-app] .st-btn-outline {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -154,9 +163,9 @@
   cursor: pointer;
   transition: transform 0.15s, background 0.15s, color 0.15s;
 }
-.st-btn-outline:hover { background: var(--st-dark); color: var(--st-yellow); }
+[data-street-v3-app] .st-btn-outline:hover { background: var(--st-dark); color: var(--st-yellow); }
 
-.st-btn-yellow {
+[data-street-v3-app] .st-btn-yellow {
   background: var(--st-yellow);
   color: var(--st-dark);
   border: 2px solid var(--st-dark);
@@ -169,30 +178,30 @@
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
 }
-.st-btn-yellow:hover { transform: scale(1.03); box-shadow: 0 4px 20px hsl(45 100% 51% / 0.5); }
+[data-street-v3-app] .st-btn-yellow:hover { transform: scale(1.03); box-shadow: 0 4px 20px hsl(45 100% 51% / 0.5); }
 
 /* ─── Cards ─── */
-.st-card {
+[data-street-v3-app] .st-card {
   background: hsl(var(--card));
   border: 2px solid var(--st-dark);
   border-radius: var(--radius);
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
 }
-.st-card:hover {
+[data-street-v3-app] .st-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 40px hsl(0 0% 0% / 0.12);
 }
 
 /* ─── Product card ─── */
-.st-product-card {}
+[data-street-v3-app] .st-product-card {}
 
-.st-product-img-wrap {
+[data-street-v3-app] .st-product-img-wrap {
   border-bottom: 2px solid var(--st-dark);
   overflow: hidden;
 }
 
-.st-size-btn {
+[data-street-v3-app] .st-size-btn {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 50%;
@@ -204,13 +213,13 @@
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
-.st-size-btn:hover, .st-size-btn.active {
+[data-street-v3-app] .st-size-btn:hover, [data-street-v3-app] .st-size-btn.active {
   background: var(--st-dark);
   color: var(--st-yellow);
 }
 
 /* ─── Announcement bar ─── */
-.st-announcement {
+[data-street-v3-app] .st-announcement {
   background: var(--st-navy);
   color: #fff;
   font-size: 0.7rem;
@@ -222,13 +231,13 @@
 }
 
 /* ─── Footer ─── */
-.st-footer {
+[data-street-v3-app] .st-footer {
   background: var(--st-dark);
   color: #fff;
 }
 
 /* ─── Badge / tag ─── */
-.st-badge {
+[data-street-v3-app] .st-badge {
   display: inline-block;
   padding: 0.2rem 0.65rem;
   font-size: 0.65rem;
@@ -240,7 +249,7 @@
   background: var(--st-yellow);
   color: var(--st-dark);
 }
-.st-badge-dark {
+[data-street-v3-app] .st-badge-dark {
   background: var(--st-dark);
   color: var(--st-yellow);
   border-color: var(--st-dark);
@@ -252,7 +261,7 @@
   text-transform: uppercase;
   border-radius: 999px;
 }
-.st-badge-pink {
+[data-street-v3-app] .st-badge-pink {
   background: var(--st-pink);
   color: #fff;
   border-color: var(--st-pink);
@@ -266,7 +275,7 @@
 }
 
 /* ─── Scroll-to-discover pill ─── */
-.st-scroll-pill {
+[data-street-v3-app] .st-scroll-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -282,10 +291,10 @@
   cursor: pointer;
   transition: background 0.15s;
 }
-.st-scroll-pill:hover { background: var(--st-dark); color: var(--st-yellow); }
+[data-street-v3-app] .st-scroll-pill:hover { background: var(--st-dark); color: var(--st-yellow); }
 
 /* ─── Hero split ─── */
-.st-hero-headline {
+[data-street-v3-app] .st-hero-headline {
   font-size: clamp(2.5rem, 7vw, 5.5rem);
   font-weight: 900;
   line-height: 0.9;
@@ -294,7 +303,7 @@
 }
 
 /* ─── Section heading ─── */
-.st-section-title {
+[data-street-v3-app] .st-section-title {
   font-size: clamp(1.8rem, 4vw, 3rem);
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -303,7 +312,7 @@
 }
 
 /* ─── Marquee strip ─── */
-.st-marquee-strip {
+[data-street-v3-app] .st-marquee-strip {
   background: var(--st-dark);
   color: var(--st-yellow);
   font-size: 0.75rem;
@@ -315,7 +324,7 @@
   border-bottom: 2px solid var(--st-dark);
   padding: 0.6rem 0;
 }
-.st-marquee-inner {
+[data-street-v3-app] .st-marquee-inner {
   display: inline-flex;
   gap: 3rem;
   white-space: nowrap;
@@ -327,14 +336,14 @@
 }
 
 /* ─── Blob wave ─── */
-.st-blob-divider {
+[data-street-v3-app] .st-blob-divider {
   height: 80px;
   overflow: hidden;
   position: relative;
 }
 
 /* ─── Input ─── */
-.st-input {
+[data-street-v3-app] .st-input {
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
@@ -346,16 +355,16 @@
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
-.st-input:focus { border-color: var(--st-yellow); box-shadow: 0 0 0 3px hsl(45 100% 51% / 0.2); }
+[data-street-v3-app] .st-input:focus { border-color: var(--st-yellow); box-shadow: 0 0 0 3px hsl(45 100% 51% / 0.2); }
 
 /* ─── Cart drawer ─── */
-.st-cart-overlay {
+[data-street-v3-app] .st-cart-overlay {
   position: fixed;
   inset: 0;
   background: hsl(0 0% 0% / 0.5);
   z-index: 40;
 }
-.st-cart-panel {
+[data-street-v3-app] .st-cart-panel {
   position: fixed;
   top: 0;
   right: 0;

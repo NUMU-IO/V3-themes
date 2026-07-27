@@ -1,5 +1,7 @@
 {
   "type": "by-footer",
+  "tag": "footer",
+  "limit": 1,
   "name": "Footer",
   "settings": [
     {

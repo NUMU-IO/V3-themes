@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
+import { Link, Money, useListingHeading, useLocale, useProducts, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { asNumber, localized, type SectionRenderProps } from "./_shared";
@@ -30,6 +30,14 @@ export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | null>(null);
+  // The collection the shopper navigated into decides what this page is called.
+  // `category` below is the CLIENT-side chip filter and starts null, so before
+  // this a /collections/<slug> URL rendered a page headed "All products" while
+  // showing only that collection — which reads as "where did the rest go?".
+  const listing = useListingHeading({
+    title: asString(s.title),
+    defaultTitle: localized(locale, "All products", "كل المنتجات"),
+  });
   const [sort, setSort] = useState("default");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
@@ -86,12 +94,12 @@ export default function TechWaveProductsPage({ instance }: SectionRenderProps) {
             {localized(locale, "Home", "الرئيسية")}
           </Link>
           <ArrowRight size={10} className="rtl:rotate-180" />
-          <span className="text-[var(--vn-ink)]">{category ?? localized(locale, "Shop", "المتجر")}</span>
+          <span className="text-[var(--vn-ink)]">{category ?? (listing.isCollection ? listing.title : localized(locale, "Shop", "المتجر"))}</span>
         </div>
 
         {/* Title */}
         <h1 className="vn-heading text-2xl md:text-4xl text-[var(--vn-ink)] mb-8">
-          {category ?? localized(locale, "All products", "كل المنتجات")}
+          {category ?? listing.title}
         </h1>
 
         {/* Search */}

@@ -1,0 +1,103 @@
+{
+  "name": "Hero",
+  "name_ar": "الهيرو",
+  "settings": [
+    {
+      "id": "eyebrow",
+      "type": "text",
+      "label": "Eyebrow (English)",
+      "label_ar": "تمهيد (إنجليزي)",
+      "default": ""
+    },
+    {
+      "id": "eyebrow_ar",
+      "type": "text",
+      "label": "Eyebrow (Arabic)",
+      "label_ar": "تمهيد (عربي)",
+      "default": ""
+    },
+    {
+      "id": "headline",
+      "type": "text",
+      "label": "Headline (English)",
+      "label_ar": "العنوان (إنجليزي)",
+      "default": ""
+    },
+    {
+      "id": "headline_ar",
+      "type": "text",
+      "label": "Headline (Arabic)",
+      "label_ar": "العنوان (عربي)",
+      "default": ""
+    },
+    {
+      "id": "body",
+      "type": "text",
+      "label": "Body (English)",
+      "label_ar": "النص (إنجليزي)",
+      "default": ""
+    },
+    {
+      "id": "body_ar",
+      "type": "text",
+      "label": "Body (Arabic)",
+      "label_ar": "النص (عربي)",
+      "default": ""
+    },
+    {
+      "id": "cta_label",
+      "type": "text",
+      "label": "Button label (English)",
+      "label_ar": "زر رئيسي (إنجليزي)",
+      "default": ""
+    },
+    {
+      "id": "cta_label_ar",
+      "type": "text",
+      "label": "Button label (Arabic)",
+      "label_ar": "زر رئيسي (عربي)",
+      "default": ""
+    },
+    {
+      "id": "cta_href",
+      "type": "url",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    },
+    {
+      "id": "secondary_label",
+      "type": "text",
+      "label": "Secondary label (English)",
+      "label_ar": "زر ثانوي (إنجليزي)",
+      "default": ""
+    },
+    {
+      "id": "secondary_label_ar",
+      "type": "text",
+      "label": "Secondary label (Arabic)",
+      "label_ar": "زر ثانوي (عربي)",
+      "default": ""
+    },
+    {
+      "id": "secondary_href",
+      "type": "url",
+      "label": "Secondary link",
+      "label_ar": "رابط ثانوي",
+      "default": "/collections"
+    },
+    {
+      "id": "image",
+      "type": "image_picker",
+      "label": "Image",
+      "label_ar": "الصورة"
+    },
+    {
+      "id": "show_topo",
+      "type": "checkbox",
+      "label": "Topographic background",
+      "label_ar": "خلفية الخطوط",
+      "default": true
+    }
+  ]
+}

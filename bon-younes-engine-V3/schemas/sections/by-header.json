@@ -1,5 +1,7 @@
 {
   "type": "by-header",
+  "tag": "header",
+  "limit": 1,
   "name": "Header",
   "settings": [
     {

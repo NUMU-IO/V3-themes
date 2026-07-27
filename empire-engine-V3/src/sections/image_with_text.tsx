@@ -1,6 +1,7 @@
 import { EditableImage } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
+import { PLACEHOLDER_IMG, useDemo } from "../lib/demo";
 
 interface IwtSettings {
   eyebrow?: string;
@@ -23,9 +24,12 @@ interface IwtSettings {
 export default function ImageWithText({ id, settings }: EmpSectionProps) {
   const s = settings as IwtSettings;
   const pos = s.image_position ?? "start";
+  const demo = useDemo();
   const image =
     s.image ||
-    "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600";
+    (demo
+      ? "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600"
+      : PLACEHOLDER_IMG);
   const hasCta = Boolean(s.cta_text);
 
   const Copy = (

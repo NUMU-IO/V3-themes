@@ -16,7 +16,7 @@ import themeManifest from "../theme.json";
 // styles into dist/theme.css (see vite.config.ts / tailwind.config.js).
 import "./theme.css";
 import {
-  selectTemplateSections, type MaybeOrderedTemplate,
+  resolveSections, selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
 // Sections are imported EAGERLY (not React.lazy): lazy sections can't be
@@ -33,6 +33,9 @@ import ModernNewsletter from "./sections/modern-newsletter";
 import ModernProductDetail from "./sections/modern-product-detail";
 import ModernProductsPage from "./sections/modern-products-page";
 import ModernProfile from "./sections/modern-profile";
+// Chrome — the storefront renders these OUTSIDE <main>.
+import ModernHeader from "./sections/modern-header";
+import ModernFooter from "./sections/modern-footer";
 
 interface MountResult {
   cleanup: () => void;
@@ -52,13 +55,29 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "modern-product-detail": ModernProductDetail,
   "modern-products-page": ModernProductsPage,
   "modern-profile": ModernProfile,
+  // Chrome. Aliased to the GENERIC "header"/"footer" types too, so chrome
+  // delivered via section_groups (prefixed OR generic) always resolves.
+  "modern-header": ModernHeader,
+  "modern-footer": ModernFooter,
+  header: ModernHeader,
+  footer: ModernFooter,
 };
+
+const HEADER_TYPES = new Set(["modern-header", "header"]);
+const FOOTER_TYPES = new Set(["modern-footer", "footer"]);
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
 
-const BUILTIN_TEMPLATES = (
-  themeManifest as unknown as { presets?: { templates?: Record<string, MaybeOrderedTemplate> } }
-).presets?.templates ?? {};
+const PRESETS = (
+  themeManifest as unknown as {
+    presets?: {
+      templates?: Record<string, MaybeOrderedTemplate>;
+      section_groups?: Record<string, MaybeOrderedTemplate>;
+    };
+  }
+).presets ?? {};
+const BUILTIN_TEMPLATES = PRESETS.templates ?? {};
+const BUILTIN_GROUPS = PRESETS.section_groups ?? {};
 
 function RenderSection({ instance, sectionId, groupId }: {
   instance: SectionInstance; sectionId: string; groupId?: string;
@@ -86,10 +105,63 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const hostTemplate = settings.templates?.[currentTemplate] as MaybeOrderedTemplate | undefined;
   const builtinTemplate = BUILTIN_TEMPLATES[currentTemplate];
   const sections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
+
+  // Chrome (header/footer) can reach us from three places, in priority order:
+  //   1. settings.section_groups.header / .footer — what the V3 customizer
+  //      writes, so a merchant's edits always win;
+  //   2. inline in the template's own section list (legacy / seeded data);
+  //   3. the theme.json preset section_groups — the guarantee that a store
+  //      that was never customised still gets real navigation instead of the
+  //      host's generic fallback strip.
+  const groups = settings.section_groups as
+    | Record<string, MaybeOrderedTemplate>
+    | undefined;
+  const known = (list: ReturnType<typeof resolveSections>) =>
+    list.filter(({ instance }) => isKnownType(instance.type));
+
+  const inlineHeader = sections.filter(({ instance }) =>
+    HEADER_TYPES.has(instance.type),
+  );
+  const inlineFooter = sections.filter(({ instance }) =>
+    FOOTER_TYPES.has(instance.type),
+  );
+  const body = sections.filter(
+    ({ instance }) =>
+      !HEADER_TYPES.has(instance.type) && !FOOTER_TYPES.has(instance.type),
+  );
+
+  const hostHeader = known(resolveSections(groups?.header));
+  const hostFooter = known(resolveSections(groups?.footer));
+  const presetHeader = known(resolveSections(BUILTIN_GROUPS.header));
+  const presetFooter = known(resolveSections(BUILTIN_GROUPS.footer));
+
+  const header =
+    hostHeader.length > 0
+      ? hostHeader
+      : inlineHeader.length > 0
+        ? inlineHeader
+        : presetHeader;
+  const footer =
+    hostFooter.length > 0
+      ? hostFooter
+      : inlineFooter.length > 0
+        ? inlineFooter
+        : presetFooter;
+
+  // a11y: exactly one main landmark. The chrome's own header/footer
+  // landmarks render outside it, never nested inside main.
   return (
     <div data-modern-v3-app data-theme="modern-v3">
-      {sections.map(({ id, instance }) => (
-        <RenderSection key={id} sectionId={id} instance={instance} />
+      {header.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="header" />
+      ))}
+      <main>
+        {body.map(({ id, instance }) => (
+          <RenderSection key={id} sectionId={id} instance={instance} />
+        ))}
+      </main>
+      {footer.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="footer" />
       ))}
     </div>
   );
@@ -134,7 +206,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "modern-v3", name: "Modern (V3)", version: "0.3.3" },
+  manifest: { id: "modern-v3", name: "Modern (V3)", version: "0.4.0" },
   mount,
 };
 export default v3Handle;

@@ -2,12 +2,38 @@
   "id": "neo-brutalism-v3",
   "name": "Neo Brutalism (V3)",
   "author": "NUMU",
-  "version": "0.3.11",
+  "version": "0.4.0",
   "layout": "single-column",
   "description": "Neo Brutalism (V3) — bold, raw, unapologetic design with thick borders, hard shadows, and neon accents. Ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
+    "section_groups": {
+      "header": {
+        "name": "Header",
+        "sections": [
+          {
+            "type": "nb-header",
+            "settings": {
+              "menu_handle": "main-menu",
+              "sticky": true,
+              "show_search": true,
+              "show_account": true,
+              "show_cart": true
+            }
+          }
+        ]
+      },
+      "footer": {
+        "name": "Footer",
+        "sections": [
+          {
+            "type": "nb-footer",
+            "settings": {}
+          }
+        ]
+      }
+    },
     "templates": {
       "home": {
         "name": "Home",

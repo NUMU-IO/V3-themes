@@ -2,12 +2,40 @@
   "id": "modern-v3",
   "name": "Modern (V3)",
   "author": "NUMU",
-  "version": "0.3.11",
+  "version": "0.4.0",
   "layout": "single-column",
   "description": "Modern (V3) — clean teal aesthetic, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
+    "section_groups": {
+      "header": {
+        "name": "Header",
+        "sections": [
+          {
+            "type": "modern-header",
+            "settings": {
+              "menu_handle": "main-menu",
+              "show_announcement": true,
+              "show_search": true,
+              "show_account": true,
+              "show_cart": true
+            }
+          }
+        ]
+      },
+      "footer": {
+        "name": "Footer",
+        "sections": [
+          {
+            "type": "modern-footer",
+            "settings": {
+              "show_contact": true
+            }
+          }
+        ]
+      }
+    },
     "templates": {
       "home": {
         "name": "Home",

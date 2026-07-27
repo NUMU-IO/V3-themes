@@ -8,9 +8,10 @@
 
 import { type ComponentType } from "react";
 import {
-  Section,
-  useThemeSettings,
   defineThemeEntry,
+  Section,
+  selectChromeSections,
+  useThemeSettings,
   type Cart,
   type Customer,
   type SectionInstance,
@@ -22,6 +23,7 @@ import themeManifest from "../theme.json";
 // styles into dist/theme.css (see vite.config.ts / tailwind.config.js).
 import "./theme.css";
 import {
+  resolveSections,
   selectTemplateSections,
   type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
@@ -41,6 +43,8 @@ import ElegantNewsletter from "./sections/elegant-newsletter";
 import ElegantProductDetail from "./sections/elegant-product-detail";
 import ElegantProductsPage from "./sections/elegant-products-page";
 import ElegantProfile from "./sections/elegant-profile";
+import ElegantHeader from "./sections/elegant-header";
+import ElegantFooter from "./sections/elegant-footer";
 
 interface MountResult {
   cleanup: () => void;
@@ -61,13 +65,31 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "elegant-product-detail": ElegantProductDetail,
   "elegant-products-page": ElegantProductsPage,
   "elegant-profile": ElegantProfile,
+  // Chrome (header/footer). Registered under BOTH the prefixed type and the
+  // generic alias so a section_groups entry written by the customizer (which
+  // may use either) always resolves to a real component.
+  "elegant-header": ElegantHeader,
+  "elegant-footer": ElegantFooter,
+  header: ElegantHeader,
+  footer: ElegantFooter,
 };
+
+const HEADER_TYPES = new Set(["elegant-header", "header"]);
+const FOOTER_TYPES = new Set(["elegant-footer", "footer"]);
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
 
-const BUILTIN_TEMPLATES = (
-  themeManifest as unknown as { presets?: { templates?: Record<string, MaybeOrderedTemplate> } }
-).presets?.templates ?? {};
+const MANIFEST_PRESETS = (
+  themeManifest as unknown as {
+    presets?: {
+      templates?: Record<string, MaybeOrderedTemplate>;
+      section_groups?: Record<string, MaybeOrderedTemplate>;
+    };
+  }
+).presets ?? {};
+
+const BUILTIN_TEMPLATES = MANIFEST_PRESETS.templates ?? {};
+const BUILTIN_GROUPS = MANIFEST_PRESETS.section_groups ?? {};
 
 function RenderSection({ instance, sectionId, groupId }: {
   instance: SectionInstance; sectionId: string; groupId?: string;
@@ -94,11 +116,96 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const settings = useThemeSettings();
   const hostTemplate = settings.templates?.[currentTemplate] as MaybeOrderedTemplate | undefined;
   const builtinTemplate = BUILTIN_TEMPLATES[currentTemplate];
-  const sections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
+  const templateSections = selectTemplateSections(
+    hostTemplate,
+    builtinTemplate,
+    isKnownType,
+  );
+
+  // Chrome can arrive two ways: (1) `settings.section_groups.header/.footer` —
+  // what the V3 customizer writes — or (2) inline in the template's section
+  // list. Read BOTH (groups win) and fall back to the manifest's preset groups
+  // so a store that has never been customized still gets real navigation
+  // instead of the host's generic fallback strip.
+  const hostGroups = settings.section_groups as
+    | Record<string, MaybeOrderedTemplate>
+    | undefined;
+  const pickGroup = (key: string) => {
+    const fromHost = resolveSections(hostGroups?.[key]).filter(({ instance }) =>
+      isKnownType(instance.type),
+    );
+    if (fromHost.length > 0) return fromHost;
+    return resolveSections(BUILTIN_GROUPS[key]).filter(({ instance }) =>
+      isKnownType(instance.type),
+    );
+  };
+
+  const inlineHeader = templateSections.filter(({ instance }) =>
+    HEADER_TYPES.has(instance.type),
+  );
+  const inlineFooter = templateSections.filter(({ instance }) =>
+    FOOTER_TYPES.has(instance.type),
+  );
+  const body = templateSections.filter(
+    ({ instance }) =>
+      !HEADER_TYPES.has(instance.type) && !FOOTER_TYPES.has(instance.type),
+  );
+
+  const groupHeader = pickGroup("header");
+  const groupFooter = pickGroup("footer");
+  // Chrome, in priority order: the customizer's section_groups, then the
+  // header/footer sections sitting inline in THIS template.
+  //
+  // Third tier: borrow. A route this theme ships no template for — /blogs was
+  // the one that surfaced it — resolves to zero sections, so both tiers above
+  // are empty and the shopper got correct content wrapped in nothing: no logo,
+  // no menu, no cart, no footer, no way back into the store except Back.
+  // Borrowing the chrome the theme already renders on every other page is
+  // strictly better than rendering none, and it stays real editable sections
+  // rather than a synthetic strip.
+  const chromeCandidates = [
+    (settings.templates as Record<string, MaybeOrderedTemplate> | undefined)?.home,
+    BUILTIN_TEMPLATES.home,
+    ...Object.values(
+      (settings.templates ?? {}) as Record<string, MaybeOrderedTemplate>,
+    ),
+    ...Object.values(BUILTIN_TEMPLATES as Record<string, MaybeOrderedTemplate>),
+  ];
+  const header =
+    groupHeader.length > 0
+      ? groupHeader
+      : inlineHeader.length > 0
+        ? inlineHeader
+        : selectChromeSections({
+            templates: chromeCandidates,
+            isChrome: (t) => HEADER_TYPES.has(t),
+            isKnown: isKnownType,
+          });
+  const footer =
+    groupFooter.length > 0
+      ? groupFooter
+      : inlineFooter.length > 0
+        ? inlineFooter
+        : selectChromeSections({
+            templates: chromeCandidates,
+            isChrome: (t) => FOOTER_TYPES.has(t),
+            isKnown: isKnownType,
+          });
+
+  // a11y: chrome renders its own <header>/<footer> landmarks OUTSIDE the single
+  // <main> landmark; body sections live inside it.
   return (
     <div data-elegant-v3-app data-theme="elegant-v3">
-      {sections.map(({ id, instance }) => (
-        <RenderSection key={id} sectionId={id} instance={instance} />
+      {header.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="header" />
+      ))}
+      <main>
+        {body.map(({ id, instance }) => (
+          <RenderSection key={id} sectionId={id} instance={instance} />
+        ))}
+      </main>
+      {footer.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="footer" />
       ))}
     </div>
   );
@@ -160,7 +267,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "elegant-v3", name: "Elegant (V3)", version: "0.3.3" },
+  manifest: { id: "elegant-v3", name: "Elegant (V3)", version: "0.4.0" },
   mount,
 };
 export default v3Handle;

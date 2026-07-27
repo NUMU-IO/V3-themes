@@ -1,0 +1,180 @@
+{
+  "type": "kg-footer",
+  "name": "Footer",
+  "name_ar": "الفوتر",
+  "tag": "footer",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Store identity"
+    },
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name (blank = store name)",
+      "label_ar": "اسم العلامة (سيبه فاضي = اسم المتجر)",
+      "default": ""
+    },
+    {
+      "id": "brand_name_ar",
+      "type": "text",
+      "label": "Brand name (Arabic)",
+      "label_ar": "اسم العلامة (بالعربي)",
+      "default": ""
+    },
+    {
+      "id": "show_logo",
+      "type": "checkbox",
+      "label": "Show the logo instead of the name",
+      "label_ar": "إظهار الشعار بدل الاسم",
+      "default": false
+    },
+    {
+      "id": "logo_url",
+      "type": "image_picker",
+      "label": "Logo",
+      "label_ar": "الشعار",
+      "default": "",
+      "visible_if": { "show_logo": true }
+    },
+    {
+      "id": "logo_height",
+      "type": "range",
+      "label": "Logo height (px)",
+      "label_ar": "ارتفاع الشعار (بكسل)",
+      "min": 24,
+      "max": 56,
+      "step": 2,
+      "default": 36,
+      "visible_if": { "show_logo": true }
+    },
+    {
+      "id": "tagline",
+      "type": "textarea",
+      "label": "Tagline",
+      "label_ar": "الوصف المختصر",
+      "default": ""
+    },
+    {
+      "id": "tagline_ar",
+      "type": "textarea",
+      "label": "Tagline (Arabic)",
+      "label_ar": "الوصف المختصر (بالعربي)",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "First link column"
+    },
+    {
+      "id": "column_1_title",
+      "type": "text",
+      "label": "Column title",
+      "label_ar": "عنوان العمود",
+      "default": ""
+    },
+    {
+      "id": "column_1_title_ar",
+      "type": "text",
+      "label": "Column title (Arabic)",
+      "label_ar": "عنوان العمود (بالعربي)",
+      "default": ""
+    },
+    {
+      "id": "column_1_menu",
+      "type": "link_list_picker",
+      "label": "Menu",
+      "label_ar": "القائمة",
+      "default": "footer",
+      "info": "Leave empty to show the theme's default shop links."
+    },
+    {
+      "type": "header",
+      "content": "Second link column"
+    },
+    {
+      "id": "column_2_title",
+      "type": "text",
+      "label": "Column title",
+      "label_ar": "عنوان العمود",
+      "default": ""
+    },
+    {
+      "id": "column_2_title_ar",
+      "type": "text",
+      "label": "Column title (Arabic)",
+      "label_ar": "عنوان العمود (بالعربي)",
+      "default": ""
+    },
+    {
+      "id": "column_2_menu",
+      "type": "link_list_picker",
+      "label": "Menu",
+      "label_ar": "القائمة",
+      "default": "footer-secondary",
+      "info": "Leave empty to show the theme's default help links."
+    },
+    {
+      "type": "header",
+      "content": "Contact"
+    },
+    {
+      "id": "contact_title",
+      "type": "text",
+      "label": "Contact title",
+      "label_ar": "عنوان التواصل",
+      "default": ""
+    },
+    {
+      "id": "contact_title_ar",
+      "type": "text",
+      "label": "Contact title (Arabic)",
+      "label_ar": "عنوان التواصل (بالعربي)",
+      "default": ""
+    },
+    {
+      "id": "contact_email",
+      "type": "text",
+      "label": "Contact email",
+      "label_ar": "الإيميل",
+      "default": ""
+    },
+    {
+      "id": "contact_phone",
+      "type": "text",
+      "label": "Contact phone",
+      "label_ar": "رقم التليفون",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Copyright"
+    },
+    {
+      "id": "copyright",
+      "type": "text",
+      "label": "Copyright line (blank = year + store name)",
+      "label_ar": "سطر الحقوق (سيبه فاضي = السنة + اسم المتجر)",
+      "default": ""
+    },
+    {
+      "id": "copyright_ar",
+      "type": "text",
+      "label": "Copyright line (Arabic)",
+      "label_ar": "سطر الحقوق (بالعربي)",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "name_ar": "الفوتر",
+      "settings": {
+        "show_logo": false,
+        "column_1_menu": "footer",
+        "column_2_menu": "footer-secondary"
+      }
+    }
+  ]
+}

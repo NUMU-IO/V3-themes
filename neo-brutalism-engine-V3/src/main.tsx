@@ -13,7 +13,7 @@ import themeManifest from "../theme.json";
 // styles into dist/theme.css (see vite.config.ts / tailwind.config.js).
 import "./theme.css";
 import {
-  selectTemplateSections, type MaybeOrderedTemplate,
+  resolveSections, selectTemplateSections, type MaybeOrderedTemplate,
 } from "./sections/_template-utils";
 
 // Sections are imported EAGERLY (not React.lazy): lazy sections can't be
@@ -22,6 +22,8 @@ import {
 // Eager imports bundle every section into theme.js so the whole page renders
 // in one commit — server-side (createApp) and client-side (mount) alike.
 import NbAnnouncementBar from "./sections/nb-announcement-bar";
+import NbHeader from "./sections/nb-header";
+import NbFooter from "./sections/nb-footer";
 import Nbhero from "./sections/nbhero";
 import Nbmarquee from "./sections/nbmarquee";
 import Nbcategories from "./sections/nbcategories";
@@ -38,6 +40,12 @@ import NbOrderConfirmationSection from "./sections/nb-order-confirmation-section
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
+  // Chrome. Aliased to the GENERIC "header"/"footer" types too, so chrome
+  // delivered via section_groups (prefixed OR generic type) always resolves.
+  "nb-header": NbHeader,
+  "nb-footer": NbFooter,
+  header: NbHeader,
+  footer: NbFooter,
   // Home sections (faithful V2 neo-brutalism ports)
   "nb-announcement-bar": NbAnnouncementBar,
   "nbhero": Nbhero,
@@ -61,6 +69,10 @@ const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
 const BUILTIN_TEMPLATES = (
   themeManifest as unknown as { presets?: { templates?: Record<string, MaybeOrderedTemplate> } }
 ).presets?.templates ?? {};
+
+const BUILTIN_GROUPS = (
+  themeManifest as unknown as { presets?: { section_groups?: Record<string, MaybeOrderedTemplate> } }
+).presets?.section_groups ?? {};
 
 function RenderSection({ instance, sectionId, groupId }: {
   instance: SectionInstance; sectionId: string; groupId?: string;
@@ -87,11 +99,65 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const settings = useThemeSettings();
   const hostTemplate = settings.templates?.[currentTemplate] as MaybeOrderedTemplate | undefined;
   const builtinTemplate = BUILTIN_TEMPLATES[currentTemplate];
-  const sections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
+  const templateSections = selectTemplateSections(hostTemplate, builtinTemplate, isKnownType);
+
+  // Chrome (header/footer) reaches us in TWO possible places: (1) the engine's
+  // section_groups.header / .footer (what the V3 customizer writes), or (2)
+  // inline in the template's section list. Read BOTH, prefer section_groups,
+  // so chrome never silently vanishes once a saved customization moves it.
+  const groups = settings.section_groups as
+    | Record<string, MaybeOrderedTemplate>
+    | undefined;
+  const HEADER_TYPES = new Set(["nb-header", "header"]);
+  const FOOTER_TYPES = new Set(["nb-footer", "footer"]);
+  const groupHeader = resolveSections(groups?.header).filter(({ instance }) =>
+    isKnownType(instance.type),
+  );
+  const groupFooter = resolveSections(groups?.footer).filter(({ instance }) =>
+    isKnownType(instance.type),
+  );
+  const inlineHeader = templateSections.filter(({ instance }) =>
+    HEADER_TYPES.has(instance.type),
+  );
+  const inlineFooter = templateSections.filter(({ instance }) =>
+    FOOTER_TYPES.has(instance.type),
+  );
+  const body = templateSections.filter(
+    ({ instance }) =>
+      !HEADER_TYPES.has(instance.type) && !FOOTER_TYPES.has(instance.type),
+  );
+  // Last-resort chrome: theme.json's preset section_groups, so a store with no
+  // saved customization still gets real navigation instead of the host's
+  // generic fallback strip.
+  const presetHeader = resolveSections(BUILTIN_GROUPS.header);
+  const presetFooter = resolveSections(BUILTIN_GROUPS.footer);
+  const header =
+    groupHeader.length > 0
+      ? groupHeader
+      : inlineHeader.length > 0
+        ? inlineHeader
+        : presetHeader;
+  const footer =
+    groupFooter.length > 0
+      ? groupFooter
+      : inlineFooter.length > 0
+        ? inlineFooter
+        : presetFooter;
+
+  // a11y: a single <main> landmark; the <header>/<footer> banners render
+  // OUTSIDE it (no banner/contentinfo nested in main).
   return (
     <div data-neo-brutalism-v3-app data-theme="neo-brutalism-v3">
-      {sections.map(({ id, instance }) => (
-        <RenderSection key={id} sectionId={id} instance={instance} />
+      {header.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="header" />
+      ))}
+      <main>
+        {body.map(({ id, instance }) => (
+          <RenderSection key={id} sectionId={id} instance={instance} />
+        ))}
+      </main>
+      {footer.map(({ id, instance }) => (
+        <RenderSection key={id} sectionId={id} instance={instance} groupId="footer" />
       ))}
     </div>
   );
@@ -153,7 +219,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "neo-brutalism-v3", name: "Neo brutalism (V3)", version: "0.3.3" },
+  manifest: { id: "neo-brutalism-v3", name: "Neo brutalism (V3)", version: "0.4.0" },
   mount,
 };
 export default v3Handle;

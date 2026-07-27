@@ -6,6 +6,7 @@ import {
   type ThemeSettingsV3,
 } from "@numueg/theme-sdk";
 import manifest from "../theme.json";
+import { DemoContext } from "./lib/demo";
 
 import Header from "./sections/Header";
 import Footer from "./sections/Footer";
@@ -200,12 +201,16 @@ export default function Theme({ themeSettings, currentTemplate }: ThemeProps) {
     string,
     GroupLike
   >;
-  const hostTemplate =
-    hostTemplates[pageType] ?? hostTemplates.page ?? hostTemplates.home;
+  // Fall back to `page` (a generic content template) but NEVER to `home`.
+  // Chaining to home meant a route this theme ships no template for rendered
+  // the HOMEPAGE BODY under that URL — /blogs served the hero, the featured
+  // collection and the rest of the storefront front page, which is worse than
+  // rendering nothing: it looks like the link went to the wrong place, and it
+  // also masked the host's own fallback for that route (the host only steps in
+  // when the theme renders an empty body).
+  const hostTemplate = hostTemplates[pageType] ?? hostTemplates.page;
   const builtinTemplate =
-    BUILTIN_TEMPLATES[pageType] ??
-    BUILTIN_TEMPLATES.page ??
-    BUILTIN_TEMPLATES.home;
+    BUILTIN_TEMPLATES[pageType] ?? BUILTIN_TEMPLATES.page;
 
   const hostGroups = (themeSettings.section_groups ?? {}) as Record<
     string,
@@ -221,28 +226,37 @@ export default function Theme({ themeSettings, currentTemplate }: ThemeProps) {
   const bleedTop = firstType === "hero";
 
   return (
-    <div className="empire" dir={dir} style={styleVars(global)}>
+    // `data-theme` matches every other theme's root marker. The host keys its
+    // sticky-footer rule on it; without the attribute this theme was the one
+    // that still left a blank band under the footer on short pages.
+    <div
+      className="empire"
+      data-empire-v3-app
+      data-theme="empire-v3"
+      dir={dir}
+      style={styleVars(global)}
+    >
       {renderList(headerSections, "hg", "header", { solidHeader: !bleedTop })}
       {!bleedTop && headerSections.length > 0 ? (
         <div className="empire-spacer-top" aria-hidden="true" />
       ) : null}
-      {bodySections.length > 0 ? (
-        renderList(bodySections, pageType)
-      ) : (
-        <section className="empire-page empire-container">
-          <p className="empire-placeholder">
-            No template configured for "{pageType}".
-          </p>
-        </section>
-      )}
+      {/* Exactly one <main> landmark, and the slot the host fills with the page
+          body on routes this theme has no template for. An EMPTY <main> is the
+          correct output there — it is the signal the host watches for before
+          portalling its own content in, which a placeholder would suppress. */}
+      <main>{bodySections.length > 0 ? renderList(bodySections, pageType) : null}</main>
       {renderList(footerSections, "fg", "footer")}
     </div>
   );
 }
 
 // ── Entry: ONE definition → mount (client/hydrate) + createApp (SSR) ────────
-const entry = defineThemeEntry(({ themeSettings, currentTemplate }) => (
-  <Theme themeSettings={themeSettings} currentTemplate={currentTemplate} />
+// `demo` gates the sections' stock-photo fallbacks: marketplace preview only,
+// never a real installed store (see src/lib/demo.ts).
+const entry = defineThemeEntry(({ themeSettings, currentTemplate, demo }) => (
+  <DemoContext.Provider value={demo}>
+    <Theme themeSettings={themeSettings} currentTemplate={currentTemplate} />
+  </DemoContext.Provider>
 ));
 
 export const mount = entry.mount;

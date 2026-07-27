@@ -2,12 +2,41 @@
   "id": "elegant-v3",
   "name": "Elegant (V3)",
   "author": "NUMU",
-  "version": "0.3.11",
+  "version": "0.4.0",
   "layout": "single-column",
   "description": "Elegant (V3) — rich warm-brown classic storefront, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
+    "section_groups": {
+      "header": {
+        "name": "Header",
+        "sections": [
+          {
+            "type": "elegant-header",
+            "settings": {
+              "menu_handle": "main-menu",
+              "show_announcement": true,
+              "sticky": true,
+              "show_search": true,
+              "show_account": true,
+              "show_cart": true
+            }
+          }
+        ]
+      },
+      "footer": {
+        "name": "Footer",
+        "sections": [
+          {
+            "type": "elegant-footer",
+            "settings": {
+              "menu_handle": "footer"
+            }
+          }
+        ]
+      }
+    },
     "templates": {
       "home": {
         "name": "Home",

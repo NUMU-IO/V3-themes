@@ -1,8 +1,5 @@
-import {
-  useOrder,
-  usePage,
-  useLocalization,
-} from "@numueg/theme-sdk";
+import { useLocalization, useOrder, usePage } from "@numueg/theme-sdk";
+import { centsToMajor } from "../lib/money";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 
@@ -91,7 +88,7 @@ export default function OrderConfirmation({ id, settings }: EmpSectionProps) {
           <div className="empire-oc__row">
             <span className="empire-muted">الإجمالي</span>
             <span style={{ fontWeight: 800 }}>
-              {formatMoney(order.total, order.currency)}
+              {formatMoney(centsToMajor(order.total), order.currency)}
             </span>
           </div>
         </div>
@@ -111,7 +108,7 @@ export default function OrderConfirmation({ id, settings }: EmpSectionProps) {
                       × {qty}
                     </span>
                   </span>
-                  <span>{formatMoney(price * qty, order.currency)}</span>
+                  <span>{formatMoney(centsToMajor(price * qty), order.currency)}</span>
                 </li>
               );
             })}

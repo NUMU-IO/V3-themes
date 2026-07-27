@@ -1,6 +1,6 @@
 "use client";
 
-import { Link, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
+import { Link, useListingHeading, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
 import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
@@ -27,7 +27,13 @@ export default function ByProductGrid({
   const { products, loading } = useProducts();
   const locale = useLocale();
 
-  const title = asString(s.title) || localized(locale, "All drinks", "كل المشروبات");
+  // Collection name beats the static section title — same section serves
+  // /products and every /collections/* URL.
+  const listing = useListingHeading({
+    title: asString(s.title),
+    defaultTitle: localized(locale, "All drinks", "كل المشروبات"),
+  });
+  const title = listing.title;
   const subtitle =
     asString(s.subtitle) ||
     localized(

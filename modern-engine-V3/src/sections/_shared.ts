@@ -1,6 +1,13 @@
 // Shared guards from @numueg/theme-kit (import+re-export: local binding + public export).
-import { localized, asString, asNumber, asArray } from "@numueg/theme-kit";
-export { localized, asString, asNumber, asArray };
+import {
+  localized,
+  asString,
+  asNumber,
+  asArray,
+  asBool,
+  asImageUrl,
+} from "@numueg/theme-kit";
+export { localized, asString, asNumber, asArray, asBool, asImageUrl };
 
 import type { SectionInstance } from "@numueg/theme-sdk";
 

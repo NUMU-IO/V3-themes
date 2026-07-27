@@ -1,15 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  Image,
-  Link,
-  Money,
-  useLocale,
-  useProducts,
-  useResolvedSettings,
-  type Product,
-} from "@numueg/theme-sdk";
+import { Image, Link, Money, useListingHeading, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
 import { Search, ShoppingBag, SlidersHorizontal } from "lucide-react";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -143,8 +135,19 @@ export default function BzProductGrid({
   const { products, loading } = useProducts();
   const locale = useLocale();
 
-  const title = asString(s.title) || localized(locale, "SHOP ALL", "تسوّق الكل");
-  const subtitle = asString(s.subtitle) || localized(locale, "The full edit, in one place.", "كل التشكيلة في مكان واحد.");
+  // This section renders BOTH /products and /collections/*, so the collection
+  // the shopper clicked into has to outrank the static section title.
+  const listing = useListingHeading({
+    title: asString(s.title),
+    description: asString(s.subtitle),
+    defaultTitle: localized(locale, "SHOP ALL", "تسوّق الكل"),
+  });
+  const title = listing.title;
+  const subtitle =
+    listing.description ||
+    (listing.isCollection
+      ? ""
+      : localized(locale, "The full edit, in one place.", "كل التشكيلة في مكان واحد."));
   const colsDesktop = Math.max(1, Math.min(6, asNumber(s.columns_desktop, 4)));
   const colsMobile = Math.max(1, Math.min(3, asNumber(s.columns_mobile, 2)));
   const maxItems = asNumber(s.max_items, 0);

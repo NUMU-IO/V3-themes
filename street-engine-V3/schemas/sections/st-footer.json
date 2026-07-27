@@ -1,0 +1,42 @@
+{
+  "name": "Footer",
+  "name_ar": "الفوتر",
+  "tag": "footer",
+  "settings": [
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name",
+      "label_ar": "اسم البراند",
+      "default": ""
+    },
+    {
+      "id": "tagline",
+      "type": "text",
+      "label": "Tagline (English)",
+      "label_ar": "الوصف (إنجليزي)",
+      "default": ""
+    },
+    {
+      "id": "tagline_ar",
+      "type": "text",
+      "label": "Tagline (Arabic)",
+      "label_ar": "الوصف (عربي)",
+      "default": ""
+    },
+    {
+      "id": "menu_handle",
+      "type": "text",
+      "label": "Menu handle",
+      "label_ar": "معرّف القائمة",
+      "default": "footer-menu"
+    },
+    {
+      "id": "show_newsletter",
+      "type": "checkbox",
+      "label": "Show newsletter signup",
+      "label_ar": "إظهار الاشتراك بالنشرة",
+      "default": true
+    }
+  ]
+}

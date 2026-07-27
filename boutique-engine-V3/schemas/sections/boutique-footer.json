@@ -1,0 +1,186 @@
+{
+  "type": "boutique-footer",
+  "tag": "footer",
+  "limit": 1,
+  "name": "Footer",
+  "name_ar": "التذييل",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name (blank = store name)",
+      "label_ar": "اسم العلامة (فارغ = اسم المتجر)",
+      "default": ""
+    },
+    {
+      "id": "logo_url",
+      "type": "image_picker",
+      "label": "Logo image",
+      "label_ar": "صورة الشعار"
+    },
+    {
+      "id": "tagline",
+      "type": "textarea",
+      "label": "Tagline (English)",
+      "label_ar": "الوصف المختصر (إنجليزي)",
+      "default": ""
+    },
+    {
+      "id": "tagline_ar",
+      "type": "textarea",
+      "label": "Tagline (Arabic)",
+      "label_ar": "الوصف المختصر (عربي)",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Link columns"
+    },
+    {
+      "id": "menu_handle",
+      "type": "text",
+      "label": "Footer menu handle",
+      "label_ar": "معرّف قائمة التذييل",
+      "info": "A nested footer menu becomes the link columns. Leave the columns below for a menu-free setup.",
+      "default": "footer"
+    },
+    {
+      "id": "column1_title",
+      "type": "text",
+      "label": "Column 1 title",
+      "label_ar": "عنوان العمود الأول",
+      "default": ""
+    },
+    {
+      "id": "column1_link1_label",
+      "type": "text",
+      "label": "Column 1 · link 1 label",
+      "label_ar": "العمود الأول · نص الرابط ١",
+      "default": ""
+    },
+    {
+      "id": "column1_link1_href",
+      "type": "url",
+      "label": "Column 1 · link 1 URL",
+      "label_ar": "العمود الأول · رابط ١",
+      "default": ""
+    },
+    {
+      "id": "column1_link2_label",
+      "type": "text",
+      "label": "Column 1 · link 2 label",
+      "label_ar": "العمود الأول · نص الرابط ٢",
+      "default": ""
+    },
+    {
+      "id": "column1_link2_href",
+      "type": "url",
+      "label": "Column 1 · link 2 URL",
+      "label_ar": "العمود الأول · رابط ٢",
+      "default": ""
+    },
+    {
+      "id": "column1_link3_label",
+      "type": "text",
+      "label": "Column 1 · link 3 label",
+      "label_ar": "العمود الأول · نص الرابط ٣",
+      "default": ""
+    },
+    {
+      "id": "column1_link3_href",
+      "type": "url",
+      "label": "Column 1 · link 3 URL",
+      "label_ar": "العمود الأول · رابط ٣",
+      "default": ""
+    },
+    {
+      "id": "column2_title",
+      "type": "text",
+      "label": "Column 2 title",
+      "label_ar": "عنوان العمود الثاني",
+      "default": ""
+    },
+    {
+      "id": "column2_link1_label",
+      "type": "text",
+      "label": "Column 2 · link 1 label",
+      "label_ar": "العمود الثاني · نص الرابط ١",
+      "default": ""
+    },
+    {
+      "id": "column2_link1_href",
+      "type": "url",
+      "label": "Column 2 · link 1 URL",
+      "label_ar": "العمود الثاني · رابط ١",
+      "default": ""
+    },
+    {
+      "id": "column2_link2_label",
+      "type": "text",
+      "label": "Column 2 · link 2 label",
+      "label_ar": "العمود الثاني · نص الرابط ٢",
+      "default": ""
+    },
+    {
+      "id": "column2_link2_href",
+      "type": "url",
+      "label": "Column 2 · link 2 URL",
+      "label_ar": "العمود الثاني · رابط ٢",
+      "default": ""
+    },
+    {
+      "id": "column2_link3_label",
+      "type": "text",
+      "label": "Column 2 · link 3 label",
+      "label_ar": "العمود الثاني · نص الرابط ٣",
+      "default": ""
+    },
+    {
+      "id": "column2_link3_href",
+      "type": "url",
+      "label": "Column 2 · link 3 URL",
+      "label_ar": "العمود الثاني · رابط ٣",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Contact"
+    },
+    {
+      "id": "contact_email",
+      "type": "text",
+      "label": "Contact email",
+      "label_ar": "البريد الإلكتروني",
+      "default": ""
+    },
+    {
+      "id": "contact_phone",
+      "type": "text",
+      "label": "Contact phone",
+      "label_ar": "رقم التليفون",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Copyright"
+    },
+    {
+      "id": "copyright_text",
+      "type": "text",
+      "label": "Copyright line (English)",
+      "label_ar": "سطر الحقوق (إنجليزي)",
+      "default": ""
+    },
+    {
+      "id": "copyright_text_ar",
+      "type": "text",
+      "label": "Copyright line (Arabic)",
+      "label_ar": "سطر الحقوق (عربي)",
+      "default": ""
+    }
+  ]
+}

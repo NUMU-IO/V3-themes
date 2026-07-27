@@ -1,0 +1,213 @@
+{
+  "type": "modern-footer",
+  "name": "Footer",
+  "name_ar": "التذييل",
+  "tag": "footer",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "id": "brand_name",
+      "type": "text",
+      "label": "Brand name",
+      "label_ar": "اسم المتجر",
+      "default": "",
+      "info": "Leave empty to use the store name."
+    },
+    {
+      "id": "logo_url",
+      "type": "image_picker",
+      "label": "Logo",
+      "label_ar": "الشعار",
+      "info": "Falls back to the store logo, then to the brand name text."
+    },
+    {
+      "id": "tagline",
+      "type": "textarea",
+      "label": "Tagline",
+      "label_ar": "الوصف المختصر",
+      "default": ""
+    },
+    {
+      "id": "tagline_ar",
+      "type": "textarea",
+      "label": "Tagline (Arabic)",
+      "label_ar": "الوصف المختصر (عربي)",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Contact"
+    },
+    {
+      "id": "show_contact",
+      "type": "checkbox",
+      "label": "Show contact details",
+      "label_ar": "إظهار بيانات التواصل",
+      "default": true
+    },
+    {
+      "id": "contact_email",
+      "type": "text",
+      "label": "Email",
+      "label_ar": "البريد الإلكتروني",
+      "default": ""
+    },
+    {
+      "id": "contact_phone",
+      "type": "text",
+      "label": "Phone",
+      "label_ar": "رقم الهاتف",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Link column 1"
+    },
+    {
+      "id": "col1_title",
+      "type": "text",
+      "label": "Column 1 title",
+      "label_ar": "عنوان العمود الأول",
+      "default": ""
+    },
+    {
+      "id": "col1_link1_label",
+      "type": "text",
+      "label": "Link 1 label",
+      "label_ar": "اسم الرابط ١",
+      "default": ""
+    },
+    {
+      "id": "col1_link1_href",
+      "type": "url",
+      "label": "Link 1 URL",
+      "label_ar": "رابط ١",
+      "default": ""
+    },
+    {
+      "id": "col1_link2_label",
+      "type": "text",
+      "label": "Link 2 label",
+      "label_ar": "اسم الرابط ٢",
+      "default": ""
+    },
+    {
+      "id": "col1_link2_href",
+      "type": "url",
+      "label": "Link 2 URL",
+      "label_ar": "رابط ٢",
+      "default": ""
+    },
+    {
+      "id": "col1_link3_label",
+      "type": "text",
+      "label": "Link 3 label",
+      "label_ar": "اسم الرابط ٣",
+      "default": ""
+    },
+    {
+      "id": "col1_link3_href",
+      "type": "url",
+      "label": "Link 3 URL",
+      "label_ar": "رابط ٣",
+      "default": ""
+    },
+    {
+      "id": "col1_link4_label",
+      "type": "text",
+      "label": "Link 4 label",
+      "label_ar": "اسم الرابط ٤",
+      "default": ""
+    },
+    {
+      "id": "col1_link4_href",
+      "type": "url",
+      "label": "Link 4 URL",
+      "label_ar": "رابط ٤",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Link column 2"
+    },
+    {
+      "id": "col2_title",
+      "type": "text",
+      "label": "Column 2 title",
+      "label_ar": "عنوان العمود الثاني",
+      "default": ""
+    },
+    {
+      "id": "col2_link1_label",
+      "type": "text",
+      "label": "Link 1 label",
+      "label_ar": "اسم الرابط ١",
+      "default": ""
+    },
+    {
+      "id": "col2_link1_href",
+      "type": "url",
+      "label": "Link 1 URL",
+      "label_ar": "رابط ١",
+      "default": ""
+    },
+    {
+      "id": "col2_link2_label",
+      "type": "text",
+      "label": "Link 2 label",
+      "label_ar": "اسم الرابط ٢",
+      "default": ""
+    },
+    {
+      "id": "col2_link2_href",
+      "type": "url",
+      "label": "Link 2 URL",
+      "label_ar": "رابط ٢",
+      "default": ""
+    },
+    {
+      "id": "col2_link3_label",
+      "type": "text",
+      "label": "Link 3 label",
+      "label_ar": "اسم الرابط ٣",
+      "default": ""
+    },
+    {
+      "id": "col2_link3_href",
+      "type": "url",
+      "label": "Link 3 URL",
+      "label_ar": "رابط ٣",
+      "default": ""
+    },
+    {
+      "id": "col2_link4_label",
+      "type": "text",
+      "label": "Link 4 label",
+      "label_ar": "اسم الرابط ٤",
+      "default": ""
+    },
+    {
+      "id": "col2_link4_href",
+      "type": "url",
+      "label": "Link 4 URL",
+      "label_ar": "رابط ٤",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "locales": {
+        "en": { "name": "Footer" },
+        "ar": { "name": "التذييل" }
+      },
+      "settings": {
+        "show_contact": true
+      }
+    }
+  ]
+}
