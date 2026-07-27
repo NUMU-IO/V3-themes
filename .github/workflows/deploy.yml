@@ -121,6 +121,19 @@ jobs:
             const old = j.version;
             j.version = inc(j.version);
             fs.writeFileSync(tj, JSON.stringify(j, null, 2) + '\n');
+            // Keep package.json in lockstep. theme.json alone drives the R2
+            // path and the marketplace seed, so bumping only it let
+            // package.json silently fall behind by a dozen patches — which is
+            // how one version string ended up describing two different sets of
+            // published bytes. They must move together.
+            const pj = path.join(d, 'package.json');
+            if (fs.existsSync(pj)) {
+              const p = JSON.parse(fs.readFileSync(pj, 'utf8'));
+              if (p.version !== j.version) {
+                p.version = j.version;
+                fs.writeFileSync(pj, JSON.stringify(p, null, 2) + '\n');
+              }
+            }
             console.log(`bumped ${d}: ${old} -> ${j.version}`);
             n++;
           }
@@ -194,7 +207,14 @@ jobs:
           DROPLET: ${{ secrets.STAGING_SSH_USER }}@${{ secrets.STAGING_HOST }}
           EC2: ${{ secrets.PROD_EC2_USER }}@${{ secrets.PROD_EC2_HOST }}
           THEME_INPUT: ${{ github.event.inputs.theme }}
-          STRICT: ${{ github.event.inputs.strict }}
+          # On the `push` trigger there are no inputs, so `inputs.strict` is the
+          # EMPTY STRING and the strict gate at the end of this step could never
+          # fire — a run where every theme failed to build still reported
+          # success. That is how a broken fleet stayed green for weeks. An
+          # automatic push is exactly the case where nobody is watching the log,
+          # so it must be strict; manual dispatch keeps the opt-in input so an
+          # operator can still deliberately ship the themes that do build.
+          STRICT: ${{ github.event_name == 'push' && 'true' || github.event.inputs.strict }}
           # PROD is the priority target. On an AUTO push (merge to main) we skip
           # the TEST/droplet seed entirely — that box's SSH key is chronically
           # dead, and its failure used to abort the whole job and take the PROD
@@ -301,8 +321,27 @@ jobs:
             echo "::endgroup::"
           done
           echo "Deployed $ok theme(s); $fail failed.$failed"
-          if [ "$STRICT" = "true" ] && [ "$fail" -gt 0 ]; then
-            echo "::error::strict mode: $fail theme(s) failed"; exit 1
+
+          # Surface the outcome in the run summary too, so a non-strict manual
+          # dispatch still shows WHICH themes failed without digging through
+          # collapsed ::group:: logs.
+          {
+            echo "### V3 theme deploy"
+            echo ""
+            echo "- deployed: **$ok**"
+            echo "- failed: **$fail**"
+            if [ "$fail" -gt 0 ]; then
+              echo ""
+              echo "Failed themes:"
+              for t in $failed; do echo "- \`$t\`"; done
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$fail" -gt 0 ] && [ "$STRICT" = "true" ]; then
+            echo "::error::strict mode: $fail theme(s) failed:$failed"; exit 1
+          fi
+          if [ "$fail" -gt 0 ]; then
+            echo "::warning::$fail theme(s) failed but strict=false — run NOT marked failed:$failed"
           fi
 
       # Persist the bumps back to the repo so the next run starts from the new
