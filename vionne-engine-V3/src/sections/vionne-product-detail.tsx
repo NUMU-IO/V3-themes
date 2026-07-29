@@ -106,7 +106,18 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
   const showOfferLine = s.show_offer_line !== false;
   const promos = useActivePromotions("/product", locale);
   const offerLine = showOfferLine
-    ? pdpOfferLine(promos?.auto_discounts, product?.currency || "EGP", locale)
+    ? pdpOfferLine(
+        promos?.auto_discounts,
+        product?.currency || "EGP",
+        locale,
+        // Gate the bundle pill on THIS product's price: if N of it already
+        // costs less than the bundle, the "deal" is worse than just buying
+        // them and the engine refuses to apply it anyway.
+        typeof product?.price === "number" ? product.price : undefined,
+        // …and it must be IN the offer's scope. A scoped offer previously
+        // showed its pill on every product, including excluded ones.
+        product ?? undefined,
+      )
     : null;
 
   // A4 — post-add-to-cart drawer. The moment after "Add to bag" is the
@@ -428,7 +439,14 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                 the extra unit. Spend-tier progress lives in the cart nudge. */}
             {(() => {
               const hint = showOfferLine
-                ? qtyBogoHint(promos?.auto_discounts, Math.min(quantity, maxQty), locale)
+                ? qtyBogoHint(
+                    promos?.auto_discounts,
+                    Math.min(quantity, maxQty),
+                    locale,
+                    product?.currency || "EGP",
+                    product ?? undefined,
+                    typeof product?.price === "number" ? product.price : undefined,
+                  )
                 : null;
               return hint ? (
                 <p
@@ -673,6 +691,9 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
               const nudge = bestCartNudge(
                 promos?.auto_discounts, cart?.subtotal ?? 0,
                 cart?.currency || product.currency || "EGP", locale, false,
+                (cart?.items ?? []).reduce((n, it) => n + (it?.quantity || 0), 0),
+                cart?.applied_promotions,
+                cart?.items,
               );
               return nudge ? (
                 <div className="mb-4 border border-[var(--vn-border)] p-3">
