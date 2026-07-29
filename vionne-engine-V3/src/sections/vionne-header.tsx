@@ -161,6 +161,9 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
         cart?.currency || "EGP",
         locale,
         false,
+        (cart?.items ?? []).reduce((n, it) => n + (it?.quantity || 0), 0),
+        cart?.applied_promotions,
+        cart?.items,
       )
     : null;
   const [miniCartOpen, setMiniCartOpen] = useState(false);

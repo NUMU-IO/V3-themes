@@ -4,6 +4,44 @@
   "settings": [
     {
       "type": "header",
+      "content": "Offer"
+    },
+    {
+      "type": "select",
+      "id": "offer_mode",
+      "label": "Offer source",
+      "label_ar": "مصدر العرض",
+      "info": "Automatic reads your live bundle offer, so the headline and price can never disagree with checkout — and the banner hides itself when the offer ends. Manual keeps the typed-in text below.",
+      "info_ar": "تلقائي بيقرأ عرض الباقة الشغّال، فالعنوان والسعر عمرهم ما هيختلفوا عن الدفع — والبانر بيختفي لوحده لما العرض يخلص. يدوي بيسيب النص المكتوب تحت.",
+      "default": "manual",
+      "options": [
+        { "value": "manual", "label": "Manual text", "label_ar": "نص يدوي" },
+        { "value": "auto", "label": "Automatic (live offer)", "label_ar": "تلقائي (العرض الشغّال)" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "offer_promotion_id",
+      "label": "Pin a specific offer (optional)",
+      "label_ar": "تثبيت عرض معيّن (اختياري)",
+      "info": "Automatic mode only. Leave empty to use the first active bundle offer.",
+      "info_ar": "للوضع التلقائي بس. سيبها فاضية علشان يستخدم أول عرض باقة شغّال.",
+      "default": "",
+      "visible_if": "offer_mode == 'auto'"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "label_ar": "الحجم",
+      "default": "standard",
+      "options": [
+        { "value": "standard", "label": "Standard", "label_ar": "عادي" },
+        { "value": "tall", "label": "Tall", "label_ar": "كبير" }
+      ]
+    },
+    {
+      "type": "header",
       "content": "Content"
     },
     {
@@ -18,6 +56,8 @@
       "id": "headline",
       "label": "Headline",
       "label_ar": "العنوان",
+      "info": "In Automatic mode this is generated from the offer (e.g. \"3 for EGP 650\"). Type here only to override it.",
+      "info_ar": "في الوضع التلقائي بيتولّد من العرض (مثلاً \"3 قطع بـ 650 ج.م\"). اكتبي هنا بس لو عايزة تغيّريه.",
       "default": ""
     },
     {

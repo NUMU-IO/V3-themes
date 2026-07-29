@@ -186,12 +186,45 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
     : cart?.subtotal ?? 0;
   const freeShipEarned = freeThreshold > 0 && subtotal >= freeThreshold;
   const remainingForFree = freeThreshold > 0 ? Math.max(freeThreshold - subtotal, 0) : 0;
-  const grandTotal = subtotal;
+  // Offers-v2: the cart now carries the ENGINE's post-discount total — the
+  // same number checkout charges. Never re-derive it from the line items:
+  // before offers-v2 the cart had no discount fields so `total === subtotal`
+  // and hardcoding the subtotal was harmless, but a qualifying cart now
+  // returns a real total and showing the subtotal here would contradict the
+  // savings row directly above it ("you saved EGP 100 … Total EGP 750").
+  // All three values reach the theme in MAJOR units (the SDK's
+  // `normalizeCartFromServer` is the one cents→major boundary).
+  const cartDiscount = demoMode ? 0 : Math.max(0, cart?.discount_amount ?? 0);
+  const appliedPromos = demoMode ? [] : (cart?.applied_promotions ?? []);
+  const grandTotal = demoMode
+    ? subtotal
+    : typeof cart?.total === "number" && cart.total > 0
+      ? cart.total
+      : Math.max(0, subtotal - cartDiscount);
+  // Anything the engine discounted but didn't attribute to a named promotion
+  // (e.g. a pinned code) still has to appear, or subtotal − rows ≠ total.
+  const namedDiscount = appliedPromos.reduce((n, pr) => n + (pr?.amount || 0), 0);
+  const otherDiscount = Math.max(0, cartDiscount - namedDiscount);
   // A3 — best offer nudge from the store's auto-discount promotions. Skips
   // free-shipping-kind rules when the theme's own bar (A1) already tells that
   // story, so the customer never reads the same promise twice.
   const promoNudge = showPromoNudge
-    ? bestCartNudge(promos?.auto_discounts, subtotal, currency || "EGP", locale, freeThreshold > 0)
+    ? bestCartNudge(
+        promos?.auto_discounts,
+        subtotal,
+        currency || "EGP",
+        locale,
+        freeThreshold > 0,
+        // Units (not lines) for multibuy progress — three of one product is a
+        // valid trio, exactly how the engine counts it.
+        items.reduce((n, it) => n + (it?.quantity || 0), 0),
+        // The engine's own per-promotion amounts, so an unlocked bundle shows
+        // the REAL saving instead of a number the theme made up.
+        cart?.applied_promotions,
+        // The lines themselves, so a SCOPED offer counts only qualifying
+        // units rather than the whole cart.
+        items,
+      )
     : null;
 
   return (
@@ -386,6 +419,34 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
                     )}
                   </span>
                 </div>
+                {/* Offers-v2 savings rows. Amounts are the ENGINE's own
+                    per-promotion contributions — never recomputed here, so the
+                    cart can't drift from what the order is charged. */}
+                {appliedPromos.map((promo, i) => (
+                  <div
+                    key={promo?.id || i}
+                    className="flex justify-between gap-3 text-[var(--vn-accent)]"
+                    data-testid="cart-promo-savings"
+                  >
+                    <span>
+                      {(locale?.startsWith("ar") && promo?.title_ar) ||
+                        promo?.title}
+                    </span>
+                    <span className="font-medium whitespace-nowrap">
+                      {"−"}
+                      <Money amount={promo?.amount || 0} currency={currency} />
+                    </span>
+                  </div>
+                ))}
+                {otherDiscount > 0 && (
+                  <div className="flex justify-between gap-3 text-[var(--vn-accent)]">
+                    <span>{localized(locale, "Discount", "الخصم")}</span>
+                    <span className="font-medium whitespace-nowrap">
+                      {"−"}
+                      <Money amount={otherDiscount} currency={currency} />
+                    </span>
+                  </div>
+                )}
                 {/* The "add X more" nudge moved to the progress bar at the top
                     of the cart (A1) — keeping it here too would say the same
                     thing twice on one screen. */}

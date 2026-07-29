@@ -15,6 +15,7 @@
  * MAJOR units — helpers take a major-unit subtotal and convert internally.
  */
 import { useEffect, useState } from "react";
+import * as sdk from "@numueg/theme-sdk";
 
 export interface DiscountTier {
   threshold_cents: number;
@@ -22,7 +23,16 @@ export interface DiscountTier {
 }
 
 export interface DiscountRule {
-  kind: "percentage" | "fixed" | "free_shipping" | "bogo" | "tiered";
+  // Open union: the platform adds rule kinds over time and this theme must
+  // keep rendering when it meets one it was built before.
+  kind:
+    | "percentage"
+    | "fixed"
+    | "free_shipping"
+    | "bogo"
+    | "tiered"
+    | "multibuy"
+    | (string & {});
   value_cents?: number | null;
   value_percent?: number | null;
   min_subtotal_cents?: number | null;
@@ -30,6 +40,143 @@ export interface DiscountRule {
   get_quantity?: number | null;
   get_discount_percent?: number | null;
   tiers?: DiscountTier[];
+  /** MULTIBUY: N items for a fixed total of `multibuy_price_cents`. */
+  multibuy_quantity?: number | null;
+  multibuy_price_cents?: number | null;
+}
+
+/**
+ * SDK promotion primitives, resolved ONCE at module load with a local
+ * fallback.
+ *
+ * Deliberately a namespace import, not `import { multibuyOffers } from …`.
+ * Themes are federated: a named import of an export the host's runtime SDK
+ * doesn't serve yet fails at ESM **link** time, so the whole theme fails to
+ * mount and the storefront goes blank — the worst failure mode this fleet
+ * has. A namespace import always links; a missing member is just
+ * `undefined`, so an out-of-order deploy degrades to the theme-local copy
+ * instead of a white screen.
+ *
+ * Resolved at module scope (not per render) so the hook identity is stable
+ * and the rules of hooks hold.
+ */
+type MultibuyOffer = {
+  promotionId: string;
+  quantity: number;
+  groupPriceCents: number;
+  groupPriceMajor: number;
+  eligibleProductIds?: string[];
+  eligibleCategoryIds?: string[];
+  isStoreWide?: boolean;
+};
+
+/** A cart line / product, as much of it as eligibility needs. */
+type EligibleItem = {
+  id?: string;
+  product_id?: string;
+  category_id?: string | null;
+  quantity?: number;
+};
+
+/**
+ * Does this product take part in the offer? Store-wide offers include
+ * everything; otherwise the product must be named or sit in a named category.
+ * A scoped offer over a product with no known category returns false — better
+ * to under-promise than to advertise a discount the server won't apply.
+ */
+export function offerIncludesProduct(
+  offer: MultibuyOffer,
+  item: EligibleItem | null | undefined,
+): boolean {
+  if (!item) return false;
+  if (offer.isStoreWide !== false) {
+    // Undefined (older host SDK, which doesn't send scoping) is treated as
+    // store-wide — that's what themes counted before, so nothing regresses.
+    if (
+      !offer.eligibleProductIds?.length &&
+      !offer.eligibleCategoryIds?.length
+    ) {
+      return true;
+    }
+  }
+  const id = item.product_id ?? item.id;
+  if (id && offer.eligibleProductIds?.includes(id)) return true;
+  const category = item.category_id;
+  return Boolean(category && offer.eligibleCategoryIds?.includes(category));
+}
+
+/** Cart UNITS that actually qualify — not lines, and not the whole cart. */
+export function eligibleUnits(
+  offer: MultibuyOffer,
+  items: EligibleItem[] | undefined,
+): number {
+  return (items ?? []).reduce(
+    (n, it) => (offerIncludesProduct(offer, it) ? n + (it?.quantity || 0) : n),
+    0,
+  );
+}
+
+const sdkAny = sdk as unknown as Record<string, unknown>;
+
+/** Local mirror of the SDK's `multibuyOffers`, used when the host is older. */
+function localMultibuyOffers(promos: ActivePromo[] | undefined): MultibuyOffer[] {
+  const out: MultibuyOffer[] = [];
+  for (const p of promos ?? []) {
+    const r = p?.discount_rule;
+    if (!r || r.kind !== "multibuy") continue;
+    const n = r.multibuy_quantity;
+    const cents = r.multibuy_price_cents;
+    if (typeof n !== "number" || n < 2) continue;
+    if (typeof cents !== "number" || cents <= 0) continue;
+    const prodIds = p.eligible_product_ids ?? [];
+    const catIds = p.eligible_category_ids ?? [];
+    out.push({
+      promotionId: p.promotion_id,
+      quantity: n,
+      groupPriceCents: cents,
+      groupPriceMajor: cents / 100,
+      eligibleProductIds: prodIds,
+      eligibleCategoryIds: catIds,
+      isStoreWide: prodIds.length === 0 && catIds.length === 0,
+    });
+  }
+  return out;
+}
+
+export function multibuyOffers(
+  promos: ActivePromo[] | undefined,
+): MultibuyOffer[] {
+  const fn = sdkAny.multibuyOffers as
+    | ((p: unknown) => MultibuyOffer[])
+    | undefined;
+  return typeof fn === "function"
+    ? fn(promos as unknown)
+    : localMultibuyOffers(promos);
+}
+
+/**
+ * "3 for EGP 650" / "3 قطع بـ 650 ج.م" — generated from the RULE, never
+ * typed by a merchant, so it can't drift from what the engine charges and
+ * it disappears with the promotion.
+ */
+export function multibuyHeadline(
+  offer: MultibuyOffer,
+  locale: string,
+  currency: string,
+): string {
+  const price = fmt(offer.groupPriceCents, currency, locale);
+  return locale === "ar"
+    ? `${offer.quantity} قطع بـ ${price}`
+    : `${offer.quantity} for ${price}`;
+}
+
+/** Never advertise a bundle that costs more than buying the items outright. */
+export function multibuyBeatsUnitPrice(
+  offer: MultibuyOffer,
+  unitPriceMajor: number | null | undefined,
+): boolean {
+  if (typeof unitPriceMajor !== "number" || unitPriceMajor <= 0) return false;
+  return Math.round(unitPriceMajor * 100) * offer.quantity > offer.groupPriceCents;
 }
 
 export interface ActivePromo {
@@ -37,6 +184,9 @@ export interface ActivePromo {
   translated_content?: { headline?: Record<string, string> };
   discount_rule?: DiscountRule | null;
   coupon_code?: string | null;
+  /** Catalog scoping. Both empty/absent ⇒ the whole store qualifies. */
+  eligible_product_ids?: string[];
+  eligible_category_ids?: string[];
 }
 
 interface ActivePromotionsData {
@@ -44,8 +194,24 @@ interface ActivePromotionsData {
   discount_codes_visible?: ActivePromo[];
 }
 
-/** Fetch the active promotions for a page. Null until loaded / on any miss. */
-export function useActivePromotions(page: string, locale: string) {
+/**
+ * Fetch the active promotions for a page. Null until loaded / on any miss.
+ *
+ * Prefers the SDK's implementation when the host runtime serves one (it
+ * dedupes across sections via the shared resource cache), and falls back to
+ * this local copy otherwise. Resolved once at module load — see the
+ * federation note above — so the hook identity never changes between
+ * renders.
+ */
+export const useActivePromotions: (
+  page: string,
+  locale: string,
+) => ActivePromotionsData | null =
+  (sdkAny.useActivePromotions as
+    | ((page: string, locale: string) => ActivePromotionsData | null)
+    | undefined) ?? localUseActivePromotions;
+
+function localUseActivePromotions(page: string, locale: string) {
   const [data, setData] = useState<ActivePromotionsData | null>(null);
   useEffect(() => {
     let cancelled = false;
@@ -96,10 +262,76 @@ export function bestCartNudge(
   currency: string,
   locale: string,
   skipFreeShipping: boolean,
+  /**
+   * Units in the cart, for multibuy progress ("add 1 more to get 3 for
+   * EGP 650"). Counts UNITS not lines — three of one product is a valid
+   * trio, exactly how the engine scores it. Omit and multibuy is skipped
+   * rather than guessed at.
+   */
+  unitsInCart?: number,
+  /**
+   * The engine's own `cart.applied_promotions`, so an unlocked offer shows
+   * the REAL saving. Never recompute a discount in the theme — the server
+   * prices the cart and this is what it charged.
+   */
+  appliedPromotions?: { id: string; amount: number }[],
+  /**
+   * The cart lines, so a SCOPED offer counts only qualifying units. Without
+   * these a "3 for EGP 650 on scarves" offer counts every unit in the cart
+   * and tells a shopper holding one ineligible item to "add 2 more" — then
+   * the discount doesn't apply. Falls back to `unitsInCart` when absent.
+   */
+  cartItems?: EligibleItem[],
 ): PromoNudgeInfo | null {
   if (!promos?.length) return null;
   const subtotalCents = Math.round(subtotalMajor * 100);
   const ar = locale === "ar";
+
+  // ── Multibuy first: it's the hero deal and the most actionable of all —
+  // the shopper is a countable number of items away from it, not a fuzzy
+  // spend amount. Handled ahead of the ranking loop because its progress is
+  // measured in units, not cents.
+  if (typeof unitsInCart === "number" || cartItems) {
+    for (const offer of multibuyOffers(promos)) {
+      const headline = multibuyHeadline(offer, locale, currency);
+      // Count only units the offer actually covers. `cartItems` wins when
+      // present because it can see scoping; the bare number is the fallback.
+      const units = cartItems
+        ? eligibleUnits(offer, cartItems)
+        : (unitsInCart as number);
+      const remainder = units % offer.quantity;
+      const groups = Math.floor(units / offer.quantity);
+      const applied = (appliedPromotions ?? []).find(
+        (p) => p && p.id === offer.promotionId,
+      );
+      if (groups > 0) {
+        const saved = applied?.amount;
+        const savedText =
+          typeof saved === "number" && saved > 0
+            ? fmt(Math.round(saved * 100), currency, locale)
+            : null;
+        return {
+          couponCode: null,
+          message: savedText
+            ? ar
+              ? `${headline} — وفّرتي ${savedText}`
+              : `${headline} — you saved ${savedText}`
+            : headline,
+          progressPct: 100,
+          unlocked: true,
+        };
+      }
+      const need = offer.quantity - remainder;
+      return {
+        couponCode: null,
+        message: ar
+          ? `ضيفي ${need} كمان وتاخدي ${headline}`
+          : `Add ${need} more to get ${headline}`,
+        progressPct: Math.min(100, (remainder / offer.quantity) * 100),
+        unlocked: false,
+      };
+    }
+  }
 
   // Actionable-first: a rule the shopper can still make progress on (tiered /
   // spend-threshold) beats a static line (BOGO / bare headline) — the nudge
@@ -219,9 +451,37 @@ export function qtyBogoHint(
   promos: ActivePromo[] | undefined,
   quantity: number,
   locale: string,
+  currency?: string,
+  /** This product + its price, so the hint never promises a bundle it can't
+   *  deliver — the same two gates `pdpOfferLine` applies. */
+  product?: EligibleItem,
+  unitPriceMajor?: number,
 ): { message: string; qualified: boolean } | null {
   if (!promos?.length) return null;
   const ar = locale === "ar";
+
+  // Multibuy maps onto the stepper even better than BOGO does — the shopper
+  // is N−q items away from a fixed bundle price, right where they change q.
+  for (const offer of multibuyOffers(promos)) {
+    if (product && !offerIncludesProduct(offer, product)) continue;
+    if (unitPriceMajor != null && !multibuyBeatsUnitPrice(offer, unitPriceMajor)) {
+      continue;
+    }
+    const headline = multibuyHeadline(offer, locale, currency || "EGP");
+    if (quantity >= offer.quantity) {
+      return {
+        message: ar ? `${headline} هيتطبّق عند الدفع` : `${headline} — applied at checkout`,
+        qualified: true,
+      };
+    }
+    const need = offer.quantity - quantity;
+    return {
+      message: ar
+        ? `ضيفي ${need} كمان وتاخدي ${headline}`
+        : `Add ${need} more for ${headline}`,
+      qualified: false,
+    };
+  }
   const bogo = promos.find(
     (p) => p.discount_rule?.kind === "bogo" && p.discount_rule.buy_quantity && p.discount_rule.get_quantity,
   )?.discount_rule;
@@ -254,9 +514,31 @@ export function pdpOfferLine(
   promos: ActivePromo[] | undefined,
   currency: string,
   locale: string,
+  /**
+   * This product's unit price in MAJOR units. When supplied, a multibuy
+   * pill only shows if N of THIS item actually costs more than the bundle —
+   * otherwise we'd advertise a "deal" that's worse than just buying them,
+   * and the engine would refuse to apply it anyway.
+   */
+  unitPriceMajor?: number,
+  /** This product, so a scoped offer isn't advertised on an item it excludes. */
+  product?: EligibleItem,
 ): string | null {
   if (!promos?.length) return null;
   const ar = locale === "ar";
+
+  // Multibuy leads on a PDP: it's about THIS product, and it's the one offer
+  // the shopper can act on by changing the quantity in front of them.
+  for (const offer of multibuyOffers(promos)) {
+    // Two independent gates, both required:
+    //   • the product must be IN the offer's scope, and
+    //   • N of it must actually cost more than the bundle.
+    if (product && !offerIncludesProduct(offer, product)) continue;
+    if (unitPriceMajor != null && !multibuyBeatsUnitPrice(offer, unitPriceMajor)) {
+      continue;
+    }
+    return multibuyHeadline(offer, locale, currency);
+  }
   // On a PDP the strongest nudge is the one about THIS purchase: BOGO ("buy
   // one more of this") beats spend-tiers, which beat flat thresholds.
   const RANK: Record<string, number> = { bogo: 0, tiered: 1, percentage: 2, fixed: 2 };
