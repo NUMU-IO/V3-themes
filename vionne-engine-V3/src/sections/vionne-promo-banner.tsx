@@ -111,8 +111,8 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
             <p className="mt-1 text-xs text-muted-foreground">
               {localized(
                 locale,
-                "Create one in Marketing → Promotions, or switch this section to Manual.",
-                "اعملي واحد من التسويق ← العروض، أو حوّلي القسم لوضع يدوي.",
+                "Create one in Marketing → Discounts, or switch this section to Manual.",
+                "اعملي واحد من التسويق ← الخصومات، أو حوّلي القسم لوضع يدوي.",
               )}
             </p>
           </div>
