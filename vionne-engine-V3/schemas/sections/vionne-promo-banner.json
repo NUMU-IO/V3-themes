@@ -79,6 +79,8 @@
       "id": "cta_link",
       "label": "Button link",
       "label_ar": "رابط الزر",
+      "info": "Where the button sends shoppers. Defaults to all products. If the offer only covers some items, point this at that collection instead — e.g. /collections/scarves — so shoppers land on products that actually qualify.",
+      "info_ar": "الزر بيوَدّي العميلة فين. الافتراضي كل المنتجات. لو العرض على منتجات معيّنة بس، خلّيه على الكوليكشن بتاعها — مثلاً /collections/scarves — علشان تنزل على حاجات مؤهّلة للعرض فعلاً.",
       "default": "/products"
     },
     {
