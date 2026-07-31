@@ -1,6 +1,6 @@
 "use client";
 import { Link, collectionHref, useCollections, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { asString, localized, type SectionRenderProps } from "./_shared";
+import { asString, localized, responsiveImg, PRODUCT_CARD_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -51,9 +51,10 @@ export default function VionneCollectionsIndex({ instance, sectionId }: SectionR
               >
                 {cat.image_url ? (
                   <img
-                    src={cat.image_url}
+                    {...responsiveImg(cat.image_url, PRODUCT_CARD_IMG)}
                     alt={cat.name}
                     loading="lazy"
+                    decoding="async"
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (

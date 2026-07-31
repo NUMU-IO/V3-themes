@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Link, useCart, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { multibuyHeadline, multibuyOffers, useActivePromotions } from "./_promotions";
 
@@ -174,8 +174,10 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
                     <div className="absolute inset-0 bg-muted animate-pulse rounded-2xl" />
                   )}
                   <img
-                    src={imageUrl}
+                    {...responsiveImg(imageUrl, EDITORIAL_IMG)}
                     alt=""
+                    loading="lazy"
+                    decoding="async"
                     className={`w-full h-full object-cover transition-opacity duration-300 ${
                       imageLoading ? "opacity-0" : "opacity-100"
                     }`}

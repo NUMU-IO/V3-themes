@@ -1,7 +1,7 @@
 "use client";
 import { Link, Money, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
-import { asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
+import { asString, localized, merchantLabelText, productImage, responsiveImg, PRODUCT_CARD_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { QuickAddButton } from "./_quick-add";
 import { PricePair } from "./_price";
@@ -77,10 +77,11 @@ const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) =
                 <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-3 group-hover:scale-[1.02] transition-transform duration-500">
                   {productImage(product) ? (
                     <img
-                      src={productImage(product)}
+                      {...responsiveImg(productImage(product), PRODUCT_CARD_IMG)}
                       alt={product.name}
                       className="vn-product-image w-full h-full object-cover"
                       loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="absolute inset-0 vn-shimmer" />

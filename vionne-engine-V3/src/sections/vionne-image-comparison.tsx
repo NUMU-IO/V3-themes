@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const ASPECT_CLASS: Record<string, string> = {
@@ -279,11 +279,13 @@ const VionneImageComparison = ({ instance, sectionId }: SectionRenderProps) => {
         >
           {afterImage ? (
             <img
-              src={afterImage}
+              {...responsiveImg(afterImage, EDITORIAL_IMG)}
               alt={afterLabel || ""}
               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
               style={applyImageTransform(afterImageTransform, "cover")}
               draggable={false}
+              loading="lazy"
+              decoding="async"
             />
           ) : (
             <div className="absolute inset-0 vn-shimmer" />
@@ -295,11 +297,13 @@ const VionneImageComparison = ({ instance, sectionId }: SectionRenderProps) => {
               style={{ ["--vn-clip" as string]: `${100 - position}%` } as React.CSSProperties}
             >
               <img
-                src={beforeImage}
+                {...responsiveImg(beforeImage, EDITORIAL_IMG)}
                 alt={beforeLabel || ""}
                 className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                 style={applyImageTransform(beforeImageTransform, "cover")}
                 draggable={false}
+                loading="lazy"
+                decoding="async"
               />
             </div>
           )}
