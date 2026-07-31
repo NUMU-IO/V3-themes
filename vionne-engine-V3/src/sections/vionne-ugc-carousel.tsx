@@ -43,6 +43,53 @@ const PREPARE_ROOT_MARGIN_PX = 400;
 /** Ceiling on simultaneous metadata fetches (see the concurrency gate below). */
 const MAX_CONCURRENT_PREPARES = 2;
 
+/**
+ * 1×1 fully transparent GIF, used as the poster of last resort.
+ *
+ * Not cosmetic. A <video> only keeps showing its poster while the "show poster
+ * flag" is set, and that flag is only set when a `poster` ATTRIBUTE exists.
+ * With no poster the flag is never set, so the moment metadata/first-frame data
+ * arrives the element paints the video's first frame — and on a reel that fell
+ * through the whole poster chain that means the shimmer placeholder is replaced
+ * by a video frame at PREWARM time, before the shopper has clicked anything.
+ * Measured: 99.93% of pixels changed on that branch, versus 0 of 74,620 pixels
+ * on a reel that has a real poster.
+ *
+ * A transparent poster restores the flag while showing nothing, so the shimmer
+ * behind it stays visible until playback actually starts. Preferred over
+ * skipping the prewarm for poster-less reels, which would have fixed the pixels
+ * by giving up the feature exactly where it is needed most.
+ */
+const BLANK_POSTER =
+  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+/**
+ * Run `fn` once the page has finished loading and the main thread is idle.
+ *
+ * Speculative prewarming must never compete with the LCP image. The 400px
+ * margin is generous enough that a carousel sitting just below the fold — 121px
+ * down on a real test store — satisfies it immediately, so without this the
+ * observer fired DURING page load and pulled reel metadata straight into the
+ * critical window. Deferring to `load` + idle keeps stage 2 purely
+ * opportunistic: it costs nothing until the page has already painted.
+ */
+function whenIdleAfterLoad(fn: () => void): () => void {
+  let cancelled = false;
+  const idle = () => {
+    if (cancelled) return;
+    const ric = (window as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void })
+      .requestIdleCallback;
+    if (typeof ric === "function") ric(() => !cancelled && fn(), { timeout: 2000 });
+    else setTimeout(() => !cancelled && fn(), 200);
+  };
+  if (document.readyState === "complete") idle();
+  else window.addEventListener("load", idle, { once: true });
+  return () => {
+    cancelled = true;
+    window.removeEventListener("load", idle);
+  };
+}
+
 type PrepareFn = () => void;
 
 // ONE IntersectionObserver shared by every reel on the page, rather than one
@@ -109,10 +156,25 @@ function withPrepareSlot(run: (release: () => void) => void): void {
  *
  * Three escalating stages:
  *   1. mount            — poster only, no `src`, zero media bytes.
- *   2. within 400px     — attach `src` + `load()` ⇒ metadata only (queued).
+ *   2. after page load, — attach `src` + `load()` ⇒ metadata only (queued).
+ *      idle, within 400px  Deferred past `load` deliberately: a carousel just
+ *                          below the fold satisfies the margin instantly, and
+ *                          without the delay this fired during the critical
+ *                          window and competed with the LCP image.
  *   3. mouse hover/focus— same, but immediately and unqueued: a pointer on the
  *                         card is a much stronger signal than proximity.
  * A click always attaches first, so it works even if no stage has fired.
+ *
+ * ⚠️ Stage 2's cost is link-dependent and worth knowing before tuning it.
+ * `preload="metadata"` makes the BROWSER stop early — measured 208/144/144 KiB
+ * against 3,634/2,534/1,427 KiB files, ~6% — but the abort is a cancelled
+ * range request, so a fast connection can have several hundred KiB to a few MB
+ * already in flight from the CDN before the cancel lands (measured unthrottled
+ * on loopback: 5,683 KiB pushed for 432 KiB consumed). On a slow Egyptian
+ * mobile link — the case this store is optimised for — the saving is real and
+ * large. On fast fibre it is much smaller. If that egress ever matters, delete
+ * stage 2 and keep stages 1 and 3: hover already covers the desktop case and
+ * only ever warms the one card under the pointer.
  */
 function UgcReel({
   src,
@@ -162,20 +224,23 @@ function UgcReel({
     });
   }, [attach]);
 
-  // Stage 2 — prewarm as the reel approaches the viewport.
+  // Stage 2 — prewarm as the reel approaches the viewport, but never before the
+  // page has loaded and gone idle (see whenIdleAfterLoad).
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
-    const observer = getSharedObserver();
-    if (!observer) {
+    let observer: IntersectionObserver | null = null;
+    const cancelSchedule = whenIdleAfterLoad(() => {
+      observer = getSharedObserver();
       // No IntersectionObserver: stay lazy and let interaction do the work,
       // rather than eagerly fetching metadata for every reel.
-      return;
-    }
-    prepareTargets.set(el, prepare);
-    observer.observe(el);
+      if (!observer) return;
+      prepareTargets.set(el, prepare);
+      observer.observe(el);
+    });
     return () => {
-      observer.unobserve(el);
+      cancelSchedule();
+      observer?.unobserve(el);
       prepareTargets.delete(el);
     };
   }, [prepare]);
@@ -206,7 +271,10 @@ function UgcReel({
       <video
         ref={videoRef}
         // NO `src` — it is attached by `attach()`. See the header note.
-        poster={poster || undefined}
+        // BLANK_POSTER (not undefined) when there is no still: it keeps the
+        // show-poster flag set so prewarming cannot paint the first frame over
+        // the shimmer behind it. See the BLANK_POSTER note.
+        poster={poster || BLANK_POSTER}
         className="absolute inset-0 w-full h-full object-cover"
         preload="metadata"
         muted
