@@ -14,7 +14,7 @@ import {
   type Product,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Check, Minus, Plus, ShoppingBag, Tag, Truck, X } from "lucide-react";
-import { asNumber, asString, localized, productCurrency, productImage, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { bestCartNudge, useActivePromotions } from "./_promotions";
 
@@ -328,10 +328,11 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
                 <div className="shrink-0">
                   {it.image_url ? (
                     <img
-                      src={it.image_url}
+                      {...responsiveImg(it.image_url, THUMB_IMG)}
                       alt={it.name}
                       className="w-24 h-28 sm:w-28 sm:h-36 object-cover bg-[var(--vn-band)]"
                       loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-24 h-28 sm:w-28 sm:h-36 bg-[var(--vn-band)] flex items-center justify-center">
@@ -559,10 +560,11 @@ function CartRecommendations({ inCartIds, seedProductId, title, sectionId, local
                 <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-2.5">
                   {productImage(p) ? (
                     <img
-                      src={productImage(p)}
+                      {...responsiveImg(productImage(p), PRODUCT_CARD_IMG)}
                       alt={p.name}
                       className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
                       loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="absolute inset-0 vn-shimmer" />

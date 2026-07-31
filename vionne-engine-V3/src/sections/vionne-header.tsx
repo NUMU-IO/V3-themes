@@ -22,6 +22,8 @@ import {
   asString,
   localized,
   readBlocks,
+  responsiveImg,
+  CARD_TRACK_IMG,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -483,9 +485,10 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                           >
                             {cat.image_url ? (
                               <img
-                                src={cat.image_url}
+                                {...responsiveImg(cat.image_url, CARD_TRACK_IMG)}
                                 alt={cat.name}
                                 loading="lazy"
+                                decoding="async"
                                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                               />
                             ) : (

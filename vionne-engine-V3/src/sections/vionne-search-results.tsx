@@ -11,7 +11,7 @@ import {
 } from "@numueg/theme-sdk";
 import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, asString, localized, merchantLabelText, usePageData, type SectionRenderProps, productImage } from "./_shared";
+import { asNumber, asString, localized, merchantLabelText, responsiveImg, usePageData, PRODUCT_CARD_IMG, type SectionRenderProps, productImage } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -155,10 +155,11 @@ function SearchCard({ product }: { product: Product }) {
       <div className="relative overflow-hidden bg-[var(--vn-band)] aspect-[3/4]">
         {primary ? (
           <img
-            src={primary}
+            {...responsiveImg(primary, PRODUCT_CARD_IMG)}
             alt={product.name}
             className="vn-product-image absolute inset-0 w-full h-full object-cover"
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="absolute inset-0 vn-shimmer" />

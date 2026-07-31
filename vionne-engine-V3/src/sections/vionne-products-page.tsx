@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Link, Money, useListingHeading, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, merchantLabelText, productImage, responsiveImg, PRODUCT_CARD_IMG, type SectionRenderProps } from "./_shared";
 import { QuickAddButton } from "./_quick-add";
 import { PricePair } from "./_price";
 import { InlineEditable } from "./_inline-editable";
@@ -356,20 +356,22 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
       >
         {primary ? (
           <img
-            src={primary}
+            {...responsiveImg(primary, PRODUCT_CARD_IMG)}
             alt={product.name}
             className="vn-product-image absolute inset-0 w-full h-full object-cover"
             loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="absolute inset-0 vn-shimmer" />
         )}
         {secondary && (
           <img
-            src={secondary}
+            {...responsiveImg(secondary, PRODUCT_CARD_IMG)}
             alt=""
             className="vn-product-image-secondary"
             loading="lazy"
+            decoding="async"
           />
         )}
 

@@ -1,6 +1,6 @@
 "use client";
 import { Link, useResolvedSettings } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asString, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, responsiveImg, CARD_TRACK_IMG, type ImageTransform, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 interface Item {
@@ -69,10 +69,12 @@ export default function CollectionStrip({ instance, sectionId }: SectionRenderPr
               <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-muted group">
                 {it.image && (
                   <img
-                    src={it.image}
+                    {...responsiveImg(it.image, CARD_TRACK_IMG)}
                     alt={it.label}
                     className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ${it.imageTransform ? "" : "group-hover:scale-105"}`}
                     style={applyImageTransform(it.imageTransform, "cover")}
+                    loading="lazy"
+                    decoding="async"
                   />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />

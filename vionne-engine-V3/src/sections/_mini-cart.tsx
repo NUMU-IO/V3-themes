@@ -22,7 +22,7 @@ import {
   type Product,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Banknote, Minus, Plus, ShieldCheck, ShoppingBag, Truck, X } from "lucide-react";
-import { localized, productCurrency, productImage } from "./_shared";
+import { localized, productCurrency, productImage, responsiveImg, THUMB_IMG } from "./_shared";
 import { PricePair } from "./_price";
 
 export function MiniCartDrawer({ open, onClose, locale }: {
@@ -143,7 +143,7 @@ export function MiniCartDrawer({ open, onClose, locale }: {
               {items.map((it) => (
                 <li key={it.id} className="vn-sheet-item flex gap-3.5 py-4" data-testid="storefront-mini-cart-item">
                   {it.image_url ? (
-                    <img src={it.image_url} alt={it.name} className="w-14 h-[70px] object-cover shrink-0" />
+                    <img {...responsiveImg(it.image_url, THUMB_IMG)} alt={it.name} className="w-14 h-[70px] object-cover shrink-0" loading="lazy" decoding="async" />
                   ) : (
                     <div className="w-14 h-[70px] vn-shimmer shrink-0" />
                   )}
@@ -208,7 +208,7 @@ export function MiniCartDrawer({ open, onClose, locale }: {
                       className="flex items-center gap-3 group"
                     >
                       {productImage(p) ? (
-                        <img src={productImage(p)} alt={p.name} className="w-12 h-14 object-cover rounded-md shrink-0" loading="lazy" />
+                        <img {...responsiveImg(productImage(p), THUMB_IMG)} alt={p.name} className="w-12 h-14 object-cover rounded-md shrink-0" loading="lazy" decoding="async" />
                       ) : (
                         <div className="w-12 h-14 vn-shimmer rounded-md shrink-0" />
                       )}

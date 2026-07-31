@@ -1,6 +1,6 @@
 "use client";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const VionneAbout = ({ instance, sectionId }: SectionRenderProps) => {
@@ -70,7 +70,7 @@ const VionneAbout = ({ instance, sectionId }: SectionRenderProps) => {
           </div>
           {image ? (
             <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-muted">
-              <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" style={applyImageTransform(imageTransform, "cover")} />
+              <img {...responsiveImg(image, EDITORIAL_IMG)} alt="" className="absolute inset-0 w-full h-full object-cover" style={applyImageTransform(imageTransform, "cover")} loading="lazy" decoding="async" />
             </div>
           ) : null}
         </div>

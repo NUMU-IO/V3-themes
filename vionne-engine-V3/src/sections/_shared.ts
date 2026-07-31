@@ -258,6 +258,177 @@ export {
   type ImageTransform,
 } from "@numueg/theme-sdk";
 
+// ── Responsive image delivery ────────────────────────────────────────────────
+//
+// Merchant images are stored at upload resolution — Vionne's product shots are
+// 1440×1920 — and every section rendered them raw. Measured on the live home
+// page: 7,493 KiB of images, with a 1440×1920 product shot painted into a
+// 233×311 slot (648 KiB wasted on ONE image) and a 1440×1457 upload painted
+// into a 44×59 thumbnail (545 KiB wasted).
+//
+// The host already owns the fix: `/api/image-transform` validates the source
+// host, then 302s to Next's optimizer, which resizes AND negotiates WebP/AVIF
+// off the request's `Accept` header. The hero used it; nothing else did.
+//
+// `focalSrc` (SDK) is the canonical URL builder for that route — reused here so
+// the query-string shape stays in one place. Focal/aspect params are
+// deliberately NOT passed: the route honours them only when Cloudflare Image
+// Resizing is enabled, and `applyImageTransform`'s CSS framing is the
+// correctness baseline either way. Passing them would only fragment the cache.
+import { focalSrc } from "@numueg/theme-sdk";
+
+/**
+ * The ONLY widths the optimizer will serve.
+ *
+ * `/api/image-transform` forwards `w` verbatim to `/_next/image`, which rejects
+ * any width outside `images.deviceSizes ∪ images.imageSizes` with a 400. The
+ * storefront configures deviceSizes [640,768,1024,1280,1920] and imageSizes
+ * [64,128,256,384] (numu-storefront/next.config.ts), so this list is exactly
+ * their union. Requesting an "obvious" width like 200 or 300 silently breaks
+ * the image — always pick from here.
+ */
+export const IMG_WIDTHS = [64, 128, 256, 384, 640, 768, 1024, 1280, 1920] as const;
+
+/** Smallest allowed width that still covers `want` (largest if none does). */
+function snapWidth(want: number): number {
+  for (const w of IMG_WIDTHS) if (w >= want) return w;
+  return IMG_WIDTHS[IMG_WIDTHS.length - 1];
+}
+
+/**
+ * Hosts `/api/image-transform` will relay.
+ *
+ * MUST stay a subset of `DEFAULT_HOSTS` in
+ * numu-storefront/src/app/api/image-transform/route.ts. The proxy answers 403
+ * for any other host, so sending it a URL from somewhere else does not degrade
+ * — it produces a BROKEN IMAGE.
+ *
+ * That is not hypothetical: this theme's own `theme.json` presets seed the
+ * image-comparison section with `https://picsum.photos/...` placeholders, and
+ * the marketplace "Try theme" preview renders exactly those. Routing every
+ * `<img>` through the proxy unconditionally would have 403'd them and shipped a
+ * demo full of broken images — while every real merchant image (which always
+ * lives on the platform CDN or R2) worked fine, so it would have been invisible
+ * in normal QA.
+ */
+const PROXY_IMAGE_HOSTS = [
+  "numueg.app",
+  "r2.dev",
+  "r2.cloudflarestorage.com",
+  "imagedelivery.net",
+];
+
+// ⚠️ `numu.io` is deliberately ABSENT even though it is a platform domain and
+// appears in the storefront's `next.config.ts > images.remotePatterns` and in
+// `bundle-allowlist.ts`. The image proxy's OWN allowlist (`DEFAULT_HOSTS`) does
+// not list it, and that list is the gate that runs first — so a `*.numu.io`
+// image sent through the proxy 403s and renders broken, where a plain
+// `src={url}` loaded it fine. Latent today (no store serves images from
+// numu.io), which is precisely why it would have shipped unnoticed.
+//
+// The alternative fix is to add `numu.io` to `DEFAULT_HOSTS` in
+// numu-storefront/src/app/api/image-transform/route.ts, which would make all
+// three lists agree. That is the tidier end state, but it widens a shared
+// security allowlist for zero present benefit, so it is left as a deliberate
+// decision rather than folded into a performance pass.
+
+/**
+ * Can this source go through the transform proxy at all?
+ *
+ * False for: empty, `data:` (bytes are already local), `blob:` (an in-flight
+ * editor upload — proxying it 400s and the merchant sees a broken image
+ * mid-edit), and any host the proxy would 403. Those all fall back to the raw
+ * URL, i.e. exactly today's behaviour.
+ */
+function transformable(url: string | null | undefined): url is string {
+  if (!url || url.startsWith("data:") || url.startsWith("blob:")) return false;
+  // Relative → a host-served asset; the proxy passes those through.
+  if (url.startsWith("/")) return true;
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return PROXY_IMAGE_HOSTS.some(
+      (allowed) => host === allowed || host.endsWith(`.${allowed}`),
+    );
+  } catch {
+    return false;
+  }
+}
+
+/** A single proxied source at (at least) `width` CSS px. */
+export function imgSrc(url: string | null | undefined, width: number): string {
+  if (!transformable(url)) return url || "";
+  return focalSrc(url, { width: snapWidth(width) });
+}
+
+/**
+ * A `srcSet` covering `widths`, for pairing with a `sizes` attribute. Returns
+ * undefined (not "") for untransformable sources so the caller can spread it
+ * and have React omit the attribute entirely.
+ */
+export function imgSrcSet(
+  url: string | null | undefined,
+  widths: readonly number[],
+): string | undefined {
+  if (!transformable(url)) return undefined;
+  const ladder = [...new Set(widths.map(snapWidth))].sort((a, b) => a - b);
+  return ladder.map((w) => `${focalSrc(url, { width: w })} ${w}w`).join(", ");
+}
+
+/**
+ * Everything an `<img>` needs for responsive delivery, ready to spread.
+ *
+ *   <img {...responsiveImg(url, PRODUCT_CARD_IMG)} alt={…} className={…} />
+ *
+ * `src` is the smallest ladder rung so a browser that ignores `srcSet` still
+ * gets a sane payload rather than the 1440px original.
+ */
+export function responsiveImg(
+  url: string | null | undefined,
+  preset: { widths: readonly number[]; sizes: string },
+): { src: string; srcSet?: string; sizes?: string } {
+  const srcSet = imgSrcSet(url, preset.widths);
+  return {
+    src: imgSrc(url, preset.widths[0]),
+    ...(srcSet ? { srcSet, sizes: preset.sizes } : {}),
+  };
+}
+
+/** 2-up on phones, 4-up on desktop — the PLP / featured-collection grid. */
+export const PRODUCT_CARD_IMG = {
+  widths: [256, 384, 640, 768],
+  sizes: "(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw",
+} as const;
+
+/** Fixed-width cards in a horizontally scrolling track (UGC, collection strip). */
+export const CARD_TRACK_IMG = {
+  widths: [256, 384, 640],
+  sizes: "(min-width: 768px) 260px, (min-width: 640px) 240px, 210px",
+} as const;
+
+/** The 44×44 tagged-product chip on a UGC card. 128 covers 2× DPR. */
+export const CHIP_IMG = {
+  widths: [64, 128],
+  sizes: "44px",
+} as const;
+
+/** Full-bleed editorial / lifestyle imagery inside a container. */
+export const EDITORIAL_IMG = {
+  widths: [640, 768, 1024, 1280, 1920],
+  sizes: "(min-width: 1280px) 50vw, (min-width: 768px) 60vw, 100vw",
+} as const;
+
+/** PDP main gallery frame — big, but never 1440px on a phone. */
+export const PDP_MAIN_IMG = {
+  widths: [384, 640, 768, 1024, 1280],
+  sizes: "(min-width: 1024px) 50vw, 100vw",
+} as const;
+
+/** PDP thumbnail rail + cart line items. */
+export const THUMB_IMG = {
+  widths: [128, 256],
+  sizes: "96px",
+} as const;
+
 /**
  * Product image URL across the API's TWO shapes: catalog products carry
  * `images: [{url}]` objects while the related-products endpoint returns
