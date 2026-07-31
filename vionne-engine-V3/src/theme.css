@@ -22,8 +22,13 @@
   --vn-surface-dark: var(--theme-color_surface_dark, #3A3A3A);
   --vn-ink: var(--theme-color_ink, #050505);
   --vn-border: var(--theme-color_border, #DADADA);
-  /* Default bumped from #8B8B8B (3.5:1 on white) to #6F6F6F (4.79:1) so
-     secondary text meets WCAG AA. Used by .vn-eyebrow + paragraph muted text. */
+  /* Default bumped from #8B8B8B to #6F6F6F so secondary text meets WCAG AA on
+     the theme's LIGHT surfaces: 5.02:1 on #FFFFFF, 4.53:1 on the #F3F3F3 band.
+     Used by .vn-eyebrow + paragraph muted text.
+     ⚠️ It does NOT pass on the dark surfaces (#3A3A3A footer / newsletter —
+     2.26:1). Those sections must set their own colour, which is why the
+     .vn-eyebrow default is declared at zero specificity via :where() further
+     down: `text-white` and friends have to be able to win there. */
   --vn-muted: var(--theme-color_muted, #6F6F6F);
   --vn-sale: var(--theme-color_sale, #A20000);
   /* Signature Vionne gold — new global in W1 (V2 lacked it). Additive: no
@@ -57,7 +62,13 @@
   --accent: 0 0% 23%;
   --accent-foreground: 0 0% 100%;
   --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 55%;
+  /* 55% = #8C8C8C, which is 3.03:1 on the #F3F3F3 promo-banner band at 14px —
+     a real WCAG AA failure, and the one the audit caught on the promo-banner
+     subtitle (`p.text-muted-foreground`). NOTE this is a DIFFERENT token from
+     --vn-muted above; --vn-muted was already darkened, `text-muted-foreground`
+     was not, and the two are easy to confuse.
+     43% = #6E6E6E → 4.62:1 on #F3F3F3 and 5.13:1 on white. */
+  --muted-foreground: 0 0% 43%;
   --card: 0 0% 100%;
   --card-foreground: 0 0% 2%;
   --border: 0 0% 86%;
@@ -123,6 +134,29 @@
   text-transform: uppercase;
   letter-spacing: 0.22em;
   font-size: 11px;
+}
+
+/* The muted default, at ZERO specificity.
+ *
+ * This declaration used to live in the `.vn-eyebrow` rule above, where it beat
+ * every Tailwind text-colour utility: both are single-class selectors, and
+ * `@tailwind utilities` is injected at the top of this file, so the later rule
+ * (this one) won. The result was that `<h3 class="vn-eyebrow mb-4 text-white">`
+ * — three of them, on the dark #3A3A3A footer and newsletter panels — rendered
+ * #6F6F6F for a measured contrast of 2.26:1. The markup asked for white; the
+ * component class silently overrode it. That is the same defect class as the
+ * NUMU landing page's global `h1..h6 { color }` rule.
+ *
+ * `:where()` contributes no specificity, so an unstyled `.vn-eyebrow` still
+ * gets the muted grey exactly as before — every existing eyebrow renders
+ * identically — while ANY explicit colour utility on the element now wins.
+ * `text-white` on #3A3A3A is 11.37:1.
+ *
+ * Deliberately NOT "delete the colour and let it inherit": ~20 eyebrows across
+ * the theme rely on this default, and inheriting near-black would be a visible
+ * redesign of every section. V3 must look identical to V2.
+ */
+:where(.vn-eyebrow) {
   color: var(--vn-muted);
 }
 
