@@ -1,0 +1,140 @@
+{
+  "type": "vionne-faq",
+  "name": "FAQ Page (Vionne)",
+  "name_ar": "صفحة الأسئلة الشائعة",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page header",
+      "content_ar": "رأس الصفحة"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "label_ar": "النص العلوي",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "label_ar": "العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro paragraph",
+      "label_ar": "الفقرة التعريفية",
+      "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "show_group_headings",
+      "label": "Show category headings",
+      "label_ar": "إظهار عناوين الأقسام",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Still need help?",
+      "content_ar": "لسه محتاجة مساعدة؟"
+    },
+    {
+      "type": "text",
+      "id": "contact_title",
+      "label": "Contact card title",
+      "label_ar": "عنوان بطاقة التواصل",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "contact_text",
+      "label": "Contact card text",
+      "label_ar": "نص بطاقة التواصل",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "contact_cta",
+      "label": "Contact button label",
+      "label_ar": "نص زر التواصل",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "contact_link",
+      "label": "Contact button link",
+      "label_ar": "رابط زر التواصل",
+      "default": "/contact"
+    }
+  ],
+  "max_blocks": 40,
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "Question",
+      "name_ar": "سؤال",
+      "settings": [
+        {
+          "type": "select",
+          "id": "group",
+          "label": "Category",
+          "label_ar": "القسم",
+          "default": "shipping",
+          "options": [
+            { "value": "shipping", "label": "Shipping & Delivery", "label_ar": "الشحن والتوصيل" },
+            { "value": "orders", "label": "Orders & Tracking", "label_ar": "الطلبات والتتبع" },
+            { "value": "payment", "label": "Payment & Offers", "label_ar": "الدفع والعروض" },
+            { "value": "returns", "label": "Returns & Refunds", "label_ar": "الاستبدال والاسترجاع" },
+            { "value": "product", "label": "Products & Care", "label_ar": "المنتجات والعناية" },
+            { "value": "privacy", "label": "Privacy & Your Data", "label_ar": "الخصوصية وبياناتك" }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "question_en",
+          "label": "Question (English)",
+          "label_ar": "السؤال (إنجليزي)",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "question_ar",
+          "label": "Question (Arabic)",
+          "label_ar": "السؤال (عربي)",
+          "default": ""
+        },
+        {
+          "type": "textarea",
+          "id": "answer_en",
+          "label": "Answer (English)",
+          "label_ar": "الإجابة (إنجليزي)",
+          "default": ""
+        },
+        {
+          "type": "textarea",
+          "id": "answer_ar",
+          "label": "Answer (Arabic)",
+          "label_ar": "الإجابة (عربي)",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ (Vionne)",
+      "locales": {
+        "en": { "name": "FAQ (Vionne)" },
+        "ar": { "name": "الأسئلة الشائعة" }
+      },
+      "settings": {
+        "show_group_headings": true,
+        "contact_link": "/contact"
+      }
+    }
+  ]
+}

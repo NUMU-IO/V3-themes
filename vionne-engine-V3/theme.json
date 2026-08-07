@@ -2,9 +2,9 @@
   "id": "vionne-v3",
   "name": "Vionne (V3)",
   "author": "NUMU",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "layout": "single-column",
-  "description": "Vionne (V3) — refined grayscale storefront for modest fashion, ported faithfully from the V2 in-tree theme. Now with an editable Vionne header + footer included across every page.",
+  "description": "Vionne (V3) — refined grayscale storefront for contemporary fashion & accessories, ported faithfully from the V2 in-tree theme. Now with an editable Vionne header + footer included across every page.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
   "presets": {
@@ -180,7 +180,7 @@
               "eyebrow": "ABOUT VIONNE",
               "headline": "Made for the way you dress",
               "quote": "Quietly tailored. Refined. Made to be lived in.",
-              "description": "Vionne is built around modest fashion that doesn't compromise on cut, fabric, or the way a piece moves with you. Each release is small, considered, and shipped worldwide.",
+              "description": "Vionne is built around everyday fashion that doesn't compromise on cut, fabric, or the way a piece moves with you. Each release is small, considered, and shipped worldwide.",
               "value_1_title": "Crafted small",
               "value_1_text": "Limited drops, considered every season.",
               "value_2_title": "Honest fabric",
@@ -209,6 +209,26 @@
           {
             "type": "vionne-contact",
             "settings": {}
+          },
+          {
+            "type": "vionne-footer",
+            "settings": {}
+          }
+        ]
+      },
+      "faq": {
+        "name": "FAQ",
+        "sections": [
+          {
+            "type": "vionne-header",
+            "settings": {}
+          },
+          {
+            "type": "vionne-faq",
+            "settings": {
+              "show_group_headings": true,
+              "contact_link": "/contact"
+            }
           },
           {
             "type": "vionne-footer",

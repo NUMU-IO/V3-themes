@@ -22,7 +22,22 @@ const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) =
     ? (s.product_ids as unknown[]).filter((x): x is string => typeof x === "string" && x.length > 0)
     : [];
 
-  const tagged = products;
+  // `collection_tag` was read on the line above and then thrown away —
+  // `const tagged = products` meant every featured-collection section on a page
+  // rendered the SAME first N products regardless of its configured tag. The
+  // live home page carries five of these sections; they only look distinct
+  // because each pins explicit `product_ids`. Now the tag actually filters.
+  //
+  // Falling back to the full catalog when nothing matches is deliberate: a
+  // mistyped or not-yet-applied tag should degrade to "show something" rather
+  // than silently blanking a whole homepage row (the section returns null on an
+  // empty list), which is also exactly the behaviour stores have today.
+  const wanted = tag.trim().toLowerCase();
+  const tagged = wanted
+    ? products.filter((p) =>
+        (p.tags ?? []).some((t) => String(t).trim().toLowerCase() === wanted),
+      )
+    : products;
   const autoProducts = tagged.length > 0 ? tagged : products;
 
   const collectionProducts = manualIds.length > 0

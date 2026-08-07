@@ -2,8 +2,14 @@
 import { asArray, asBool, asImageAlt, asImageUrl, asNumber, asString, localized, readBlocks } from "@numueg/theme-kit";
 export { asArray, asBool, asImageAlt, asImageUrl, asNumber, asString, localized, readBlocks };
 
-import { createContext, useContext } from "react";
-import type { SectionInstance } from "@numueg/theme-sdk";
+import { createContext, useContext, useEffect, useState } from "react";
+import {
+  useCollections,
+  useShop,
+  useThemeSettings,
+  type Collection,
+  type SectionInstance,
+} from "@numueg/theme-sdk";
 
 export interface SectionRenderProps {
   instance: SectionInstance;
@@ -49,6 +55,96 @@ export interface MountPageData {
 export const PageDataContext = createContext<MountPageData | null>(null);
 export const usePageData = (): MountPageData | null =>
   useContext(PageDataContext);
+
+/**
+ * The store's collections, on EVERY route.
+ *
+ * `useCollections()` reads `page.data.collections`, which the host pre-fetches
+ * only on catalog routes — `/`, `/products`, `/products/[slug]`,
+ * `/collections`, `/collections/[slug]`, `/search`. On `/cart`, `/about`,
+ * `/contact`, `/account`, `/pages/*`, `/policies/*`, `/blogs/*`, `/checkout`
+ * and 404 it ships nothing, so the header's COLLECTIONS dropdown, the mobile
+ * drawer's collection grid and the footer's Shop column all silently vanished
+ * on exactly those pages. Measured on the live store: 11 collections in the
+ * payload on the first group, 0 on the second.
+ *
+ * The SDK's own `fetchIfMissing` escape hatch does NOT close the gap: it reads
+ * `data.collections` off the response, while `/api/collections` answers the
+ * platform envelope `{ success, data: [...] }`. That lookup is `undefined`, so
+ * the hook fetches and then commits an EMPTY list — the same blank menu, now
+ * with a network round trip. Fixed at the source too (see the SDK hook), but
+ * themes federate against whatever SDK the host serves, so the theme cannot
+ * depend on that fix having shipped. This helper does the fetch itself and
+ * accepts every envelope shape, which keeps the chrome correct on any host.
+ */
+export function useStoreCollections(): Collection[] {
+  // SSR-provided list first — free, already in the payload, no request.
+  const { collections: fromPage } = useCollections();
+  const shop = useShop();
+  const [fetched, setFetched] = useState<Collection[]>([]);
+
+  const havePage = fromPage.length > 0;
+  const storeId = shop?.id;
+
+  useEffect(() => {
+    if (havePage || !storeId) return;
+    let cancelled = false;
+    fetch(`/api/collections?store_id=${encodeURIComponent(storeId)}`, {
+      credentials: "include",
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        if (cancelled) return;
+        // Three shapes in the wild: the platform envelope `{ data: [...] }`,
+        // the SDK's documented `{ collections: [...] }`, and a bare array.
+        const raw = Array.isArray(json)
+          ? json
+          : Array.isArray(json?.data)
+            ? json.data
+            : Array.isArray(json?.collections)
+              ? json.collections
+              : Array.isArray(json?.data?.items)
+                ? json.data.items
+                : [];
+        setFetched(raw as Collection[]);
+      })
+      .catch(() => {
+        // A miss leaves the menu exactly as it is today — never a crash.
+        if (!cancelled) setFetched([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [havePage, storeId]);
+
+  return havePage ? fromPage : fetched;
+}
+
+/**
+ * The merchant's free-shipping threshold, in MAJOR units. 0 = not configured.
+ *
+ * It lives on the CART section's settings, but three surfaces outside the cart
+ * need it — the mini-cart drawer, the FAQ's shipping answer, and anything else
+ * that promises free delivery — and a second hardcoded copy is how a store ends
+ * up advertising two different numbers. Read cross-section from the published
+ * customization so every surface quotes the same figure the bag counts to.
+ */
+export function useFreeShippingThreshold(): number {
+  const themeSettings = useThemeSettings();
+  const templates = themeSettings.templates ?? {};
+  for (const tpl of Object.values(templates)) {
+    const sections =
+      (tpl as { sections?: Record<string, { type?: string; settings?: Record<string, unknown> }> })
+        ?.sections ?? {};
+    for (const sec of Object.values(sections)) {
+      if (sec?.type === "vionne-cart") {
+        const v = Number(sec.settings?.free_shipping_threshold ?? 0);
+        if (v > 0) return v;
+      }
+    }
+  }
+  return 0;
+}
 
 /**
  * ENG-3: pick the locale-appropriate default. Merchant-entered values still

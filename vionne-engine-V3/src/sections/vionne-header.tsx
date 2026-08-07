@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Link, collectionHref, logoImgStyle, useCart, useCollections, useCustomer, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation } from "@numueg/theme-sdk";
+import { Link, collectionHref, logoImgStyle, useCart, useCustomer, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation } from "@numueg/theme-sdk";
 import {
   ArrowRight,
   ChevronDown,
@@ -14,7 +14,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { bestCartNudge, useActivePromotions } from "./_promotions";
+import { bestCartNudge, promoPagePath, useActivePromotions } from "./_promotions";
 import {
   asBool,
   asImageUrl,
@@ -23,6 +23,7 @@ import {
   localized,
   readBlocks,
   responsiveImg,
+  useStoreCollections,
   CARD_TRACK_IMG,
   type SectionRenderProps,
 } from "./_shared";
@@ -60,7 +61,11 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
   const s = useResolvedSettings(instance);
   const shop = useShop();
   const { cart } = useCart();
-  const { collections } = useCollections();
+  // Route-independent collections — see useStoreCollections. Plain
+  // useCollections() left the COLLECTIONS dropdown and the drawer's collection
+  // grid EMPTY on /cart, /about, /contact, /account, /pages/*, /blogs/* and
+  // 404, because the host only pre-fetches collections on catalog routes.
+  const collections = useStoreCollections();
   const customer = useCustomer();
   const themeSettings = useThemeSettings();
   const locale = useLocale();
@@ -155,7 +160,11 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
   // Drawer offer nudge (AOV): surface the store's best active auto-discount
   // inside the menu — the shopper sees "spend X, unlock Y" before browsing.
   const showDrawerOffer = asBool(s.drawer_show_offer, true);
-  const activePromos = useActivePromotions("cart", locale);
+  const activePromos = useActivePromotions(promoPagePath(), locale, {
+    productIds: (cart?.items ?? []).map((it) => it.product_id),
+    categoryIds: (cart?.items ?? []).map((it) => it.category_id),
+    subtotalMajor: cart?.subtotal,
+  });
   const drawerNudge = showDrawerOffer
     ? bestCartNudge(
         activePromos?.auto_discounts,

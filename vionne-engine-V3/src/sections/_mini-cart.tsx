@@ -18,11 +18,11 @@ import {
   useCart,
   useProducts,
   useRelatedProducts,
-  useThemeSettings,
   type Product,
 } from "@numueg/theme-sdk";
-import { ArrowRight, Banknote, Minus, Plus, ShieldCheck, ShoppingBag, Truck, X } from "lucide-react";
-import { localized, productCurrency, productImage, responsiveImg, THUMB_IMG } from "./_shared";
+import { ArrowRight, Banknote, Check, Minus, Plus, ShieldCheck, ShoppingBag, Tag, Truck, X } from "lucide-react";
+import { localized, productCurrency, productImage, responsiveImg, useFreeShippingThreshold, THUMB_IMG } from "./_shared";
+import { cartNudges, promoPagePath, useActivePromotions, visibleCodeOffers } from "./_promotions";
 import { PricePair } from "./_price";
 
 export function MiniCartDrawer({ open, onClose, locale }: {
@@ -33,25 +33,57 @@ export function MiniCartDrawer({ open, onClose, locale }: {
   const { cart, updateQuantity, removeItem } = useCart();
   const { products: catalogProducts } = useProducts();
   // CRO — free-shipping progress INSIDE the drawer. The threshold lives on the
-  // cart SECTION's settings; read it cross-section from the published
-  // customization so the drawer and the cart page always tell the same story.
-  const themeSettings = useThemeSettings();
-  const freeThreshold = (() => {
-    const tpls = themeSettings.templates ?? {};
-    for (const tpl of Object.values(tpls)) {
-      const sections = (tpl as { sections?: Record<string, { type?: string; settings?: Record<string, unknown> }> })?.sections ?? {};
-      for (const sec of Object.values(sections)) {
-        if (sec?.type === "vionne-cart") {
-          const v = Number(sec.settings?.free_shipping_threshold ?? 0);
-          if (v > 0) return v;
-        }
-      }
-    }
-    return 0;
-  })();
+  // cart SECTION's settings; read it cross-section (see useFreeShippingThreshold)
+  // so the drawer, the cart page and the FAQ always quote the same number.
+  const freeThreshold = useFreeShippingThreshold();
   const items = cart?.items ?? [];
   const firstProductId = items[0]?.product_id ?? null;
   const related = useRelatedProducts(open ? firstProductId : null, { limit: 8 });
+
+  // ── Offers + real money ────────────────────────────────────────────────
+  // This drawer is the cart surface shoppers actually open — it is on every
+  // page behind the bag icon — and it was the ONLY one that showed no offer,
+  // no saving and no post-discount total. With a qualifying "3 for EGP 650"
+  // cart it read "Subtotal EGP 750" while /cart read EGP 650: same cart, two
+  // numbers, and the shopper had no way to know the offer had applied.
+  // Everything below mirrors vionne-cart exactly so the two can't diverge.
+  const promos = useActivePromotions(promoPagePath(), locale, {
+    productIds: items.map((it) => it.product_id),
+    categoryIds: items.map((it) => it.category_id),
+    subtotalMajor: cart?.subtotal,
+  });
+  const subtotal = cart?.subtotal ?? 0;
+  const appliedPromos = cart?.applied_promotions ?? [];
+  const cartDiscount = Math.max(0, cart?.discount_amount ?? 0);
+  // The ENGINE's total — the number checkout charges. Never re-derived here.
+  const grandTotal =
+    typeof cart?.total === "number" && cart.total > 0
+      ? cart.total
+      : Math.max(0, subtotal - cartDiscount);
+  // Anything discounted but not attributed to a named promotion (e.g. a pinned
+  // code) still has to appear, or subtotal − rows ≠ total.
+  const namedDiscount = appliedPromos.reduce((n, pr) => n + (pr?.amount || 0), 0);
+  const otherDiscount = Math.max(0, cartDiscount - namedDiscount);
+  const nudges = cartNudges(
+    promos?.auto_discounts,
+    subtotal,
+    cart?.currency || "EGP",
+    locale,
+    // The drawer draws its own free-shipping bar above, so free-shipping rules
+    // would say the same thing twice.
+    freeThreshold > 0,
+    items.reduce((n, it) => n + (it?.quantity || 0), 0),
+    cart?.applied_promotions,
+    items,
+  );
+  const codeOffers = visibleCodeOffers(
+    promos?.discount_codes_visible,
+    cart?.currency || "EGP",
+    locale,
+  );
+  // Only break the money block into subtotal/savings/total when there IS a
+  // saving — an undiscounted cart keeps the single clean subtotal line.
+  const hasSavings = cartDiscount > 0 || appliedPromos.length > 0;
 
   useEffect(() => {
     if (!open) return;
@@ -96,7 +128,6 @@ export function MiniCartDrawer({ open, onClose, locale }: {
 
         <div className="flex-1 overflow-y-auto px-5">
           {freeThreshold > 0 && items.length > 0 && (() => {
-            const subtotal = cart?.subtotal ?? 0;
             const earned = subtotal >= freeThreshold;
             const pct = Math.min(100, (subtotal / freeThreshold) * 100);
             return (
@@ -126,6 +157,57 @@ export function MiniCartDrawer({ open, onClose, locale }: {
               </div>
             );
           })()}
+
+          {/* Active offers — the same set, in the same order, as /cart. */}
+          {items.length > 0 && (nudges.length > 0 || codeOffers.length > 0) && (
+            <div className="pt-4 space-y-2" data-testid="storefront-mini-cart-offers">
+              {nudges.map((nudge, i) => (
+                <div
+                  key={nudge.promotionId ?? `nudge-${i}`}
+                  className="border border-[var(--vn-border)] px-3 py-2.5"
+                  data-unlocked={nudge.unlocked || undefined}
+                >
+                  <p className="text-[11px] leading-relaxed flex items-start gap-2 text-[var(--vn-ink)]">
+                    {nudge.unlocked ? (
+                      <Check size={12} aria-hidden="true" className="shrink-0 mt-0.5 text-[var(--vn-accent)]" />
+                    ) : (
+                      <Tag size={12} aria-hidden="true" className="shrink-0 mt-0.5" />
+                    )}
+                    <span className={nudge.unlocked ? "font-medium" : undefined}>{nudge.message}</span>
+                  </p>
+                  {nudge.progressPct !== null && (
+                    <div
+                      className="mt-2 h-1 rounded-full bg-[var(--vn-border)] overflow-hidden"
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={Math.round(nudge.progressPct)}
+                    >
+                      <div
+                        className="h-full rounded-full bg-[var(--vn-ink)] transition-[width] duration-500 ease-out"
+                        style={{ width: `${nudge.progressPct}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+              {codeOffers.map((offer) => (
+                <div
+                  key={offer.promotionId}
+                  className="flex items-center justify-between gap-2 border border-dashed border-[var(--vn-border)] px-3 py-2.5"
+                >
+                  <span className="text-[11px] leading-relaxed text-[var(--vn-ink)]">{offer.message}</span>
+                  <span
+                    dir="ltr"
+                    className="shrink-0 border border-[var(--vn-ink)] px-2 py-1 font-mono text-[10px] tracking-wider text-[var(--vn-ink)]"
+                  >
+                    {offer.code}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
           {items.length === 0 ? (
             <div className="py-14 text-center">
               <div className="w-14 h-14 mx-auto mb-5 rounded-full border border-[var(--vn-border)] flex items-center justify-center">
@@ -235,11 +317,50 @@ export function MiniCartDrawer({ open, onClose, locale }: {
         {/* Footer */}
         {items.length > 0 && (
           <div className="px-5 py-4 border-t border-[var(--vn-border)] shrink-0">
-            <div className="flex justify-between items-baseline mb-3 text-sm">
-              <span className="text-[var(--vn-muted)]">{localized(locale, "Subtotal", "الإجمالي الفرعي")}</span>
-              <span className="font-semibold">
-                <Money amount={cart?.subtotal ?? 0} currency={cart?.currency} />
-              </span>
+            {/* Subtotal → savings → TOTAL. The drawer used to print the
+                subtotal alone and call it a day, so a shopper whose cart the
+                engine had already discounted saw the pre-discount number here
+                and a different one on /cart and at checkout. Every figure
+                below is the engine's own. */}
+            <div className="space-y-1.5 mb-3 text-sm">
+              <div className="flex justify-between items-baseline">
+                <span className="text-[var(--vn-muted)]">{localized(locale, "Subtotal", "الإجمالي الفرعي")}</span>
+                <span className={hasSavings ? "text-[var(--vn-muted)]" : "font-semibold"}>
+                  <Money amount={subtotal} currency={cart?.currency} />
+                </span>
+              </div>
+              {appliedPromos.map((promo, i) => (
+                <div
+                  key={promo?.id || i}
+                  className="flex justify-between gap-3 text-xs text-[var(--vn-accent)]"
+                  data-testid="storefront-mini-cart-savings"
+                >
+                  <span className="truncate">
+                    {(locale?.startsWith("ar") && promo?.title_ar) || promo?.title}
+                  </span>
+                  <span className="font-medium whitespace-nowrap">
+                    {"−"}
+                    <Money amount={promo?.amount || 0} currency={cart?.currency} />
+                  </span>
+                </div>
+              ))}
+              {otherDiscount > 0 && (
+                <div className="flex justify-between gap-3 text-xs text-[var(--vn-accent)]">
+                  <span>{localized(locale, "Discount", "الخصم")}</span>
+                  <span className="font-medium whitespace-nowrap">
+                    {"−"}
+                    <Money amount={otherDiscount} currency={cart?.currency} />
+                  </span>
+                </div>
+              )}
+              {hasSavings && (
+                <div className="flex justify-between items-baseline pt-1.5 border-t border-[var(--vn-border)]">
+                  <span className="text-[var(--vn-ink)]">{localized(locale, "Total", "الإجمالي")}</span>
+                  <span className="font-semibold">
+                    <Money amount={grandTotal} currency={cart?.currency} />
+                  </span>
+                </div>
+              )}
             </div>
             <Link to="/checkout" onClick={onClose} className="vn-btn vn-btn-filled w-full flex items-center justify-center gap-2">
               {localized(locale, "Checkout", "إتمام الشراء")}

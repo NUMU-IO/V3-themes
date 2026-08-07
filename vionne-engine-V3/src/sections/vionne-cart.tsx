@@ -13,10 +13,10 @@ import {
   type CartItem,
   type Product,
 } from "@numueg/theme-sdk";
-import { ArrowRight, Check, Minus, Plus, ShoppingBag, Tag, Truck, X } from "lucide-react";
+import { ArrowRight, Check, Copy, Minus, Plus, ShoppingBag, Tag, Truck, X } from "lucide-react";
 import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
-import { bestCartNudge, useActivePromotions } from "./_promotions";
+import { cartNudges, promoPagePath, useActivePromotions, visibleCodeOffers, type VisibleCodeOffer } from "./_promotions";
 
 /**
  * vionne-cart — the cart template body.
@@ -40,7 +40,11 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
   const locale = useLocale();
   // A3 — active promotions (auto-discount offers). Hook must run before the
   // loading/empty early returns (rules of hooks).
-  const promos = useActivePromotions("/cart", locale);
+  const promos = useActivePromotions(promoPagePath(), locale, {
+    productIds: (cart?.items ?? []).map((it) => it.product_id),
+    categoryIds: (cart?.items ?? []).map((it) => it.category_id),
+    subtotalMajor: cart?.subtotal,
+  });
 
   // ── Editor-preview sample cart ─────────────────────────────────────────
   // In the customizer the preview session usually has an EMPTY cart, so the
@@ -205,11 +209,14 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
   // (e.g. a pinned code) still has to appear, or subtotal − rows ≠ total.
   const namedDiscount = appliedPromos.reduce((n, pr) => n + (pr?.amount || 0), 0);
   const otherDiscount = Math.max(0, cartDiscount - namedDiscount);
-  // A3 — best offer nudge from the store's auto-discount promotions. Skips
-  // free-shipping-kind rules when the theme's own bar (A1) already tells that
-  // story, so the customer never reads the same promise twice.
-  const promoNudge = showPromoNudge
-    ? bestCartNudge(
+  // A3 — EVERY active offer from the store's auto-discount promotions, not
+  // just the top-ranked one. This used to call `bestCartNudge`, which returns
+  // the first match and stops: a store running three offers advertised one and
+  // the shopper never learned about the other two they also qualified for.
+  // Free-shipping-kind rules are still skipped when the theme's own bar (A1)
+  // already tells that story, so nobody reads the same promise twice.
+  const promoNudges = showPromoNudge
+    ? cartNudges(
         promos?.auto_discounts,
         subtotal,
         currency || "EGP",
@@ -225,7 +232,13 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
         // units rather than the whole cart.
         items,
       )
-    : null;
+    : [];
+  // Merchant-published discount CODES. The host has always returned this
+  // bucket and every theme surface threw it away, so a code the merchant
+  // deliberately published was invisible on the storefront.
+  const codeOffers = showPromoNudge
+    ? visibleCodeOffers(promos?.discount_codes_visible, currency || "EGP", locale)
+    : [];
 
   return (
     <section className="bg-background min-h-[70vh]" data-vn-section={sectionId} data-testid="storefront-cart">
@@ -294,29 +307,54 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
           </div>
         )}
 
-        {/* A3 — offer nudge ("Add X more to unlock Y% off"). Same mechanic as
+        {/* A3 — offer nudges ("Add X more to unlock Y% off"). Same mechanic as
             the free-shipping bar but for the merchant's configured discounts;
             these offers previously existed in the platform yet were never
-            shown to the customer, so they couldn't change behavior. */}
-        {promoNudge && (
-          <div
-            className="mb-8 border border-[var(--vn-border)] p-4"
-            data-testid="storefront-cart-promo-nudge"
-          >
-            <div className="flex items-center gap-2.5 text-sm">
-              <Tag size={15} aria-hidden="true" className="shrink-0 text-[var(--vn-ink)]" />
-              <span className={promoNudge.unlocked ? "font-medium text-[var(--vn-ink)]" : "text-[var(--vn-ink)]"}>
-                {promoNudge.message}
-              </span>
-            </div>
-            {promoNudge.progressPct !== null && (
-              <div className="mt-3 h-1.5 rounded-full bg-[var(--vn-border)] overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-[var(--vn-ink)] transition-[width] duration-500 ease-out"
-                  style={{ width: `${promoNudge.progressPct}%` }}
-                />
+            shown to the customer, so they couldn't change behavior. ALL active
+            offers render, most-actionable first — the old single-slot version
+            hid every offer after the first. */}
+        {(promoNudges.length > 0 || codeOffers.length > 0) && (
+          <div className="mb-8 space-y-2" data-testid="storefront-cart-promo-nudge">
+            {promoNudges.map((nudge, i) => (
+              <div
+                key={nudge.promotionId ?? `nudge-${i}`}
+                className="border border-[var(--vn-border)] p-4"
+                data-testid="storefront-cart-promo-nudge-item"
+                data-unlocked={nudge.unlocked || undefined}
+              >
+                <div className="flex items-start gap-2.5 text-sm">
+                  {nudge.unlocked ? (
+                    <Check size={15} aria-hidden="true" className="shrink-0 mt-0.5 text-[var(--vn-accent)]" />
+                  ) : (
+                    <Tag size={15} aria-hidden="true" className="shrink-0 mt-0.5 text-[var(--vn-ink)]" />
+                  )}
+                  <span className={nudge.unlocked ? "font-medium text-[var(--vn-ink)]" : "text-[var(--vn-ink)]"}>
+                    {nudge.message}
+                  </span>
+                </div>
+                {nudge.progressPct !== null && (
+                  <div
+                    className="mt-3 h-1.5 rounded-full bg-[var(--vn-border)] overflow-hidden"
+                    role="progressbar"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={Math.round(nudge.progressPct)}
+                  >
+                    <div
+                      className="h-full rounded-full bg-[var(--vn-ink)] transition-[width] duration-500 ease-out"
+                      style={{ width: `${nudge.progressPct}%` }}
+                    />
+                  </div>
+                )}
               </div>
-            )}
+            ))}
+
+            {/* Merchant-published discount codes — the shopper has to type
+                these at checkout, so they render as a copyable chip rather
+                than a progress meter. */}
+            {codeOffers.map((offer) => (
+              <CartCodeOffer key={offer.promotionId} offer={offer} locale={locale} />
+            ))}
           </div>
         )}
 
@@ -499,6 +537,48 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
         )}
       </div>
     </section>
+  );
+}
+
+/**
+ * CartCodeOffer — one merchant-published discount code, with copy-to-clipboard.
+ *
+ * A visible code is useless if the shopper has to retype it from memory into
+ * the checkout field, so the whole chip is the copy affordance and it confirms
+ * in place. `navigator.clipboard` is absent on insecure origins and old
+ * browsers; the code stays selectable text either way, so a failed copy
+ * degrades to "read it and type it" rather than to a dead button.
+ */
+function CartCodeOffer({ offer, locale }: { offer: VisibleCodeOffer; locale: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    try {
+      navigator?.clipboard?.writeText(offer.code).catch(() => {});
+    } catch {
+      /* no clipboard — the code is still readable on screen */
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div
+      className="flex flex-wrap items-center justify-between gap-3 border border-dashed border-[var(--vn-border)] p-4"
+      data-testid="storefront-cart-code-offer"
+    >
+      <span className="flex items-start gap-2.5 text-sm text-[var(--vn-ink)]">
+        <Tag size={15} aria-hidden="true" className="shrink-0 mt-0.5" />
+        {offer.message}
+      </span>
+      <button
+        type="button"
+        onClick={copy}
+        className="inline-flex items-center gap-2 border border-[var(--vn-ink)] px-3 py-1.5 vn-label text-[10px] text-[var(--vn-ink)] hover:bg-[var(--vn-ink)] hover:text-[var(--vn-white)] transition-colors"
+        aria-label={localized(locale, `Copy code ${offer.code}`, `انسخي كود ${offer.code}`)}
+      >
+        {copied ? <Check size={12} aria-hidden="true" /> : <Copy size={12} aria-hidden="true" />}
+        <span dir="ltr" className="font-mono tracking-wider">{offer.code}</span>
+      </button>
+    </div>
   );
 }
 

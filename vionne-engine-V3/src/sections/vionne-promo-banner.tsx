@@ -4,7 +4,7 @@ import { Link, useCart, useLocale, useResolvedSettings } from "@numueg/theme-sdk
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
-import { multibuyHeadline, multibuyOffers, useActivePromotions } from "./_promotions";
+import { multibuyHeadline, multibuyOffers, promoPagePath, useActivePromotions } from "./_promotions";
 
 /**
  * Promotional banner.
@@ -39,7 +39,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
 
   // Hooks must run before any early return (rules of hooks) — `useActivePromotions`
   // is a no-op server-side and resolves on hydrate.
-  const promos = useActivePromotions("/", locale);
+  const promos = useActivePromotions(promoPagePath(), locale);
   const currency = cart?.currency || "EGP";
 
   // Editor detection, effect-gated so SSR/hydration stays clean. `useDemo()`
@@ -63,9 +63,20 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
 
   const badge = asString(s.badge_text) || (isAuto ? localized(locale, "Mix & Match & Save", "اختاري واوفري") : "");
   const autoHeadline = offer ? multibuyHeadline(offer, locale, currency) : "";
-  // Any non-empty manual field overrides its generated value, so a merchant
-  // can always take the wheel without leaving auto mode.
-  const headline = asString(s.headline) || (isAuto ? autoHeadline : localized(locale, "Special Offer", "عرض خاص"));
+  const manualHeadline = asString(s.headline);
+  // In AUTO mode the headline is GENERATED, full stop.
+  //
+  // It used to be `manual || generated`, which quietly defeated the entire
+  // point of auto mode: the live banner carried a typed "3 for EGP 650" that
+  // won over the rule, so re-pricing or ending the promotion left the store
+  // advertising a number checkout would refuse to honour — exactly the failure
+  // this section's own docblock promises it prevents. A merchant who wants
+  // custom wording switches the section to Manual, where nothing is generated
+  // and nothing can go stale. The generated string is identical when the typed
+  // one was accurate, so this is a no-op until the offer changes.
+  const headline = isAuto
+    ? autoHeadline || manualHeadline
+    : manualHeadline || localized(locale, "Special Offer", "عرض خاص");
   const subtitle = asString(s.subtitle) || (isAuto ? "" : localized(locale, "Shop our latest collection", "اكتشفي أحدث تشكيلة"));
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوّقي دلوقتي");
   const ctaLink = asString(s.cta_link) || "/products";

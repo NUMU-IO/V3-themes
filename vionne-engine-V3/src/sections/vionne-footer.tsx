@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
-import { Link, collectionHref, useCollections, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation } from "@numueg/theme-sdk";
+import { Link, collectionHref, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation } from "@numueg/theme-sdk";
 import { Facebook, Instagram, Mail, Music2, Phone, Twitter, Youtube } from "lucide-react";
 import {
   asString,
   localized,
   readBlockNodes,
+  useStoreCollections,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -43,7 +44,9 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
   const s = useResolvedSettings(instance);
   const locale = useLocale();
   const shop = useShop();
-  const { collections } = useCollections();
+  // Route-independent — see useStoreCollections. Plain useCollections() made
+  // the Shop column collapse to a lone "All products" on every non-catalog route.
+  const collections = useStoreCollections();
   const themeSettings = useThemeSettings();
   const { t } = useTranslation();
   const globals = (themeSettings.global_settings ?? {}) as Record<string, unknown>;
@@ -61,8 +64,8 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
       "footer.brand_blurb",
       localized(
         locale,
-        "Modest, refined, made to be lived in.",
-        "موضة محتشمة وراقية — مصمَّمة تتلبس كل يوم.",
+        "Refined, considered, made to be lived in.",
+        "قطع أنيقة وراقية — مصمَّمة تتلبس كل يوم.",
       ),
     );
 
@@ -158,11 +161,16 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
   };
   const helpColumn: FooterColumn = {
     title: helpTitle,
-    // Default Help column links to routes that actually exist. Shipping /
-    // Returns / Privacy / Terms / FAQ were removed — those CMS pages don't
-    // exist on most stores yet, so the links 404'd. Merchants that add those
-    // pages can restore the links via a footer menu or editor `column` blocks.
+    // Default Help column links to routes that actually RENDER something.
+    // Shipping / Returns / Privacy / Terms were removed once because those CMS
+    // pages don't exist on most stores, so the links resolved to a body-less
+    // placeholder. FAQ is back because the theme now ships a designed `faq`
+    // template that answers all four subjects on one page — so the link leads
+    // to real content rather than an empty heading. Merchants who publish the
+    // individual policy pages can still add them via a footer menu or `column`
+    // blocks.
     links: [
+      { label: t("footer.faq", localized(locale, "FAQ", "الأسئلة الشائعة")), href: "/faq" },
       { label: t("footer.contact", localized(locale, "Contact", "تواصلي")), href: "/contact" },
       { label: t("footer.track_order", localized(locale, "Track order", "تتبع الطلب")), href: "/track" },
     ],

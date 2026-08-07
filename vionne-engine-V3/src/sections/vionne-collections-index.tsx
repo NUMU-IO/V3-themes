@@ -1,6 +1,6 @@
 "use client";
-import { Link, collectionHref, useCollections, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { asString, localized, responsiveImg, PRODUCT_CARD_IMG, type SectionRenderProps } from "./_shared";
+import { Link, collectionHref, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { asString, localized, responsiveImg, useStoreCollections, PRODUCT_CARD_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -14,7 +14,11 @@ import { InlineEditable } from "./_inline-editable";
 export default function VionneCollectionsIndex({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
-  const { collections } = useCollections();
+  // Route-independent (see useStoreCollections). /collections DOES ship
+  // collections in page.data today, so this is belt-and-braces — but it means
+  // the index can never render its "No collections yet." empty state purely
+  // because the host skipped the pre-fetch.
+  const collections = useStoreCollections();
 
   const heading = asString(s.title) || localized(locale, "All Collections", "كل التشكيلات");
   const subtitle =
