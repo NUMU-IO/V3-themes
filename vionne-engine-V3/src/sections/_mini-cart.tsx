@@ -182,6 +182,10 @@ export function MiniCartDrawer({ open, onClose, locale }: {
                       aria-valuemin={0}
                       aria-valuemax={100}
                       aria-valuenow={Math.round(nudge.progressPct)}
+                      // Without a name this is announced as a bare percentage.
+                      // The offer copy sits in a sibling <p>, which doesn't
+                      // label it. Matches the free-shipping meter's wording.
+                      aria-label={localized(locale, "Offer progress", "تقدّم العرض")}
                     >
                       <div
                         className="h-full rounded-full bg-[var(--vn-ink)] transition-[width] duration-500 ease-out"
