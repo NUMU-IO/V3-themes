@@ -23,6 +23,7 @@ import {
   localized,
   readBlocks,
   responsiveImg,
+  useInheritedChrome,
   useStoreCollections,
   CARD_TRACK_IMG,
   type SectionRenderProps,
@@ -132,7 +133,11 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
   // (3) else the V2 Vionne default set (Shop / About / Contact).
   const headerMenuHandle = asString(s.header_menu_handle) || "main-menu";
   const { items: menuItems } = useNavigation(headerMenuHandle);
-  const navBlocks = readBlocks(instance, "nav_item");
+  // Same inheritance as the footer: a newly-seeded template must not fall
+  // back to the theme's default nav while every other page shows the
+  // merchant's configured nav items.
+  const navSource = useInheritedChrome(instance, "vionne-header", "nav_item");
+  const navBlocks = readBlocks(navSource, "nav_item");
   const nav: NavLink[] =
     menuItems.length > 0
       ? menuItems.map((it) => ({ label: it.title, to: it.url || "/" }))
