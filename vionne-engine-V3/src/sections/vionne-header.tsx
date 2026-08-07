@@ -21,6 +21,7 @@ import {
   asNumber,
   asString,
   localized,
+  logoSrc,
   readBlocks,
   responsiveImg,
   useInheritedChrome,
@@ -328,8 +329,9 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
           >
             {logoUrl ? (
               <img
-                src={logoUrl}
+                src={logoSrc(logoUrl)}
                 alt={brandName}
+                decoding="async"
                 className={
                   logoShaped
                     ? "inline-block w-auto max-h-12 md:max-h-14"
@@ -456,6 +458,11 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
                     aria-valuenow={Math.round(drawerNudge.progressPct)}
                     aria-valuemin={0}
                     aria-valuemax={100}
+                    // A progressbar with no accessible name is announced as
+                    // just a percentage, so a screen reader user hears "42%"
+                    // with nothing saying what is 42% done. The <p> above
+                    // carries the offer copy but is a sibling, not a label.
+                    aria-label={localized(locale, "Offer progress", "تقدّم العرض")}
                   >
                     <div
                       className="h-full bg-[var(--vn-ink)] transition-[width] duration-500"

@@ -584,6 +584,25 @@ export const THUMB_IMG = {
 } as const;
 
 /**
+ * The brand logo, sized for the header/footer slot instead of shipped whole.
+ *
+ * The logo is the one image the theme was still rendering straight off the
+ * CDN, and it's above the fold on every page: vionne's was a 35.8 KB webp
+ * painted into a 48–56 px-tall box, so ~35 KB of it was thrown away on the
+ * first request of every visit. The slot is height-constrained and never more
+ * than a couple hundred CSS px wide, so a single 384w rendition covers 2× DPR
+ * at any sane wordmark aspect ratio — no `srcSet`/`sizes` needed for a box
+ * whose width we don't control.
+ *
+ * GIF and SVG pass through untouched: the optimizer would freeze an animated
+ * logo on its first frame and rasterizing a vector only makes it heavier.
+ */
+export function logoSrc(url: string | null | undefined): string {
+  if (!url || /\.(gif|svg)(?:[?#]|$)/i.test(url)) return url || "";
+  return imgSrc(url, 384);
+}
+
+/**
  * Product image URL across the API's TWO shapes: catalog products carry
  * `images: [{url}]` objects while the related-products endpoint returns
  * `images: ["https://…"]` plain strings (plus legacy `image_url` /
