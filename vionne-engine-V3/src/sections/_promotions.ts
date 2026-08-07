@@ -194,45 +194,120 @@ interface ActivePromotionsData {
   discount_codes_visible?: ActivePromo[];
 }
 
+/** What the shopper is holding, so catalog-SCOPED offers survive eligibility. */
+export interface PromoCartContext {
+  productIds?: (string | null | undefined)[];
+  categoryIds?: (string | null | undefined)[];
+  /** Major units — converted to cents here, matching the rest of this module. */
+  subtotalMajor?: number;
+}
+
+const PROMO_TTL_MS = 60_000; // mirrors the API's own `cache_ttl_seconds: 60`
+const promoCache = new Map<string, { at: number; data: ActivePromotionsData | null }>();
+const promoInflight = new Map<string, Promise<ActivePromotionsData | null>>();
+
+/** Build the request URL. Stable ordering so the cache key is deterministic. */
+function promoUrl(page: string, locale: string, cart?: PromoCartContext): string {
+  const qs = new URLSearchParams();
+  qs.set("page", page);
+  qs.set("locale", locale);
+  const uniq = (xs: (string | null | undefined)[] | undefined) =>
+    [...new Set((xs ?? []).filter((x): x is string => Boolean(x)))].sort();
+  for (const id of uniq(cart?.productIds)) qs.append("product_ids", id);
+  for (const id of uniq(cart?.categoryIds)) qs.append("category_ids", id);
+  if (typeof cart?.subtotalMajor === "number" && cart.subtotalMajor > 0) {
+    qs.set("subtotal_cents", String(Math.round(cart.subtotalMajor * 100)));
+  }
+  return `/api/storefront/promotions?${qs.toString()}`;
+}
+
 /**
  * Fetch the active promotions for a page. Null until loaded / on any miss.
  *
- * Prefers the SDK's implementation when the host runtime serves one (it
- * dedupes across sections via the shared resource cache), and falls back to
- * this local copy otherwise. Resolved once at module load — see the
- * federation note above — so the hook identity never changes between
- * renders.
+ * Deliberately NOT delegating to the SDK's `useActivePromotions` any more. That
+ * one takes `(page, locale)` and nothing else, so it cannot pass the cart —
+ * and without the cart the backend's eligibility checker drops every
+ * catalog-scoped promotion before it reaches the response
+ * (`PromotionEligibilityChecker._target_matches` resolves PRODUCT / CATEGORY
+ * targets against `cart_product_ids` / `cart_category_ids`; an untagged
+ * inclusion target with an empty cart can never match). A merchant's
+ * "20% off this category" offer was therefore charged correctly at checkout
+ * while being invisible in the cart.
+ *
+ * The module-level cache keeps the dedupe the SDK hook provided: several
+ * sections on one page (header, mini-cart, cart body, PDP) ask the same
+ * question and share one request for its 60s lifetime.
  */
-export const useActivePromotions: (
+export function useActivePromotions(
   page: string,
   locale: string,
-) => ActivePromotionsData | null =
-  (sdkAny.useActivePromotions as
-    | ((page: string, locale: string) => ActivePromotionsData | null)
-    | undefined) ?? localUseActivePromotions;
+  cart?: PromoCartContext,
+): ActivePromotionsData | null {
+  const url = promoUrl(page, locale, cart);
+  const cached = promoCache.get(url);
+  const fresh = cached && Date.now() - cached.at < PROMO_TTL_MS ? cached.data : null;
+  const [data, setData] = useState<ActivePromotionsData | null>(fresh);
 
-function localUseActivePromotions(page: string, locale: string) {
-  const [data, setData] = useState<ActivePromotionsData | null>(null);
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/storefront/promotions?page=${encodeURIComponent(page)}&locale=${locale}`, {
-      credentials: "include",
-    })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((j) => {
-        if (!cancelled) setData((j?.data as ActivePromotionsData) ?? null);
-      })
-      .catch(() => {
-        if (!cancelled) setData(null);
-      });
+    const hit = promoCache.get(url);
+    if (hit && Date.now() - hit.at < PROMO_TTL_MS) {
+      setData(hit.data);
+      return;
+    }
+    let req = promoInflight.get(url);
+    if (!req) {
+      req = fetch(url, { credentials: "include" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => (j?.data as ActivePromotionsData) ?? null)
+        // A promo miss must never throw in the UI — the cart still works, it
+        // just shows no offers.
+        .catch(() => null)
+        .then((d) => {
+          promoCache.set(url, { at: Date.now(), data: d });
+          promoInflight.delete(url);
+          return d;
+        });
+      promoInflight.set(url, req);
+    }
+    req.then((d) => {
+      if (!cancelled) setData(d);
+    });
     return () => {
       cancelled = true;
     };
-  }, [page, locale]);
+  }, [url]);
+
   return data;
 }
 
+/**
+ * The path to resolve promotions against.
+ *
+ * Four surfaces used to hardcode four DIFFERENT keys for the same question —
+ * the banner asked for `"/"`, the cart page for `"/cart"`, the header for
+ * `"cart"` (no slash) and the PDP for `"/product"`. Harmless only because
+ * AUTOMATIC-surface promotions skip display-rule matching entirely
+ * (`promotion_resolver._first_matching_display`); the moment a merchant
+ * page-targets a promotion the four surfaces disagree about which page the
+ * shopper is on, and the header — which renders on EVERY route — is wrong
+ * almost everywhere by construction.
+ *
+ * The backend field is `VisitorContextInput.page_path`, so the honest answer is
+ * the real path. SSR-safe: falls back to "/" when there is no window.
+ */
+export function promoPagePath(): string {
+  if (typeof window === "undefined") return "/";
+  try {
+    return window.location.pathname || "/";
+  } catch {
+    return "/";
+  }
+}
+
 export interface PromoNudgeInfo {
+  /** Stable identity for React keys + dedupe. Null for synthesised lines. */
+  promotionId: string | null;
   /** Ready-to-render message. `{amount}` was already substituted. */
   message: string;
   /** 0-100 progress toward the next unlock; null = no meter (e.g. BOGO). */
@@ -242,6 +317,14 @@ export interface PromoNudgeInfo {
   couponCode: string | null;
 }
 
+/** A merchant-published discount CODE the shopper is meant to see and type. */
+export interface VisibleCodeOffer {
+  promotionId: string;
+  code: string;
+  /** Merchant headline when set, else a generated description of the rule. */
+  message: string;
+}
+
 const fmt = (cents: number, currency: string, locale: string) =>
   new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-EG", {
     style: "currency",
@@ -249,14 +332,178 @@ const fmt = (cents: number, currency: string, locale: string) =>
     maximumFractionDigits: 0,
   }).format(cents / 100);
 
+/** Describe ONE multibuy offer against the current cart. */
+function multibuyNudge(
+  offer: ReturnType<typeof multibuyOffers>[number],
+  locale: string,
+  currency: string,
+  unitsInCart: number | undefined,
+  appliedPromotions: { id: string; amount: number }[] | undefined,
+  cartItems: EligibleItem[] | undefined,
+): PromoNudgeInfo {
+  const ar = locale === "ar";
+  const headline = multibuyHeadline(offer, locale, currency);
+  // Count only units the offer actually covers. `cartItems` wins when present
+  // because it can see scoping; the bare number is the fallback.
+  const units = cartItems ? eligibleUnits(offer, cartItems) : (unitsInCart ?? 0);
+  const remainder = units % offer.quantity;
+  const groups = Math.floor(units / offer.quantity);
+  const applied = (appliedPromotions ?? []).find(
+    (p) => p && p.id === offer.promotionId,
+  );
+
+  if (groups > 0) {
+    const saved = applied?.amount;
+    const savedText =
+      typeof saved === "number" && saved > 0
+        ? fmt(Math.round(saved * 100), currency, locale)
+        : null;
+    return {
+      promotionId: offer.promotionId,
+      couponCode: null,
+      message: savedText
+        ? ar
+          ? `${headline} — وفّرتي ${savedText}`
+          : `${headline} — you saved ${savedText}`
+        : headline,
+      progressPct: 100,
+      unlocked: true,
+    };
+  }
+  const need = offer.quantity - remainder;
+  return {
+    promotionId: offer.promotionId,
+    couponCode: null,
+    message: ar
+      ? `ضيفي ${need} كمان وتاخدي ${headline}`
+      : `Add ${need} more to get ${headline}`,
+    progressPct: Math.min(100, (remainder / offer.quantity) * 100),
+    unlocked: false,
+  };
+}
+
+/** Describe ONE non-multibuy promotion. Null when it can't be phrased. */
+function rulePromoNudge(
+  p: ActivePromo,
+  subtotalCents: number,
+  currency: string,
+  locale: string,
+  skipFreeShipping: boolean,
+): PromoNudgeInfo | null {
+  const r = p.discount_rule;
+  if (!r) return null;
+  const ar = locale === "ar";
+  const headline =
+    p.translated_content?.headline?.[locale] || p.translated_content?.headline?.en;
+  const base = { promotionId: p.promotion_id, couponCode: p.coupon_code ?? null };
+
+  if (r.kind === "tiered" && r.tiers?.length) {
+    const sorted = [...r.tiers].sort((a, b) => a.threshold_cents - b.threshold_cents);
+    const next = sorted.find((t) => t.threshold_cents > subtotalCents);
+    const current = [...sorted].reverse().find((t) => t.threshold_cents <= subtotalCents);
+    if (next) {
+      const remaining = fmt(next.threshold_cents - subtotalCents, currency, locale);
+      return {
+        ...base,
+        message: ar
+          ? `ضيفي ${remaining} كمان وتفتحي خصم ${next.percent}%`
+          : `Add ${remaining} more to unlock ${next.percent}% off`,
+        progressPct: Math.min(100, (subtotalCents / next.threshold_cents) * 100),
+        unlocked: false,
+      };
+    }
+    if (current) {
+      return {
+        ...base,
+        message: ar
+          ? `خصم ${current.percent}% هيتطبق عند الدفع`
+          : `${current.percent}% off unlocked — applied at checkout`,
+        progressPct: 100,
+        unlocked: true,
+      };
+    }
+  }
+
+  if ((r.kind === "percentage" || r.kind === "fixed") && r.min_subtotal_cents) {
+    const off =
+      r.kind === "percentage"
+        ? `${r.value_percent}%`
+        : fmt(r.value_cents ?? 0, currency, locale);
+    if (subtotalCents < r.min_subtotal_cents) {
+      const remaining = fmt(r.min_subtotal_cents - subtotalCents, currency, locale);
+      return {
+        ...base,
+        message: ar
+          ? `ضيفي ${remaining} كمان وتاخدي خصم ${off}`
+          : `Add ${remaining} more to get ${off} off`,
+        progressPct: Math.min(100, (subtotalCents / r.min_subtotal_cents) * 100),
+        unlocked: false,
+      };
+    }
+    return {
+      ...base,
+      message: ar ? `خصم ${off} هيتطبق عند الدفع` : `${off} off unlocked — applied at checkout`,
+      progressPct: 100,
+      unlocked: true,
+    };
+  }
+
+  if (r.kind === "bogo" && r.buy_quantity && r.get_quantity) {
+    const freeish =
+      (r.get_discount_percent ?? 100) >= 100
+        ? ar ? "ببلاش" : "free"
+        : `${r.get_discount_percent}% ${ar ? "خصم" : "off"}`;
+    return {
+      ...base,
+      message:
+        headline ||
+        (ar
+          ? `اشتري ${r.buy_quantity} وخدي ${r.get_quantity} ${freeish}`
+          : `Buy ${r.buy_quantity}, get ${r.get_quantity} ${freeish}`),
+      progressPct: null,
+      unlocked: false,
+    };
+  }
+
+  if (r.kind === "free_shipping" && !skipFreeShipping && r.min_subtotal_cents) {
+    if (subtotalCents < r.min_subtotal_cents) {
+      const remaining = fmt(r.min_subtotal_cents - subtotalCents, currency, locale);
+      return {
+        ...base,
+        message: ar
+          ? `ضيفي ${remaining} كمان وتحصلي على شحن مجاني`
+          : `Add ${remaining} more to get free shipping`,
+        progressPct: Math.min(100, (subtotalCents / r.min_subtotal_cents) * 100),
+        unlocked: false,
+      };
+    }
+    return {
+      ...base,
+      message: ar ? "كسبتي الشحن المجاني!" : "You've earned free shipping!",
+      progressPct: 100,
+      unlocked: true,
+    };
+  }
+
+  // Rule kind we can't phrase — fall back to the merchant headline if any.
+  if (headline) return { ...base, message: headline, progressPct: null, unlocked: false };
+  return null;
+}
+
 /**
- * Pick the best cart nudge from the auto-discount rules for a major-unit
- * subtotal. Tiered/threshold rules become a progress message ("Add X more to
- * unlock Y% off"); met conditions become an unlocked message. Free-shipping
- * rules can be skipped when the theme's own free-shipping bar already covers
- * that story (`skipFreeShipping`).
+ * EVERY active auto-discount offer, described against the current cart.
+ *
+ * The cart used to render exactly one line: `bestCartNudge` ranked the
+ * promotions and `return`ed on the first match, so a store running three
+ * offers advertised one and the other two were invisible to the shopper who
+ * qualified for them. This returns the whole set, most-actionable first, and
+ * the single-slot surfaces (PDP pill, mobile menu) keep taking `[0]`.
+ *
+ * Ordering: multibuy leads — the shopper is a countable number of items away
+ * from it, not a fuzzy spend amount — then the rules the shopper can still make
+ * progress on (tiered / spend-threshold), then the static ones.
  */
-export function bestCartNudge(
+export function cartNudges(
   promos: ActivePromo[] | undefined,
   subtotalMajor: number,
   currency: string,
@@ -282,163 +529,153 @@ export function bestCartNudge(
    * the discount doesn't apply. Falls back to `unitsInCart` when absent.
    */
   cartItems?: EligibleItem[],
-): PromoNudgeInfo | null {
-  if (!promos?.length) return null;
+): PromoNudgeInfo[] {
+  if (!promos?.length) return [];
   const subtotalCents = Math.round(subtotalMajor * 100);
-  const ar = locale === "ar";
+  const out: PromoNudgeInfo[] = [];
 
-  // ── Multibuy first: it's the hero deal and the most actionable of all —
-  // the shopper is a countable number of items away from it, not a fuzzy
-  // spend amount. Handled ahead of the ranking loop because its progress is
-  // measured in units, not cents.
+  // Multibuy first — the hero deal.
+  const multibuyIds = new Set<string>();
   if (typeof unitsInCart === "number" || cartItems) {
     for (const offer of multibuyOffers(promos)) {
-      const headline = multibuyHeadline(offer, locale, currency);
-      // Count only units the offer actually covers. `cartItems` wins when
-      // present because it can see scoping; the bare number is the fallback.
-      const units = cartItems
-        ? eligibleUnits(offer, cartItems)
-        : (unitsInCart as number);
-      const remainder = units % offer.quantity;
-      const groups = Math.floor(units / offer.quantity);
-      const applied = (appliedPromotions ?? []).find(
-        (p) => p && p.id === offer.promotionId,
+      multibuyIds.add(offer.promotionId);
+      out.push(
+        multibuyNudge(offer, locale, currency, unitsInCart, appliedPromotions, cartItems),
       );
-      if (groups > 0) {
-        const saved = applied?.amount;
-        const savedText =
-          typeof saved === "number" && saved > 0
-            ? fmt(Math.round(saved * 100), currency, locale)
-            : null;
-        return {
-          couponCode: null,
-          message: savedText
-            ? ar
-              ? `${headline} — وفّرتي ${savedText}`
-              : `${headline} — you saved ${savedText}`
-            : headline,
-          progressPct: 100,
-          unlocked: true,
-        };
-      }
-      const need = offer.quantity - remainder;
-      return {
-        couponCode: null,
-        message: ar
-          ? `ضيفي ${need} كمان وتاخدي ${headline}`
-          : `Add ${need} more to get ${headline}`,
-        progressPct: Math.min(100, (remainder / offer.quantity) * 100),
-        unlocked: false,
-      };
     }
   }
 
-  // Actionable-first: a rule the shopper can still make progress on (tiered /
-  // spend-threshold) beats a static line (BOGO / bare headline) — the nudge
-  // exists to change the order, not just to inform.
-  const RANK: Record<string, number> = { tiered: 0, percentage: 1, fixed: 1, free_shipping: 2, bogo: 3 };
-  const ordered = [...promos].sort(
-    (a, b) => (RANK[a.discount_rule?.kind ?? ""] ?? 9) - (RANK[b.discount_rule?.kind ?? ""] ?? 9),
-  );
-
+  // Then everything else, actionable-first.
+  const RANK: Record<string, number> = {
+    tiered: 0,
+    percentage: 1,
+    fixed: 1,
+    free_shipping: 2,
+    bogo: 3,
+  };
+  const ordered = [...promos]
+    .filter((p) => !multibuyIds.has(p.promotion_id))
+    .sort(
+      (a, b) =>
+        (RANK[a.discount_rule?.kind ?? ""] ?? 9) -
+        (RANK[b.discount_rule?.kind ?? ""] ?? 9),
+    );
   for (const p of ordered) {
-    const r = p.discount_rule;
-    if (!r) continue;
-    const headline = p.translated_content?.headline?.[locale] || p.translated_content?.headline?.en;
-    const base = { couponCode: p.coupon_code ?? null };
-
-    if (r.kind === "tiered" && r.tiers?.length) {
-      const sorted = [...r.tiers].sort((a, b) => a.threshold_cents - b.threshold_cents);
-      const next = sorted.find((t) => t.threshold_cents > subtotalCents);
-      const current = [...sorted].reverse().find((t) => t.threshold_cents <= subtotalCents);
-      if (next) {
-        const remaining = fmt(next.threshold_cents - subtotalCents, currency, locale);
-        return {
-          ...base,
-          message: ar
-            ? `ضيفي ${remaining} كمان وتفتحي خصم ${next.percent}%`
-            : `Add ${remaining} more to unlock ${next.percent}% off`,
-          progressPct: Math.min(100, (subtotalCents / next.threshold_cents) * 100),
-          unlocked: false,
-        };
-      }
-      if (current) {
-        return {
-          ...base,
-          message: ar
-            ? `خصم ${current.percent}% هيتطبق عند الدفع`
-            : `${current.percent}% off unlocked — applied at checkout`,
-          progressPct: 100,
-          unlocked: true,
-        };
-      }
-    }
-
-    if ((r.kind === "percentage" || r.kind === "fixed") && r.min_subtotal_cents) {
-      const off =
-        r.kind === "percentage"
-          ? `${r.value_percent}%`
-          : fmt(r.value_cents ?? 0, currency, locale);
-      if (subtotalCents < r.min_subtotal_cents) {
-        const remaining = fmt(r.min_subtotal_cents - subtotalCents, currency, locale);
-        return {
-          ...base,
-          message: ar
-            ? `ضيفي ${remaining} كمان وتاخدي خصم ${off}`
-            : `Add ${remaining} more to get ${off} off`,
-          progressPct: Math.min(100, (subtotalCents / r.min_subtotal_cents) * 100),
-          unlocked: false,
-        };
-      }
-      return {
-        ...base,
-        message: ar ? `خصم ${off} هيتطبق عند الدفع` : `${off} off unlocked — applied at checkout`,
-        progressPct: 100,
-        unlocked: true,
-      };
-    }
-
-    if (r.kind === "bogo" && r.buy_quantity && r.get_quantity) {
-      const freeish =
-        (r.get_discount_percent ?? 100) >= 100
-          ? ar ? "ببلاش" : "free"
-          : `${r.get_discount_percent}% ${ar ? "خصم" : "off"}`;
-      return {
-        ...base,
-        message:
-          headline ||
-          (ar
-            ? `اشتري ${r.buy_quantity} وخدي ${r.get_quantity} ${freeish}`
-            : `Buy ${r.buy_quantity}, get ${r.get_quantity} ${freeish}`),
-        progressPct: null,
-        unlocked: false,
-      };
-    }
-
-    if (r.kind === "free_shipping" && !skipFreeShipping && r.min_subtotal_cents) {
-      if (subtotalCents < r.min_subtotal_cents) {
-        const remaining = fmt(r.min_subtotal_cents - subtotalCents, currency, locale);
-        return {
-          ...base,
-          message: ar
-            ? `ضيفي ${remaining} كمان وتحصلي على شحن مجاني`
-            : `Add ${remaining} more to get free shipping`,
-          progressPct: Math.min(100, (subtotalCents / r.min_subtotal_cents) * 100),
-          unlocked: false,
-        };
-      }
-      return {
-        ...base,
-        message: ar ? "كسبتي الشحن المجاني!" : "You've earned free shipping!",
-        progressPct: 100,
-        unlocked: true,
-      };
-    }
-
-    // Rule kind we can't phrase — fall back to the merchant headline if any.
-    if (headline) return { ...base, message: headline, progressPct: null, unlocked: false };
+    const nudge = rulePromoNudge(p, subtotalCents, currency, locale, skipFreeShipping);
+    if (nudge) out.push(nudge);
   }
-  return null;
+
+  // Two promotions can phrase to the same sentence (e.g. duplicated rules).
+  // Showing the identical line twice reads as a bug, so collapse by message.
+  const seen = new Set<string>();
+  return out.filter((n) => {
+    if (seen.has(n.message)) return false;
+    seen.add(n.message);
+    return true;
+  });
+}
+
+/**
+ * The single most actionable nudge — for surfaces with room for exactly one
+ * (the PDP, the mobile menu). Thin wrapper over `cartNudges` so the two can
+ * never disagree about ranking.
+ */
+export function bestCartNudge(
+  promos: ActivePromo[] | undefined,
+  subtotalMajor: number,
+  currency: string,
+  locale: string,
+  skipFreeShipping: boolean,
+  unitsInCart?: number,
+  appliedPromotions?: { id: string; amount: number }[],
+  cartItems?: EligibleItem[],
+): PromoNudgeInfo | null {
+  return (
+    cartNudges(
+      promos,
+      subtotalMajor,
+      currency,
+      locale,
+      skipFreeShipping,
+      unitsInCart,
+      appliedPromotions,
+      cartItems,
+    )[0] ?? null
+  );
+}
+
+/**
+ * Merchant-published discount CODES the shopper is meant to see and type.
+ *
+ * The host has always returned this bucket alongside `auto_discounts` and the
+ * theme has always thrown it away — a merchant could publish "SAVE20, 20% off"
+ * as a visible code and no storefront surface ever printed it. Distinct from an
+ * auto-discount: it needs the shopper to copy a code at checkout, so it renders
+ * as a code chip rather than a progress nudge.
+ */
+export function visibleCodeOffers(
+  promos: ActivePromo[] | undefined,
+  currency: string,
+  locale: string,
+): VisibleCodeOffer[] {
+  if (!promos?.length) return [];
+  const ar = locale === "ar";
+  const out: VisibleCodeOffer[] = [];
+  const seen = new Set<string>();
+  for (const p of promos) {
+    const code = (p.coupon_code ?? "").trim();
+    // No code = nothing the shopper could act on. Skip rather than show a
+    // teaser they can't redeem.
+    if (!code || seen.has(code.toUpperCase())) continue;
+    seen.add(code.toUpperCase());
+    const r = p.discount_rule;
+    const headline =
+      p.translated_content?.headline?.[locale] || p.translated_content?.headline?.en;
+    let message = headline ?? "";
+    if (!message && r) {
+      // Every rule kind the engine can price gets a real sentence. Anything
+      // left unhandled falls through to the generic label below rather than
+      // inventing terms the checkout wouldn't honour.
+      if (r.kind === "percentage" && r.value_percent) {
+        message = ar ? `خصم ${r.value_percent}%` : `${r.value_percent}% off`;
+      } else if (r.kind === "fixed" && r.value_cents) {
+        const amt = fmt(r.value_cents, currency, locale);
+        message = ar ? `خصم ${amt}` : `${amt} off`;
+      } else if (r.kind === "free_shipping") {
+        message = ar ? "شحن مجاني" : "Free shipping";
+      } else if (r.kind === "bogo" && r.buy_quantity && r.get_quantity) {
+        const freeish =
+          (r.get_discount_percent ?? 100) >= 100
+            ? ar ? "ببلاش" : "free"
+            : `${r.get_discount_percent}% ${ar ? "خصم" : "off"}`;
+        message = ar
+          ? `اشتري ${r.buy_quantity} وخدي ${r.get_quantity} ${freeish}`
+          : `Buy ${r.buy_quantity}, get ${r.get_quantity} ${freeish}`;
+      } else if (r.kind === "tiered" && r.tiers?.length) {
+        const t = [...r.tiers].sort((a, b) => a.threshold_cents - b.threshold_cents)[0];
+        const spend = fmt(t.threshold_cents, currency, locale);
+        message = ar
+          ? `اصرفي ${spend} ووفّري ${t.percent}%`
+          : `Spend ${spend}, save ${t.percent}%`;
+      } else if (
+        r.kind === "multibuy" &&
+        typeof r.multibuy_quantity === "number" &&
+        typeof r.multibuy_price_cents === "number"
+      ) {
+        const price = fmt(r.multibuy_price_cents, currency, locale);
+        message = ar
+          ? `${r.multibuy_quantity} قطع بـ ${price}`
+          : `${r.multibuy_quantity} for ${price}`;
+      }
+    }
+    if (!message) message = ar ? "كود خصم" : "Discount code";
+    if (r?.min_subtotal_cents) {
+      const min = fmt(r.min_subtotal_cents, currency, locale);
+      message += ar ? ` للطلبات فوق ${min}` : ` on orders over ${min}`;
+    }
+    out.push({ promotionId: p.promotion_id, code, message });
+  }
+  return out;
 }
 
 /**

@@ -19,7 +19,7 @@ import {
 import { Check, Minus, Plus, ShoppingBag, Tag, Truck, RotateCcw, ShieldCheck, ArrowRight, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PDP_MAIN_IMG, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps } from "./_shared";
-import { bestCartNudge, pdpOfferLine, qtyBogoHint, useActivePromotions } from "./_promotions";
+import { bestCartNudge, pdpOfferLine, promoPagePath, qtyBogoHint, useActivePromotions } from "./_promotions";
 import { InlineEditable } from "./_inline-editable";
 import { PricePair } from "./_price";
 import { recordRecentlyViewed, useRecentlyViewed } from "./_recently-viewed";
@@ -100,11 +100,27 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
     limit: relatedCount,
   });
 
+  // Cart is read up here (rather than beside the added-to-bag drawer below)
+  // because the promotions request needs its contents: a CATALOG-SCOPED
+  // promotion is filtered out server-side when the request carries no cart
+  // context, so the PDP offer pill silently vanished for exactly the offers
+  // that were scoped to this product's category.
+  const { cart } = useCart();
+
   // A3 — one compact offer line near the price ("Spend X, save Y%"), sourced
   // from the store's auto-discount promotions. Before the early return
   // (rules of hooks).
   const showOfferLine = s.show_offer_line !== false;
-  const promos = useActivePromotions("/product", locale);
+  const promos = useActivePromotions(promoPagePath(), locale, {
+    // This product plus whatever is already in the bag — an offer scoped to
+    // either should resolve on this page.
+    productIds: [product?.id, ...(cart?.items ?? []).map((it) => it.product_id)],
+    categoryIds: [
+      (product as { category_id?: string | null } | null)?.category_id,
+      ...(cart?.items ?? []).map((it) => it.category_id),
+    ],
+    subtotalMajor: cart?.subtotal,
+  });
   const offerLine = showOfferLine
     ? pdpOfferLine(
         promos?.auto_discounts,
@@ -126,7 +142,6 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
   // hooks live before the early return (rules of hooks).
   const showAddedDrawer = s.show_added_drawer !== false;
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { cart } = useCart();
   const { products: catalogProducts } = useProducts();
   useEffect(() => {
     if (!drawerOpen) return;

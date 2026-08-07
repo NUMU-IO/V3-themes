@@ -50,6 +50,7 @@ import VionneProfile from "./sections/vionne-profile";
 import VionneSearchResults from "./sections/vionne-search-results";
 import VionneNotFound from "./sections/vionne-not-found";
 import VionneCollectionsIndex from "./sections/vionne-collections-index";
+import VionneFaq from "./sections/vionne-faq";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
@@ -78,6 +79,28 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "vionne-search-results": VionneSearchResults,
   "vionne-not-found": VionneNotFound,
   "vionne-collections-index": VionneCollectionsIndex,
+  "vionne-faq": VionneFaq,
+};
+
+/**
+ * Content handles this theme ships a DESIGNED template for.
+ *
+ * The host maps a handful of handles to template types itself
+ * (`TEMPLATE_TYPE_BY_HANDLE` in numu-storefront/src/lib/content-pages.ts —
+ * about, contact, account, order-confirmation) and everything else arrives as
+ * `page.type = "page"`. That map lives in the HOST, so a theme adding a new
+ * designed page would otherwise have to wait for a storefront deploy before the
+ * URL rendered anything but the generic CMS body.
+ *
+ * Resolving it theme-side removes that coupling: the bundle looks at the
+ * handle it was given and picks its own template when it has one. Purely
+ * additive — an unknown handle still falls through to whatever the host asked
+ * for. Adding the same entry to the host's map is still worth doing (it makes
+ * the intent visible from the storefront side), but nothing depends on it.
+ */
+const TEMPLATE_BY_HANDLE: Record<string, string> = {
+  faq: "faq",
+  faqs: "faq",
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -256,31 +279,38 @@ export interface MountContext {
   [extra: string]: unknown;
 }
 
-interface DraftHandle { applyDraft: (next: ThemeSettingsV3) => void; }
+// `pickStore` / `pickTemplate` used to live here and were dead: defineThemeEntry
+// resolves the store and the current template itself and hands them to the
+// render callback, so nothing ever called them. Removed rather than left to rot
+// — the handle→template resolution below is the live version of that logic, and
+// having two copies (one of them unreachable) is exactly how the next person
+// "fixes" routing in the function that never runs.
 
-function pickStore(ctx: MountContext): Store {
-  const s = ctx.storeData ?? ctx.store;
-  if (s) return s;
-  return { id: "unknown", name: "Store", slug: "store", currency: "EGP", default_language: "en", use_nextjs_storefront: true } as Store;
-}
-
-function pickTemplate(ctx: MountContext): string {
-  if (typeof ctx.currentTemplate === "string" && ctx.currentTemplate) return ctx.currentTemplate;
-  const pt = ctx.page?.type;
-  if (typeof pt === "string" && pt) return pt;
-  return "home";
+/**
+ * Upgrade the host's generic `page` template to a designed one when this theme
+ * ships a template for the handle. Never DOWNgrades: an explicit non-page
+ * template from the host is always respected, so a real route can't be hijacked.
+ */
+function resolveTemplate(hostTemplate: string, page: MountPageData | null): string {
+  const handle = (page?.handle ?? "").toLowerCase();
+  const mapped = TEMPLATE_BY_HANDLE[handle];
+  if (mapped && (!hostTemplate || hostTemplate === "page")) return mapped;
+  return hostTemplate || "home";
 }
 
 // defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
 // (host-side renderToString for SSR) from a single render function, so the
 // server markup and the client hydration tree are identical by construction.
-const entry = defineThemeEntry(({ currentTemplate, demo, page }) => (
-  <DemoContext.Provider value={demo}>
-    <PageDataContext.Provider value={(page as MountPageData | null) ?? null}>
-      <ThemeApp currentTemplate={currentTemplate} />
-    </PageDataContext.Provider>
-  </DemoContext.Provider>
-));
+const entry = defineThemeEntry(({ currentTemplate, demo, page }) => {
+  const pageData = (page as MountPageData | null) ?? null;
+  return (
+    <DemoContext.Provider value={demo}>
+      <PageDataContext.Provider value={pageData}>
+        <ThemeApp currentTemplate={resolveTemplate(currentTemplate, pageData)} />
+      </PageDataContext.Provider>
+    </DemoContext.Provider>
+  );
+});
 
 export const mount = entry.mount;
 export const createApp = entry.createApp;
@@ -289,7 +319,7 @@ const v3Handle = {
   kind: "v3-mount" as const,
   numu_theme_version: 3 as const,
   mount_returns: "MountResult" as const,
-  manifest: { id: "vionne-v3", name: "Vionne (V3)", version: "0.7.0" },
+  manifest: { id: "vionne-v3", name: "Vionne (V3)", version: "0.8.0" },
   mount,
 };
 export default v3Handle;
@@ -308,6 +338,7 @@ if (import.meta.env.DEV && typeof document !== "undefined") {
       : path === "/search" ? "search"
       : path === "/account" || path === "/profile" ? "account"
       : path === "/404" ? "404"
+      : path === "/faq" || path === "/faqs" ? "faq"
       : path.startsWith("/pages/") ? "page"
       : "home";
     mount(rootEl, {
