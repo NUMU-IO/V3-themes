@@ -121,6 +121,64 @@ export function useStoreCollections(): Collection[] {
 }
 
 /**
+ * Chrome config that survives a template being added later.
+ *
+ * THE BUG THIS FIXES — header/footer are global chrome, but this theme renders
+ * them per-template (no `section_groups`), so each template holds its own copy
+ * of the section. When a theme UPDATE introduces a new template, the platform
+ * seeds it straight from the bundle preset
+ * (`theme_v3_presets.generate_initial_v3_customization` builds each template
+ * from `presets.templates[*].sections` verbatim), and chrome entries in a
+ * preset are intentionally bare — `{"type":"vionne-footer","settings":{}}`.
+ *
+ * The result, measured on the live store the day `faq` shipped: 15 of 16
+ * templates carried the merchant's authored `col-shop` / `col-help` footer
+ * columns, and the brand-new `faq` template carried NONE. So the footer fell
+ * through to the theme's built-in defaults on exactly one page and rendered the
+ * merchant's columns everywhere else — one component, two appearances, which is
+ * precisely what a shopper notices.
+ *
+ * This is not vionne-specific and not faq-specific: it happens to every theme,
+ * every time a new template ships, for every chrome block type.
+ *
+ * The fix: when THIS template's chrome instance carries no blocks of the type
+ * we're about to read, borrow them from a sibling template's instance of the
+ * same section type. The theme already borrows chrome SECTIONS this way when a
+ * route has no template at all (`selectChromeSections` in main.tsx); this
+ * extends the same idea to the chrome's own configuration.
+ *
+ * Deliberately only fires when this instance has NOTHING of that block type —
+ * a merchant who has genuinely customised one page's footer keeps their edit.
+ *
+ * @param instance      the chrome section being rendered
+ * @param sectionType   its type, e.g. "vionne-footer"
+ * @param blockType     the block type about to be read, e.g. "column"
+ * @returns the section to read blocks from — `instance` itself when it is
+ *          configured, otherwise a sibling that is
+ */
+export function useInheritedChrome(
+  instance: SectionInstance,
+  sectionType: string,
+  blockType: string,
+): SectionInstance {
+  const themeSettings = useThemeSettings();
+  if (readBlockNodes(instance, blockType).length > 0) return instance;
+
+  const templates = (themeSettings.templates ?? {}) as Record<
+    string,
+    { sections?: Record<string, unknown> } | undefined
+  >;
+  for (const tpl of Object.values(templates)) {
+    for (const sec of Object.values(tpl?.sections ?? {})) {
+      const s = sec as { type?: string } | null;
+      if (s?.type !== sectionType) continue;
+      if (readBlockNodes(sec, blockType).length > 0) return sec as SectionInstance;
+    }
+  }
+  return instance;
+}
+
+/**
  * The merchant's free-shipping threshold, in MAJOR units. 0 = not configured.
  *
  * It lives on the CART section's settings, but three surfaces outside the cart

@@ -6,6 +6,7 @@ import {
   asString,
   localized,
   readBlockNodes,
+  useInheritedChrome,
   useStoreCollections,
   type SectionRenderProps,
 } from "./_shared";
@@ -129,7 +130,13 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
   // (2) Editor `column` blocks — each holds NESTED `link` blocks (label + href),
   // falling back to legacy link1..5 settings so footers authored before nested
   // blocks still render. Empty columns are dropped.
-  const blockColumns: FooterColumn[] = readBlockNodes(instance, "column")
+  // Read columns from THIS footer when it is configured, else inherit a
+  // sibling template's (see useInheritedChrome) — a template added by a
+  // later theme update is seeded with bare chrome and would otherwise
+  // render the built-in defaults while every other page shows the
+  // merchant's columns.
+  const columnSource = useInheritedChrome(instance, "vionne-footer", "column");
+  const blockColumns: FooterColumn[] = readBlockNodes(columnSource, "column")
     .map((col) => {
       const nested: FooterLink[] = readBlockNodes(col, "link")
         .map((l) => ({ label: asString(l.settings.label), href: asString(l.settings.href) }))
