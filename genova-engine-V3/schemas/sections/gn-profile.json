@@ -1,0 +1,43 @@
+{
+  "type": "gn-profile",
+  "name": "Account",
+  "name_ar": "حسابي",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Account"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_orders",
+      "label": "Show orders",
+      "label_ar": "إظهار الطلبات",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_addresses",
+      "label": "Show addresses",
+      "label_ar": "إظهار العناوين",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show wishlist",
+      "label_ar": "إظهار المفضلة",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Account",
+      "name_ar": "حسابي",
+      "settings": {}
+    }
+  ]
+}

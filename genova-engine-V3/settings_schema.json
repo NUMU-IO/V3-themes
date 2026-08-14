@@ -1,0 +1,472 @@
+[
+  {
+    "name": "Brand",
+    "name_ar": "العلامة التجارية",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo",
+        "label_ar": "الشعار",
+        "info": "Shown in the header and footer. Leave empty to use the store name as a wordmark — Genova is designed to look right either way.",
+        "info_ar": "يظهر في الهيدر والفوتر. سيبه فاضي وهيستخدم اسم المتجر كنص — التصميم شغال بالطريقتين.",
+        "default": ""
+      },
+      {
+        "type": "select",
+        "id": "logo_shape",
+        "label": "Logo shape",
+        "label_ar": "شكل الشعار",
+        "default": "none",
+        "info": "Crops the logo into a shape. 'Original' keeps it untouched — the right choice for a wordmark.",
+        "info_ar": "بيقص الشعار في شكل. \"الأصلي\" بيسيبه زي ما هو — وده الأنسب للشعار الكتابي.",
+        "options": [
+          {
+            "value": "none",
+            "label": "Original",
+            "label_ar": "الأصلي"
+          },
+          {
+            "value": "square",
+            "label": "Square",
+            "label_ar": "مربع"
+          },
+          {
+            "value": "rounded",
+            "label": "Rounded square",
+            "label_ar": "مربع بزوايا دائرية"
+          },
+          {
+            "value": "circle",
+            "label": "Circle",
+            "label_ar": "دائرة"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo width",
+        "label_ar": "عرض الشعار",
+        "default": 48,
+        "min": 24,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "info": "Sets the logo's size. The header grows to fit a larger logo.",
+        "info_ar": "بيحدد حجم الشعار. الهيدر بيكبر لو الشعار أكبر."
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon (browser tab icon)",
+        "label_ar": "أيقونة المتصفح",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "name_ar": "الألوان",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Genova is a strict monochrome theme — there is no accent colour by design. Hierarchy comes from type weight, space and hairlines; the only colour on the page is your product photography. Changing these to a coloured palette will work, but it is not what the theme was drawn for.",
+        "content_ar": "جينوفا ثيم أبيض وأسود بالكامل عن قصد — مفيش لون مميز. الترتيب البصري بيتعمل بحجم ووزن الخط والمسافات والخطوط الرفيعة، واللون الوحيد في الصفحة هو صور المنتجات. تقدر تغيّرهم لألوان، بس ده مش اللي الثيم اتصمم عليه."
+      },
+      {
+        "type": "header",
+        "content": "Surfaces",
+        "content_ar": "الخلفيات"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Page background",
+        "label_ar": "خلفية الصفحة",
+        "default": "#F5F4F2"
+      },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Card & panel background",
+        "label_ar": "خلفية الكروت والقوائم",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_media",
+        "label": "Image plate",
+        "label_ar": "خلفية الصور",
+        "info": "Sits behind product photos while they load and shows through transparent PNGs.",
+        "info_ar": "بيظهر ورا صور المنتجات وهي بتحمّل، وكمان من ورا الصور الشفافة.",
+        "default": "#EDEBE8"
+      },
+      {
+        "type": "header",
+        "content": "Text",
+        "content_ar": "النصوص"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Ink (headings & body)",
+        "label_ar": "لون النص الأساسي",
+        "default": "#141414"
+      },
+      {
+        "type": "color",
+        "id": "color_ink_soft",
+        "label": "Ink — hover / pressed",
+        "label_ar": "لون النص عند المرور",
+        "default": "#3A3A3A"
+      },
+      {
+        "type": "color",
+        "id": "color_muted",
+        "label": "Muted text (prices, captions)",
+        "label_ar": "النص الثانوي (الأسعار والتعليقات)",
+        "default": "#6B6B6B"
+      },
+      {
+        "type": "color",
+        "id": "color_muted_2",
+        "label": "Faint text (placeholders)",
+        "label_ar": "النص الخفيف (النصوص الإرشادية)",
+        "default": "#9A9A9A"
+      },
+      {
+        "type": "header",
+        "content": "Lines",
+        "content_ar": "الخطوط"
+      },
+      {
+        "type": "color",
+        "id": "border_color",
+        "label": "Hairline",
+        "label_ar": "الخط الفاصل",
+        "info": "Genova has no shadows — every edge in the theme is one of these lines.",
+        "info_ar": "الثيم من غير ظلال خالص — كل الحدود في التصميم هي الخطوط دي.",
+        "default": "#E2E0DC"
+      },
+      {
+        "type": "color",
+        "id": "color_line_strong",
+        "label": "Strong line (selected states)",
+        "label_ar": "الخط القوي (العناصر المختارة)",
+        "default": "#C9C6C1"
+      },
+      {
+        "type": "header",
+        "content": "Announcement bar",
+        "content_ar": "شريط الإعلانات"
+      },
+      {
+        "type": "color",
+        "id": "color_ticker_bg",
+        "label": "Announcement background",
+        "label_ar": "خلفية شريط الإعلانات",
+        "default": "#111111"
+      },
+      {
+        "type": "color",
+        "id": "color_ticker_fg",
+        "label": "Announcement text",
+        "label_ar": "نص شريط الإعلانات",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "header",
+        "content": "Buttons",
+        "content_ar": "الأزرار"
+      },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "Primary button background",
+        "label_ar": "خلفية الزر الأساسي",
+        "default": "#111111"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color",
+        "label": "Primary button text",
+        "label_ar": "نص الزر الأساسي",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "secondary_color",
+        "label": "Secondary button background",
+        "label_ar": "خلفية الزر الثانوي",
+        "default": "#D9D9D9"
+      },
+      {
+        "type": "color",
+        "id": "color_btn_secondary_fg",
+        "label": "Secondary button text",
+        "label_ar": "نص الزر الثانوي",
+        "default": "#111111"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale / discount colour",
+        "label_ar": "لون التخفيض",
+        "info": "Used for sale badges, discounted prices and low-stock warnings. Set it to your text colour for a fully monochrome store.",
+        "default": "#c81e1e"
+      },
+      {
+        "type": "color",
+        "id": "color_sale_fg",
+        "label": "Sale badge text",
+        "label_ar": "لون نص التخفيض",
+        "default": "#ffffff"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "name_ar": "الخطوط",
+    "settings": [
+      {
+        "type": "select",
+        "id": "heading_font",
+        "label": "Heading font",
+        "label_ar": "خط العناوين",
+        "default": "\"Instrument Sans\", \"Manrope\", system-ui, sans-serif",
+        "info": "Genova uses one family for everything — hierarchy comes from weight and size, not from mixing faces.",
+        "info_ar": "جينوفا بيستخدم خط واحد في كل حاجة — الترتيب بيتعمل بالوزن والحجم مش بخلط خطوط.",
+        "options": [
+          {
+            "value": "\"Instrument Sans\", \"Manrope\", system-ui, sans-serif",
+            "label": "Instrument Sans (theme default)",
+            "label_ar": "إنسترومنت سانس (الافتراضي)"
+          },
+          {
+            "value": "inter",
+            "label": "Inter",
+            "label_ar": "إنتر"
+          },
+          {
+            "value": "dm-sans",
+            "label": "DM Sans",
+            "label_ar": "دي إم سانس"
+          },
+          {
+            "value": "montserrat",
+            "label": "Montserrat",
+            "label_ar": "مونتسيرات"
+          },
+          {
+            "value": "poppins",
+            "label": "Poppins",
+            "label_ar": "بوبينز"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "body_font",
+        "label": "Body font",
+        "label_ar": "خط النص",
+        "default": "\"Instrument Sans\", \"Manrope\", system-ui, sans-serif",
+        "options": [
+          {
+            "value": "\"Instrument Sans\", \"Manrope\", system-ui, sans-serif",
+            "label": "Instrument Sans (theme default)",
+            "label_ar": "إنسترومنت سانس (الافتراضي)"
+          },
+          {
+            "value": "inter",
+            "label": "Inter",
+            "label_ar": "إنتر"
+          },
+          {
+            "value": "dm-sans",
+            "label": "DM Sans",
+            "label_ar": "دي إم سانس"
+          },
+          {
+            "value": "montserrat",
+            "label": "Montserrat",
+            "label_ar": "مونتسيرات"
+          },
+          {
+            "value": "poppins",
+            "label": "Poppins",
+            "label_ar": "بوبينز"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "arabic_font",
+        "label": "Arabic font",
+        "label_ar": "الخط العربي",
+        "default": "\"IBM Plex Sans Arabic\", \"Noto Kufi Arabic\", sans-serif",
+        "info": "Used automatically whenever the storefront is in Arabic.",
+        "info_ar": "بيتستخدم أوتوماتيك لما المتجر يكون بالعربي.",
+        "options": [
+          {
+            "value": "\"IBM Plex Sans Arabic\", \"Noto Kufi Arabic\", sans-serif",
+            "label": "IBM Plex Sans Arabic (theme default)",
+            "label_ar": "آي بي إم بلكس سانس عربي (الافتراضي)"
+          },
+          {
+            "value": "cairo",
+            "label": "Cairo",
+            "label_ar": "القاهرة"
+          },
+          {
+            "value": "tajawal",
+            "label": "Tajawal",
+            "label_ar": "تجوال"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "base_font_size",
+        "label": "Base text size",
+        "label_ar": "حجم النص الأساسي",
+        "default": "15px",
+        "options": [
+          {
+            "value": "14px",
+            "label": "Compact",
+            "label_ar": "مضغوط"
+          },
+          {
+            "value": "15px",
+            "label": "Default",
+            "label_ar": "افتراضي"
+          },
+          {
+            "value": "16px",
+            "label": "Comfortable",
+            "label_ar": "مريح"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "heading_tracking",
+        "label": "Heading letter spacing",
+        "label_ar": "تباعد حروف العناوين",
+        "default": "-0.01em",
+        "options": [
+          {
+            "value": "-0.02em",
+            "label": "Tight",
+            "label_ar": "ضيق"
+          },
+          {
+            "value": "-0.01em",
+            "label": "Default",
+            "label_ar": "افتراضي"
+          },
+          {
+            "value": "0",
+            "label": "Normal",
+            "label_ar": "عادي"
+          },
+          {
+            "value": "0.01em",
+            "label": "Open",
+            "label_ar": "واسع"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "name_ar": "التخطيط",
+    "settings": [
+      {
+        "type": "select",
+        "id": "container_width",
+        "label": "Maximum content width",
+        "label_ar": "أقصى عرض للمحتوى",
+        "default": "1600px",
+        "info": "Genova is a wide, edge-aware layout. Narrower widths make it read more like a classic boutique.",
+        "info_ar": "جينوفا تخطيط عريض. العرض الأصغر بيخلي الشكل أقرب للبوتيك الكلاسيكي.",
+        "options": [
+          {
+            "value": "1280px",
+            "label": "Narrow",
+            "label_ar": "ضيق"
+          },
+          {
+            "value": "1440px",
+            "label": "Medium",
+            "label_ar": "متوسط"
+          },
+          {
+            "value": "1600px",
+            "label": "Wide (default)",
+            "label_ar": "عريض (الافتراضي)"
+          },
+          {
+            "value": "100%",
+            "label": "Full bleed",
+            "label_ar": "عرض الشاشة بالكامل"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enableStickyHeader",
+        "label": "Stick the header to the top when scrolling",
+        "label_ar": "تثبيت الهيدر أعلى الصفحة عند التمرير",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enableAnimations",
+        "label": "Enable animations",
+        "label_ar": "تفعيل الحركة",
+        "info": "Turns off the announcement ticker, hero autoplay and every transition. Visitors who ask their device for reduced motion always get the still version regardless of this setting.",
+        "info_ar": "بيوقف شريط الإعلانات المتحرك والسلايدر وكل الانتقالات. الزائر اللي مفعّل \"تقليل الحركة\" في جهازه بيشوف النسخة الثابتة في كل الحالات.",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Social",
+    "name_ar": "السوشيال ميديا",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram URL",
+        "label_ar": "رابط إنستجرام",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok URL",
+        "label_ar": "رابط تيك توك",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook URL",
+        "label_ar": "رابط فيسبوك",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "social_whatsapp",
+        "label": "WhatsApp number",
+        "label_ar": "رقم واتساب",
+        "info": "Egyptian format, e.g. 01012345678. Used by the contact and store sections.",
+        "info_ar": "بالصيغة المصرية، مثال 01012345678. بيتستخدم في أقسام التواصل والفرع.",
+        "default": ""
+      }
+    ]
+  }
+]

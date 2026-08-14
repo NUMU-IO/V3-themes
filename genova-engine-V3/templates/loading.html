@@ -1,0 +1,26 @@
+<!-- Genova (V3) — static BYOT loading state.
+     Plain HTML: this renders before the bundle (and therefore before any CSS
+     custom property) exists, so every value is a literal that must match the
+     theme's shipped defaults. Monochrome by design — no spinner, no colour.
+
+     Bilingual by ancestor `dir`, same mechanism as error.html: English is the
+     default, Arabic replaces it only under [dir="rtl"], so a document with no
+     direction still shows exactly one word. `aria-label` cannot be swapped by
+     CSS, so the accessible name comes from the visible text instead — which is
+     what a screen reader should be reading anyway. -->
+<meta charset="utf-8" />
+<style>
+  .gn-load-ar { display: none; }
+  [dir="rtl"] .gn-load-en { display: none; }
+  [dir="rtl"] .gn-load-ar { display: revert; }
+</style>
+<div
+  role="status"
+  aria-live="polite"
+  style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;background:#f5f4f2;font-family:'Instrument Sans',Manrope,system-ui,sans-serif"
+>
+  <span style="font-size:.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b6b6b">
+    <span class="gn-load-en">Loading</span>
+    <span class="gn-load-ar" lang="ar">جاري التحميل</span>
+  </span>
+</div>

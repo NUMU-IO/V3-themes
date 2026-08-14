@@ -1,0 +1,192 @@
+{
+  "type": "gn-fit-guide",
+  "name": "Fit guide ✦",
+  "name_ar": "دليل المقاسات ✦",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "“Will these fit me?” is the main reason a denim shopper doesn’t buy, and the main reason they return it. Fill this in properly and it pays for itself. Every measurement here is yours — nothing is guessed on your behalf, because a wrong number causes the exact returns this is meant to prevent.",
+      "content_ar": "“هيبقى مقاسي ولا لأ؟” ده أكتر سبب بيخلي الزبونة متشتريش چينز، وأكتر سبب بترجّعه. لو ملّيتي القسم ده صح هيوفّر عليكي كتير. كل المقاسات هنا بتاعتك — مفيش رقم متحطوط بالنيابة عنك، لأن رقم غلط هيسبب نفس المرتجعات اللي القسم ده موجود يمنعها."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Find your fit"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro",
+      "label_ar": "المقدمة",
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "mode",
+      "label": "Length",
+      "label_ar": "الحجم",
+      "default": "full",
+      "options": [
+        {
+          "value": "full",
+          "label": "Full page",
+          "label_ar": "صفحة كاملة"
+        },
+        {
+          "value": "compact",
+          "label": "Short teaser (homepage)",
+          "label_ar": "مختصر للرئيسية"
+        }
+      ]
+    },
+    {
+      "type": "url",
+      "id": "full_guide_link",
+      "label": "Link to the full guide",
+      "label_ar": "رابط الدليل الكامل",
+      "default": "/pages/fit-guide",
+      "visible_if": "mode == 'compact'"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_measure_table",
+      "label": "Show the measurement table",
+      "label_ar": "إظهار جدول المقاسات",
+      "default": true,
+      "visible_if": "mode == 'full'"
+    },
+    {
+      "type": "text",
+      "id": "model_note",
+      "label": "Model note",
+      "label_ar": "ملاحظة عن الموديل",
+      "default": "",
+      "info": "e.g. “Model is 168 cm and wears a 28.”",
+      "info_ar": "مثال: “طول الموديل ١٦٨ سم ولابسة مقاس ٢٨.”"
+    },
+    {
+      "type": "header",
+      "content": "Ask for help",
+      "content_ar": "اطلبي مساعدة"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp number",
+      "label_ar": "رقم واتساب",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": "Not sure? Ask us"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "fit",
+      "name": "Fit",
+      "name_ar": "قصة",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "label_ar": "الاسم",
+          "default": "High-rise straight"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "label_ar": "الصورة",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "rise",
+          "label": "Rise",
+          "label_ar": "الخصر",
+          "default": "High"
+        },
+        {
+          "type": "text",
+          "id": "leg",
+          "label": "Leg shape",
+          "label_ar": "قصة الرجل",
+          "default": "Straight"
+        },
+        {
+          "type": "text",
+          "id": "stretch",
+          "label": "Stretch",
+          "label_ar": "الاسترتش",
+          "default": "Rigid"
+        },
+        {
+          "type": "textarea",
+          "id": "best_for",
+          "label": "Best for",
+          "label_ar": "مناسب لمين",
+          "default": ""
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Shop this fit",
+          "label_ar": "تسوّقي القصة دي",
+          "default": ""
+        }
+      ]
+    },
+    {
+      "type": "size_row",
+      "name": "Size row",
+      "name_ar": "صف مقاس",
+      "settings": [
+        {
+          "type": "text",
+          "id": "size",
+          "label": "Size",
+          "label_ar": "المقاس",
+          "default": "28"
+        },
+        {
+          "type": "text",
+          "id": "waist",
+          "label": "Waist",
+          "label_ar": "الخصر",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "hip",
+          "label": "Hip",
+          "label_ar": "الأرداف",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "inseam",
+          "label": "Inseam",
+          "label_ar": "طول الرجل",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Fit guide ✦",
+      "name_ar": "دليل المقاسات ✦",
+      "settings": {
+        "mode": "full"
+      }
+    }
+  ]
+}

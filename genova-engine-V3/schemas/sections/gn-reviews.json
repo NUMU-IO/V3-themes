@@ -1,0 +1,53 @@
+{
+  "type": "gn-reviews",
+  "name": "Customer reviews",
+  "name_ar": "تقييمات العملاء",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "On a product page this shows that product’s reviews. Anywhere else it samples your products and says so — the platform has no store-wide review score, and showing one would be a number we made up.",
+      "content_ar": "في صفحة المنتج بيعرض تقييمات المنتج ده. في أي مكان تاني بياخد عينة من منتجاتك وبيوضح كده — المنصة مفيهاش تقييم عام للمتجر، وعرض رقم كده هيبقى رقم مخترع."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Customers are saying"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "Show the rating summary",
+      "label_ar": "إظهار ملخص التقييم",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "min_rating",
+      "label": "Only show reviews rated at least",
+      "label_ar": "اعرض التقييمات من",
+      "default": 4,
+      "min": 1,
+      "max": 5,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "sample_products",
+      "label": "Products to sample (off a product page)",
+      "label_ar": "عدد المنتجات للعينة",
+      "default": 6,
+      "min": 3,
+      "max": 12,
+      "step": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer reviews",
+      "name_ar": "تقييمات العملاء",
+      "settings": {}
+    }
+  ]
+}

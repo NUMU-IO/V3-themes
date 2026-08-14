@@ -1,0 +1,3707 @@
+/* Self-hosted webfonts. Must stay first — an @import after any declaration is
+   dropped silently.
+
+   These were a render-blocking third-party chain: theme.css had to download
+   before the browser even DISCOVERED the Google Fonts CSS, then hit
+   fonts.googleapis.com, then fonts.gstatic.com. Three serialised round trips on
+   the critical path, two of them cross-origin, for every shopper. Now the files
+   sit beside theme.css on the same CDN origin, already connected.
+
+   `unicode-range` matters more than the raw byte total here: the six Arabic
+   faces are ~186 KB but an English page never requests any of them, so a Latin
+   shopper downloads ~30 KB for the whole typographic system (Instrument Sans is
+   a variable font — one file covers 400-700).
+
+   The @font-face block is NOT imported here: Vite's library mode inlines any
+   asset referenced from CSS as base64 regardless of `assetsInlineLimit`, which
+   took the stylesheet from 51 KB to 368 KB and defeated unicode-range entirely.
+   `emitFonts()` in vite.config.ts prepends it at generateBundle time instead,
+   where Vite never sees the url() and cannot rewrite it.
+
+   Regenerate the files with scratchpad/selfhost_fonts.py. Both families are
+   OFL 1.1. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ════════════════════════════════════════════════════════════════════════════
+   GENOVA (V3) — design tokens
+   ────────────────────────────────────────────────────────────────────────────
+   STRICT MONOCHROME (decision D1). There is no accent colour in this theme.
+   The only colour on any page comes from product photography and third-party
+   payment marks. Sale price, low stock, offers, focus rings and error states
+   all have monochrome substitutes — see the plan §2.1a; do not reintroduce a
+   hue to solve one of them.
+
+   Every token reads through `var(--theme-<setting_id>, <default>)`. The SDK's
+   `applyGlobalStyleTokens` writes `--theme-<id>` for each global setting on the
+   mount root, on mount AND on every live-preview draft, so editing a colour in
+   Theme Settings repaints immediately. The literal after the comma is the
+   shipped default and the value used before any settings exist (SSR, marketplace
+   preview, a fresh install).
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-genova-v3-app] {
+  /* ── Surfaces ─────────────────────────────────────────────────────────── */
+  --gn-canvas: var(--theme-background_color, #f5f4f2);
+  --gn-surface: var(--theme-color_surface, #ffffff);
+  --gn-media-bg: var(--theme-color_media, #edebe8);
+
+  /* ── Ink ──────────────────────────────────────────────────────────────── */
+  --gn-ink: var(--theme-text_color, #141414);
+  --gn-ink-soft: var(--theme-color_ink_soft, #3a3a3a);
+  --gn-muted: var(--theme-color_muted, #6b6b6b);
+  --gn-muted-2: var(--theme-color_muted_2, #9a9a9a);
+
+  /* ── Hairlines. Genova has no shadows; depth is lines and image plates. ── */
+  --gn-line: var(--theme-border_color, #e2e0dc);
+  --gn-line-strong: var(--theme-color_line_strong, #c9c6c1);
+
+  /* ── Inverted band: announcement ticker, offer strips ─────────────────── */
+  --gn-ticker-bg: var(--theme-color_ticker_bg, #111111);
+  --gn-ticker-fg: var(--theme-color_ticker_fg, #ffffff);
+
+  /* ── Buttons ──────────────────────────────────────────────────────────── */
+  --gn-btn-primary-bg: var(--theme-button_color, #111111);
+  --gn-btn-primary-fg: var(--theme-button_text_color, #ffffff);
+  --gn-btn-secondary-bg: var(--theme-secondary_color, #d9d9d9);
+  --gn-btn-secondary-fg: var(--theme-color_btn_secondary_fg, #111111);
+
+  /* ── Commerce signal colour ───────────────────────────────────────────
+     D1 made this theme strictly monochrome; Yousef reversed that on
+     2026-08-14 for DISCOUNTS ONLY. Editorial chrome stays greyscale — colour
+     is spent exclusively where it changes a purchase decision, which is what
+     makes it work: a page with one colour has an unmissable focal point, a
+     page with five has none.
+     #C81E1E is 5.9:1 on --gn-surface (AA body text needs 4.5:1) and 5.9:1
+     under white badge text. Merchant-overridable, with the monochrome value
+     one setting away for anyone who wants the original.
+     Colour is never the ONLY carrier: badges keep their "−40%" text, the
+     compare-at keeps its strikethrough, low stock keeps its count. */
+  --gn-sale: var(--theme-color_sale, #c81e1e);
+  --gn-sale-fg: var(--theme-color_sale_fg, #ffffff);
+
+  /* ── Scrims ───────────────────────────────────────────────────────────── */
+  --gn-overlay: var(--theme-color_overlay, rgba(0, 0, 0, 0.45));
+
+  /* ── Type ─────────────────────────────────────────────────────────────── */
+  --gn-font-heading: var(--theme-heading_font, "Instrument Sans", "Manrope", system-ui, sans-serif);
+  --gn-font-body: var(--theme-body_font, "Instrument Sans", "Manrope", system-ui, sans-serif);
+  --gn-font-arabic: var(--theme-arabic_font, "IBM Plex Sans Arabic", "Noto Kufi Arabic", "Cairo", sans-serif);
+  --gn-base-size: var(--theme-base_font_size, 15px);
+  --gn-tracking: var(--theme-heading_tracking, -0.01em);
+
+  /* Type scale. With no colour, weight/size/space carry ALL hierarchy — keep
+     the steps far apart or the page reads flat (plan §2.2). */
+  --gn-fs-display: clamp(2.2rem, 4.5vw, 3.4rem);
+  --gn-fs-title: clamp(1.9rem, 3.6vw, 3rem);
+  --gn-fs-heading: 1.375rem;
+  --gn-fs-body: 0.9375rem;
+  --gn-fs-nav: 0.8125rem;
+  --gn-fs-label: 0.6875rem;
+  --gn-fs-price: 0.9375rem;
+
+  /* ── Geometry ─────────────────────────────────────────────────────────── */
+  --gn-container: var(--theme-container_width, 1600px);
+  --gn-gutter: 32px;
+  --gn-radius-swatch: 6px;
+  /* Logo size and the bar that has to hold it.
+
+     `--theme-logo_width` is written by the SDK's applyGlobalStyleTokens from
+     the merchant's `logo_width` global — verified, it emits numeric scalars
+     verbatim, hence the `* 1px`.
+
+     The bar GROWS to fit. Capping the logo to a fixed 80px bar was the actual
+     bug behind "I change it and nothing happens": the cap worked out at 56px
+     while the slider's own minimum was 60, so every value the editor could
+     produce rendered identically. A size control whose entire range is above
+     its own ceiling is not a control.
+
+     The default (48) is chosen so `max(80px, 48+24)` is exactly 80px — the
+     designed bar height is unchanged until a merchant actually asks for a
+     bigger logo. 40vw keeps a large value from eating a phone screen. */
+  --gn-logo-size: min(calc(var(--theme-logo_width, 48) * 1px), 40vw);
+  --gn-header-h: max(80px, calc(var(--gn-logo-size) + 24px));
+  --gn-announce-h: 34px;
+
+  /* ── Motion. One curve for the whole theme (plan §2.4). ───────────────── */
+  --gn-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --gn-dur-fast: 180ms;
+  --gn-dur: 240ms;
+  --gn-dur-slow: 350ms;
+}
+
+@media (max-width: 768px) {
+  [data-genova-v3-app] {
+    --gn-gutter: 24px;
+    /* +16 so the default 48px logo still yields exactly 64px here. */
+    --gn-header-h: max(64px, calc(var(--gn-logo-size) + 16px));
+    /* Lighthouse flags anything under 12px as illegible on mobile, and it is
+       right: 11px uppercase at arm's length on a phone is genuinely hard.
+       Raising the token lifts the ticker, quick-add, trust titles and every
+       other .gn-label in one place. */
+    --gn-fs-label: 0.75rem;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Base
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-genova-v3-app] {
+  background: var(--gn-canvas);
+  color: var(--gn-ink);
+  font-family: var(--gn-font-body);
+  font-size: var(--gn-base-size);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+[data-genova-v3-app] * {
+  box-sizing: border-box;
+}
+
+/* Arabic gets its own family; everything else (metrics, rhythm) is shared. */
+[data-genova-v3-app]:dir(rtl),
+[dir="rtl"] [data-genova-v3-app] {
+  font-family: var(--gn-font-arabic);
+}
+
+[data-genova-v3-app] h1,
+[data-genova-v3-app] h2,
+[data-genova-v3-app] h3,
+[data-genova-v3-app] h4 {
+  font-family: var(--gn-font-heading);
+  font-weight: 500;
+  letter-spacing: var(--gn-tracking);
+  line-height: 1.12;
+  color: var(--gn-ink);
+}
+
+[data-genova-v3-app] img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Focus ring. REQUIRED and non-negotiable: with zero colour this is the only
+   affordance a keyboard user gets, so it must survive every restyle. The inner
+   white ring keeps it visible over dark photography. */
+[data-genova-v3-app] :focus-visible {
+  outline: 2px solid var(--gn-ink);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+[data-genova-v3-app] .gn-on-media:focus-visible {
+  outline-color: #ffffff;
+  box-shadow: 0 0 0 4px var(--gn-ink);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Primitives — the vocabulary every section reuses
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-container {
+    width: 100%;
+    max-width: var(--gn-container);
+    margin-inline: auto;
+    padding-inline: var(--gn-gutter);
+  }
+
+  /* Uppercase micro-label: nav items, eyebrows, "Only 3 left", chip text.
+     Genova leans on this heavily because it can't lean on colour. */
+  .gn-label {
+    font-size: var(--gn-fs-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .gn-nav-link {
+    font-size: var(--gn-fs-nav);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--gn-ink);
+    transition: opacity var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-nav-link:hover {
+    opacity: 0.6;
+  }
+
+  .gn-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding-inline: 1.75rem;
+    border-radius: 999px;
+    font-size: var(--gn-fs-nav);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background-color var(--gn-dur-fast) var(--gn-ease),
+      color var(--gn-dur-fast) var(--gn-ease),
+      opacity var(--gn-dur-fast) var(--gn-ease);
+  }
+
+  .gn-btn-primary {
+    background: var(--gn-btn-primary-bg);
+    color: var(--gn-btn-primary-fg);
+    min-height: 50px;
+  }
+  .gn-btn-primary:hover {
+    background: var(--gn-ink-soft);
+  }
+  .gn-btn-primary:disabled {
+    background: var(--gn-muted-2);
+    cursor: not-allowed;
+  }
+
+  .gn-btn-secondary {
+    background: var(--gn-btn-secondary-bg);
+    color: var(--gn-btn-secondary-fg);
+    min-height: 50px;
+  }
+  .gn-btn-secondary:hover {
+    background: var(--gn-line-strong);
+  }
+
+  .gn-btn-outline {
+    background: transparent;
+    color: var(--gn-ink);
+    border: 1px solid var(--gn-ink);
+  }
+  .gn-btn-outline:hover {
+    background: var(--gn-ink);
+    color: var(--gn-surface);
+  }
+
+  /* Size / variant chip. Unavailable is a diagonal strike, NOT a colour — the
+     only way to say "sold out" without a hue (and WCAG 1.4.1 compliant). */
+  .gn-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding-inline: 0.75rem;
+    border: 1px solid var(--gn-line);
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+    font-size: var(--gn-fs-nav);
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-chip:hover {
+    border-color: var(--gn-line-strong);
+  }
+  .gn-chip[aria-pressed="true"],
+  .gn-chip[data-selected="true"] {
+    border-color: var(--gn-ink);
+    box-shadow: inset 0 0 0 1px var(--gn-ink);
+  }
+  .gn-chip[data-unavailable="true"] {
+    color: var(--gn-muted-2);
+    cursor: not-allowed;
+    background-image: linear-gradient(
+      to top left,
+      transparent calc(50% - 0.5px),
+      var(--gn-line-strong) calc(50% - 0.5px),
+      var(--gn-line-strong) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    );
+  }
+
+  /* 3:4 product plate. The plate colour is what stops a monochrome grid from
+     looking like holes in the page while images load. */
+  .gn-plate {
+    /* `display: block` is LOAD-BEARING, not tidiness. This is rendered as a
+       <span> in most call sites, and an inline box ignores `aspect-ratio`
+       entirely — with only absolutely-positioned children it collapses to 0×0
+       and every product image silently disappears. It shipped broken once:
+       the skeleton rendered correctly (it re-declared display) while the real
+       product card did not. Five modifier rules were independently patching
+       around it; they are now redundant but harmless. */
+    display: block;
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: var(--gn-media-bg);
+  }
+  .gn-plate > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gn-hairline {
+    border: 0;
+    border-top: 1px solid var(--gn-line);
+    margin: 0;
+  }
+
+  /* Price. Compare-at is struck muted text; the live price gains weight, never
+     a colour (plan §2.1a). */
+  .gn-price {
+    font-size: var(--gn-fs-price);
+    font-weight: 500;
+    color: var(--gn-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .gn-price-compare {
+    font-size: var(--gn-fs-price);
+    font-weight: 400;
+    color: var(--gn-muted);
+    text-decoration: line-through;
+    font-variant-numeric: tabular-nums;
+  }
+  /* The LIVE price goes red when discounted, not the struck-through one —
+     colour belongs on the number the shopper will actually pay. */
+  .gn-price-group.is-sale .gn-price {
+    color: var(--gn-sale);
+    font-weight: 700;
+  }
+  .gn-price-saving {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 6px;
+    background: var(--gn-sale);
+    color: var(--gn-sale-fg);
+    font-size: var(--gn-fs-label);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Seamless marquee: the track is duplicated in markup and translated by
+     exactly -50%, so the loop has no visible seam. */
+  .gn-marquee {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+  }
+  .gn-marquee-track {
+    display: flex;
+    flex: 0 0 auto;
+    min-width: 100%;
+    gap: var(--gn-marquee-gap, 3rem);
+    padding-inline-end: var(--gn-marquee-gap, 3rem);
+    animation: gn-marquee var(--gn-marquee-duration, 30s) linear infinite;
+  }
+  .gn-marquee[data-direction="right"] .gn-marquee-track {
+    animation-direction: reverse;
+  }
+  .gn-marquee[data-paused="true"] .gn-marquee-track,
+  .gn-marquee:hover[data-pause-on-hover="true"] .gn-marquee-track {
+    animation-play-state: paused;
+  }
+
+  .gn-skip-link {
+    position: absolute;
+    inset-inline-start: -9999px;
+    z-index: 100;
+  }
+  .gn-skip-link:focus {
+    inset-inline-start: 1rem;
+    top: 1rem;
+    background: var(--gn-ink);
+    color: var(--gn-surface);
+    padding: 0.75rem 1.25rem;
+  }
+
+  /* ── Scroll reveal ─────────────────────────────────────────────────────
+     Hidden state lives behind [data-reveal="armed"], which ONLY ever appears
+     from script and only on elements that were off-screen at mount. No JS, a
+     failed bundle, a crawler, motion off, or an element already in view → the
+     attribute never appears, the rule never matches, content is simply visible.
+     The animation is strictly additive; it can never blank the page.
+
+     The `transition` MUST live on the base `.gn-reveal`, not on the armed
+     state. A transition is started by the AFTER-change style: when the
+     attribute flips armed→in, the element matches only `[data-reveal="in"]`,
+     so declaring it on `[armed]` left the after-change style with
+     `transition-duration: 0s` and the browser jumped straight to the end.
+     Measured: armed = opacity 0 / duration 0.7s, one frame later = opacity 1 /
+     duration 0s. Arming was always correct; nothing ever animated. */
+  .gn-reveal {
+    transition:
+      opacity 700ms var(--gn-ease) var(--gn-reveal-delay, 0ms),
+      transform 700ms var(--gn-ease) var(--gn-reveal-delay, 0ms),
+      clip-path 800ms var(--gn-ease) var(--gn-reveal-delay, 0ms);
+  }
+  .gn-reveal[data-reveal="armed"] {
+    opacity: 0;
+  }
+  .gn-reveal[data-reveal="armed"].is-up {
+    transform: translateY(18px);
+  }
+  /* A wipe rather than a slide — the editorial move. The box never changes, so
+     nothing around it shifts while it reveals (no CLS). */
+  .gn-reveal[data-reveal="armed"].is-mask {
+    clip-path: inset(0 0 100% 0);
+  }
+  .gn-reveal[data-reveal="in"] {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .gn-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .gn-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    transition: opacity var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-icon-btn:hover {
+    opacity: 0.6;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   gn-header
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-header {
+    position: relative;
+    z-index: 50;
+  }
+  /* Sticky + over-hero together: the header must scroll WITH the hero for the
+     first viewport, so `sticky` is applied to the bar, not the whole header —
+     otherwise the ticker sticks too and eats 34px of every screen. */
+  .gn-header.is-sticky .gn-header-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  /* STRUCTURE and PAINT are two separate axes, deliberately.
+     `is-over` lifts the bar out of flow (homepage only) so the hero starts at
+     the top of the page and the nav floats on it. `is-transparent` /
+     `is-painted` only change colours.
+     Keeping them separate is what stops the 80px content jump: if the paint
+     change also moved the bar back into flow, everything below would shift down
+     the instant the shopper scrolled past 24px. */
+  .gn-header.is-over .gn-header-bar {
+    position: absolute;
+    inset-inline: 0;
+    /* Explicit: `top: auto` on a fixed box resolves to the STATIC position,
+       and the browser resolved that to 0 — so the bar landed on top of the
+       ticker it owns and the nav labels overprinted the marquee. */
+    top: 0;
+  }
+  /* Over-hero and NOT yet scrolled: stay absolute so the bar travels with the
+     hero and sits BELOW the ticker. Only once painted (>24px scrolled, by
+     which point the ticker has left the viewport) does it become fixed. That
+     ordering is what stops the two from ever occupying the same 34px. */
+  .gn-header.is-over:not(.is-painted) .gn-header-bar {
+    top: var(--gn-announce-h, 0px);
+  }
+  .gn-header.is-over.is-sticky.is-painted .gn-header-bar {
+    position: fixed;
+    top: 0;
+  }
+  .gn-header.is-transparent .gn-header-bar {
+    background: transparent;
+    color: #ffffff;
+    border-bottom: 1px solid transparent;
+  }
+  /* White nav over a photograph is only legible if the photograph cooperates.
+     A denim texture or a bright sky eats it — which is exactly what the first
+     screenshots showed. This is a top-down scrim UNDER the bar: strong enough
+     to hold the type, short enough that it reads as light falloff rather than
+     a band, and `pointer-events: none` so it never intercepts a click.
+     Only on the transparent state; the painted header has a real background. */
+  .gn-header.is-transparent .gn-header-bar::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: calc(100% + 48px);
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.55) 0%,
+      rgba(0, 0, 0, 0.32) 45%,
+      rgba(0, 0, 0, 0) 100%
+    );
+  }
+  .gn-header.is-transparent .gn-header-inner {
+    position: relative;
+    z-index: 1;
+  }
+  /* The wordmark and nav also carry a soft shadow — belt and braces on a light
+     photograph, invisible on a dark one. */
+  .gn-header.is-transparent .gn-wordmark,
+  .gn-header.is-transparent .gn-header-nav,
+  .gn-header.is-transparent .gn-header-actions {
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
+  }
+  .gn-header.is-painted .gn-header-bar {
+    background: var(--gn-canvas);
+    color: var(--gn-ink);
+    border-bottom: 1px solid var(--gn-line);
+  }
+  .gn-header-bar {
+    transition:
+      background-color var(--gn-dur) var(--gn-ease),
+      color var(--gn-dur) var(--gn-ease),
+      border-color var(--gn-dur) var(--gn-ease);
+  }
+
+  .gn-header-inner {
+    display: grid;
+    /* `minmax(0, 1fr)`, NOT `1fr`. A bare `1fr` is `minmax(auto, 1fr)`, and
+       that auto floor is a min-content floor: as soon as one side's content
+       exceeds its fair share, the track refuses to shrink and the grid takes
+       the difference out of the OTHER side — which slides the centre column
+       off-centre. That is precisely what happened to the logo on phones.
+
+         390px: 137px per side, actions need 132 → fits, looks centred
+         360px: 122px per side, actions need 132 → left track robbed by 10px
+
+       So it looked fine on the viewport I tested and drifted on the narrower
+       one that most Android users actually have. With the floor removed the
+       two side tracks stay exactly equal at every width and the centre column
+       is genuinely centred; overflow is absorbed by the actions instead of
+       displacing the logo. */
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    min-height: var(--gn-header-h);
+    width: 100%;
+    max-width: var(--gn-container);
+    margin-inline: auto;
+    padding-inline: var(--gn-gutter);
+  }
+
+  .gn-header-brand {
+    display: flex;
+    align-items: center;
+    justify-self: start;
+  }
+  /* The home link wraps a 36px logo on phones, which is a 36x36 tap target.
+     Height only — widening it would grow the centre track and eat the 2px of
+     clearance the 320px layout was measured to have. 36x44 clears WCAG 2.5.8
+     (24x24) comfortably without disturbing a centring result verified to
+     0.00px at every width. */
+  .gn-header-brand > a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .gn-header-brand img {
+    /* NO sizing here at all. Sizing is owned by the `style` prop passed to the
+       SDK's <Logo> in gn-header.tsx.
+
+       A `max-height` here was NOT harmless: max-height clamps a height from any
+       origin — inline included, because they are different properties and not a
+       specificity contest — so this rule silently squashed the shaped box from
+       56x56 to 56x52 and would have rendered a `circle` logo as an ellipse. The
+       two caps also disagreed by 4px (-24 inline vs -28 here), which is the kind
+       of thing that is invisible until someone measures it. */
+    object-fit: contain;
+  }
+  .gn-wordmark {
+    font-family: var(--gn-font-heading);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: currentColor;
+  }
+
+  .gn-header-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    justify-self: center;
+  }
+  .gn-header-nav .gn-nav-link {
+    color: currentColor;
+  }
+
+  .gn-nav-group {
+    position: relative;
+  }
+  .gn-nav-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .gn-nav-caret {
+    transition: transform var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-nav-caret.is-open {
+    transform: rotate(180deg);
+  }
+  .gn-nav-panel {
+    position: absolute;
+    top: 100%;
+    inset-inline-start: 0;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 0;
+    background: var(--gn-surface);
+    border: 1px solid var(--gn-line);
+    /* Opacity + 4px lift, per the reference's dropdown motion.
+       Hidden with `visibility`, NOT the `hidden` attribute or `display:none`:
+       display can't be transitioned, so the panel would pop instead of fading.
+       `visibility: hidden` still removes it from the tab order and the
+       accessibility tree, and it DOES participate in transitions. */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition:
+      opacity var(--gn-dur-fast) var(--gn-ease),
+      transform var(--gn-dur-fast) var(--gn-ease),
+      visibility 0s linear var(--gn-dur-fast);
+  }
+  .gn-nav-panel.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+  .gn-nav-child {
+    padding: 0.5rem 1.25rem;
+    font-size: var(--gn-fs-nav);
+    font-weight: 500;
+    color: var(--gn-ink);
+    white-space: nowrap;
+    transition: opacity var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-nav-child:hover {
+    opacity: 0.6;
+  }
+
+  .gn-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    justify-self: end;
+    gap: 0.25rem;
+    /* Grid items default to `min-width: auto`; without this the flex row still
+       refuses to compress and pushes back into the centre column. */
+    min-width: 0;
+  }
+  /* Left icon group. Exists so the header has EQUAL visual weight either side
+     of the logo: with one icon left and three right, a mathematically centred
+     logo still reads as off-centre — measured 0.00px and still reported as
+     wrong, which is the tell that the problem was optical, not geometric. */
+  .gn-header-lead {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    justify-self: start;
+    min-width: 0;
+  }
+  .gn-cart-btn {
+    position: relative;
+  }
+  /* Count sits on the bag rather than beside it, so the actions row keeps a
+     fixed width and nothing shifts when the first item is added.
+     Background and digit are set EXPLICITLY per paint state. An earlier version
+     used `background: currentColor`, which made the digit — also currentColor —
+     invisible against its own badge. */
+  .gn-cart-count {
+    position: absolute;
+    top: 5px;
+    inset-inline-end: 3px;
+    min-width: 16px;
+    height: 16px;
+    padding-inline: 3px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .gn-header.is-painted .gn-cart-count {
+    background: var(--gn-ink);
+    color: var(--gn-surface);
+  }
+  .gn-header.is-transparent .gn-cart-count {
+    background: #ffffff;
+    color: var(--gn-ink);
+  }
+
+  .gn-header-burger {
+    display: none;
+    justify-self: start;
+  }
+
+  /* ── Announcement ticker ─────────────────────────────────────────────── */
+  .gn-ticker {
+    background: var(--gn-ticker-bg);
+    color: var(--gn-ticker-fg);
+    min-height: var(--gn-announce-h);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .gn-ticker .gn-marquee {
+    width: 100%;
+  }
+  .gn-ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 2.25rem;
+    font-size: var(--gn-fs-label);
+    font-weight: 500;
+    /* Slight positive tracking: at 11-12px uppercase on a dark band, tight
+       letterforms close up and the line reads as a smear at speed. */
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .gn-ticker-dot {
+    opacity: 0.45;
+    font-size: 1.25em;
+    line-height: 0;
+  }
+
+  /* ── Search panel ────────────────────────────────────────────────────── */
+  .gn-search-panel {
+    background: var(--gn-surface);
+    border-bottom: 1px solid var(--gn-line);
+    color: var(--gn-ink);
+  }
+  .gn-search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: var(--gn-container);
+    margin-inline: auto;
+    padding: 1rem var(--gn-gutter);
+  }
+  .gn-search-input {
+    flex: 1;
+    min-height: 44px;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--gn-line);
+    font-size: 1rem;
+    color: var(--gn-ink);
+  }
+  .gn-search-input::placeholder {
+    color: var(--gn-muted-2);
+  }
+  .gn-search-submit {
+    min-height: 44px;
+  }
+
+  /* ── Mobile drawer ───────────────────────────────────────────────────── */
+  .gn-drawer-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: var(--gn-overlay);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms var(--gn-ease);
+  }
+  .gn-drawer-scrim.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .gn-drawer {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 61;
+    width: min(88vw, 380px);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem var(--gn-gutter) 2rem;
+    overflow-y: auto;
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+    transform: translateX(-100%);
+    /* Same reason as the nav panel: `visibility` rather than the `hidden`
+       attribute, so the slide animates AND a closed drawer stays out of the tab
+       order. Without it, every link in the closed drawer is still tabbable and
+       a keyboard user disappears off-screen mid-page. */
+    visibility: hidden;
+    transition:
+      transform 280ms var(--gn-ease),
+      visibility 0s linear 280ms;
+  }
+  [dir="rtl"] .gn-drawer {
+    transform: translateX(100%);
+  }
+  .gn-drawer.is-open,
+  [dir="rtl"] .gn-drawer.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .gn-drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 0.5rem;
+  }
+  .gn-drawer-nav {
+    display: flex;
+    flex-direction: column;
+  }
+  .gn-drawer-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 52px;
+    border-bottom: 1px solid var(--gn-line);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    list-style: none;
+  }
+  .gn-drawer-link::-webkit-details-marker {
+    display: none;
+  }
+  .gn-drawer-group[open] > .gn-drawer-link .gn-nav-caret,
+  .gn-drawer-group[open] > .gn-drawer-link svg {
+    transform: rotate(180deg);
+  }
+  .gn-drawer-child {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline-start: 1rem;
+    border-bottom: 1px solid var(--gn-line);
+    font-size: 0.875rem;
+    color: var(--gn-muted);
+  }
+  .gn-drawer-section-label {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--gn-muted);
+  }
+  .gn-drawer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  .gn-drawer-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  .gn-drawer-tile .gn-plate {
+    display: block;
+    aspect-ratio: 1 / 1;
+  }
+  .gn-drawer-tile-label {
+    /* The drawer is mobile-only, so this must clear 12px on its own — it does
+       not inherit the --gn-fs-label bump, which is what left it at 11px after
+       the other four were fixed. */
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .gn-drawer-offer {
+    display: block;
+    padding: 1rem;
+    background: var(--gn-ticker-bg);
+    color: var(--gn-ticker-fg);
+    font-size: var(--gn-fs-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+}
+
+@media (min-width: 1025px) {
+  .gn-header-lead {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .gn-header-nav {
+    display: none;
+  }
+  .gn-header-burger {
+    display: inline-flex;
+  }
+  .gn-header-inner {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+  .gn-header-brand {
+    justify-self: center;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   gn-hero-carousel
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-hero {
+    position: relative;
+    background: var(--gn-media-bg);
+    overflow: hidden;
+  }
+  /* Height comes from the SECTION, never from the image, so swapping slides —
+     or an image that hasn't loaded — cannot shift the page. `svh` rather than
+     `vh` so mobile browser chrome doesn't crop the composition. */
+  .gn-hero.is-full {
+    height: calc(100svh - var(--gn-announce-h));
+  }
+  .gn-hero.is-large {
+    height: 78svh;
+  }
+  .gn-hero.is-medium {
+    height: 62svh;
+  }
+
+  .gn-hero-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .gn-hero-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 500ms var(--gn-ease);
+  }
+  .gn-hero-slide.is-active {
+    opacity: 1;
+  }
+  /* `--gn-hero-text` is the merchant override; the light/dark preset is the
+     fallback, so an unset picker changes nothing. */
+  .gn-hero-slide.is-light {
+    color: var(--gn-hero-text, #ffffff);
+  }
+  .gn-hero-slide:not(.is-light) {
+    color: var(--gn-hero-text, var(--gn-ink));
+  }
+  .gn-hero-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Faces and campaign type live in the upper-middle of a fashion frame;
+       centre-cropping a tall phone viewport cuts heads off. */
+    object-position: 50% 30%;
+  }
+  .gn-hero-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--gn-media-bg);
+  }
+  .gn-hero-scrim {
+    position: absolute;
+    inset: 0;
+    background: #000000;
+  }
+
+  /* Slide variant: the frame becomes a flex row and moves as ONE track, so the
+     slides stay side by side instead of stacking. Translating each slide
+     individually (the obvious version) puts them all in the same place. */
+  .gn-hero.is-slide .gn-hero-frame {
+    display: flex;
+    transform: translateX(var(--gn-hero-offset, 0%));
+    transition: transform 500ms var(--gn-ease);
+  }
+  .gn-hero.is-slide .gn-hero-slide {
+    position: relative;
+    inset: auto;
+    flex: 0 0 100%;
+    opacity: 1;
+    transition: none;
+  }
+  /* RTL runs the other way; without this the track slides off-screen. */
+  [dir="rtl"] .gn-hero.is-slide .gn-hero-frame {
+    transform: translateX(calc(-1 * var(--gn-hero-offset, 0%)));
+  }
+
+  .gn-hero-copy {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.875rem;
+    max-width: min(46ch, 90%);
+    padding: var(--gn-gutter);
+  }
+  .gn-hero-copy.is-bottom-start {
+    inset-block-end: 3vh;
+    inset-inline-start: 0;
+  }
+  .gn-hero-copy.is-bottom-center {
+    inset-block-end: 3vh;
+    inset-inline: 0;
+    margin-inline: auto;
+    align-items: center;
+    text-align: center;
+  }
+  .gn-hero-copy.is-center {
+    inset: 0;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-inline: auto;
+  }
+  .gn-hero-eyebrow {
+    opacity: 0.85;
+  }
+  /* With no image the slide sits on the light `--gn-media-bg` plate, so white
+     copy measures 1.19:1 — invisible. The headline already inherited ink here;
+     the eyebrow did not, which is how the two disagreed. Both are ink now
+     whenever there is no photograph to sit on. */
+  .gn-hero-slide:has(.gn-hero-placeholder) .gn-hero-eyebrow,
+  .gn-hero-slide:has(.gn-hero-placeholder) .gn-hero-headline,
+  .gn-hero-slide:has(.gn-hero-placeholder) .gn-hero-subline {
+    color: var(--gn-ink);
+  }
+  .gn-hero-headline {
+    font-size: var(--gn-fs-display);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: var(--gn-tracking);
+    margin: 0;
+    color: currentColor;
+  }
+  .gn-hero-subline {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    opacity: 0.9;
+  }
+  .gn-hero-cta {
+    background: var(--gn-hero-cta-bg, #ffffff);
+    color: var(--gn-hero-cta-fg, var(--gn-ink));
+    margin-top: 0.5rem;
+  }
+  .gn-hero-slide:not(.is-light) .gn-hero-cta {
+    background: var(--gn-hero-cta-bg, var(--gn-ink));
+    color: var(--gn-hero-cta-fg, var(--gn-surface));
+  }
+
+  /* Numbered pagination, bottom-end. No prev/next arrows — the reference has
+     none, and the numbers double as the keyboard affordance. */
+  .gn-hero-pagination {
+    position: absolute;
+    inset-block-end: 2.5vh;
+    inset-inline-end: var(--gn-gutter);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 2;
+  }
+  .gn-hero-dot {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: transparent;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition:
+      border-color var(--gn-dur-fast) var(--gn-ease),
+      background-color var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-hero-dot:hover {
+    border-color: #ffffff;
+  }
+  .gn-hero-dot.is-active {
+    border-color: #ffffff;
+    background: rgba(255, 255, 255, 0.18);
+  }
+  /* Pagination sits inside the 44px touch-target rule via a padded hit area
+     rather than a 44px circle, which would look clumsy at this scale. */
+  .gn-hero-dot::before {
+    content: "";
+    position: absolute;
+    inset: -7px;
+  }
+
+  .gn-hero-empty {
+    height: auto;
+    background: var(--gn-media-bg);
+  }
+  .gn-hero-empty-inner {
+    padding-block: 4rem;
+    text-align: center;
+    color: var(--gn-muted);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   gn-brand-marquee
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-statement {
+    overflow: hidden;
+  }
+  .gn-statement.is-canvas {
+    background: var(--gn-canvas);
+    color: var(--gn-ink);
+  }
+  .gn-statement.is-surface {
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+  }
+  .gn-statement.is-ink {
+    background: var(--gn-ticker-bg);
+    color: var(--gn-ticker-fg);
+  }
+  .gn-statement.has-borders {
+    border-block: 1px solid var(--gn-line);
+  }
+  .gn-statement-text {
+    white-space: nowrap;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .gn-statement-text.is-sm {
+    font-size: 0.9375rem;
+  }
+  .gn-statement-text.is-md {
+    font-size: 1.125rem;
+  }
+  .gn-statement-text.is-lg {
+    font-size: 1.5rem;
+  }
+  .gn-statement-credit {
+    margin: 0.75rem 0 0;
+    padding-inline: var(--gn-gutter);
+    color: var(--gn-muted);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   gn-collection-rail
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-rail-section {
+    padding-block: 4rem;
+  }
+  .gn-rail-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .gn-section-heading {
+    font-size: var(--gn-fs-heading);
+    font-weight: 500;
+    margin: 0;
+  }
+  .gn-rail-head-end {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .gn-textlink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--gn-ink);
+    border-bottom: 1px solid var(--gn-line-strong);
+    padding-bottom: 2px;
+    transition: border-color var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-textlink:hover {
+    border-color: var(--gn-ink);
+  }
+  .gn-rail-arrows {
+    display: flex;
+    gap: 0.375rem;
+  }
+  .gn-rail-arrow {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--gn-line);
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-rail-arrow:hover {
+    border-color: var(--gn-ink);
+  }
+
+  /* `proximity`, NOT `mandatory` — this one keyword cost the home page its
+     entire Performance score.
+     A MANDATORY snap container must re-align to a snap point whenever its
+     content re-lays out. The self-hosted font swapping in does exactly that, so
+     the track emitted real `scroll` events at ~167-232ms. Chrome stops
+     recording Largest Contentful Paint at the first user-interaction signal and
+     scroll counts as one — so home produced NO LCP entry at all, Lighthouse
+     scored Performance `null`, and (much worse) CrUX/RUM collect no LCP field
+     data for the page either.
+     Measured: 0/6 runs emitted LCP with mandatory; forcing reduced-motion
+     restored it at 172ms. `proximity` keeps card-aligned snapping under a real
+     user swipe without forcing a re-snap on layout change.
+     `overflow-anchor: none` stops scroll anchoring adding its own adjustment. */
+  .gn-rail-track {
+    display: grid;
+    grid-auto-flow: column;
+    /* A FLOOR on card width. `columns_desktop` is a merchant setting and a
+       saved store keeps whatever it was seeded with, so a container that is
+       narrower than the setting assumes produced 90px cards — too small to
+       read a product name, let alone a price and a button. Below the floor the
+       rail simply scrolls further, which is what a rail is for. */
+    grid-auto-columns: max(
+      190px,
+      calc((100% - (var(--gn-rail-per-view) - 1) * 16px) / var(--gn-rail-per-view))
+    );
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    overflow-anchor: none;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .gn-rail-track::-webkit-scrollbar {
+    display: none;
+  }
+  .gn-rail-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--gn-rail-per-view), 1fr);
+    gap: 16px;
+  }
+  .gn-rail-card {
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: var(--gn-ink);
+  }
+  .gn-rail-plate.is-portrait {
+    aspect-ratio: 3 / 4;
+  }
+  .gn-rail-plate.is-square {
+    aspect-ratio: 1 / 1;
+  }
+  .gn-rail-plate.is-landscape {
+    aspect-ratio: 4 / 3;
+  }
+  /* Subtle scale only — no shadow, no lift. Overflow is clipped by .gn-plate. */
+  .gn-rail-plate img {
+    transition: transform 600ms var(--gn-ease);
+  }
+  .gn-rail-card:hover .gn-rail-plate img {
+    transform: scale(1.03);
+  }
+  .gn-rail-card-label {
+    color: var(--gn-ink);
+  }
+}
+
+@media (max-width: 900px) {
+  .gn-rail-track,
+  .gn-rail-grid {
+    --gn-rail-per-view: 2.2;
+  }
+  .gn-rail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .gn-rail-section {
+    padding-block: 2.5rem;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   gn-editorial-banner
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-banner.is-contained {
+    max-width: var(--gn-container);
+    margin-inline: auto;
+    padding-inline: var(--gn-gutter);
+  }
+  .gn-banner-media {
+    position: relative;
+    overflow: hidden;
+    background: var(--gn-media-bg);
+  }
+  .gn-banner.is-short .gn-banner-media {
+    height: 42svh;
+  }
+  .gn-banner.is-medium .gn-banner-media {
+    height: 64svh;
+  }
+  .gn-banner.is-tall .gn-banner-media {
+    height: 86svh;
+  }
+  .gn-banner-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 40%;
+  }
+  .gn-banner-scrim {
+    position: absolute;
+    inset: 0;
+    background: #000000;
+  }
+  .gn-banner-copy {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: var(--gn-gutter);
+    color: #ffffff;
+  }
+  .gn-banner-copy.is-center {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .gn-banner-copy.is-bottom-start {
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+  .gn-banner-copy.is-bottom-end {
+    align-items: flex-end;
+    justify-content: flex-end;
+    text-align: end;
+  }
+  .gn-banner-heading {
+    font-size: var(--gn-fs-title);
+    font-weight: 500;
+    line-height: 1.08;
+    margin: 0;
+    color: currentColor;
+    max-width: 22ch;
+  }
+  .gn-banner-cta {
+    background: #ffffff;
+    color: var(--gn-ink);
+  }
+  .gn-banner-empty {
+    padding: 3rem var(--gn-gutter);
+    text-align: center;
+    color: var(--gn-muted);
+    border: 1px dashed var(--gn-line-strong);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Product card, grids, rails
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-grid {
+    display: grid;
+    /* `minmax(0, 1fr)` — the SAME min-content floor that pushed the header
+       logo off-centre, in a second place. A bare `1fr` refuses to shrink a
+       card below its own content, so at 320px three cards floored at ~113px
+       each and pinned the page at 371px no matter how narrow the viewport got.
+       A `scrollWidth` that stays constant as the viewport shrinks is the
+       signature of exactly this. */
+    grid-template-columns: repeat(var(--gn-grid-cols, 3), minmax(0, 1fr));
+    gap: 16px;
+  }
+  .gn-rail-item {
+    scroll-snap-align: start;
+  }
+
+  .gn-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Positioning context for the quick-add overlay. The button cannot go
+     INSIDE .gn-card-media (that is an <a>, and a <button> in an <a> is invalid
+     and swallows the click), and as a sibling of .gn-card it anchored to the
+     full card height and landed on the price. A shared wrapper is the fix. */
+  .gn-card-mediawrap {
+    position: relative;
+    display: block;
+  }
+  .gn-card-media {
+    position: relative;
+    display: block;
+  }
+  /* Both images occupy the SAME box. Only opacity animates — no src swap, no
+     reflow, and the second image is already decoded when the hover starts. */
+  .gn-card-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity var(--gn-dur-slow) var(--gn-ease);
+  }
+  .gn-card-img.is-secondary {
+    opacity: 0;
+  }
+  .gn-card:hover .gn-card-img.is-secondary,
+  .gn-card:focus-within .gn-card-img.is-secondary {
+    opacity: 1;
+  }
+
+  .gn-card-tags {
+    position: absolute;
+    top: 10px;
+    inset-inline-start: 10px;
+    display: flex;
+    gap: 0.375rem;
+  }
+  .gn-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+    border: 1px solid var(--gn-ink);
+  }
+  /* Only the SALE chip is coloured. "Sold out" and "Coming soon" stay ink on
+     purpose — they are states, not savings, and colouring them would spend the
+     loudest signal on the one product the shopper cannot buy. */
+  .gn-tag.is-sale {
+    background: var(--gn-sale);
+    color: var(--gn-sale-fg);
+    border-color: var(--gn-sale);
+    font-weight: 700;
+  }
+
+  /* Quick add sits over the image bottom on hover; on touch (no hover) it is
+     always visible, because a control that needs a hover is a control a phone
+     user never finds. */
+  .gn-card-quickadd {
+    position: absolute;
+    inset-inline: 10px;
+    bottom: 10px;
+    min-height: 44px;
+    /* One line, always. At 90px of card the label broke to "+ QUICK / ADD"
+       and the button grew tall enough to cover the price behind it. */
+    white-space: nowrap;
+    padding-inline: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* ALWAYS VISIBLE, at every pointer type. It used to fade in on hover,
+       which meant it did not exist for any phone user — and phones are most of
+       this store's traffic. A hover-only buy affordance is a buy affordance
+       most shoppers never see. */
+    background: var(--gn-ink);
+    color: var(--gn-surface);
+    border: 1px solid var(--gn-ink);
+    font-size: var(--gn-fs-label);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    /* Always visible, every pointer type. It was hover-gated on desktop, which
+       made the primary buy affordance invisible until the shopper happened to
+       move the mouse over a card. Yousef asked for the buy path to be the
+       loudest thing on the card; a control you have to discover is the
+       opposite of that. Hover now only changes its colour. */
+    opacity: 1;
+    transform: none;
+    transition:
+      background-color var(--gn-dur-fast) var(--gn-ease),
+      border-color var(--gn-dur-fast) var(--gn-ease),
+      color var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-card-quickadd:hover {
+    background: var(--gn-sale);
+    border-color: var(--gn-sale);
+    color: var(--gn-sale-fg);
+  }
+
+  .gn-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.875rem 0.875rem 1.125rem;
+    background: var(--gn-surface);
+  }
+  .gn-card-title {
+    /* Bumped from 0.9375/500. On a monochrome grid the card text is the only
+       thing distinguishing one product from the next, and it was reading as
+       caption-weight metadata rather than as the product. */
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--gn-ink);
+    line-height: 1.35;
+  }
+  .gn-card-color,
+  .gn-collections-count {
+    font-size: 0.8125rem;
+    color: var(--gn-muted);
+    margin: 0;
+  }
+  .gn-card-lowstock {
+    color: var(--gn-sale);
+    font-weight: 700;
+    margin: 0.25rem 0 0;
+  }
+
+  .gn-price-group {
+    display: inline-flex;
+    /* WRAP. With the grid floor removed a 131px card at 320px exposed this:
+       price + compare-at + saving have a min-content of 144.6px and this row
+       would not break, spilling 27.6px over the neighbouring card. The old
+       overflow bug was hiding it by never letting cards get that narrow. */
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.5rem;
+  }
+  .gn-price-group.is-lg .gn-price {
+    font-size: 1.125rem;
+  }
+
+  .gn-card.is-skeleton .gn-plate {
+    display: block;
+  }
+  .gn-skel-line {
+    display: block;
+    height: 12px;
+    background: var(--gn-line);
+    border-radius: 2px;
+  }
+  .gn-skel-line.is-short {
+    width: 40%;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Sheets, modals, forms
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-sheet-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: var(--gn-overlay);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms var(--gn-ease);
+  }
+  .gn-sheet-scrim.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* End panel above 768px, bottom sheet below — matching the reference's quick
+     add and filter behaviour. */
+  .gn-sheet,
+  .gn-modal {
+    position: fixed;
+    z-index: 71;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+    overflow-y: auto;
+    padding: 1rem 1.25rem 1.5rem;
+  }
+  .gn-sheet {
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: min(92vw, 420px);
+  }
+  .gn-modal {
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    transform: translate(-50%, -50%);
+    width: min(92vw, 560px);
+    max-height: 86vh;
+  }
+  [dir="rtl"] .gn-modal {
+    transform: translate(50%, -50%);
+  }
+  @media (max-width: 768px) {
+    .gn-sheet {
+      inset: auto 0 0 0;
+      width: 100%;
+      max-height: 86vh;
+      border-top: 1px solid var(--gn-line);
+    }
+  }
+
+  .gn-sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .gn-sheet-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    flex: 1;
+  }
+  .gn-sheet-cta {
+    width: 100%;
+  }
+  .gn-sheet-product {
+    display: flex;
+    gap: 0.875rem;
+    align-items: center;
+  }
+  .gn-sheet-thumb {
+    width: 68px;
+    flex: 0 0 68px;
+    aspect-ratio: 3 / 4;
+  }
+  .gn-sheet-title {
+    font-weight: 500;
+    margin: 0 0 0.25rem;
+  }
+
+  .gn-axis {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+  .gn-axis-legend {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    color: var(--gn-muted);
+    margin-bottom: 0.5rem;
+    padding: 0;
+  }
+  .gn-axis-chosen {
+    color: var(--gn-ink);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+  }
+  .gn-axis-guide {
+    margin-inline-start: auto;
+  }
+  .gn-axis-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .gn-swatch {
+    min-height: 44px;
+    padding-inline: 0.875rem;
+    border: 1px solid var(--gn-line);
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+    border-radius: var(--gn-radius-swatch);
+    cursor: pointer;
+    font-size: 0.8125rem;
+  }
+  .gn-swatch[data-selected="true"] {
+    border-color: var(--gn-ink);
+    box-shadow: inset 0 0 0 1px var(--gn-ink);
+  }
+
+  /* Status copy: ink, a hairline card, and words. Never colour alone — Genova
+     has no red or green, and colour-only meaning fails WCAG 1.4.1. */
+  .gn-formnote {
+    margin: 0;
+    padding: 0.75rem 0.875rem;
+    border: 1px solid var(--gn-line-strong);
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+    font-size: 0.875rem;
+  }
+  .gn-formnote.is-ok {
+    border-color: var(--gn-line);
+  }
+
+  .gn-input,
+  .gn-select {
+    min-height: 44px;
+    padding-inline: 0.75rem;
+    border: 1px solid var(--gn-line);
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+    font: inherit;
+    font-size: 0.875rem;
+  }
+  .gn-select {
+    cursor: pointer;
+  }
+
+  .gn-table-wrap {
+    overflow-x: auto;
+  }
+  .gn-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .gn-table th,
+  .gn-table td {
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid var(--gn-line);
+    text-align: start;
+  }
+  .gn-table th {
+    font-size: var(--gn-fs-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gn-muted);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Accordion
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-acc {
+    border-bottom: 1px solid var(--gn-line);
+  }
+  .gn-acc-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 52px;
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+  .gn-acc-summary::-webkit-details-marker {
+    display: none;
+  }
+  .gn-acc-caret {
+    flex: 0 0 auto;
+    transition: transform var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-acc[open] .gn-acc-caret {
+    transform: rotate(180deg);
+  }
+  /* 0fr → 1fr animates to AUTO height without measuring anything in JS.
+     `height: auto` cannot be transitioned, and a max-height guess either clips
+     long copy or makes short copy crawl against an invented ceiling. */
+  .gn-acc-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 220ms var(--gn-ease);
+  }
+  .gn-acc[open] .gn-acc-panel {
+    grid-template-rows: 1fr;
+  }
+  .gn-acc-inner {
+    overflow: hidden;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    color: var(--gn-ink-soft);
+  }
+  .gn-acc[open] .gn-acc-inner {
+    padding-bottom: 1rem;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Listing pages
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-plp,
+  .gn-collections,
+  .gn-search {
+    padding-block: 2.5rem 4rem;
+  }
+  .gn-plp-head {
+    text-align: center;
+    padding-block: 2rem 2.5rem;
+  }
+  .gn-page-title {
+    font-size: var(--gn-fs-title);
+    font-weight: 400;
+    margin: 0;
+  }
+  .gn-plp-desc {
+    max-width: 62ch;
+    margin: 1rem auto 0;
+    color: var(--gn-muted);
+    line-height: 1.7;
+  }
+
+  .gn-plp-body[data-with-rail="true"] {
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  .gn-plp-rail {
+    position: sticky;
+    top: calc(var(--gn-header-h) + 16px);
+  }
+  .gn-plp-rail-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+    color: var(--gn-ink);
+  }
+  .gn-filters {
+    display: flex;
+    flex-direction: column;
+  }
+  .gn-filter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 52px;
+    border-bottom: 1px solid var(--gn-line);
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .gn-filter-acc {
+    border-bottom: 1px solid var(--gn-line);
+  }
+  .gn-filter-price {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .gn-filter-price .gn-input {
+    width: 100%;
+    min-width: 0;
+  }
+  .gn-filter-sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .gn-filter-clear {
+    align-self: flex-start;
+    margin-top: 1rem;
+  }
+  /* Switch: ink fill when on, hairline track when off — shape, not colour. */
+  .gn-switch {
+    appearance: none;
+    width: 40px;
+    height: 22px;
+    border-radius: 999px;
+    border: 1px solid var(--gn-line-strong);
+    background: var(--gn-surface);
+    position: relative;
+    cursor: pointer;
+    transition: background-color var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    inset-inline-start: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: var(--gn-line-strong);
+    transition:
+      transform var(--gn-dur-fast) var(--gn-ease),
+      background-color var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-switch:checked {
+    background: var(--gn-ink);
+    border-color: var(--gn-ink);
+  }
+  .gn-switch:checked::after {
+    background: var(--gn-surface);
+    transform: translateX(18px);
+  }
+  [dir="rtl"] .gn-switch:checked::after {
+    transform: translateX(-18px);
+  }
+
+  .gn-plp-toolbar {
+    display: flex;
+    /* WRAP. Unwrapped, this row's min-content sum is Filters 137 + count 74 +
+       Sort 155 + 2x16 gap = 398px, and flex children default to
+       `min-width: auto` so none of them will shrink below their content. The
+       row therefore forced the whole PAGE to 422px and `/products` +
+       `/collections/<slug>` scrolled sideways on every phone.
+       This is why a static sweep for hard widths and `100vw` found nothing:
+       the overflow is an emergent min-content sum, not a declared width. */
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--gn-line);
+    margin-bottom: 1.5rem;
+  }
+  /* Let each control shrink instead of shoving the row wider. */
+  .gn-plp-toolbar > * {
+    min-width: 0;
+  }
+  .gn-plp-sort .gn-select {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .gn-plp-count {
+    color: var(--gn-muted);
+    margin: 0;
+  }
+  .gn-plp-sort {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-inline-start: auto;
+  }
+  .gn-plp-sort .gn-label {
+    color: var(--gn-muted);
+  }
+  .gn-plp-filter-btn {
+    display: none;
+  }
+  .gn-plp-note {
+    margin-bottom: 1.5rem;
+  }
+
+  .gn-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 4rem 1rem;
+    text-align: center;
+  }
+  .gn-empty-title {
+    font-size: 1.125rem;
+    margin: 0;
+  }
+  .gn-empty-hint {
+    color: var(--gn-muted);
+    margin: 0;
+  }
+
+  .gn-search-big {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 640px;
+    margin: 1.5rem auto 0;
+    border-bottom: 1px solid var(--gn-ink);
+    padding-bottom: 0.5rem;
+  }
+  .gn-search-big-input {
+    flex: 1;
+    min-height: 44px;
+    border: 0;
+    background: transparent;
+    font-size: 1.125rem;
+    color: var(--gn-ink);
+  }
+  .gn-search-big-input::placeholder {
+    color: var(--gn-muted-2);
+  }
+}
+
+@media (max-width: 900px) {
+  .gn-plp-body[data-with-rail="true"] {
+    grid-template-columns: 1fr;
+  }
+  .gn-plp-rail {
+    display: none;
+  }
+  .gn-plp-filter-btn {
+    display: inline-flex;
+  }
+  .gn-plp-sort .gn-label {
+    display: none;
+  }
+  .gn-grid {
+    /* minmax(0,1fr) HERE TOO. Fixing only the base rule was useless: this
+       ≤900 override is later in the sheet at equal specificity, so its bare
+       `1fr` won on every phone and the grid stayed frozen at 346.9px from 320
+       through 390. Same floor, third occurrence — the first was the header,
+       the second the base grid. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   PDP
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-pdp {
+    padding-block: 2rem 4rem;
+  }
+  .gn-pdp-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 3rem;
+    align-items: start;
+  }
+  .gn-pdp-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    position: sticky;
+    top: calc(var(--gn-header-h) + 24px);
+  }
+  .gn-pdp-title {
+    font-size: clamp(1.6rem, 2.4vw, 2.25rem);
+    font-weight: 400;
+    margin: 0;
+    line-height: 1.15;
+  }
+  .gn-pdp-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gn-muted);
+  }
+  .gn-pdp-lowstock {
+    color: var(--gn-ink);
+    margin: 0;
+  }
+  .gn-pdp-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .gn-pdp-return {
+    font-size: 0.8125rem;
+    color: var(--gn-muted);
+    margin: 0;
+  }
+  .gn-pdp-accordions {
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--gn-line);
+  }
+  .gn-pdp-pay {
+    padding-top: 0.5rem;
+  }
+  /* Returns promise under the buttons — reassurance where the decision is. */
+  .gn-pdp-assure {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.75rem 0.875rem;
+    border: 1px solid var(--gn-line);
+    background: var(--gn-surface);
+    font-size: 0.8125rem;
+    color: var(--gn-ink-soft);
+  }
+  .gn-pdp-repeat-cta {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  /* Sticky mobile buy bar — hidden on desktop, where the panel is already
+     sticky and the buttons are always in view. */
+  .gn-pdp-stickybar {
+    display: none;
+  }
+  .gn-pdp-stickybar-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem var(--gn-gutter);
+    background: var(--gn-surface);
+    border-top: 1px solid var(--gn-line);
+  }
+  .gn-pdp-stickybar-info {
+    min-width: 0;
+    flex: 1;
+  }
+  .gn-pdp-stickybar-name {
+    margin: 0 0 2px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .gn-pdp-stickybar .gn-btn {
+    flex: 0 0 auto;
+    min-height: 46px;
+  }
+
+  /* ── Mini-cart drawer ─────────────────────────────────────────────────── */
+  .gn-bag {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-end: 0;
+    z-index: 75;
+    /* The host ships `#main > div > * > * { width: 100% }`. That is (1,0,0);
+       no class selector can outrank an id, so the drawer stretched to the full
+       1440px viewport and its buttons landed at y=1300 — off-screen and
+       genuinely unclickable. Not a style nit: the CTA was unreachable. */
+    width: min(94vw, 420px) !important;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+    /* Fast on purpose: this fires right after a tap, and anything slower than
+       ~240ms reads as the page hanging rather than the bag opening. */
+    transform: translateX(100%);
+    visibility: hidden;
+    transition:
+      transform 240ms var(--gn-ease),
+      visibility 0s linear 240ms;
+  }
+  [dir="rtl"] .gn-bag {
+    transform: translateX(-100%);
+  }
+  .gn-bag.is-open,
+  [dir="rtl"] .gn-bag.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  /* Bottom sheet on phones — a 420px end-panel on a 390px screen is a
+     full-screen takeover with none of the affordances of a sheet. */
+  @media (max-width: 768px) {
+    .gn-bag {
+      inset-block: auto 0;
+      inset-inline: 0;
+      width: 100% !important;
+      max-width: none;
+      max-height: 88dvh;
+      border-start-start-radius: 14px;
+      border-start-end-radius: 14px;
+      transform: translateY(100%);
+    }
+    [dir="rtl"] .gn-bag {
+      transform: translateY(100%);
+    }
+    .gn-bag.is-open,
+    [dir="rtl"] .gn-bag.is-open {
+      transform: translateY(0);
+    }
+  }
+
+  .gn-bag-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--gn-line);
+  }
+  .gn-bag-added {
+    margin: 0;
+    padding: 0.75rem 1.25rem;
+    background: var(--gn-canvas);
+    border-bottom: 1px solid var(--gn-line);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .gn-bag-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem 1.25rem;
+    text-align: center;
+  }
+  .gn-bag-items {
+    flex: 1;
+    overflow-y: auto;
+    padding-inline: 1.25rem;
+  }
+  .gn-bag-row {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 0.875rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--gn-line);
+  }
+  .gn-bag-thumb {
+    width: 64px;
+    aspect-ratio: 3 / 4;
+  }
+  .gn-bag-name {
+    margin: 0 0 0.125rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+  .gn-bag-end {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .gn-bag-remove {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--gn-muted);
+    font-size: 0.75rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .gn-qty-control.is-sm {
+    margin-top: 0.5rem;
+  }
+  .gn-qty-control.is-sm button {
+    width: 32px;
+    height: 32px;
+  }
+  .gn-qty-control.is-sm span {
+    min-width: 2rem;
+    font-size: 0.875rem;
+  }
+  .gn-bag-foot {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    padding: 1.25rem;
+    border-top: 1px solid var(--gn-line);
+    background: var(--gn-surface);
+  }
+  .gn-bag-suggest-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  .gn-bag-suggest-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    color: var(--gn-ink);
+    font-size: 0.8125rem;
+  }
+  .gn-bag-suggest-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    color: inherit;
+  }
+  .gn-bag-suggest-item .gn-plate {
+    aspect-ratio: 3 / 4;
+  }
+  .gn-bag-suggest-name {
+    line-height: 1.3;
+  }
+  /* The whole point of the recommendation. It used to be a link that closed
+     the bag and navigated away — an AOV leak wearing an AOV feature's clothes.
+     Full-width and ink-filled so it reads as the action, not a footnote. */
+  .gn-bag-suggest-add {
+    margin-top: auto;
+    min-height: 40px;
+    width: 100%;
+    background: var(--gn-ink);
+    color: var(--gn-surface);
+    border: 1px solid var(--gn-ink);
+    font-size: var(--gn-fs-label);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background-color var(--gn-dur-fast) var(--gn-ease),
+      border-color var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-bag-suggest-add:hover {
+    background: var(--gn-sale);
+    border-color: var(--gn-sale);
+  }
+  .gn-sheet-loading {
+    color: var(--gn-muted);
+    padding-block: 0.75rem;
+  }
+  .gn-bag-total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-top: 0.25rem;
+    border-top: 1px solid var(--gn-line);
+  }
+  .gn-bag-cta,
+  .gn-bag-viewall {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* The rail card wrapper exists so Reveal can observe an UNCLIPPED box. An
+     element inside the scroll container's clip reports zero intersection and
+     the reveal never fires — the classic scroll-animation dead end. */
+  .gn-rail-card-wrap {
+    scroll-snap-align: start;
+    display: flex;
+  }
+  .gn-rail-card-wrap > .gn-rail-card {
+    width: 100%;
+  }
+  .gn-richtext p {
+    margin: 0 0 0.75rem;
+  }
+
+  .gn-qty {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  .gn-qty .gn-label {
+    color: var(--gn-muted);
+  }
+  .gn-qty-control {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--gn-line);
+  }
+  .gn-qty-control button {
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: 0;
+    color: var(--gn-ink);
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .gn-qty-control button:disabled {
+    color: var(--gn-muted-2);
+    cursor: not-allowed;
+  }
+  .gn-qty-control span {
+    min-width: 2.5rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gn-fitspec {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--gn-line);
+    font-size: 0.875rem;
+  }
+  .gn-fitspec-row {
+    display: contents;
+  }
+  .gn-fitspec dt {
+    color: var(--gn-muted);
+  }
+  .gn-fitspec dd {
+    margin: 0;
+  }
+
+  /* ── Gallery ─────────────────────────────────────────────────────────── */
+  .gn-gallery {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+  .gn-gallery.is-below {
+    grid-template-columns: 1fr;
+  }
+  .gn-gallery-thumbs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .gn-gallery.is-below .gn-gallery-thumbs {
+    flex-direction: row;
+    order: 2;
+    overflow-x: auto;
+  }
+  .gn-gallery-thumb {
+    padding: 0;
+    border: 1px solid transparent;
+    background: none;
+    cursor: pointer;
+    width: 56px;
+    flex: 0 0 56px;
+  }
+  .gn-gallery-thumb .gn-plate {
+    display: block;
+    aspect-ratio: 3 / 4;
+  }
+  .gn-gallery-thumb.is-active {
+    border-color: var(--gn-ink);
+  }
+  .gn-gallery-stage {
+    position: relative;
+    min-width: 0;
+  }
+  .gn-gallery-main .gn-plate {
+    display: block;
+  }
+  .gn-gallery-zoom {
+    position: absolute;
+    inset-block-end: 12px;
+    inset-inline-end: 12px;
+    min-height: 36px;
+    padding-inline: 0.875rem;
+    background: var(--gn-surface);
+    border: 1px solid var(--gn-line);
+    color: var(--gn-ink);
+    cursor: pointer;
+  }
+  /* Mobile swipe carousel — same images, different presentation. CSS chooses,
+     so there is no duplicated markup and no JS breakpoint listener. */
+  .gn-gallery-scroller,
+  .gn-gallery-dots {
+    display: none;
+  }
+
+  .gn-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.9);
+  }
+  .gn-lightbox-img {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+  }
+  .gn-lightbox-close {
+    position: absolute;
+    top: 1rem;
+    inset-inline-end: 1rem;
+    color: #ffffff;
+  }
+}
+
+@media (max-width: 900px) {
+  .gn-pdp-stickybar {
+    display: block;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 45;
+  }
+  /* Reserve the bar's height so it never covers the last of the page. */
+  .gn-pdp {
+    padding-bottom: 6rem;
+  }
+  .gn-pdp-grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+  .gn-pdp-panel {
+    position: static;
+  }
+  .gn-gallery {
+    grid-template-columns: 1fr;
+  }
+  .gn-gallery-thumbs,
+  .gn-gallery-main {
+    display: none;
+  }
+  .gn-gallery-scroller {
+    display: flex;
+    overflow-x: auto;
+    /* Same LCP hazard as .gn-rail-track — see the note there. */
+    scroll-snap-type: x proximity;
+    overflow-anchor: none;
+    scrollbar-width: none;
+  }
+  .gn-gallery-scroller::-webkit-scrollbar {
+    display: none;
+  }
+  .gn-gallery-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    display: block;
+  }
+  .gn-gallery-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding-top: 10px;
+  }
+  .gn-gallery-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--gn-line-strong);
+  }
+  .gn-gallery-dot.is-active {
+    background: var(--gn-ink);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Trusted strip · about tabs · reviews · Instagram
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-trusted {
+    padding-block: 4rem;
+    border-block: 1px solid var(--gn-line);
+  }
+  .gn-trusted-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  .gn-trusted-heading {
+    margin: 0;
+  }
+  .gn-trusted-quote {
+    margin: 0;
+    max-width: 60ch;
+  }
+  .gn-trusted-text {
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    line-height: 1.45;
+    margin: 0;
+  }
+  .gn-trusted-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    color: var(--gn-muted);
+  }
+  .gn-trusted-product {
+    font-size: 0.8125rem;
+  }
+  .gn-trusted-dots {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .gn-trusted-dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 1px solid var(--gn-line-strong);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+  }
+  .gn-trusted-dot::before {
+    content: "";
+    position: absolute;
+    inset: -18px;
+  }
+  .gn-trusted-dot.is-active {
+    background: var(--gn-ink);
+    border-color: var(--gn-ink);
+  }
+
+  .gn-abouttabs {
+    padding-block: 4rem;
+  }
+  .gn-abouttabs-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  .gn-abouttabs.is-image-end .gn-abouttabs-media {
+    order: 2;
+  }
+  .gn-abouttabs-plate {
+    display: block;
+    aspect-ratio: 4 / 5;
+  }
+  /* Stacked, all mounted. Unmounting the inactive image collapses the cell mid
+     swap and re-requests the image on every tab change. */
+  .gn-abouttabs-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity var(--gn-dur) var(--gn-ease);
+  }
+  .gn-abouttabs-img.is-active {
+    opacity: 1;
+  }
+  .gn-abouttabs-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .gn-abouttabs-tablist {
+    display: flex;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--gn-line);
+  }
+  .gn-abouttabs-tab {
+    padding: 0 0 0.75rem;
+    background: none;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    color: var(--gn-muted);
+    cursor: pointer;
+    margin-bottom: -1px;
+  }
+  .gn-abouttabs-tab.is-active {
+    color: var(--gn-ink);
+    border-bottom-color: var(--gn-ink);
+  }
+  .gn-abouttabs-body {
+    margin: 0;
+    line-height: 1.75;
+    color: var(--gn-ink-soft);
+    max-width: 52ch;
+  }
+
+  .gn-reviews {
+    padding-block: 4rem;
+    border-top: 1px solid var(--gn-line);
+  }
+  .gn-reviews-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  .gn-reviews-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .gn-reviews-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    color: var(--gn-muted);
+    font-size: 0.875rem;
+  }
+  .gn-reviews-score {
+    font-weight: 500;
+    color: var(--gn-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Stars are glyphs + a text score, never colour alone. */
+  .gn-stars {
+    display: inline-flex;
+    gap: 1px;
+    letter-spacing: 1px;
+  }
+  .gn-star.is-full {
+    color: var(--gn-ink);
+  }
+  .gn-star.is-half {
+    color: var(--gn-muted);
+  }
+  .gn-star.is-empty {
+    color: var(--gn-line-strong);
+  }
+  .gn-review-card {
+    margin: 0;
+    max-width: 62ch;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    align-items: center;
+  }
+  .gn-review-title {
+    font-weight: 500;
+    margin: 0;
+  }
+  .gn-review-body {
+    margin: 0;
+    line-height: 1.7;
+    color: var(--gn-ink-soft);
+  }
+  .gn-review-meta {
+    display: flex;
+    gap: 0.75rem;
+    color: var(--gn-muted);
+  }
+  .gn-review-verified {
+    border: 1px solid var(--gn-line);
+    padding: 2px 6px;
+  }
+  .gn-reviews-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .gn-reviews-pos {
+    color: var(--gn-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gn-ig {
+    padding-block: 4rem;
+  }
+  .gn-ig-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .gn-ig-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--gn-ig-cols, 6), 1fr);
+    gap: 8px;
+  }
+  .gn-ig-tile .gn-plate {
+    display: block;
+    aspect-ratio: 1 / 1;
+  }
+  .gn-ig-grid.has-hover .gn-ig-tile img {
+    transition: opacity var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-ig-grid.has-hover .gn-ig-tile:hover img {
+    opacity: 0.75;
+  }
+  .gn-ig-empty {
+    padding: 3rem var(--gn-gutter);
+    text-align: center;
+    color: var(--gn-muted);
+    border: 1px dashed var(--gn-line-strong);
+  }
+}
+
+@media (max-width: 900px) {
+  .gn-abouttabs-inner {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+  .gn-abouttabs.is-image-end .gn-abouttabs-media {
+    order: 0;
+  }
+  .gn-ig-grid {
+    grid-template-columns: repeat(var(--gn-ig-mobile-cols, 3), 1fr);
+  }
+  .gn-trusted,
+  .gn-abouttabs,
+  .gn-reviews,
+  .gn-ig {
+    padding-block: 2.5rem;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Cart
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-cart {
+    padding-block: 2.5rem 4rem;
+  }
+  .gn-cart-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.9fr);
+    gap: 3rem;
+    align-items: start;
+  }
+  .gn-cart-items {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--gn-line);
+  }
+  .gn-cart-row {
+    display: grid;
+    grid-template-columns: 84px 1fr auto auto;
+    gap: 1rem;
+    align-items: center;
+    padding-block: 1.25rem;
+    border-bottom: 1px solid var(--gn-line);
+  }
+  .gn-cart-thumb {
+    width: 84px;
+    aspect-ratio: 3 / 4;
+  }
+  .gn-cart-name {
+    font-weight: 500;
+    margin: 0 0 0.25rem;
+  }
+  .gn-cart-variant {
+    font-size: 0.8125rem;
+    color: var(--gn-muted);
+    margin: 0 0 0.375rem;
+  }
+  .gn-cart-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .gn-cart-line-total {
+    min-width: 5rem;
+    text-align: end;
+  }
+
+  .gn-cart-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--gn-line);
+    background: var(--gn-surface);
+    position: sticky;
+    top: calc(var(--gn-header-h) + 24px);
+  }
+  .gn-cart-total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .gn-cart-checkout,
+  .gn-cart-back {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+  .gn-cart-pay {
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--gn-line);
+  }
+  .gn-coupon {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .gn-coupon .gn-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Offer strip — an ink band, the same treatment as the ticker. No coloured
+     ribbon exists in this theme to reach for (plan §2.1a). */
+  .gn-offerline {
+    margin: 0;
+    padding: 0.625rem 0.875rem;
+    background: var(--gn-ticker-bg);
+    color: var(--gn-ticker-fg);
+    font-size: var(--gn-fs-label);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .gn-offerline.is-unlocked {
+    background: var(--gn-surface);
+    color: var(--gn-ink);
+    border: 1px solid var(--gn-ink);
+  }
+
+  /* Free-shipping bar: hairline track, ink fill. No colour to make it feel
+     "encouraging", so the copy above it has to do that work. */
+  .gn-freeship {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .gn-freeship-text {
+    font-size: 0.8125rem;
+    margin: 0;
+  }
+  .gn-freeship-track {
+    height: 3px;
+    background: var(--gn-line);
+    overflow: hidden;
+  }
+  .gn-freeship-fill {
+    display: block;
+    block-size: 100%;
+    background: var(--gn-ink);
+    transition: inline-size var(--gn-dur) var(--gn-ease);
+  }
+}
+
+@media (max-width: 900px) {
+  .gn-cart-grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+  .gn-cart-summary {
+    position: static;
+  }
+  .gn-cart-row {
+    grid-template-columns: 64px 1fr auto;
+    grid-template-areas: "thumb detail total" "thumb controls controls";
+  }
+  .gn-cart-thumb {
+    grid-area: thumb;
+    width: 64px;
+  }
+  .gn-cart-detail {
+    grid-area: detail;
+  }
+  .gn-cart-controls {
+    grid-area: controls;
+  }
+  .gn-cart-line-total {
+    grid-area: total;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Content pages · account · 404
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-about,
+  .gn-contact,
+  .gn-faq,
+  .gn-account,
+  .gn-confirm,
+  .gn-404 {
+    padding-block: 2.5rem 4rem;
+  }
+  /* Informational pages get a comfortable measure, NOT the product grid's
+     density — the reference is explicit about this. */
+  .gn-about-head {
+    max-width: 72ch;
+    margin-inline: auto;
+    text-align: center;
+    padding-block: 2rem 2.5rem;
+  }
+  .gn-about-eyebrow {
+    color: var(--gn-muted);
+    margin: 0 0 0.75rem;
+  }
+  .gn-about-body {
+    margin: 1.25rem 0 0;
+    line-height: 1.8;
+    color: var(--gn-ink-soft);
+  }
+  .gn-about-image {
+    display: block;
+    aspect-ratio: 16 / 9;
+    margin-block: 2.5rem;
+  }
+  .gn-about-values {
+    display: grid;
+    /* `auto-fit` rather than a breakpoint: three fixed columns became ~92px
+       each at 390px, which wraps the value text to a couple of characters per
+       line. This reflows at every width instead of only at the ones I happened
+       to test — 3 up on desktop, 2 up on a tablet, 1 up on a phone.
+       `min(220px, 100%)` is what stops the track floor from overflowing a
+       viewport narrower than 220px. */
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    gap: 2rem;
+    padding-block: 1rem 2rem;
+    border-top: 1px solid var(--gn-line);
+  }
+  .gn-about-value-title {
+    color: var(--gn-ink);
+    margin: 0 0 0.5rem;
+  }
+  .gn-about-value-text {
+    margin: 0;
+    color: var(--gn-muted);
+    line-height: 1.7;
+  }
+  .gn-about-cta {
+    text-align: center;
+  }
+
+  .gn-contact-grid {
+    display: grid;
+    /* Two columns only when there is room for both. Below that the form column
+       measured 162px at 390px — narrower than its own inputs. */
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 3rem;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .gn-contact-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2.5rem;
+    }
+  }
+  .gn-contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .gn-contact-wa {
+    align-self: flex-start;
+  }
+  .gn-contact-list {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .gn-contact-item dt {
+    color: var(--gn-muted);
+    margin-bottom: 0.25rem;
+  }
+  .gn-contact-item dd {
+    margin: 0;
+  }
+  .gn-contact-map iframe {
+    width: 100%;
+    height: 280px;
+    border: 1px solid var(--gn-line);
+  }
+  .gn-contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .gn-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  .gn-field .gn-label {
+    color: var(--gn-muted);
+  }
+  .gn-textarea {
+    padding-block: 0.625rem;
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .gn-faq-body {
+    max-width: 76ch;
+    margin-inline: auto;
+  }
+  .gn-faq-group {
+    margin-bottom: 2.5rem;
+  }
+  .gn-faq-group-title {
+    margin: 0 0 0.5rem;
+  }
+  .gn-faq-contact {
+    color: var(--gn-muted);
+  }
+
+  .gn-account-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  .gn-account-block {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .gn-account-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--gn-line);
+  }
+  .gn-account-order,
+  .gn-account-address {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.875rem;
+    border-bottom: 1px solid var(--gn-line);
+  }
+  .gn-account-order-no {
+    font-weight: 500;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .gn-account-actions {
+    padding-top: 2rem;
+  }
+
+  .gn-confirm-inner {
+    max-width: 60ch;
+    margin-inline: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.875rem;
+    padding-block: 3rem;
+  }
+  .gn-confirm-eyebrow {
+    color: var(--gn-muted);
+    margin: 0;
+  }
+  .gn-confirm-number {
+    font-variant-numeric: tabular-nums;
+    color: var(--gn-muted);
+    margin: 0;
+  }
+  .gn-confirm-summary {
+    width: 100%;
+    margin-top: 1rem;
+    border: 1px solid var(--gn-line);
+    background: var(--gn-surface);
+    padding: 1.25rem;
+    text-align: start;
+  }
+  .gn-confirm-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.5rem;
+  }
+  .gn-confirm-line.is-total {
+    border-top: 1px solid var(--gn-line);
+    margin-top: 0.5rem;
+    padding-top: 0.875rem;
+    align-items: baseline;
+  }
+  .gn-confirm-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .gn-about-values,
+  .gn-contact-grid,
+  .gn-account-grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ✦ Signature sections — fit guide · customer looks · store visit
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-fitguide,
+  .gn-girls,
+  .gn-storevisit {
+    padding-block: 4rem;
+  }
+  .gn-fitguide.is-compact {
+    padding-block: 2.5rem;
+  }
+  .gn-fitguide-head {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .gn-fitguide-grid {
+    display: grid;
+    /* `minmax(0, 1fr)` — the SAME min-content floor that pushed the header
+       logo off-centre, in a second place. A bare `1fr` refuses to shrink a
+       card below its own content, so at 320px three cards floored at ~113px
+       each and pinned the page at 371px no matter how narrow the viewport got.
+       A `scrollWidth` that stays constant as the viewport shrinks is the
+       signature of exactly this. */
+    grid-template-columns: repeat(var(--gn-grid-cols, 3), minmax(0, 1fr));
+    gap: 2rem;
+  }
+  /* Redesigned: the first version was a cramped definition list with a bare
+     underlined link — correct data, no craft. Now the card is a real object:
+     a surface panel, the spec rows separated by hairlines so the eye can scan
+     RISE / LEG / STRETCH as a table, and the action reading as an action. */
+  .gn-fitcard {
+    display: flex;
+    flex-direction: column;
+    background: var(--gn-surface);
+    border: 1px solid var(--gn-line);
+    height: 100%;
+  }
+  .gn-fitcard-plate {
+    display: block;
+    aspect-ratio: 4 / 5;
+  }
+  .gn-fitcard-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    padding: 1.25rem;
+    flex: 1;
+  }
+  .gn-fitcard-name {
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: var(--gn-tracking);
+    margin: 0;
+  }
+  /* Spec table. `dt`/`dd` alternate, so a hairline on every dd's row bottom
+     gives one rule per pair without wrapper elements. */
+  .gn-fitcard-specs {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    margin: 0;
+    font-size: 0.875rem;
+  }
+  .gn-fitcard-specs dt {
+    color: var(--gn-muted);
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--gn-line);
+    align-self: stretch;
+  }
+  .gn-fitcard-specs dd {
+    margin: 0;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--gn-line);
+    color: var(--gn-ink);
+    font-weight: 500;
+  }
+  .gn-fitcard-best {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--gn-muted);
+    line-height: 1.7;
+  }
+  /* Pushed to the bottom so cards of unequal copy length still line their
+     actions up — the thing that made the old row look accidental. */
+  .gn-fitcard-cta {
+    margin-top: auto;
+    padding-top: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    align-self: flex-start;
+    font-size: var(--gn-fs-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gn-ink);
+    border-bottom: 1px solid var(--gn-ink);
+    padding-bottom: 3px;
+    transition: gap var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-fitcard:hover .gn-fitcard-cta {
+    gap: 0.7rem;
+  }
+  .gn-fitguide-table {
+    margin-top: 3rem;
+    max-width: 72ch;
+  }
+  .gn-fitguide-cta {
+    text-align: center;
+    margin-top: 2.5rem;
+  }
+
+  .gn-girls-sub {
+    margin: 0.375rem 0 0;
+    color: var(--gn-muted);
+    font-size: 0.875rem;
+  }
+  .gn-look {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    scroll-snap-align: start;
+  }
+  .gn-look-plate {
+    display: block;
+    aspect-ratio: 3 / 4;
+  }
+  .gn-look-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .gn-look-name {
+    color: var(--gn-ink);
+    margin: 0;
+  }
+  .gn-look-caption {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--gn-muted);
+    line-height: 1.6;
+  }
+
+  .gn-storevisit {
+    border-top: 1px solid var(--gn-line);
+  }
+  .gn-storevisit-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  .gn-storevisit-image {
+    display: block;
+    aspect-ratio: 4 / 3;
+  }
+  .gn-storevisit-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .gn-storevisit-address {
+    font-style: normal;
+    line-height: 1.7;
+    font-size: 1.0625rem;
+    margin: 0;
+  }
+  .gn-storevisit-hours {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0;
+    color: var(--gn-ink-soft);
+  }
+  .gn-storevisit-hours .gn-label {
+    color: var(--gn-muted);
+  }
+  .gn-storevisit-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .gn-fitguide-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .gn-storevisit-inner {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+  .gn-fitguide,
+  .gn-girls,
+  .gn-storevisit {
+    padding-block: 2.5rem;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   gn-footer
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+  .gn-footer {
+    background: var(--gn-canvas);
+    border-top: 1px solid var(--gn-line);
+  }
+
+  .gn-footer-trust {
+    border-bottom: 1px solid var(--gn-line);
+  }
+  .gn-footer-trust-inner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    padding-block: 2rem;
+  }
+  .gn-trust-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+  }
+  .gn-trust-title {
+    font-size: var(--gn-fs-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .gn-trust-text {
+    font-size: 0.8125rem;
+    color: var(--gn-muted);
+    margin: 0.25rem 0 0;
+  }
+
+  .gn-footer-main {
+    display: grid;
+    grid-template-columns: 1.6fr repeat(auto-fit, minmax(140px, 1fr));
+    gap: 2.5rem;
+    padding-block: 3.5rem;
+  }
+  .gn-footer-brand {
+    font-family: var(--gn-font-heading);
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0 0 0.75rem;
+  }
+  .gn-footer-text {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--gn-muted);
+    margin: 0;
+    max-width: 44ch;
+  }
+  .gn-footer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 1.25rem;
+  }
+  .gn-footer-col {
+    display: flex;
+    flex-direction: column;
+  }
+  .gn-footer-col-title {
+    color: var(--gn-muted);
+    margin: 0 0 0.875rem;
+  }
+  .gn-footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 32px;
+    font-size: 0.875rem;
+    color: var(--gn-ink-soft);
+    transition: opacity var(--gn-dur-fast) var(--gn-ease);
+  }
+  .gn-footer-link:hover {
+    opacity: 0.6;
+  }
+  .gn-footer-wa {
+    margin-top: 0.25rem;
+  }
+
+  .gn-news-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.875rem;
+    border-bottom: 1px solid var(--gn-line-strong);
+  }
+  .gn-news-input {
+    flex: 1;
+    min-height: 44px;
+    background: transparent;
+    border: 0;
+    font-size: 0.875rem;
+    color: var(--gn-ink);
+  }
+  .gn-news-input::placeholder {
+    color: var(--gn-muted-2);
+  }
+  .gn-news-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: 0;
+    color: var(--gn-ink);
+    cursor: pointer;
+  }
+
+  .gn-footer-base {
+    border-top: 1px solid var(--gn-line);
+  }
+  .gn-footer-base-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-block: 1.25rem;
+  }
+  .gn-footer-socials {
+    display: flex;
+    gap: 0.25rem;
+  }
+  .gn-footer-credit {
+    font-size: 0.75rem;
+    color: var(--gn-muted);
+    margin: 0;
+  }
+
+  /* Payment marks — the theme's only colour surface (see lib/payment-marks). */
+  .gn-pay-marks {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .gn-pay-mark {
+    display: inline-flex;
+    line-height: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .gn-footer-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding-block: 2.5rem;
+  }
+  .gn-footer-about {
+    grid-column: 1 / -1;
+  }
+  .gn-footer-trust-inner {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Header width budget on a phone. Equal side tracks keep the logo centred,
+     but the actions can still overflow their track and creep toward the mark.
+     Buying the space back from the gutter and the gap is free; buying it from
+     the 44px touch targets is not, so those are untouched.
+
+       360px before: 24px gutter + 16px gap → 122px/side, actions need 132 ✗
+       360px after:  16px gutter +  8px gap → 138px/side, actions need 132 ✓ */
+  .gn-header-inner {
+    gap: 0.5rem;
+    padding-inline: 16px;
+  }
+  .gn-footer-main {
+    grid-template-columns: 1fr;
+  }
+  .gn-footer-base-inner {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* 320px is the narrowest screen still in real use. There the three action
+   icons overrun their track by ~14px and creep under the logo. The width comes
+   out of the icons' horizontal padding, never their height: the tap target
+   stays 40x44, well above the 24x24 WCAG 2.5.8 floor, and the icons themselves
+   do not change size. */
+@media (max-width: 380px) {
+  [data-genova-v3-app] .gn-header-actions .gn-icon-btn,
+  [data-genova-v3-app] .gn-header-burger {
+    width: 40px;
+  }
+  [data-genova-v3-app] .gn-header-inner {
+    gap: 0.375rem;
+    padding-inline: 12px;
+  }
+}
+
+@keyframes gn-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* RTL mirrors the marquee direction — a left-running ticker reads backwards in
+   Arabic. Logical properties handle the rest of the layout. */
+[dir="rtl"] .gn-marquee-track {
+  animation-direction: reverse;
+}
+[dir="rtl"] .gn-marquee[data-direction="right"] .gn-marquee-track {
+  animation-direction: normal;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Motion off
+   ────────────────────────────────────────────────────────────────────────────
+   Two independent switches, and they must agree: the OS `prefers-reduced-motion`
+   and the merchant's `enableAnimations` global (which sets data-gn-motion="off"
+   on the mount root). Either one stops autoplay and marquees.
+
+   The rule that matters: motion-off must render the FINISHED state, never a
+   hidden pre-state. A reveal that only becomes visible via an animation leaves
+   a blank page for anyone with reduced motion on.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-genova-v3-app] *,
+  [data-genova-v3-app] *::before,
+  [data-genova-v3-app] *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    /* DELAY too, not just duration. Reveals carry an inline
+       `--gn-reveal-delay` of 70-420ms for their stagger; zeroing only the
+       duration left that delay intact, so 18 elements sat at opacity 0 and
+       cleared progressively over 432ms. An instant transition that starts
+       four-tenths of a second late is still a visible blank. */
+    animation-delay: 0s !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
+  }
+  [data-genova-v3-app] .gn-marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+  /* Force the FINISHED state. Zeroing durations is NOT enough: an element
+     already carrying data-reveal="armed" stays at opacity 0 forever — it just
+     gets there instantly. `useMotionOn()` starts optimistic (`useState(true)`)
+     and learns the OS preference in an effect, so Reveal's own effect arms on
+     the first commit; by the time motion resolves to off, cleanup disconnects
+     the observer and nothing ever flips the attribute to "in". Measured: 22/22
+     reveals invisible for the whole session with reduced motion on.
+     This is the backstop that cannot be defeated by effect ordering — it holds
+     even if the JS guard below it is wrong again. */
+  [data-genova-v3-app] .gn-reveal[data-reveal="armed"] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+}
+
+[data-genova-v3-app][data-gn-motion="off"] *,
+[data-genova-v3-app][data-gn-motion="off"] *::before,
+[data-genova-v3-app][data-gn-motion="off"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  animation-delay: 0s !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+[data-genova-v3-app][data-gn-motion="off"] .gn-marquee-track {
+  animation: none !important;
+  transform: none !important;
+}
+/* Same backstop for the merchant's own animations-off switch. */
+[data-genova-v3-app][data-gn-motion="off"] .gn-reveal[data-reveal="armed"] {
+  opacity: 1 !important;
+  transform: none !important;
+  clip-path: none !important;
+}

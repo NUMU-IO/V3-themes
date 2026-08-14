@@ -1,0 +1,82 @@
+{
+  "type": "gn-store-visit",
+  "name": "Visit the shop ✦",
+  "name_ar": "زوري الفرع ✦",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A shop someone can walk into is the strongest trust signal you have — stronger than any badge. Give it a real photo and a real address.",
+      "content_ar": "المحل اللي الزبونة تقدر تيجي له هو أقوى دليل ثقة عندك — أقوى من أي شعار. حطي له صورة حقيقية وعنوان حقيقي."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Come and try them on"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Photo of the shop",
+      "label_ar": "صورة المحل",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "address",
+      "label": "Address (English)",
+      "label_ar": "العنوان (إنجليزي)",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "address_ar",
+      "label": "Address (Arabic)",
+      "label_ar": "العنوان (عربي)",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Hours",
+      "label_ar": "مواعيد العمل",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone",
+      "label_ar": "التليفون",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "whatsapp",
+      "label": "WhatsApp number",
+      "label_ar": "رقم واتساب",
+      "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "show_directions_button",
+      "label": "Show the directions button",
+      "label_ar": "إظهار زر الاتجاهات",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "map_link",
+      "label": "Google Maps link",
+      "label_ar": "رابط خرائط جوجل",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Visit the shop ✦",
+      "name_ar": "زوري الفرع ✦",
+      "settings": {}
+    }
+  ]
+}

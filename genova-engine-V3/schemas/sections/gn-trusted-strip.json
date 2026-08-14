@@ -1,0 +1,83 @@
+{
+  "type": "gn-trusted-strip",
+  "name": "Trusted by people",
+  "name_ar": "آراء العملاء",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Short quotes from real customers, one at a time. Keep them specific — “the 32 fits like a 32” beats “great quality”.",
+      "content_ar": "اقتباسات قصيرة من عملاء حقيقيين، واحد في المرة. خليها محددة — “مقاس ٣٢ طالع مضبوط” أحسن من “جودة ممتازة”."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Trusted by people."
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Move through them automatically",
+      "label_ar": "التنقل تلقائيًا",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_seconds",
+      "label": "Seconds per quote",
+      "label_ar": "ثواني لكل اقتباس",
+      "default": 9,
+      "min": 6,
+      "max": 20,
+      "step": 1,
+      "visible_if": "autoplay",
+      "unit": "s"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Quote",
+      "name_ar": "اقتباس",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "label_ar": "الاقتباس",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Who said it",
+          "label_ar": "مين قالها",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "product_label",
+          "label": "Product",
+          "label_ar": "المنتج",
+          "default": ""
+        },
+        {
+          "type": "url",
+          "id": "product_link",
+          "label": "Product link",
+          "label_ar": "رابط المنتج",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Trusted by people",
+      "name_ar": "آراء العملاء",
+      "settings": {}
+    }
+  ]
+}

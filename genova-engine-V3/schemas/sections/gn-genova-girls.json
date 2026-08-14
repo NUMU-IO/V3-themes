@@ -1,0 +1,135 @@
+{
+  "type": "gn-genova-girls",
+  "name": "Customer looks ✦",
+  "name_ar": "لوكات العميلات ✦",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Real customers wearing the pieces, each linked to what they’re wearing. This is the section that answers “what does this look like on someone like me” — the question a product photo can’t.",
+      "content_ar": "عميلات حقيقيات لابسين القطع، وكل صورة موصولة بالمنتج. القسم ده بيجاوب على سؤال “هيبقى شكله إيه على واحدة زيي” — وده اللي صورة المنتج لوحدها مش بتجاوبه."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Genova girls"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "label_ar": "العنوان الفرعي",
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "label_ar": "طريقة العرض",
+      "default": "carousel",
+      "options": [
+        {
+          "value": "carousel",
+          "label": "Scrolling rail",
+          "label_ar": "شريط قابل للتمرير"
+        },
+        {
+          "value": "grid",
+          "label": "Grid",
+          "label_ar": "شبكة"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Looks across",
+      "label_ar": "عدد اللوكات في الصف",
+      "default": 4,
+      "min": 2,
+      "max": 6,
+      "step": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_names",
+      "label": "Show names",
+      "label_ar": "إظهار الأسماء",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_link",
+      "label": "Show the product link",
+      "label_ar": "إظهار رابط المنتج",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Link text",
+      "label_ar": "نص الرابط",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Link",
+      "label_ar": "الرابط",
+      "default": ""
+    }
+  ],
+  "blocks": [
+    {
+      "type": "look",
+      "name": "Look",
+      "name_ar": "لوك",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Photo",
+          "label_ar": "الصورة",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name or handle",
+          "label_ar": "الاسم أو الحساب",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "label_ar": "التعليق",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "product_label",
+          "label": "Product link text",
+          "label_ar": "نص رابط المنتج",
+          "default": ""
+        },
+        {
+          "type": "url",
+          "id": "product_link",
+          "label": "Product link",
+          "label_ar": "رابط المنتج",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "max_blocks": 16,
+  "presets": [
+    {
+      "name": "Customer looks ✦",
+      "name_ar": "لوكات العميلات ✦",
+      "settings": {}
+    }
+  ]
+}

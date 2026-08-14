@@ -1,0 +1,164 @@
+{
+  "type": "gn-products-page",
+  "name": "Product listing",
+  "name_ar": "قائمة المنتجات",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading override",
+      "label_ar": "تغيير العنوان",
+      "default": "",
+      "info": "Leave empty to use the collection’s own name.",
+      "info_ar": "سيبيه فاضي عشان يستخدم اسم التصنيف."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "Show the collection description",
+      "label_ar": "إظهار وصف التصنيف",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Products across (desktop)",
+      "label_ar": "عدد المنتجات في الصف (كمبيوتر)",
+      "default": 3,
+      "min": 2,
+      "max": 5,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Products across (mobile)",
+      "label_ar": "عدد المنتجات في الصف (موبايل)",
+      "default": 2,
+      "min": 1,
+      "max": 2,
+      "step": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "Show the result count",
+      "label_ar": "إظهار عدد النتائج",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "Show quick add",
+      "label_ar": "إظهار الإضافة السريعة",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Filters & sorting",
+      "content_ar": "الفلاتر والترتيب"
+    },
+    {
+      "type": "paragraph",
+      "content": "Filtering happens in the shopper’s browser, so it can only see the products this page has loaded. Past the limit below the filters switch off and the page says why — a filter that quietly ignores half your catalogue is worse than no filter.",
+      "content_ar": "الفلترة بتحصل في متصفح الزبون، يعني بتشوف بس المنتجات اللي الصفحة حمّلتها. بعد الحد اللي تحت الفلاتر بتتقفل والصفحة بتوضح السبب — فلتر بيتجاهل نص الكتالوج في صمت أسوأ من إنه مايكونش موجود."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show filters",
+      "label_ar": "إظهار الفلاتر",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_in_stock_filter",
+      "label": "In-stock filter",
+      "label_ar": "فلتر المتوفر",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price_filter",
+      "label": "Price filter",
+      "label_ar": "فلتر السعر",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_size_filter",
+      "label": "Size filter",
+      "label_ar": "فلتر المقاس",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort",
+      "label": "Show sorting",
+      "label_ar": "إظهار الترتيب",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "default_sort",
+      "label": "Default order",
+      "label_ar": "الترتيب الافتراضي",
+      "default": "featured",
+      "options": [
+        {
+          "value": "featured",
+          "label": "Featured",
+          "label_ar": "المختار"
+        },
+        {
+          "value": "best-selling",
+          "label": "Best selling",
+          "label_ar": "الأكثر مبيعًا"
+        },
+        {
+          "value": "a-z",
+          "label": "A–Z",
+          "label_ar": "أ–ي"
+        },
+        {
+          "value": "z-a",
+          "label": "Z–A",
+          "label_ar": "ي–أ"
+        },
+        {
+          "value": "price-asc",
+          "label": "Price, low to high",
+          "label_ar": "السعر من الأقل"
+        },
+        {
+          "value": "price-desc",
+          "label": "Price, high to low",
+          "label_ar": "السعر من الأعلى"
+        },
+        {
+          "value": "newest",
+          "label": "Newest",
+          "label_ar": "الأحدث"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "filter_pool_size",
+      "label": "Filter up to this many products",
+      "label_ar": "الحد الأقصى للفلترة",
+      "default": 250,
+      "min": 50,
+      "max": 500,
+      "step": 50
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product listing",
+      "name_ar": "قائمة المنتجات",
+      "settings": {}
+    }
+  ]
+}

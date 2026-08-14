@@ -1,0 +1,154 @@
+{
+  "type": "gn-collection-rail",
+  "name": "Shop by collection",
+  "name_ar": "تسوّق حسب التصنيف",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Shop by collection"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "\"View all\" link",
+      "label_ar": "رابط \"شوف الكل\"",
+      "default": "/collections"
+    },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Where the cards come from",
+      "label_ar": "مصدر الكروت",
+      "info": "\"Your collections\" stays up to date on its own as you add categories. Choose \"Cards I add below\" only when you want a curated set with your own images.",
+      "info_ar": "\"تصنيفات متجرك\" بتتحدث لوحدها كل ما تضيفي تصنيف. اختاري \"الكروت اللي تحت\" بس لو عايزة مجموعة مختارة بصورك.",
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Your collections",
+          "label_ar": "تصنيفات متجرك"
+        },
+        {
+          "value": "manual",
+          "label": "Cards I add below",
+          "label_ar": "الكروت اللي تحت"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "How many collections",
+      "label_ar": "عدد التصنيفات",
+      "default": 8,
+      "min": 3,
+      "max": 16,
+      "step": 1,
+      "visible_if": "source == 'auto'"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "label_ar": "طريقة العرض",
+      "default": "rail",
+      "options": [
+        {
+          "value": "rail",
+          "label": "Scrolling rail",
+          "label_ar": "شريط قابل للتمرير"
+        },
+        {
+          "value": "grid",
+          "label": "Grid",
+          "label_ar": "شبكة"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "cards_desktop",
+      "label": "Cards across (desktop)",
+      "label_ar": "عدد الكروت في الصف (كمبيوتر)",
+      "default": 4,
+      "min": 2,
+      "max": 6,
+      "step": 1
+    },
+    {
+      "type": "select",
+      "id": "aspect",
+      "label": "Image shape",
+      "label_ar": "شكل الصورة",
+      "default": "portrait",
+      "options": [
+        {
+          "value": "portrait",
+          "label": "Portrait (3:4)",
+          "label_ar": "طولي (٣:٤)"
+        },
+        {
+          "value": "square",
+          "label": "Square",
+          "label_ar": "مربع"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape (4:3)",
+          "label_ar": "عرضي (٤:٣)"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show previous / next buttons",
+      "label_ar": "إظهار أزرار السابق والتالي",
+      "default": true,
+      "visible_if": "layout == 'rail'"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Collection card",
+      "name_ar": "كرت تصنيف",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "label_ar": "الصورة",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "label_ar": "الاسم",
+          "default": ""
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "label_ar": "الرابط",
+          "default": "/products"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Shop by collection",
+      "name_ar": "تسوّق حسب التصنيف",
+      "settings": {
+        "source": "auto"
+      }
+    }
+  ]
+}

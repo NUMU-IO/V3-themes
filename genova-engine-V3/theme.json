@@ -1,0 +1,2589 @@
+{
+  "id": "genova-v3",
+  "name": "Genova (V3)",
+  "name_ar": "جينوفا",
+  "author": "NUMU",
+  "version": "1.0.0",
+  "layout": "single-column",
+  "description": "Genova (V3) — an editorial, strictly monochrome storefront built for denim. Wide image plates, hairline structure, no shadows and no accent colour, so the product photography carries the whole page. Ships denim-specific fit guidance, customer styling and store-visit sections.",
+  "description_ar": "جينوفا (V3) — متجر أبيض وأسود بطابع تحريري، متعمل مخصوص للچينز. صور كبيرة وخطوط رفيعة، من غير ظلال ولا ألوان مميزة، عشان صور المنتجات هي اللي تقود الصفحة. فيه أقسام جاهزة لدليل المقاسات، ولوكات العميلات، وزيارة الفرع.",
+  "error_template": "templates/error.html",
+  "loading_template": "templates/loading.html",
+  "presets": {
+    "templates": {
+      "home": {
+        "name": "Home",
+        "name_ar": "الرئيسية",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-hero-carousel",
+            "settings": {
+              "height": "full",
+              "transition": "fade",
+              "autoplay": true,
+              "interval": 6
+            },
+            "blocks": [
+              {
+                "type": "slide",
+                "settings": {
+                  "eyebrow": "Summer 26",
+                  "headline": "Built for the way you actually wear denim",
+                  "cta_text": "Shop now",
+                  "cta_link": "/products",
+                  "text_color": "light"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-brand-marquee",
+            "settings": {
+              "size": "md",
+              "color_scheme": "canvas",
+              "speed_seconds": 32,
+              "pause_on_hover": true,
+              "padding_y": 18
+            }
+          },
+          {
+            "type": "gn-collection-rail",
+            "settings": {
+              "source": "auto",
+              "layout": "rail",
+              "cards_desktop": 4,
+              "aspect": "portrait",
+              "show_arrows": true
+            }
+          },
+          {
+            "type": "gn-editorial-banner",
+            "settings": {
+              "height": "medium",
+              "full_width": true,
+              "overlay_opacity": 20
+            }
+          },
+          {
+            "type": "gn-product-rail",
+            "settings": {
+              "heading": "New in",
+              "source": "newest",
+              "limit": 8,
+              "columns_desktop": 4
+            }
+          },
+          {
+            "type": "gn-fit-guide",
+            "settings": {
+              "mode": "compact",
+              "full_guide_link": "/pages/fit-guide"
+            },
+            "blocks": [
+              {
+                "type": "fit",
+                "settings": {
+                  "name": "High-rise straight",
+                  "rise": "High",
+                  "leg": "Straight",
+                  "stretch": "Rigid",
+                  "best_for": "Sits at the natural waist and falls straight from the hip. The most forgiving cut if you are between sizes.",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "fit",
+                "settings": {
+                  "name": "Mid-rise slim",
+                  "rise": "Mid",
+                  "leg": "Slim",
+                  "stretch": "Comfort stretch",
+                  "best_for": "Close through the thigh with a little give. Everyday denim that still holds its shape by evening.",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "fit",
+                "settings": {
+                  "name": "Wide leg",
+                  "rise": "High",
+                  "leg": "Wide",
+                  "stretch": "Rigid",
+                  "best_for": "Full from the knee down. Wears long — check the inseam against your usual shoe height.",
+                  "link": "/products"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-trusted-strip",
+            "settings": {
+              "autoplay": true,
+              "autoplay_seconds": 9
+            }
+          },
+          {
+            "type": "gn-about-tabs",
+            "settings": {
+              "layout": "image-start"
+            }
+          },
+          {
+            "type": "gn-genova-girls",
+            "settings": {
+              "layout": "carousel",
+              "columns": 4
+            }
+          },
+          {
+            "type": "gn-reviews",
+            "settings": {
+              "min_rating": 4,
+              "sample_products": 6
+            }
+          },
+          {
+            "type": "gn-instagram-grid",
+            "settings": {
+              "columns_desktop": 6,
+              "rows": 1
+            }
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "product": {
+        "name": "Product",
+        "name_ar": "صفحة المنتج",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-product-detail",
+            "settings": {}
+          },
+          {
+            "type": "gn-reviews",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "products": {
+        "name": "All products",
+        "name_ar": "كل المنتجات",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-products-page",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "collection": {
+        "name": "Collection",
+        "name_ar": "التصنيف",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-products-page",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "collections": {
+        "name": "All collections",
+        "name_ar": "كل التصنيفات",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-collections-index",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "cart": {
+        "name": "Cart",
+        "name_ar": "السلة",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-cart",
+            "settings": {
+              "free_shipping_threshold": 3000,
+              "show_progress_bar": true,
+              "show_recommendations": true
+            }
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "search": {
+        "name": "Search",
+        "name_ar": "البحث",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-search-results",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "page": {
+        "name": "Content page",
+        "name_ar": "صفحة محتوى",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "about": {
+        "name": "About",
+        "name_ar": "عن العلامة",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-about",
+            "settings": {}
+          },
+          {
+            "type": "gn-store-visit",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "contact": {
+        "name": "Contact",
+        "name_ar": "تواصل معنا",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-contact",
+            "settings": {}
+          },
+          {
+            "type": "gn-store-visit",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "faq": {
+        "name": "FAQ",
+        "name_ar": "الأسئلة الشائعة",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-faq",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "group",
+                "settings": {
+                  "title": "Ordering & payment"
+                },
+                "blocks": [
+                  {
+                    "type": "qa",
+                    "settings": {
+                      "question": "What payment methods can I use?",
+                      "answer": "Card, InstaPay and cash on delivery. Whatever your store has switched on shows at checkout — you never see a method you can't actually use."
+                    }
+                  },
+                  {
+                    "type": "qa",
+                    "settings": {
+                      "question": "Can I change or cancel my order?",
+                      "answer": "Message us as soon as you can. If it hasn't shipped yet we can change the size, the address or cancel it outright."
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "group",
+                "settings": {
+                  "title": "Shipping"
+                },
+                "blocks": [
+                  {
+                    "type": "qa",
+                    "settings": {
+                      "question": "How long does delivery take?",
+                      "answer": "Most orders reach anywhere in Egypt within a few days of being dispatched. You'll get a message the moment yours is on its way."
+                    }
+                  },
+                  {
+                    "type": "qa",
+                    "settings": {
+                      "question": "Do you deliver outside Cairo?",
+                      "answer": "Yes — we ship nationwide. Delivery to governorates outside the main cities can take a day or two longer."
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "group",
+                "settings": {
+                  "title": "Fit & returns"
+                },
+                "blocks": [
+                  {
+                    "type": "qa",
+                    "settings": {
+                      "question": "I'm between two sizes. Which should I take?",
+                      "answer": "For rigid denim take the larger size; it gives as you wear it. For anything with stretch take your usual size. The fit guide has the measurements for every cut, and you can always message us before you order."
+                    }
+                  },
+                  {
+                    "type": "qa",
+                    "settings": {
+                      "question": "Can I exchange something that doesn't fit?",
+                      "answer": "Yes. Keep it unworn with its tags on and get in touch — sizing is the most common reason for an exchange and we'd rather you had the right one."
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "fit-guide": {
+        "name": "Fit guide",
+        "name_ar": "دليل المقاسات",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-fit-guide",
+            "settings": {
+              "mode": "full",
+              "show_measure_table": true
+            },
+            "blocks": [
+              {
+                "type": "fit",
+                "settings": {
+                  "name": "High-rise straight",
+                  "rise": "High",
+                  "leg": "Straight",
+                  "stretch": "Rigid",
+                  "best_for": "Sits at the natural waist and falls straight from the hip. The most forgiving cut if you are between sizes.",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "fit",
+                "settings": {
+                  "name": "Mid-rise slim",
+                  "rise": "Mid",
+                  "leg": "Slim",
+                  "stretch": "Comfort stretch",
+                  "best_for": "Close through the thigh with a little give. Everyday denim that still holds its shape by evening.",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "fit",
+                "settings": {
+                  "name": "Wide leg",
+                  "rise": "High",
+                  "leg": "Wide",
+                  "stretch": "Rigid",
+                  "best_for": "Full from the knee down. Wears long — check the inseam against your usual shoe height.",
+                  "link": "/products"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "account": {
+        "name": "Account",
+        "name_ar": "حسابي",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-profile",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "order-confirmation": {
+        "name": "Order confirmation",
+        "name_ar": "تأكيد الطلب",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-order-confirmation",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "404": {
+        "name": "404 — Not found",
+        "name_ar": "٤٠٤ — الصفحة غير موجودة",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-not-found",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "checkout": {
+        "name": "Checkout",
+        "name_ar": "إتمام الشراء",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "profile": {
+        "name": "Account (profile route)",
+        "name_ar": "حسابي (مسار البروفايل)",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-profile",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

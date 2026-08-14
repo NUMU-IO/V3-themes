@@ -1,0 +1,75 @@
+{
+  "type": "gn-contact",
+  "name": "Contact",
+  "name_ar": "تواصل معنا",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Contact"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Intro",
+      "label_ar": "المقدمة",
+      "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "show_form",
+      "label": "Show the message form",
+      "label_ar": "إظهار نموذج الرسالة",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "whatsapp",
+      "label": "WhatsApp number",
+      "label_ar": "رقم واتساب",
+      "default": "",
+      "info": "Egyptian format, e.g. 01012345678. Shown first — it is the channel most shoppers use.",
+      "info_ar": "بالصيغة المصرية، مثال 01012345678. بيظهر الأول لأنه القناة اللي أغلب الزباين بتستخدمها."
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone",
+      "label_ar": "التليفون",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email",
+      "label_ar": "البريد الإلكتروني",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Hours",
+      "label_ar": "مواعيد العمل",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "map_embed",
+      "label": "Map embed URL",
+      "label_ar": "رابط تضمين الخريطة",
+      "default": "",
+      "info": "The src URL from Google Maps → Share → Embed a map. Paste the URL only, not the whole tag.",
+      "info_ar": "رابط الـ src من خرائط جوجل ← مشاركة ← تضمين خريطة. الصقي الرابط بس مش الكود كله."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact",
+      "name_ar": "تواصل معنا",
+      "settings": {}
+    }
+  ]
+}

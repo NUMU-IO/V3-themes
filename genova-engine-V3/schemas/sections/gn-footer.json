@@ -1,0 +1,305 @@
+{
+  "type": "gn-footer",
+  "name": "Footer",
+  "name_ar": "الفوتر",
+  "tag": "footer",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Trust row",
+      "content_ar": "شريط الثقة"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_row",
+      "label": "Show the trust row",
+      "label_ar": "إظهار شريط الثقة",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "trust_shipping_title",
+      "label": "Shipping — title",
+      "label_ar": "الشحن — العنوان",
+      "default": "Fast shipping",
+      "visible_if": "show_trust_row"
+    },
+    {
+      "type": "text",
+      "id": "trust_shipping_text",
+      "label": "Shipping — text",
+      "label_ar": "الشحن — الوصف",
+      "default": "Delivered in 2–5 days across Egypt",
+      "visible_if": "show_trust_row"
+    },
+    {
+      "type": "text",
+      "id": "trust_service_title",
+      "label": "Service — title",
+      "label_ar": "الخدمة — العنوان",
+      "default": "Here to help",
+      "visible_if": "show_trust_row"
+    },
+    {
+      "type": "text",
+      "id": "trust_service_text",
+      "label": "Service — text",
+      "label_ar": "الخدمة — الوصف",
+      "default": "Message us on WhatsApp for sizing help",
+      "visible_if": "show_trust_row"
+    },
+    {
+      "type": "text",
+      "id": "trust_payment_title",
+      "label": "Payment — title",
+      "label_ar": "الدفع — العنوان",
+      "default": "Secure payment",
+      "visible_if": "show_trust_row"
+    },
+    {
+      "type": "text",
+      "id": "trust_payment_text",
+      "label": "Payment — text",
+      "label_ar": "الدفع — الوصف",
+      "default": "Card, InstaPay or cash on delivery",
+      "visible_if": "show_trust_row"
+    },
+    {
+      "type": "header",
+      "content": "About & contact",
+      "content_ar": "عن العلامة والتواصل"
+    },
+    {
+      "type": "textarea",
+      "id": "about_text",
+      "label": "About text",
+      "label_ar": "نبذة عن العلامة",
+      "default": "Denim made for real Egyptian bodies. Cut, washed and finished to fit — then worn until it earns its creases."
+    },
+    {
+      "type": "text",
+      "id": "contact_phone",
+      "label": "Phone",
+      "label_ar": "رقم التليفون",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Email",
+      "label_ar": "البريد الإلكتروني",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "contact_whatsapp",
+      "label": "WhatsApp number",
+      "label_ar": "رقم واتساب",
+      "info": "Egyptian format, e.g. 01012345678.",
+      "info_ar": "بالصيغة المصرية، مثال 01012345678.",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Newsletter",
+      "content_ar": "النشرة البريدية"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show the newsletter form",
+      "label_ar": "إظهار نموذج النشرة البريدية",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Newsletter heading",
+      "label_ar": "عنوان النشرة",
+      "default": "Join the list",
+      "visible_if": "show_newsletter"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_subtitle",
+      "label": "Newsletter text",
+      "label_ar": "نص النشرة",
+      "default": "New drops and restocks, before anyone else.",
+      "visible_if": "show_newsletter"
+    },
+    {
+      "type": "header",
+      "content": "Social & payment",
+      "content_ar": "السوشيال والدفع"
+    },
+    {
+      "type": "text",
+      "id": "social_instagram",
+      "label": "Instagram URL",
+      "label_ar": "رابط إنستجرام",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "social_tiktok",
+      "label": "TikTok URL",
+      "label_ar": "رابط تيك توك",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "social_facebook",
+      "label": "Facebook URL",
+      "label_ar": "رابط فيسبوك",
+      "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_marks",
+      "label": "Show payment badges",
+      "label_ar": "إظهار شعارات الدفع",
+      "info": "Shows only the methods your checkout actually accepts — it reads them from your payment settings, so it can never advertise a method you don't offer.",
+      "info_ar": "بيظهر وسائل الدفع اللي الشيك أوت بيقبلها فعلًا، لأنه بيقراها من إعدادات الدفع، فمستحيل يعلن عن وسيلة مش متاحة.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "credit_text",
+      "label": "Credit line",
+      "label_ar": "سطر الحقوق",
+      "default": "© Genova",
+      "info": "Leave empty to fall back to your store name.",
+      "info_ar": "سيبه فاضي وهيستخدم اسم متجرك."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Link column",
+      "name_ar": "عمود روابط",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Column heading",
+          "label_ar": "عنوان العمود",
+          "default": "Shop"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "link",
+          "name": "Link",
+          "name_ar": "رابط",
+          "settings": [
+            {
+              "type": "text",
+              "id": "label",
+              "label": "Label",
+              "label_ar": "الاسم",
+              "default": "All products"
+            },
+            {
+              "type": "url",
+              "id": "link",
+              "label": "Link",
+              "label_ar": "الرابط",
+              "default": "/products"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Footer",
+      "name_ar": "الفوتر",
+      "settings": {},
+      "blocks": [
+        {
+          "type": "column",
+          "settings": {
+            "title": "Shop"
+          },
+          "blocks": [
+            {
+              "type": "link",
+              "settings": {
+                "label": "All products",
+                "link": "/products"
+              }
+            },
+            {
+              "type": "link",
+              "settings": {
+                "label": "New in",
+                "link": "/collections/new-in"
+              }
+            },
+            {
+              "type": "link",
+              "settings": {
+                "label": "Fit guide",
+                "link": "/pages/fit-guide"
+              }
+            }
+          ]
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Help"
+          },
+          "blocks": [
+            {
+              "type": "link",
+              "settings": {
+                "label": "Contact",
+                "link": "/contact"
+              }
+            },
+            {
+              "type": "link",
+              "settings": {
+                "label": "FAQ",
+                "link": "/faq"
+              }
+            },
+            {
+              "type": "link",
+              "settings": {
+                "label": "Shipping & returns",
+                "link": "/policies/refund-policy"
+              }
+            }
+          ]
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Legal"
+          },
+          "blocks": [
+            {
+              "type": "link",
+              "settings": {
+                "label": "Privacy policy",
+                "link": "/policies/privacy-policy"
+              }
+            },
+            {
+              "type": "link",
+              "settings": {
+                "label": "Terms of service",
+                "link": "/policies/terms-of-service"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

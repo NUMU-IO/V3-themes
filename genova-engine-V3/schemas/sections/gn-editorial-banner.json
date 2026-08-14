@@ -1,0 +1,102 @@
+{
+  "type": "gn-editorial-banner",
+  "name": "Editorial banner",
+  "name_ar": "بانر تحريري",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "One wide photograph, edge to edge. It exists to give the page a breath between product modules — the less you put on top of it, the better it works.",
+      "content_ar": "صورة واحدة عريضة من حافة لحافة. موجودة عشان تدّي الصفحة مساحة راحة بين أقسام المنتجات — كل ما تحطي حاجات أقل فوقها كل ما اشتغلت أحسن."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image (desktop)",
+      "label_ar": "الصورة (كمبيوتر)",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Image (mobile)",
+      "label_ar": "الصورة (موبايل)",
+      "info": "Optional taller crop for narrow screens.",
+      "info_ar": "قصّة أطول اختيارية للشاشات الضيقة.",
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "label_ar": "الارتفاع",
+      "default": "medium",
+      "options": [
+        { "value": "short", "label": "Short", "label_ar": "قصير" },
+        { "value": "medium", "label": "Medium", "label_ar": "متوسط" },
+        { "value": "tall", "label": "Tall", "label_ar": "طويل" }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "label_ar": "عرض الشاشة بالكامل",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "overlay_text",
+      "label": "Heading on the image",
+      "label_ar": "عنوان على الصورة",
+      "info": "Leave empty for a clean photograph with no overlay at all.",
+      "info_ar": "سيبيه فاضي عشان الصورة تفضل نضيفة من غير أي طبقة فوقها.",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "label_ar": "مكان النص",
+      "default": "center",
+      "options": [
+        { "value": "center", "label": "Centre", "label_ar": "المنتصف" },
+        { "value": "bottom-start", "label": "Bottom left", "label_ar": "أسفل البداية" },
+        { "value": "bottom-end", "label": "Bottom right", "label_ar": "أسفل النهاية" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Image darkening",
+      "label_ar": "تعتيم الصورة",
+      "info": "Applied only when there is text on the image.",
+      "info_ar": "بينطبق بس لما يكون فيه نص على الصورة.",
+      "default": 20,
+      "min": 0,
+      "max": 70,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial banner",
+      "name_ar": "بانر تحريري",
+      "settings": {}
+    }
+  ]
+}
