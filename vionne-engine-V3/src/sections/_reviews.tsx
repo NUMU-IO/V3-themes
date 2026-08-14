@@ -94,6 +94,17 @@ export function ReviewsSection({ productId, locale }: { productId: string; local
     }
   };
 
+  // CRO: with ZERO approved reviews, a titled "Customer reviews — no
+  // reviews yet" block is anti-social-proof (it announces that nobody has
+  // vouched for the product at the exact decision moment). Render nothing
+  // until the first review exists; reviews arrive via the post-delivery
+  // flows and the account page, so the PDP entry point isn't the only
+  // door. Kept visible mid-interaction (open form / just-submitted) so a
+  // writer never sees their form vanish.
+  if (items.length === 0 && stats.count === 0 && !formOpen && state !== "done") {
+    return null;
+  }
+
   return (
     <section className="mt-12 pt-8 border-t border-[var(--vn-border)]" data-testid="storefront-reviews">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
