@@ -1,0 +1,92 @@
+{
+  "type": "gn-about-tabs",
+  "name": "Brand story tabs",
+  "name_ar": "قصة العلامة",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Built to standard"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Image side",
+      "label_ar": "مكان الصورة",
+      "default": "image-start",
+      "options": [
+        {
+          "value": "image-start",
+          "label": "Image first",
+          "label_ar": "الصورة الأول"
+        },
+        {
+          "value": "image-end",
+          "label": "Text first",
+          "label_ar": "النص الأول"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Tab 1",
+      "content_ar": "التبويب الأول"
+    },
+    {
+      "type": "text",
+      "id": "tab_1_label",
+      "label": "Label",
+      "label_ar": "الاسم",
+      "default": "About us"
+    },
+    {
+      "type": "image_picker",
+      "id": "tab_1_image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "tab_1_body",
+      "label": "Text",
+      "label_ar": "النص",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Tab 2",
+      "content_ar": "التبويب التاني"
+    },
+    {
+      "type": "text",
+      "id": "tab_2_label",
+      "label": "Label",
+      "label_ar": "الاسم",
+      "default": "Our denim"
+    },
+    {
+      "type": "image_picker",
+      "id": "tab_2_image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "tab_2_body",
+      "label": "Text",
+      "label_ar": "النص",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand story tabs",
+      "name_ar": "قصة العلامة",
+      "settings": {}
+    }
+  ]
+}

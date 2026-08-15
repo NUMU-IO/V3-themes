@@ -1,0 +1,109 @@
+{
+  "type": "gn-about",
+  "name": "About",
+  "name_ar": "عن العلامة",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "label_ar": "نص صغير فوق العنوان",
+      "default": "Our story"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "label_ar": "العنوان",
+      "default": "About Genova"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body",
+      "label_ar": "النص",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Values",
+      "content_ar": "قيمنا"
+    },
+    {
+      "type": "text",
+      "id": "value_1_title",
+      "label": "Value 1 — title",
+      "label_ar": "القيمة الأولى — العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "value_1_text",
+      "label": "Value 1 — text",
+      "label_ar": "القيمة الأولى — النص",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "value_2_title",
+      "label": "Value 2 — title",
+      "label_ar": "القيمة التانية — العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "value_2_text",
+      "label": "Value 2 — text",
+      "label_ar": "القيمة التانية — النص",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "value_3_title",
+      "label": "Value 3 — title",
+      "label_ar": "القيمة التالتة — العنوان",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "value_3_text",
+      "label": "Value 3 — text",
+      "label_ar": "القيمة التالتة — النص",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Call to action",
+      "content_ar": "زر الدعوة"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": "Shop the collection"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    }
+  ],
+  "presets": [
+    {
+      "name": "About",
+      "name_ar": "عن العلامة",
+      "settings": {}
+    }
+  ]
+}

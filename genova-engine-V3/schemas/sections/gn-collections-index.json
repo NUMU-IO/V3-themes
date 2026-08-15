@@ -1,0 +1,63 @@
+{
+  "type": "gn-collections-index",
+  "name": "All collections",
+  "name_ar": "كل التصنيفات",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Collections"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Cards across",
+      "label_ar": "عدد الكروت في الصف",
+      "default": 3,
+      "min": 2,
+      "max": 5,
+      "step": 1
+    },
+    {
+      "type": "select",
+      "id": "aspect",
+      "label": "Image shape",
+      "label_ar": "شكل الصورة",
+      "default": "portrait",
+      "options": [
+        {
+          "value": "portrait",
+          "label": "Portrait (3:4)",
+          "label_ar": "طولي"
+        },
+        {
+          "value": "square",
+          "label": "Square",
+          "label_ar": "مربع"
+        },
+        {
+          "value": "landscape",
+          "label": "Landscape (4:3)",
+          "label_ar": "عرضي"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_counts",
+      "label": "Show how many products",
+      "label_ar": "إظهار عدد المنتجات",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "All collections",
+      "name_ar": "كل التصنيفات",
+      "settings": {}
+    }
+  ]
+}

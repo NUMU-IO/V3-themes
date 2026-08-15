@@ -1,0 +1,57 @@
+{
+  "type": "gn-order-confirmation",
+  "name": "Order confirmation",
+  "name_ar": "تأكيد الطلب",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Thank you"
+    },
+    {
+      "type": "textarea",
+      "id": "message",
+      "label": "Message",
+      "label_ar": "الرسالة",
+      "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "Show the order summary",
+      "label_ar": "إظهار ملخص الطلب",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_whatsapp_cta",
+      "label": "Show the WhatsApp button",
+      "label_ar": "إظهار زر واتساب",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp number",
+      "label_ar": "رقم واتساب",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "continue_link",
+      "label": "“Continue shopping” link",
+      "label_ar": "رابط “كمّلي تسوّق”",
+      "default": "/products"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Order confirmation",
+      "name_ar": "تأكيد الطلب",
+      "settings": {}
+    }
+  ]
+}

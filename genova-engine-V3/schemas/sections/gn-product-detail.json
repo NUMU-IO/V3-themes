@@ -1,0 +1,193 @@
+{
+  "type": "gn-product-detail",
+  "name": "Product details",
+  "name_ar": "تفاصيل المنتج",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Gallery",
+      "content_ar": "معرض الصور"
+    },
+    {
+      "type": "select",
+      "id": "gallery_layout",
+      "label": "Thumbnail position",
+      "label_ar": "مكان الصور المصغرة",
+      "default": "thumbs-start",
+      "options": [
+        {
+          "value": "thumbs-start",
+          "label": "Beside the image",
+          "label_ar": "جنب الصورة"
+        },
+        {
+          "value": "below",
+          "label": "Under the image",
+          "label_ar": "تحت الصورة"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_zoom",
+      "label": "Show the zoom button",
+      "label_ar": "إظهار زر التكبير",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Buying",
+      "content_ar": "الشراء"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_color_swatches",
+      "label": "Show colour options",
+      "label_ar": "إظهار الألوان",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_size_guide",
+      "label": "Show the size guide link",
+      "label_ar": "إظهار رابط دليل المقاسات",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "size_guide_link",
+      "label": "Full fit guide page",
+      "label_ar": "صفحة دليل المقاسات",
+      "default": "/pages/fit-guide"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show the review score",
+      "label_ar": "إظهار تقييم المنتج",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity",
+      "label": "Show the quantity stepper",
+      "label_ar": "إظهار عداد الكمية",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_buy_now",
+      "label": "Show “Buy it now”",
+      "label_ar": "إظهار زر الشراء الفوري",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_low_stock",
+      "label": "Warn when stock is low",
+      "label_ar": "تنبيه لما الكمية تقل",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_marks",
+      "label": "Show payment badges",
+      "label_ar": "إظهار شعارات الدفع",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_return_note",
+      "label": "Show returns note",
+      "label_ar": "إظهار ملاحظة الاستبدال",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "return_note",
+      "visible_if": "settings.show_return_note",
+      "label": "Returns note",
+      "label_ar": "ملاحظة الاستبدال",
+      "default": "Free exchange within 14 days."
+    },
+    {
+      "type": "header",
+      "content": "Content sections",
+      "content_ar": "أقسام المحتوى"
+    },
+    {
+      "type": "paragraph",
+      "content": "Each one becomes an expandable section under the buy buttons, and only appears when you write something in it. The description comes from the product itself.",
+      "content_ar": "كل واحدة بتبقى قسم بيتفتح تحت أزرار الشراء، وبيظهر بس لما تكتبي فيه حاجة. الوصف بييجي من المنتج نفسه."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show the product description",
+      "label_ar": "إظهار وصف المنتج",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "features_text",
+      "label": "Features",
+      "label_ar": "المميزات",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "details_text",
+      "label": "Details",
+      "label_ar": "التفاصيل",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "composition_text",
+      "label": "Composition",
+      "label_ar": "الخامة",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "care_text",
+      "label": "Care",
+      "label_ar": "العناية",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "origin_text",
+      "label": "Origin",
+      "label_ar": "بلد الصنع",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Below the product",
+      "content_ar": "تحت المنتج"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related",
+      "label": "Show “You may also like”",
+      "label_ar": "إظهار “ممكن يعجبك كمان”",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "related_title",
+      "label": "Its heading",
+      "label_ar": "عنوانه",
+      "default": "You may also like"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product details",
+      "name_ar": "تفاصيل المنتج",
+      "settings": {}
+    }
+  ]
+}

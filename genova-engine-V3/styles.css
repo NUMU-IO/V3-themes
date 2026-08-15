@@ -1,0 +1,67 @@
+/**
+ * Genova (V3) — FALLBACK stylesheet.
+ *
+ * This is not the stylesheet the storefront normally loads. `vite.config.ts`
+ * sets `build.lib.cssFileName: "theme"`, so the COMPILED Tailwind output from
+ * src/theme.css is emitted as dist/theme.css and the plugin's fallback copy of
+ * this file no-ops.
+ *
+ * It exists because the plugin's contract check requires a root styles.css, and
+ * because it is the last line of defence: if a build ever ships without the
+ * compiled CSS, these declarations keep the storefront legible (correct
+ * palette, readable type, no shadows) instead of rendering raw unstyled HTML.
+ * Keep the tokens here in sync with src/theme.css; don't grow it beyond that.
+ */
+
+[data-genova-v3-app] {
+  --gn-canvas: #f5f4f2;
+  --gn-surface: #ffffff;
+  --gn-media-bg: #edebe8;
+  --gn-ink: #141414;
+  --gn-ink-soft: #3a3a3a;
+  --gn-muted: #6b6b6b;
+  --gn-muted-2: #9a9a9a;
+  --gn-line: #e2e0dc;
+  --gn-line-strong: #c9c6c1;
+  --gn-ticker-bg: #111111;
+  --gn-ticker-fg: #ffffff;
+  --gn-btn-primary-bg: #111111;
+  --gn-btn-primary-fg: #ffffff;
+  --gn-btn-secondary-bg: #d9d9d9;
+  --gn-btn-secondary-fg: #111111;
+  --gn-overlay: rgba(0, 0, 0, 0.45);
+  --gn-font-heading: "Instrument Sans", "Manrope", system-ui, sans-serif;
+  --gn-font-body: "Instrument Sans", "Manrope", system-ui, sans-serif;
+  --gn-container: 1600px;
+  --gn-gutter: 32px;
+  --gn-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  background: var(--gn-canvas);
+  color: var(--gn-ink);
+  font-family: var(--gn-font-body);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+[data-genova-v3-app] * {
+  box-sizing: border-box;
+}
+
+[data-genova-v3-app] h1,
+[data-genova-v3-app] h2,
+[data-genova-v3-app] h3 {
+  font-family: var(--gn-font-heading);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+[data-genova-v3-app] img {
+  max-width: 100%;
+  display: block;
+}
+
+[data-genova-v3-app] :focus-visible {
+  outline: 2px solid var(--gn-ink);
+  outline-offset: 2px;
+}

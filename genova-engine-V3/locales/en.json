@@ -1,0 +1,248 @@
+{
+  "about": {
+    "headline": "About Genova"
+  },
+  "about_tabs": {
+    "heading": "Built to standard"
+  },
+  "account": {
+    "addresses": "Addresses",
+    "greeting": "Hi {{name}}",
+    "heading": "Account",
+    "no_addresses": "No saved addresses.",
+    "no_orders": "No orders yet.",
+    "orders": "Orders",
+    "sign_in": "Sign in",
+    "sign_out": "Sign out",
+    "signed_out": "Sign in to see your orders"
+  },
+  "banner": {
+    "empty": "Choose an image for this banner"
+  },
+  "cart": {
+    "added_name": "Added to your bag",
+    "apply": "Apply",
+    "checkout": "Checkout",
+    "continue": "Continue shopping",
+    "coupon": "Discount code",
+    "coupon_bad": "That code isn’t valid",
+    "coupon_not_applied": "We couldn’t apply that here — try it at checkout.",
+    "coupon_ok": "Code applied",
+    "empty": "Your bag is empty",
+    "free_ship_reached": "Free shipping unlocked",
+    "free_ship_remaining": "Spend {{amount}} more for free shipping",
+    "heading": "Your bag",
+    "recommendations": "Complete the look",
+    "remove": "Remove",
+    "sample_note": "Sample items — only you can see these, while editing.",
+    "shipping_note": "Shipping and any discounts are calculated at checkout.",
+    "subtotal": "Subtotal",
+    "summary": "Order summary",
+    "view_bag": "View bag",
+    "add": "Add"
+  },
+  "collection_rail": {
+    "heading": "Shop by collection"
+  },
+  "collections": {
+    "browse_all": "Browse all products",
+    "count": "{{n}} products",
+    "empty": "No collections yet",
+    "heading": "Collections"
+  },
+  "contact": {
+    "email": "Email",
+    "heading": "Contact",
+    "hours": "Hours",
+    "map": "Map",
+    "message": "Message",
+    "name": "Name",
+    "phone": "Phone",
+    "send": "Send",
+    "whatsapp_cta": "Message us on WhatsApp"
+  },
+  "faq": {
+    "contact_link": "Get in touch",
+    "empty": "No questions added yet.",
+    "heading": "FAQ"
+  },
+  "fit": {
+    "ask": "Not sure? Ask us",
+    "fabric": "Fabric",
+    "heading": "Find your fit",
+    "hip": "Hip",
+    "inseam": "Inseam",
+    "leg": "Leg",
+    "measurements": "Measurements",
+    "model_height": "Model height",
+    "rise": "Rise",
+    "see_full": "See the full fit guide",
+    "shop_this": "Shop this fit",
+    "stretch": "Stretch",
+    "waist": "Waist"
+  },
+  "footer": {
+    "about_text": "Denim made for real Egyptian bodies. Cut, washed and finished to fit — then worn until it earns its creases.",
+    "email": "Email",
+    "newsletter_subtitle": "New drops and restocks, before anyone else.",
+    "newsletter_title": "Join the list",
+    "subscribe": "Subscribe",
+    "trust_payment_text": "Card, InstaPay or cash on delivery",
+    "trust_payment_title": "Secure payment",
+    "trust_service_text": "Message us on WhatsApp for sizing help",
+    "trust_service_title": "Here to help",
+    "trust_shipping_text": "Delivered in 2–5 days across Egypt",
+    "trust_shipping_title": "Fast shipping"
+  },
+  "general": {
+    "account": "Account",
+    "announcement": "Announcement",
+    "back": "Back",
+    "cart": "Cart",
+    "close": "Close",
+    "loading": "Loading",
+    "menu": "Menu",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "shop": "Shop",
+    "skip_to_content": "Skip to content",
+    "view_all": "View all",
+    "whatsapp": "WhatsApp"
+  },
+  "girls": {
+    "empty": "Add customer looks to this section",
+    "heading": "Genova girls",
+    "shop_look": "Shop this look"
+  },
+  "header": {
+    "announcement_1": "Free shipping on all orders over 3,000 EGP",
+    "announcement_2": "New denim drop — now in store",
+    "nav_about": "About",
+    "nav_fit_guide": "Fit guide",
+    "nav_jeans": "Jeans",
+    "nav_new_in": "New in",
+    "nav_tops": "Tops",
+    "search_placeholder": "Search jeans, sizes, styles"
+  },
+  "hero": {
+    "empty": "Add a slide to this section",
+    "label": "Campaign",
+    "slides": "Slides"
+  },
+  "instagram": {
+    "empty": "Add image tiles to this section",
+    "heading": "Follow us on Instagram",
+    "visit": "Visit Instagram"
+  },
+  "marquee": {
+    "label": "Brand statement",
+    "statement": "Real denim. Real fits. Made for how you actually live in them."
+  },
+  "notfound": {
+    "body": "The link may be old, or the piece may have sold out.",
+    "cta": "Shop everything",
+    "headline": "That page isn’t here",
+    "popular": "Popular right now"
+  },
+  "offer": {
+    "add_more": "Add {{n}} more for the {{q}} for {{price}} offer",
+    "n_for_price": "{{n}} for {{price}}",
+    "unlocked": "Offer applied — you saved {{amount}}"
+  },
+  "order": {
+    "confirmed": "Order confirmed",
+    "message": "We’ve got it. You’ll hear from us as soon as it ships — usually within a day.",
+    "number": "Order #{{n}}",
+    "support": "Questions? Reach {{store}} any time.",
+    "thanks": "Thank you",
+    "total": "Total",
+    "whatsapp": "Ask us about this order"
+  },
+  "plp": {
+    "all_products": "All products",
+    "apply": "Show {{n}} products",
+    "clear": "Clear filters",
+    "count": "{{n}} products",
+    "empty": "Nothing matches those filters",
+    "filters": "Filters",
+    "in_stock_only": "In stock only",
+    "price": "Price",
+    "price_max": "Maximum price",
+    "price_min": "Minimum price",
+    "size": "Size",
+    "sort_by": "Sort by:",
+    "too_many_to_filter": "This collection is too large to filter on this page — browse or search instead."
+  },
+  "product": {
+    "add_failed": "Couldn’t add that — try again",
+    "add_to_cart": "Add to cart",
+    "added": "Added to your bag",
+    "adding": "Adding…",
+    "buy_now": "Buy it now",
+    "care": "Care",
+    "choose_options": "Choose your options first",
+    "coming_soon": "Coming soon",
+    "composition": "Composition",
+    "decrease": "Decrease quantity",
+    "description": "Description",
+    "details": "Details",
+    "features": "Features",
+    "full_fit_guide": "See the full fit guide",
+    "image_n": "Image {{n}}",
+    "images": "Images",
+    "increase": "Increase quantity",
+    "only_n_left": "Only {{count}} left",
+    "origin": "Origin",
+    "quantity": "Quantity",
+    "quick_add": "Quick add",
+    "related": "You may also like",
+    "sale": "Sale",
+    "size": "Size",
+    "size_guide": "Size guide",
+    "size_guide_empty": "Message us on WhatsApp and we’ll help you pick.",
+    "sold_out": "Sold out",
+    "zoom": "Zoom",
+    "return_note": "Free exchange within 14 days",
+    "loading_options": "Loading sizes…",
+    "load_failed": "Couldn’t load the options — open the product page",
+    "view_product": "View product"
+  },
+  "product_rail": {
+    "heading": "New in"
+  },
+  "reviews": {
+    "from_n": "from {{n}} reviews",
+    "from_n_across": "from {{n}} reviews across {{p}} products",
+    "heading": "Customers are saying",
+    "rating_of_5": "{{n}} out of 5",
+    "verified": "Verified purchase"
+  },
+  "search": {
+    "clear": "Clear search",
+    "empty": "Nothing found for “{{q}}”",
+    "empty_hint": "Try a shorter word, or browse everything.",
+    "heading": "Search",
+    "placeholder": "What are you looking for?",
+    "results": "{{n}} results for “{{q}}”",
+    "searching": "Searching…"
+  },
+  "sort": {
+    "a_z": "A–Z",
+    "best_selling": "Best selling",
+    "featured": "Featured",
+    "newest": "Newest",
+    "price_asc": "Price, low to high",
+    "price_desc": "Price, high to low",
+    "z_a": "Z–A"
+  },
+  "store": {
+    "directions": "Get directions",
+    "heading": "Come and try them on",
+    "hours": "Hours",
+    "whatsapp": "Message the shop"
+  },
+  "trusted": {
+    "heading": "Trusted by people."
+  }
+}

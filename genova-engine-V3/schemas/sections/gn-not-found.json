@@ -1,0 +1,50 @@
+{
+  "type": "gn-not-found",
+  "name": "404",
+  "name_ar": "٤٠٤",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "label_ar": "العنوان",
+      "default": "That page isn’t here"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body",
+      "label_ar": "النص",
+      "default": "The link may be old, or the piece may have sold out."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": "Shop everything"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_popular_products",
+      "label": "Show a few products",
+      "label_ar": "إظهار بعض المنتجات",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "404",
+      "name_ar": "٤٠٤",
+      "settings": {}
+    }
+  ]
+}

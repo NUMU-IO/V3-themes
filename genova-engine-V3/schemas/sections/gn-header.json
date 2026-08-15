@@ -1,0 +1,286 @@
+{
+  "type": "gn-header",
+  "name": "Header",
+  "name_ar": "الهيدر",
+  "tag": "header",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Announcement bar",
+      "content_ar": "شريط الإعلانات"
+    },
+    {
+      "type": "paragraph",
+      "content": "The ticker lives inside the header on purpose. Adding a separate announcement section would stack on top of the platform's own promotion bar and shoppers would see two.",
+      "content_ar": "شريط الإعلانات جزء من الهيدر عن قصد. لو ضفت قسم إعلانات منفصل هيظهر فوق شريط العروض بتاع المنصة والزبون هيشوف اتنين."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show the announcement bar",
+      "label_ar": "إظهار شريط الإعلانات",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_text_1",
+      "label": "Message 1",
+      "label_ar": "الرسالة الأولى",
+      "default": "Free shipping on all orders over 3,000 EGP",
+      "visible_if": "show_announcement"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text_2",
+      "label": "Message 2",
+      "label_ar": "الرسالة الثانية",
+      "default": "New denim drop — now in store",
+      "visible_if": "show_announcement"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text_3",
+      "label": "Message 3",
+      "label_ar": "الرسالة الثالثة",
+      "default": "",
+      "visible_if": "show_announcement"
+    },
+    {
+      "type": "range",
+      "id": "ticker_speed",
+      "label": "Ticker speed",
+      "label_ar": "سرعة الشريط",
+      "info": "Seconds for one full loop. Higher is slower.",
+      "info_ar": "عدد الثواني للفة كاملة. الرقم الأكبر يعني أبطأ.",
+      "default": 28,
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "s",
+      "visible_if": "show_announcement"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause when the shopper hovers it",
+      "label_ar": "إيقاف الحركة عند مرور الماوس",
+      "default": true,
+      "visible_if": "show_announcement"
+    },
+    {
+      "type": "header",
+      "content": "Layout",
+      "content_ar": "التخطيط"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Keep the header visible while scrolling",
+      "label_ar": "إبقاء الهيدر ظاهر أثناء التمرير",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_over_hero",
+      "label": "Overlay the homepage hero",
+      "label_ar": "دمج الهيدر مع صورة الصفحة الرئيسية",
+      "info": "On the homepage the header sits on the hero image in white. It turns solid as soon as the page scrolls, so the menu is never white-on-white. Interior pages are always solid.",
+      "info_ar": "في الصفحة الرئيسية الهيدر بيبقى فوق الصورة باللون الأبيض، وبيرجع خلفية صلبة أول ما الصفحة تنزل، عشان القائمة متبقاش أبيض على أبيض. باقي الصفحات دايمًا بخلفية.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Navigation",
+      "content_ar": "القائمة"
+    },
+    {
+      "type": "link_list_picker",
+      "id": "menu_handle",
+      "label": "Menu",
+      "label_ar": "القائمة",
+      "info": "Pick a menu you manage under Navigation. If none is set, the Menu items added below are used instead.",
+      "info_ar": "اختار قائمة من إعدادات التنقل. لو مفيش، هيستخدم عناصر القائمة اللي تحت.",
+      "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Icons",
+      "content_ar": "الأيقونات"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "label_ar": "إظهار البحث",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "label_ar": "النص الإرشادي للبحث",
+      "default": "Search jeans, sizes, styles",
+      "visible_if": "show_search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account",
+      "label_ar": "إظهار الحساب",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Show cart",
+      "label_ar": "إظهار السلة",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Mobile menu",
+      "content_ar": "قائمة الموبايل"
+    },
+    {
+      "type": "checkbox",
+      "id": "drawer_collection_images",
+      "label": "Show a collection grid in the mobile menu",
+      "label_ar": "إظهار شبكة التصنيفات في قائمة الموبايل",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "drawer_collections_title",
+      "label": "Collection grid heading",
+      "label_ar": "عنوان شبكة التصنيفات",
+      "default": "Shop",
+      "visible_if": "drawer_collection_images"
+    },
+    {
+      "type": "range",
+      "id": "drawer_collections_limit",
+      "label": "How many collections",
+      "label_ar": "عدد التصنيفات",
+      "default": 6,
+      "min": 3,
+      "max": 12,
+      "step": 3,
+      "visible_if": "drawer_collection_images"
+    },
+    {
+      "type": "checkbox",
+      "id": "drawer_show_offer",
+      "label": "Show an offer strip at the bottom of the mobile menu",
+      "label_ar": "إظهار شريط عرض أسفل قائمة الموبايل",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "drawer_offer_text",
+      "label": "Offer text",
+      "label_ar": "نص العرض",
+      "default": "",
+      "visible_if": "drawer_show_offer"
+    },
+    {
+      "type": "url",
+      "id": "drawer_offer_link",
+      "label": "Offer link",
+      "label_ar": "رابط العرض",
+      "default": "/products",
+      "visible_if": "drawer_show_offer"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "nav_item",
+      "name": "Menu item",
+      "name_ar": "عنصر قائمة",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "label_ar": "الاسم",
+          "default": "New in"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "label_ar": "الرابط",
+          "default": "/products"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "nav_child",
+          "name": "Sub-item",
+          "name_ar": "عنصر فرعي",
+          "settings": [
+            {
+              "type": "text",
+              "id": "label",
+              "label": "Label",
+              "label_ar": "الاسم",
+              "default": "Straight leg"
+            },
+            {
+              "type": "url",
+              "id": "link",
+              "label": "Link",
+              "label_ar": "الرابط",
+              "default": "/products"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Header",
+      "name_ar": "الهيدر",
+      "settings": {},
+      "blocks": [
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "New in",
+            "link": "/products"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Jeans",
+            "link": "/collections/jeans"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Tops",
+            "link": "/collections/tops"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Fit guide",
+            "link": "/pages/fit-guide"
+          }
+        },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "About",
+            "link": "/about"
+          }
+        }
+      ]
+    }
+  ]
+}

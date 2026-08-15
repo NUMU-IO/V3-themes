@@ -1,0 +1,89 @@
+{
+  "type": "gn-cart",
+  "name": "Cart",
+  "name_ar": "السلة",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Your bag"
+    },
+    {
+      "type": "url",
+      "id": "continue_link",
+      "label": "“Continue shopping” link",
+      "label_ar": "رابط “كمّلي تسوّق”",
+      "default": "/products"
+    },
+    {
+      "type": "header",
+      "content": "Free shipping",
+      "content_ar": "الشحن المجاني"
+    },
+    {
+      "type": "paragraph",
+      "content": "Set the amount that unlocks free shipping and shoppers see how close they are. Leave it at 0 to hide the bar entirely — a progress bar toward a threshold you don’t actually offer is worse than nothing.",
+      "content_ar": "حطي المبلغ اللي بيخلي الشحن مجاني والزباين هيشوفوا فاضلهم كام. سيبيه 0 عشان الشريط يختفي — شريط تقدم لهدف مش موجود أصلًا أسوأ من إنه مايكونش موجود."
+    },
+    {
+      "type": "range",
+      "id": "free_shipping_threshold",
+      "label": "Free shipping over",
+      "label_ar": "الشحن مجاني فوق",
+      "default": 0,
+      "min": 0,
+      "max": 10000,
+      "step": 100
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress_bar",
+      "label": "Show the progress bar",
+      "label_ar": "إظهار شريط التقدم",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Extras",
+      "content_ar": "إضافات"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_coupon",
+      "label": "Show the discount-code field",
+      "label_ar": "إظهار خانة كود الخصم",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recommendations",
+      "label": "Show recommendations",
+      "label_ar": "إظهار مقترحات",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "recommendations_title",
+      "label": "Recommendations heading",
+      "label_ar": "عنوان المقترحات",
+      "default": "Complete the look"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_marks",
+      "label": "Show payment badges",
+      "label_ar": "إظهار شعارات الدفع",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cart",
+      "name_ar": "السلة",
+      "settings": {}
+    }
+  ]
+}

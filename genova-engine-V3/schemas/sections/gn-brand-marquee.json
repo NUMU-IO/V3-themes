@@ -1,0 +1,148 @@
+{
+  "type": "gn-brand-marquee",
+  "name": "Moving brand statement",
+  "name_ar": "جملة العلامة المتحركة",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "One sentence, repeated, moving slowly across a narrow band. It works as a breath between the campaign image and the products — keep it short and keep it about the brand, not about an offer.",
+      "content_ar": "جملة واحدة بتتكرر وبتتحرك ببطء في شريط رفيع. بتشتغل كمساحة راحة بين صورة الحملة والمنتجات — خليها قصيرة وعن العلامة نفسها مش عن عرض."
+    },
+    {
+      "type": "text",
+      "id": "statement",
+      "label": "Statement",
+      "label_ar": "الجملة",
+      "default": "Real denim. Real fits. Made for how you actually live in them."
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Text size",
+      "label_ar": "حجم النص",
+      "default": "md",
+      "options": [
+        {
+          "value": "sm",
+          "label": "Small",
+          "label_ar": "صغير"
+        },
+        {
+          "value": "md",
+          "label": "Medium",
+          "label_ar": "متوسط"
+        },
+        {
+          "value": "lg",
+          "label": "Large",
+          "label_ar": "كبير"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "label_ar": "الخلفية",
+      "default": "canvas",
+      "options": [
+        {
+          "value": "canvas",
+          "label": "Page background",
+          "label_ar": "خلفية الصفحة"
+        },
+        {
+          "value": "surface",
+          "label": "White",
+          "label_ar": "أبيض"
+        },
+        {
+          "value": "ink",
+          "label": "Black",
+          "label_ar": "أسود"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "speed_seconds",
+      "label": "Speed",
+      "label_ar": "السرعة",
+      "info": "Seconds for one full loop. Higher is slower.",
+      "info_ar": "عدد الثواني للفة كاملة. الرقم الأكبر يعني أبطأ.",
+      "default": 32,
+      "min": 18,
+      "max": 60,
+      "step": 2,
+      "unit": "s"
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Direction",
+      "label_ar": "الاتجاه",
+      "info": "Mirrored automatically when the storefront is in Arabic.",
+      "info_ar": "بيتعكس تلقائيًا لما المتجر يكون بالعربي.",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "Leftwards",
+          "label_ar": "لليسار"
+        },
+        {
+          "value": "right",
+          "label": "Rightwards",
+          "label_ar": "لليمين"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause when the shopper hovers it",
+      "label_ar": "إيقاف الحركة عند مرور الماوس",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "label": "Band height",
+      "label_ar": "ارتفاع الشريط",
+      "default": 18,
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_borders",
+      "label": "Show hairlines above and below",
+      "label_ar": "إظهار خطوط رفيعة فوق وتحت",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_credit",
+      "label": "Show a small line beneath",
+      "label_ar": "إظهار سطر صغير تحت",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "credit_text",
+      "label": "That line",
+      "label_ar": "نص السطر",
+      "default": "",
+      "visible_if": "show_credit"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Moving brand statement",
+      "name_ar": "جملة العلامة المتحركة",
+      "settings": {}
+    }
+  ]
+}

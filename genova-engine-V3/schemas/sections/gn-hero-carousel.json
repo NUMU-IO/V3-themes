@@ -1,0 +1,244 @@
+{
+  "type": "gn-hero-carousel",
+  "name": "Hero carousel",
+  "name_ar": "سلايدر الصفحة الرئيسية",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Place this first on a page and the header will sit on top of it in white. Use campaign photography with room at the bottom for the copy — and upload a separate mobile crop so faces and text survive a narrow screen.",
+      "content_ar": "حطي القسم ده أول الصفحة والهيدر هيظهر فوقه باللون الأبيض. استخدمي صور حملات فيها مساحة تحت للنص، وارفعي نسخة موبايل منفصلة عشان الوشوش والكلام ما يتقصّوش في الشاشة الضيقة."
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "label_ar": "الارتفاع",
+      "default": "full",
+      "options": [
+        {
+          "value": "full",
+          "label": "Full screen",
+          "label_ar": "الشاشة بالكامل"
+        },
+        {
+          "value": "large",
+          "label": "Large",
+          "label_ar": "كبير"
+        },
+        {
+          "value": "medium",
+          "label": "Medium",
+          "label_ar": "متوسط"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "transition",
+      "label": "Transition",
+      "label_ar": "طريقة الانتقال",
+      "default": "fade",
+      "options": [
+        {
+          "value": "fade",
+          "label": "Crossfade",
+          "label_ar": "تلاشي"
+        },
+        {
+          "value": "slide",
+          "label": "Slide",
+          "label_ar": "انزلاق"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Move through slides automatically",
+      "label_ar": "تشغيل السلايدر تلقائيًا",
+      "info": "Always paused while the shopper hovers or is tabbing through the hero, and switched off entirely for anyone who asked their device to reduce motion.",
+      "info_ar": "بيقف تلقائيًا وقت ما الزائر يحط الماوس أو يستخدم الكيبورد، وبيتقفل خالص لأي حد مفعّل \"تقليل الحركة\" في جهازه.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "interval",
+      "label": "Seconds per slide",
+      "label_ar": "عدد الثواني لكل شريحة",
+      "default": 6,
+      "min": 3,
+      "max": 15,
+      "step": 1,
+      "unit": "s",
+      "visible_if": "autoplay"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pagination",
+      "label": "Show the numbered controls",
+      "label_ar": "إظهار أرقام التنقل",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "label_ar": "مكان النص",
+      "default": "bottom-start",
+      "options": [
+        {
+          "value": "bottom-start",
+          "label": "Bottom left",
+          "label_ar": "أسفل البداية"
+        },
+        {
+          "value": "bottom-center",
+          "label": "Bottom centre",
+          "label_ar": "أسفل المنتصف"
+        },
+        {
+          "value": "center",
+          "label": "Centre",
+          "label_ar": "المنتصف"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Image darkening",
+      "label_ar": "تعتيم الصورة",
+      "info": "Only affects legibility of the text on top. Set to 0 for a clean photograph.",
+      "info_ar": "بيأثر بس على وضوح النص اللي فوق الصورة. حطيه 0 عشان الصورة تفضل نضيفة.",
+      "default": 25,
+      "min": 0,
+      "max": 70,
+      "step": 5,
+      "unit": "%"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "name_ar": "شريحة",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image (desktop)",
+          "label_ar": "الصورة (كمبيوتر)",
+          "default": ""
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Image (mobile)",
+          "label_ar": "الصورة (موبايل)",
+          "info": "Optional. A taller crop of the same shot — without it the desktop image is centre-cropped and heads get cut off.",
+          "info_ar": "اختياري. قصّة أطول من نفس الصورة — من غيرها الصورة بتتقص من النص والوشوش ممكن تتقطع.",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow",
+          "label_ar": "نص صغير فوق العنوان",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "headline",
+          "label": "Headline",
+          "label_ar": "العنوان",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "subline",
+          "label": "Supporting line",
+          "label_ar": "سطر إضافي",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "cta_text",
+          "label": "Button text",
+          "label_ar": "نص الزر",
+          "default": ""
+        },
+        {
+          "type": "url",
+          "id": "cta_link",
+          "label": "Button link",
+          "label_ar": "رابط الزر",
+          "default": "/products"
+        },
+        {
+          "type": "select",
+          "id": "text_color",
+          "label": "Text colour",
+          "label_ar": "لون النص",
+          "info": "Pick whichever stays readable on this particular photograph.",
+          "info_ar": "اختاري اللي هيفضل واضح على الصورة دي بالذات.",
+          "default": "light",
+          "options": [
+            {
+              "value": "light",
+              "label": "White",
+              "label_ar": "أبيض"
+            },
+            {
+              "value": "dark",
+              "label": "Black",
+              "label_ar": "أسود"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "custom_text_color",
+          "label": "Text colour (override)",
+          "label_ar": "لون النص (تخصيص)",
+          "info": "Optional. Leave empty to use the Light/Dark choice above. Set it when the photograph needs a colour neither black nor white can hold.",
+          "info_ar": "اختياري. سيبيه فاضي عشان يستخدم اختيار فاتح/غامق اللي فوق. استخدميه لما الصورة تحتاج لون مش أبيض ولا أسود.",
+          "default": ""
+        },
+        {
+          "type": "color",
+          "id": "cta_bg_color",
+          "label": "Button background (override)",
+          "label_ar": "خلفية الزر (تخصيص)",
+          "default": ""
+        },
+        {
+          "type": "color",
+          "id": "cta_text_color",
+          "label": "Button text (override)",
+          "label_ar": "نص الزر (تخصيص)",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "Hero carousel",
+      "name_ar": "سلايدر الصفحة الرئيسية",
+      "settings": {},
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "Summer 26",
+            "headline": "Built for the way you actually wear denim",
+            "cta_text": "Shop now",
+            "cta_link": "/products"
+          }
+        }
+      ]
+    }
+  ]
+}

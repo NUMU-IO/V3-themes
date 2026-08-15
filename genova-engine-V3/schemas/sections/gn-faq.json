@@ -1,0 +1,83 @@
+{
+  "type": "gn-faq",
+  "name": "FAQ",
+  "name_ar": "الأسئلة الشائعة",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "FAQ"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_group_headings",
+      "label": "Show group headings",
+      "label_ar": "إظهار عناوين المجموعات",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "contact_text",
+      "label": "Closing line",
+      "label_ar": "سطر الختام",
+      "default": "Still stuck?"
+    },
+    {
+      "type": "url",
+      "id": "contact_link",
+      "label": "Its link",
+      "label_ar": "رابطه",
+      "default": "/contact"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "group",
+      "name": "Group",
+      "name_ar": "مجموعة",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Group heading",
+          "label_ar": "عنوان المجموعة",
+          "default": "Shipping"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "qa",
+          "name": "Question",
+          "name_ar": "سؤال",
+          "settings": [
+            {
+              "type": "text",
+              "id": "question",
+              "label": "Question",
+              "label_ar": "السؤال",
+              "default": ""
+            },
+            {
+              "type": "textarea",
+              "id": "answer",
+              "label": "Answer",
+              "label_ar": "الإجابة",
+              "default": ""
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "FAQ",
+      "name_ar": "الأسئلة الشائعة",
+      "settings": {}
+    }
+  ]
+}
