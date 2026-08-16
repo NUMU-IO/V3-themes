@@ -905,8 +905,8 @@
 /* RTL: same ribbon, opposite direction. */
 [dir="rtl"] .vn-na-track { animation-direction: reverse; }
 
-.vn-na-card { flex: 0 0 auto; width: 150px; margin-inline-end: 1rem; display: block; text-decoration: none; color: inherit; }
-@media (min-width: 768px) { .vn-na-card { width: 180px; } }
+.vn-na-card { flex: 0 0 auto; width: 160px; margin-inline-end: 1rem; display: block; text-decoration: none; color: inherit; }
+@media (min-width: 768px) { .vn-na-card { width: 200px; } }
 .vn-na-media {
   position: relative; aspect-ratio: 3/4; overflow: hidden;
   background: var(--vn-band); margin-bottom: 0.5rem;

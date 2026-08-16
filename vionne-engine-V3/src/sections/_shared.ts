@@ -578,6 +578,20 @@ export const CHIP_IMG = {
   sizes: "44px",
 } as const;
 
+/**
+ * Fixed-width cards in the new-arrivals ribbon (160px phone / 200px desktop).
+ *
+ * `sizes` has to state the RENDERED width, not the source's: the strip first
+ * shipped with CHIP_IMG, whose `sizes: "44px"` told the browser a 64px file
+ * was plenty, and it upscaled that four times over a 180px card. The widths
+ * stay on the host's fixed ladder (…256, 384, 640…) — an off-ladder value is
+ * rejected by the image proxy — and 640 leaves headroom for a 3× screen.
+ */
+export const NA_CARD_IMG = {
+  widths: [256, 384, 640],
+  sizes: "(min-width: 768px) 200px, 160px",
+} as const;
+
 /** Full-bleed editorial / lifestyle imagery inside a container. */
 export const EDITORIAL_IMG = {
   widths: [640, 768, 1024, 1280, 1920],
