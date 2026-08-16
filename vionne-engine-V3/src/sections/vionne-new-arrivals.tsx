@@ -9,7 +9,7 @@ import {
   merchantLabelText,
   productImage,
   responsiveImg,
-  CHIP_IMG,
+  NA_CARD_IMG,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -19,7 +19,7 @@ import { PricePair } from "./_price";
 /**
  * Cards per half of the track, before duplication.
  *
- * A card is 180px + 16px of margin on desktop, so 12 spans ~2,350px — wider
+ * A card is 200px + 16px of margin on desktop, so 12 spans ~2,590px — wider
  * than any realistic viewport. Below that the ribbon shows dead space instead
  * of a continuous run; six labelled products measured 1,176px against a
  * 1,265px track.
@@ -132,7 +132,7 @@ const VionneNewArrivals = ({ instance, sectionId }: SectionRenderProps) => {
         <div className="vn-na-media">
           {img ? (
             <img
-              {...responsiveImg(img, CHIP_IMG)}
+              {...responsiveImg(img, NA_CARD_IMG)}
               alt={product.name}
               className="w-full h-full object-cover"
               loading="lazy"
