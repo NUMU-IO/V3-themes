@@ -227,6 +227,19 @@ export function merchantLabelText(product: unknown, locale: string | undefined):
   return (isAr ? label.text_ar || label.text_en : label.text_en) || "";
 }
 
+/**
+ * The label's KEY ("new" / "sale" / …), lowercased, or "" when unlabeled.
+ *
+ * Separate from `merchantLabelText` because that returns display copy, which a
+ * merchant can rename per locale — filtering on it would break the moment
+ * someone edits the badge wording. Sections that SELECT products by label
+ * (the new-arrivals strip) must match on the stable key instead.
+ */
+export function merchantLabelKey(product: unknown): string {
+  const label = (product as { label?: { key?: string } | null })?.label;
+  return (label?.key || "").trim().toLowerCase();
+}
+
 
 
 interface RawBlock {

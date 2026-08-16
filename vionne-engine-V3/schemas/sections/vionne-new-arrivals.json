@@ -1,0 +1,116 @@
+{
+  "type": "vionne-new-arrivals",
+  "name": "Vionne New Arrivals Strip",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "label": "Title",
+      "default": ""
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "label": "Subtitle",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Which products appear"
+    },
+    {
+      "id": "label_key",
+      "type": "select",
+      "label": "Show products labelled",
+      "info": "Driven by each product's Product Label in the dashboard. Label a product New and it joins this strip automatically; clear the label and it leaves. No need to edit this section.",
+      "default": "new",
+      "options": [
+        { "value": "new", "label": "New" },
+        { "value": "sale", "label": "Sale" },
+        { "value": "bestseller", "label": "Bestseller" },
+        { "value": "limited", "label": "Limited" },
+        { "value": "any", "label": "Any labelled product" }
+      ]
+    },
+    {
+      "id": "max_items",
+      "type": "range",
+      "label": "Maximum products",
+      "default": 12,
+      "min": 4,
+      "max": 24,
+      "step": 1
+    },
+    {
+      "id": "fallback_when_empty",
+      "type": "checkbox",
+      "label": "Show recent products when nothing is labelled",
+      "info": "Keeps the strip from disappearing when no product carries the label. Turn off to hide the section instead.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Promotion"
+    },
+    {
+      "id": "show_promo",
+      "type": "checkbox",
+      "label": "Show promo line",
+      "default": true
+    },
+    {
+      "id": "promo_text",
+      "type": "text",
+      "label": "Promo line",
+      "info": "The reason to add one more item — e.g. your free-delivery threshold.",
+      "default": ""
+    },
+    {
+      "id": "cta_text",
+      "type": "text",
+      "label": "Button text",
+      "default": ""
+    },
+    {
+      "id": "cta_link",
+      "type": "url",
+      "label": "Button link",
+      "default": "/products"
+    },
+    {
+      "type": "header",
+      "content": "Motion"
+    },
+    {
+      "id": "speed",
+      "type": "range",
+      "label": "Scroll duration (seconds)",
+      "info": "Time for one full pass. Higher is slower. Pauses on hover, and stays still for visitors who ask for reduced motion.",
+      "default": 45,
+      "min": 15,
+      "max": 120,
+      "step": 5
+    }
+  ],
+  "presets": [
+    {
+      "name": "New Arrivals Strip",
+      "locales": {
+        "en": { "name": "New Arrivals Strip" },
+        "ar": { "name": "شريط وصل حديثًا" }
+      },
+      "settings": {
+        "label_key": "new",
+        "max_items": 12,
+        "fallback_when_empty": true,
+        "show_promo": true,
+        "cta_link": "/products",
+        "speed": 45
+      }
+    }
+  ]
+}

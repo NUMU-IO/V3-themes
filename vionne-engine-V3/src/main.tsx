@@ -51,6 +51,7 @@ import VionneSearchResults from "./sections/vionne-search-results";
 import VionneNotFound from "./sections/vionne-not-found";
 import VionneCollectionsIndex from "./sections/vionne-collections-index";
 import VionneFaq from "./sections/vionne-faq";
+import VionneNewArrivals from "./sections/vionne-new-arrivals";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
@@ -64,6 +65,7 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "vionne-slideshow": VionneSlideshow,
   "vionne-featured-collection": VionneFeaturedCollection,
   "vionne-marquee": VionneMarquee,
+  "vionne-new-arrivals": VionneNewArrivals,
   "vionne-image-comparison": VionneImageComparison,
   "vionne-ugc-carousel": VionneUgcCarousel,
   "vionne-about": VionneAbout,
