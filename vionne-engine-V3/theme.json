@@ -2,7 +2,7 @@
   "id": "vionne-v3",
   "name": "Vionne (V3)",
   "author": "NUMU",
-  "version": "0.8.3",
+  "version": "0.9.0",
   "layout": "single-column",
   "description": "Vionne (V3) — refined grayscale storefront for contemporary fashion & accessories, ported faithfully from the V2 in-tree theme. Now with an editable Vionne header + footer included across every page.",
   "error_template": "templates/error.html",
@@ -43,6 +43,17 @@
               "slide_1_cta_link": "/products",
               "slide_2_cta_link": "/products",
               "slide_3_cta_link": "/about"
+            }
+          },
+          {
+            "type": "vionne-new-arrivals",
+            "settings": {
+              "label_key": "new",
+              "max_items": 12,
+              "fallback_when_empty": true,
+              "show_promo": true,
+              "cta_link": "/products",
+              "speed": 45
             }
           },
           {

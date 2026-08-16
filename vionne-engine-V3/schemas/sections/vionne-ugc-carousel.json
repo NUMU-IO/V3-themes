@@ -313,6 +313,17 @@
       "label": "Item 6 product link",
       "label_ar": "رابط المنتج",
       "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Playback"
+    },
+    {
+      "id": "autoplay",
+      "type": "checkbox",
+      "label": "Autoplay videos",
+      "info": "Plays reels automatically as they scroll into view (muted). Only the most visible few play at once. Visitors on data-saver or reduced-motion settings keep tap-to-play.",
+      "default": true
     }
   ],
   "presets": [
@@ -327,7 +338,8 @@
         }
       },
       "settings": {
-        "cta_link": "/products"
+        "cta_link": "/products",
+        "autoplay": true
       }
     }
   ]

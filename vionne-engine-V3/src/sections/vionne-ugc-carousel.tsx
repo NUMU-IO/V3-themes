@@ -140,6 +140,123 @@ function withPrepareSlot(run: (release: () => void) => void): void {
   else queuedPrepares.push(begin);
 }
 
+// ── Autoplay director ───────────────────────────────────────────────────────
+//
+// Opt-in (merchant setting), and deliberately NOT "add autoPlay to every
+// <video>". A bare `autoPlay` attribute makes the browser download each reel in
+// full during page load — the 7.2 MB the staged loader above exists to avoid —
+// and it does so for reels the shopper may never scroll to.
+//
+// This plays only what is actually on screen, and only a couple at a time:
+//
+//   * a reel is a candidate once it is >= AUTOPLAY_VISIBLE_RATIO visible;
+//   * on every observer batch the candidates are ranked by how visible they
+//     are and only the top MAX_CONCURRENT_AUTOPLAY play — the rest pause. In a
+//     horizontal track three cards can be on screen at once, and three
+//     simultaneous streams is the bandwidth burst we are trying not to cause;
+//   * scrolling away pauses, which stops the download as well as the motion;
+//   * bytes are still withheld until the moment a reel is about to play, so a
+//     visitor who never reaches the carousel still pays nothing for it.
+//
+// Suppressed entirely when the visitor has asked for less motion or less data
+// — see `autoplayAllowed`. Those shoppers keep the click-to-play behaviour.
+const MAX_CONCURRENT_AUTOPLAY = 2;
+const AUTOPLAY_VISIBLE_RATIO = 0.6;
+
+interface AutoplayEntry {
+  ratio: number;
+  play: () => void;
+  pause: () => void;
+  playing: boolean;
+}
+
+const autoplayEntries = new Map<Element, AutoplayEntry>();
+let autoplayObserver: IntersectionObserver | null = null;
+
+/**
+ * Whether autoplaying video is appropriate for this visitor.
+ *
+ * `prefers-reduced-motion` is the accessibility contract — autoplaying video is
+ * exactly the kind of unrequested motion it exists to stop. `saveData` and a 2g
+ * `effectiveType` are the bandwidth contract, and they matter here specifically:
+ * this store's traffic is Egyptian mobile, where a few autoplaying reels is a
+ * real cost to a real person. Both fall back to click-to-play, which still works.
+ */
+function autoplayAllowed(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return false;
+  } catch {
+    /* matchMedia unavailable — fall through to the data checks */
+  }
+  const conn = (
+    navigator as unknown as {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    }
+  ).connection;
+  if (conn?.saveData) return false;
+  if (typeof conn?.effectiveType === "string" && /2g$/.test(conn.effectiveType)) {
+    return false;
+  }
+  return true;
+}
+
+/** Re-rank candidates and play only the most-visible few. */
+function reconcileAutoplay(): void {
+  const ranked = [...autoplayEntries.values()]
+    .filter((e) => e.ratio >= AUTOPLAY_VISIBLE_RATIO)
+    .sort((a, b) => b.ratio - a.ratio);
+  const winners = new Set(ranked.slice(0, MAX_CONCURRENT_AUTOPLAY));
+  for (const entry of autoplayEntries.values()) {
+    const should = winners.has(entry);
+    if (should && !entry.playing) {
+      entry.playing = true;
+      entry.play();
+    } else if (!should && entry.playing) {
+      entry.playing = false;
+      entry.pause();
+    }
+  }
+}
+
+function getAutoplayObserver(): IntersectionObserver | null {
+  if (typeof IntersectionObserver === "undefined") return null;
+  if (!autoplayObserver) {
+    autoplayObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const rec = autoplayEntries.get(entry.target);
+          if (rec) rec.ratio = entry.intersectionRatio;
+        }
+        reconcileAutoplay();
+      },
+      // A spread of thresholds so the ranking updates as cards slide through
+      // the track, not just as they cross a single line.
+      { threshold: [0, 0.25, 0.5, 0.6, 0.75, 1] },
+    );
+  }
+  return autoplayObserver;
+}
+
+/** Pause everything while the tab is hidden — no point buffering unseen video. */
+let visibilityBound = false;
+function bindVisibilityPause(): void {
+  if (visibilityBound || typeof document === "undefined") return;
+  visibilityBound = true;
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      for (const entry of autoplayEntries.values()) {
+        if (entry.playing) {
+          entry.playing = false;
+          entry.pause();
+        }
+      }
+    } else {
+      reconcileAutoplay();
+    }
+  });
+}
+
 /**
  * One UGC reel — poster first, bytes on demand, warmed just in time.
  *
@@ -180,10 +297,12 @@ function UgcReel({
   src,
   poster,
   label,
+  autoplay = false,
 }: {
   src: string;
   poster?: string;
   label: string;
+  autoplay?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   // Ref, not state, on purpose: attaching a source is a DOM side effect with no
@@ -244,6 +363,44 @@ function UgcReel({
       prepareTargets.delete(el);
     };
   }, [prepare]);
+
+  // Autoplay — register with the director, which decides which reels actually
+  // play. Attaching the source happens here rather than at mount, so a reel the
+  // shopper never scrolls to still downloads nothing.
+  useEffect(() => {
+    if (!autoplay) return;
+    const el = videoRef.current;
+    if (!el || !autoplayAllowed()) return;
+    const observer = getAutoplayObserver();
+    if (!observer) return;
+    bindVisibilityPause();
+
+    autoplayEntries.set(el, {
+      ratio: 0,
+      playing: false,
+      play: () => {
+        attach();
+        setStarted(true);
+        // muted + playsInline keeps this inside the gesture-free play rules;
+        // a rejection (policy, decode error) just leaves the poster up.
+        void el.play().catch(() => setStarted(false));
+      },
+      pause: () => {
+        try {
+          el.pause();
+        } catch {
+          /* element torn down mid-scroll */
+        }
+      },
+    });
+    observer.observe(el);
+
+    return () => {
+      observer.unobserve(el);
+      autoplayEntries.delete(el);
+      reconcileAutoplay();
+    };
+  }, [autoplay, attach]);
 
   // Stage 3 — desktop hover. `pointerType` is checked per event instead of
   // sniffing the device, so a hybrid laptop prewarms on its trackpad but the
@@ -327,6 +484,11 @@ const VionneUgcCarousel = ({ instance, sectionId }: SectionRenderProps) => {
   const introImage = asImageUrl(s.intro_image);
   const introImageTransform = asImageTransform(s.intro_image);
   const badgeText = asString(s.badge_text) || localized(locale, "Shop now", "تسوّقي دلوقتي");
+  // Autoplay is opt-out rather than opt-in: merchants who turn it on want it
+  // for everyone, and the director already withholds it from reduced-motion and
+  // data-saver visitors. `!== false` so a section saved before this setting
+  // existed picks up the new default instead of rendering with it off.
+  const autoplay = s.autoplay !== false;
   // Resolve the linked product (name + fallback thumb) from the catalog by
   // matching the /product/<slug-or-id> link, so each card can show the real
   // product under the video without the merchant re-typing anything.
@@ -470,6 +632,7 @@ const VionneUgcCarousel = ({ instance, sectionId }: SectionRenderProps) => {
                   <UgcReel
                     src={it.video.src}
                     poster={imgSrc(reelPoster, CARD_TRACK_IMG.widths[1])}
+                    autoplay={autoplay}
                     label={
                       it.caption ||
                       localized(locale, `Play reel ${it.n}`, `شغّلي الفيديو ${it.n}`)

@@ -864,3 +864,66 @@
     animation: none;
   }
 }
+
+/* ── New-arrivals strip ───────────────────────────────────────────────────
+   A ribbon of labelled products that scrolls on its own. The track is
+   rendered twice and shifted -50%, which is what makes the loop seamless;
+   the duration is a CSS var so the merchant's speed setting drives it. */
+.vn-na { padding: 2.5rem 0 2rem; }
+.vn-na-head {
+  display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between;
+  gap: 0.75rem; margin-bottom: 1.25rem;
+}
+.vn-na-promo {
+  margin: 0; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--vn-muted); border-inline-start: 2px solid var(--vn-ink);
+  padding-inline-start: 0.65rem;
+}
+/* Fade the ribbon into the page edges so cards enter and leave instead of
+   being clipped mid-card. */
+.vn-na-viewport {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+.vn-na-track {
+  display: flex; gap: 1rem; width: max-content;
+  animation: vionne-na-scroll var(--vn-na-speed, 45s) linear infinite;
+}
+.vn-na-track-clone { display: flex; gap: 1rem; }
+/* Pause on hover or when a card inside takes keyboard focus — a moving target
+   is impossible to click, and impossible to tab through. */
+.vn-na-viewport:hover .vn-na-track,
+.vn-na-track:focus-within { animation-play-state: paused; }
+@keyframes vionne-na-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+/* RTL: same ribbon, opposite direction. */
+[dir="rtl"] .vn-na-track { animation-direction: reverse; }
+
+.vn-na-card { flex: 0 0 auto; width: 150px; display: block; text-decoration: none; color: inherit; }
+@media (min-width: 768px) { .vn-na-card { width: 180px; } }
+.vn-na-media {
+  position: relative; aspect-ratio: 3/4; overflow: hidden;
+  background: var(--vn-band); margin-bottom: 0.5rem;
+}
+.vn-na-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 500ms ease; }
+.vn-na-card:hover .vn-na-media img { transform: scale(1.05); }
+.vn-na-pill {
+  position: absolute; top: 0.5rem; inset-inline-start: 0.5rem; z-index: 1;
+  background: color-mix(in srgb, var(--vn-white) 95%, transparent); color: var(--vn-ink);
+  border-radius: 999px; padding: 0.15rem 0.5rem;
+  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.vn-na-meta { display: flex; flex-direction: column; gap: 0.15rem; }
+.vn-na-name {
+  font-size: 12.5px; color: var(--vn-ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Autoplaying video and a self-scrolling ribbon are both unrequested motion.
+   Honour the OS setting: the strip becomes a normal swipeable row. The video
+   director checks the same query in JS and falls back to tap-to-play. */
+@media (prefers-reduced-motion: reduce) {
+  .vn-na-track { animation: none; }
+  .vn-na-viewport { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .vn-na-track-clone { display: none; }
+}
