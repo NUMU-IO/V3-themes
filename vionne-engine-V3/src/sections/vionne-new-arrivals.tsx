@@ -17,6 +17,16 @@ import { QuickAddButton } from "./_quick-add";
 import { PricePair } from "./_price";
 
 /**
+ * Cards per half of the track, before duplication.
+ *
+ * A card is 180px + 16px of margin on desktop, so 12 spans ~2,350px — wider
+ * than any realistic viewport. Below that the ribbon shows dead space instead
+ * of a continuous run; six labelled products measured 1,176px against a
+ * 1,265px track.
+ */
+const MIN_TRACK_CARDS = 12;
+
+/**
  * A continuously scrolling strip of newly-labelled products.
  *
  * Membership is driven by the merchant's PRODUCT LABEL, not by a hand-picked
@@ -69,19 +79,53 @@ const VionneNewArrivals = ({ instance, sectionId }: SectionRenderProps) => {
     return chosen.slice(0, maxItems);
   }, [products, labelKey, maxItems, fallbackWhenEmpty]);
 
+  /**
+   * The cards actually laid out, as ONE flat list rendered twice.
+   *
+   * Two things this fixes, both of which made the ribbon look broken:
+   *
+   * 1. A short label set could not fill the viewport. Six products came to
+   *    1,176px against a 1,265px track, so the "loop" was mostly empty space
+   *    with a clump of cards sliding through it. The set is repeated until it
+   *    comfortably exceeds any realistic viewport, so the ribbon always reads
+   *    as continuous regardless of how many products carry the label.
+   *
+   * 2. The halves must be exactly equal for `translateX(-50%)` to seam. They
+   *    were not: the originals sat as direct flex children and the duplicate
+   *    inside a wrapper, so the flex `gap` was counted once more on one side —
+   *    measured 2,336px against 1,160px, a 16px discrepancy that showed up as
+   *    a jump on every pass. Now both halves are the same flat list, and the
+   *    spacing lives in each card's margin rather than the track's `gap`, so
+   *    half the width is exactly one set.
+   */
+  const half = useMemo(() => {
+    if (items.length === 0) return [];
+    const copies = Math.max(1, Math.ceil(MIN_TRACK_CARDS / items.length));
+    return Array.from({ length: copies }, () => items).flat();
+  }, [items]);
+
   if (items.length === 0) return null;
+
+  // Duration scales with the number of cards so the ribbon travels at the same
+  // apparent speed whether the merchant labels three products or twenty — a
+  // fixed total duration would make a long strip crawl and a short one whip past.
+  const durationSeconds = Math.max(8, half.length * speed);
 
   // The track is rendered twice and translated by -50%, which is what makes the
   // loop seamless. The clone is aria-hidden so screen readers and the a11y tree
   // see each product exactly once.
-  const renderCard = (product: (typeof items)[number], clone: boolean) => {
+  const renderCard = (product: (typeof items)[number], clone: boolean, i: number) => {
     const labelText = merchantLabelText(product, locale);
     const img = productImage(product);
     return (
       <Link
-        key={`${clone ? "c" : "o"}-${product.id}`}
+        key={`${clone ? "c" : "o"}-${i}-${product.id}`}
         to={`/product/${product.slug || product.id}`}
         className="vn-na-card group"
+        // The duplicate exists only so the loop has something to run into. Hide
+        // it from assistive tech and keyboard order so each product is
+        // announced and tabbed exactly once.
+        aria-hidden={clone || undefined}
         tabIndex={clone ? -1 : undefined}
         data-testid={clone ? undefined : "storefront-product-card"}
       >
@@ -139,13 +183,13 @@ const VionneNewArrivals = ({ instance, sectionId }: SectionRenderProps) => {
           page, and containing it would put hard edges mid-animation. */}
       <div
         className="vn-na-viewport"
-        style={{ "--vn-na-speed": `${speed}s` } as React.CSSProperties}
+        style={{ "--vn-na-speed": `${durationSeconds}s` } as React.CSSProperties}
       >
+        {/* Both halves are the same flat list, so -50% lands exactly on the
+            start of the duplicate — see the `half` note above. */}
         <div className="vn-na-track">
-          {items.map((p) => renderCard(p, false))}
-          <div className="vn-na-track-clone" aria-hidden="true">
-            {items.map((p) => renderCard(p, true))}
-          </div>
+          {half.map((p, i) => renderCard(p, false, i))}
+          {half.map((p, i) => renderCard(p, true, i))}
         </div>
       </div>
 
