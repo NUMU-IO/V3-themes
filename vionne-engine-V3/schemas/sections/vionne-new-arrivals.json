@@ -29,11 +29,26 @@
       "info": "Driven by each product's Product Label in the dashboard. Label a product New and it joins this strip automatically; clear the label and it leaves. No need to edit this section.",
       "default": "new",
       "options": [
-        { "value": "new", "label": "New" },
-        { "value": "sale", "label": "Sale" },
-        { "value": "bestseller", "label": "Bestseller" },
-        { "value": "limited", "label": "Limited" },
-        { "value": "any", "label": "Any labelled product" }
+        {
+          "value": "new",
+          "label": "New"
+        },
+        {
+          "value": "sale",
+          "label": "Sale"
+        },
+        {
+          "value": "bestseller",
+          "label": "Bestseller"
+        },
+        {
+          "value": "limited",
+          "label": "Limited"
+        },
+        {
+          "value": "any",
+          "label": "Any labelled product"
+        }
       ]
     },
     {
@@ -88,20 +103,24 @@
     {
       "id": "speed",
       "type": "range",
-      "label": "Scroll duration (seconds)",
-      "info": "Time for one full pass. Higher is slower. Pauses on hover, and stays still for visitors who ask for reduced motion.",
-      "default": 45,
-      "min": 15,
-      "max": 120,
-      "step": 5
+      "label": "Scroll speed (seconds per product)",
+      "info": "Time each card takes to cross. The total loop scales with how many products are showing, so the ribbon moves at the same pace whether you label three or twenty. Higher is slower. Pauses on hover, and stays still for visitors who ask for reduced motion.",
+      "default": 5,
+      "min": 2,
+      "max": 15,
+      "step": 1
     }
   ],
   "presets": [
     {
       "name": "New Arrivals Strip",
       "locales": {
-        "en": { "name": "New Arrivals Strip" },
-        "ar": { "name": "شريط وصل حديثًا" }
+        "en": {
+          "name": "New Arrivals Strip"
+        },
+        "ar": {
+          "name": "شريط وصل حديثًا"
+        }
       },
       "settings": {
         "label_key": "new",
@@ -109,7 +128,7 @@
         "fallback_when_empty": true,
         "show_promo": true,
         "cta_link": "/products",
-        "speed": 45
+        "speed": 5
       }
     }
   ]

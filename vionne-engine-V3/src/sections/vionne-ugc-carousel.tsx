@@ -160,8 +160,14 @@ function withPrepareSlot(run: (release: () => void) => void): void {
 //
 // Suppressed entirely when the visitor has asked for less motion or less data
 // — see `autoplayAllowed`. Those shoppers keep the click-to-play behaviour.
-const MAX_CONCURRENT_AUTOPLAY = 2;
-const AUTOPLAY_VISIBLE_RATIO = 0.6;
+// Enough to cover every reel that fits on screen at once — the desktop track
+// shows three or four. It was 2, which is where the bandwidth saving is
+// largest, but it also meant a visitor looking straight at three reels watched
+// two of them play and the third sit on its poster, reading as a broken video
+// rather than a deliberate saving. The visibility gate below is what actually
+// protects the connection: reels off screen still download nothing.
+const MAX_CONCURRENT_AUTOPLAY = 4;
+const AUTOPLAY_VISIBLE_RATIO = 0.5;
 
 interface AutoplayEntry {
   ratio: number;

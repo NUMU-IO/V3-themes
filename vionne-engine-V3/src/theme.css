@@ -887,19 +887,25 @@
   mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
 }
 .vn-na-track {
-  display: flex; gap: 1rem; width: max-content;
-  animation: vionne-na-scroll var(--vn-na-speed, 45s) linear infinite;
+  display: flex; width: max-content;
+  /* No flex `gap` on purpose. The spacing lives on the card's margin instead,
+     so both halves of the track measure exactly the same and translateX(-50%)
+     lands on the start of the duplicate. With `gap` the boundary between the
+     halves picked up one extra gap (measured 2,336px vs 1,160px) and the loop
+     jumped 8px on every pass. */
+  animation: vionne-na-scroll var(--vn-na-speed, 60s) linear infinite;
+  will-change: transform;
 }
-.vn-na-track-clone { display: flex; gap: 1rem; }
 /* Pause on hover or when a card inside takes keyboard focus — a moving target
    is impossible to click, and impossible to tab through. */
 .vn-na-viewport:hover .vn-na-track,
 .vn-na-track:focus-within { animation-play-state: paused; }
-@keyframes vionne-na-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+/* translate3d keeps the ribbon on the compositor — a 2D translate repaints the whole strip each frame. */
+@keyframes vionne-na-scroll { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 /* RTL: same ribbon, opposite direction. */
 [dir="rtl"] .vn-na-track { animation-direction: reverse; }
 
-.vn-na-card { flex: 0 0 auto; width: 150px; display: block; text-decoration: none; color: inherit; }
+.vn-na-card { flex: 0 0 auto; width: 150px; margin-inline-end: 1rem; display: block; text-decoration: none; color: inherit; }
 @media (min-width: 768px) { .vn-na-card { width: 180px; } }
 .vn-na-media {
   position: relative; aspect-ratio: 3/4; overflow: hidden;
@@ -925,5 +931,6 @@
 @media (prefers-reduced-motion: reduce) {
   .vn-na-track { animation: none; }
   .vn-na-viewport { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
-  .vn-na-track-clone { display: none; }
+  /* Without motion the duplicate is just repeated content to scroll past. */
+  .vn-na-track > .vn-na-card[aria-hidden="true"] { display: none; }
 }
