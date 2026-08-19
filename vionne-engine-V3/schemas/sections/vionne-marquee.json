@@ -200,14 +200,24 @@
       ]
     },
     {
+      "id": "scroll_speed",
+      "type": "range",
+      "label": "Scroll speed (px/s)",
+      "label_ar": "سرعة التمرير (بكسل/ث)",
+      "default": 70,
+      "min": 15,
+      "max": 220,
+      "step": 5
+    },
+    {
       "id": "speed_seconds",
       "type": "range",
-      "label": "Loop duration (s)",
-      "label_ar": "مدة الدورة (ث)",
+      "label": "Loop duration (s) — legacy",
+      "label_ar": "مدة الدورة (ث) — قديم",
       "default": 30,
-      "min": 10,
+      "min": 4,
       "max": 120,
-      "step": 5
+      "step": 2
     },
     {
       "id": "pause_on_hover",
