@@ -1,0 +1,178 @@
+{
+  "type": "tn-size-guide",
+  "name": "Size guide",
+  "name_ar": "دليل المقاسات",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The page the product pages' “Find my size” button links to. It shows your store-wide size chart — set that once in Settings and every product that opts in shows the same numbers. Only type rows in below if you have not set one.",
+      "content_ar": "الصفحة اللي زرار “اعرف مقاسك” في صفحات المنتجات بيوديلها. بتعرض جدول مقاسات المتجر — اظبطه مرة واحدة في الإعدادات وكل منتج مربوط بيه هيعرض نفس الأرقام. متكتبش صفوف تحت غير لو لسه مظبطتش واحد."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Size guide"
+    },
+    {
+      "type": "text",
+      "id": "intro",
+      "label": "Intro line",
+      "label_ar": "سطر المقدمة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "model_note",
+      "label": "Model note",
+      "label_ar": "ملاحظة الموديل",
+      "default": "",
+      "info": "e.g. “The model is 184 cm and wears L.”",
+      "info_ar": "مثلًا “الموديل طوله 184 سم ولابس L”."
+    },
+    {
+      "type": "header",
+      "content": "Chart fallback",
+      "content_ar": "جدول احتياطي"
+    },
+    {
+      "type": "paragraph",
+      "content": "Used ONLY when your store has no size chart set. Columns are comma-separated and each row's measurements must be in the same order.",
+      "content_ar": "بيتستخدم بس لو متجرك مفيهوش جدول مقاسات. الأعمدة بتتفصل بفاصلة، وكل صف لازم يكون بنفس الترتيب."
+    },
+    {
+      "type": "text",
+      "id": "chart_columns",
+      "label": "Columns",
+      "label_ar": "الأعمدة",
+      "default": "",
+      "info": "e.g. Chest, Length, Shoulder",
+      "info_ar": "مثلًا: الصدر، الطول، الكتف"
+    },
+    {
+      "type": "select",
+      "id": "chart_unit",
+      "label": "Unit",
+      "label_ar": "الوحدة",
+      "default": "cm",
+      "options": [
+        {
+          "value": "cm",
+          "label": "Centimetres",
+          "label_ar": "سنتيمتر"
+        },
+        {
+          "value": "in",
+          "label": "Inches",
+          "label_ar": "بوصة"
+        }
+      ],
+      "info": "Charts in centimetres get a cm / inches switch on the page.",
+      "info_ar": "الجداول بالسنتيمتر بيظهر معاها زرار تحويل للبوصة."
+    },
+    {
+      "type": "header",
+      "content": "How to measure",
+      "content_ar": "طريقة القياس"
+    },
+    {
+      "type": "text",
+      "id": "measure_heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "How to measure"
+    },
+    {
+      "type": "header",
+      "content": "Still not sure?",
+      "content_ar": "لسه مش متأكد؟"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp",
+      "label": "WhatsApp number",
+      "label_ar": "رقم الواتساب",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": "Ask us which size to get"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Chart row",
+      "name_ar": "صف في الجدول",
+      "settings": [
+        {
+          "type": "text",
+          "id": "size",
+          "label": "Size",
+          "label_ar": "المقاس",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "values",
+          "label": "Measurements",
+          "label_ar": "المقاييس",
+          "default": "",
+          "info": "Comma-separated, in the same order as the columns.",
+          "info_ar": "مفصولة بفاصلة، بنفس ترتيب الأعمدة."
+        }
+      ]
+    },
+    {
+      "type": "measure",
+      "name": "How to measure",
+      "name_ar": "طريقة قياس",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "What to measure",
+          "label_ar": "بتقيس إيه",
+          "default": ""
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "How",
+          "label_ar": "إزاي",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Size guide",
+      "name_ar": "دليل المقاسات",
+      "settings": {
+        "chart_unit": "cm",
+        "measure_heading": "How to measure"
+      },
+      "blocks": [
+        {
+          "type": "measure",
+          "settings": {
+            "title": "Chest",
+            "text": "Measure right around the fullest part of your chest, keeping the tape level and not pulled tight."
+          }
+        },
+        {
+          "type": "measure",
+          "settings": {
+            "title": "Length",
+            "text": "From the highest point of the shoulder straight down to the hem."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "type": "tn-account",
+  "name": "Account",
+  "name_ar": "الحساب",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Signed out this is the sign-in and sign-up form; signed in it is the customer's orders and saved addresses. Both states are this one section.",
+      "content_ar": "لو الزبون مش داخل، ده فورم تسجيل الدخول وإنشاء الحساب؛ ولو داخل، بيبقى طلباته وعناوينه. الحالتين في نفس السكشن."
+    },
+    {
+      "type": "text",
+      "id": "signin_heading",
+      "label": "Sign-in heading",
+      "label_ar": "عنوان تسجيل الدخول",
+      "default": "Sign in"
+    },
+    {
+      "type": "text",
+      "id": "register_heading",
+      "label": "Sign-up heading",
+      "label_ar": "عنوان إنشاء الحساب",
+      "default": "Create an account"
+    },
+    {
+      "type": "text",
+      "id": "signed_in_heading",
+      "label": "Signed-in greeting",
+      "label_ar": "التحية بعد الدخول",
+      "default": "Hi {{name}}",
+      "info": "{{name}} becomes their first name, or their email if they didn't give one.",
+      "info_ar": "{{name}} بيتحول لاسمه الأول، أو إيميله لو مدخلش اسم."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_orders",
+      "label": "Show orders",
+      "label_ar": "إظهار الطلبات",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_addresses",
+      "label": "Show saved addresses",
+      "label_ar": "إظهار العناوين المحفوظة",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Account",
+      "name_ar": "الحساب",
+      "settings": {
+        "show_orders": true,
+        "show_addresses": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "type": "tn-collection-links",
+  "name": "Collection links",
+  "name_ar": "روابط التصنيفات",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The grid of collection cards near the bottom of every page — image, an orange item count, the name, and \"View all\". Set to Automatic it follows your collections, so a new one appears here without anybody remembering to add it.",
+      "content_ar": "شبكة كروت التصنيفات اللي تحت في كل صفحة — صورة، عدد المنتجات بالبرتقالي، الاسم، و\"شوف الكل\". لو خليتها تلقائي هتمشي مع تصنيفاتك، يعني أي تصنيف جديد هيظهر لوحده."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Shop by category"
+    },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Which collections",
+      "label_ar": "أنهي تصنيفات",
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatic — all collections",
+          "label_ar": "تلقائي — كل التصنيفات"
+        },
+        {
+          "value": "manual",
+          "label": "Hand-picked cards",
+          "label_ar": "كروت مختارة يدويًا"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "How many (automatic only)",
+      "label_ar": "العدد (في الوضع التلقائي)",
+      "default": 4,
+      "min": 2,
+      "max": 8,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "label_ar": "أعمدة على الكمبيوتر",
+      "default": 4,
+      "min": 2,
+      "max": 5,
+      "step": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_counts",
+      "label": "Show the item count",
+      "label_ar": "إظهار عدد المنتجات",
+      "default": true,
+      "info": "Hidden automatically on any collection whose count the store doesn't report — an empty pill is worse than none.",
+      "info_ar": "بتتخفي لوحدها لو التصنيف مش راجع بعدد — الشارة الفاضية أوحش من إنها متبانش."
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "\"View all\" text",
+      "label_ar": "نص \"شوف الكل\"",
+      "default": "View all"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Collection card",
+      "name_ar": "كارت تصنيف",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "label_ar": "الاسم",
+          "default": "T-shirts"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "label_ar": "الرابط",
+          "default": "/collections"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "label_ar": "الصورة",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "count_label",
+          "label": "Count label",
+          "label_ar": "نص العدد",
+          "default": "",
+          "info": "e.g. \"6 items\". Leave empty to hide the pill on this card.",
+          "info_ar": "مثلاً \"6 منتجات\". سيبها فاضية عشان الشارة تختفي من الكارت ده."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection links",
+      "name_ar": "روابط التصنيفات",
+      "settings": {
+        "heading": "Shop by category",
+        "source": "auto",
+        "limit": 4,
+        "columns_desktop": 4,
+        "show_counts": true
+      }
+    }
+  ]
+}

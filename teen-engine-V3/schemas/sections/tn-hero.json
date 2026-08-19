@@ -1,0 +1,130 @@
+{
+  "type": "tn-hero",
+  "name": "Campaign hero",
+  "name_ar": "بانر الحملة",
+  "limit": 2,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A full-bleed campaign image with the header capsule floating on top of it. Use a separate mobile image — a desktop landscape crop puts your model's head off-screen on a phone.",
+      "content_ar": "صورة حملة بعرض الشاشة والهيدر عايم فوقها. استخدم صورة مختلفة للموبايل — الصورة العريضة بتاعة الكمبيوتر بتقص نص الصورة على الموبايل."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_desktop",
+      "label": "Desktop image",
+      "label_ar": "صورة الكمبيوتر",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image",
+      "label_ar": "صورة الموبايل",
+      "default": "",
+      "info": "Portrait or square. Falls back to the desktop image.",
+      "info_ar": "طولية أو مربعة. لو سيبتها فاضية هياخد صورة الكمبيوتر."
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image description",
+      "label_ar": "وصف الصورة",
+      "default": "",
+      "info": "What is in the photo, for shoppers using a screen reader and for search engines.",
+      "info_ar": "إيه اللي في الصورة، للزباين اللي بيستخدموا قارئ شاشة ولمحركات البحث."
+    },
+
+    { "type": "header", "content": "Content", "content_ar": "المحتوى" },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "SUMMER DROP"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "label_ar": "العنوان الفرعي",
+      "default": "The pieces you'll actually wear."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "label_ar": "نص الزرار",
+      "default": "Shop the drop"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزرار",
+      "default": "/products"
+    },
+
+    { "type": "header", "content": "Appearance", "content_ar": "الشكل" },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "label_ar": "الارتفاع",
+      "default": "large",
+      "options": [
+        { "value": "medium", "label": "Medium", "label_ar": "متوسط" },
+        { "value": "large", "label": "Large", "label_ar": "كبير" },
+        { "value": "full", "label": "Full screen", "label_ar": "الشاشة كاملة" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text position",
+      "label_ar": "مكان النص",
+      "default": "center",
+      "options": [
+        { "value": "start", "label": "Start", "label_ar": "البداية" },
+        { "value": "center", "label": "Centre", "label_ar": "النص" },
+        { "value": "end", "label": "End", "label_ar": "النهاية" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Image darkening",
+      "label_ar": "تغميق الصورة",
+      "default": 30,
+      "min": 0,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "info": "White text needs a darker photo to stay readable. Below about 25% on a bright image the heading becomes hard to read.",
+      "info_ar": "النص الأبيض محتاج الصورة تبقى غامقة شوية عشان يبان. تحت 25% تقريبًا على صورة فاتحة العنوان بيبقى صعب يتقرا."
+    },
+    {
+      "type": "checkbox",
+      "id": "round_bottom",
+      "label": "Round the bottom corners",
+      "label_ar": "زوايا سفلية دائرية",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Campaign hero",
+      "name_ar": "بانر الحملة",
+      "settings": {
+        "heading": "SUMMER DROP",
+        "subheading": "The pieces you'll actually wear.",
+        "cta_text": "Shop the drop",
+        "cta_link": "/products",
+        "height": "large",
+        "text_align": "center",
+        "overlay_opacity": 30,
+        "round_bottom": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "type": "tn-order-confirmation",
+  "name": "Order confirmation",
+  "name_ar": "تأكيد الطلب",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The page after paying. Keep it short and certain — this is where a customer decides whether they trust the order went through.",
+      "content_ar": "الصفحة اللي بعد الدفع. خليها قصيرة وواضحة — هنا الزبون بيقرر لو الطلب عدى فعلًا ولا لأ."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "label_ar": "السطر الصغير",
+      "default": "Order placed"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Thank you — we’re on it."
+    },
+    {
+      "type": "richtext",
+      "id": "message",
+      "label": "Message",
+      "label_ar": "الرسالة",
+      "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "Show the order summary",
+      "label_ar": "إظهار ملخص الطلب",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "continue_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": "Continue shopping"
+    },
+    {
+      "type": "url",
+      "id": "continue_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    },
+    {
+      "type": "header",
+      "content": "WhatsApp",
+      "content_ar": "واتساب"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_whatsapp_cta",
+      "label": "Show a WhatsApp button",
+      "label_ar": "إظهار زر واتساب",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "whatsapp",
+      "label": "WhatsApp number",
+      "label_ar": "رقم الواتساب",
+      "default": "",
+      "visible_if": "{{ section.settings.show_whatsapp_cta }}"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_text",
+      "label": "WhatsApp button text",
+      "label_ar": "نص زر الواتساب",
+      "default": "Ask about my order",
+      "visible_if": "{{ section.settings.show_whatsapp_cta }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Order confirmation",
+      "name_ar": "تأكيد الطلب",
+      "settings": {
+        "show_summary": true,
+        "continue_link": "/products",
+        "show_whatsapp_cta": true
+      }
+    }
+  ]
+}

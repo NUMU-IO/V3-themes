@@ -1,0 +1,143 @@
+{
+  "type": "tn-cart",
+  "name": "Bag",
+  "name_ar": "السلة",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The bag, in both states. The empty card is what most visitors see, so it gets an image and a way back to shopping; the filled state adds the lines, the free-shipping bar, a discount code and the totals. While you are editing, an empty bag shows two sample lines so you can style that half too — shoppers never see them.",
+      "content_ar": "السلة بحالتيها. الكارت الفاضي هو اللي أغلب الزوار بيشوفوه، فبياخد صورة وطريق يرجع بيها يتسوق؛ والحالة المليانة فيها المنتجات وشريط الشحن المجاني وكود الخصم والإجمالي. وانت بتعدل، السلة الفاضية بتوريك سطرين تجربة عشان تنسق الشكل — الزباين مش بيشوفوهم."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Your bag"
+    },
+    {
+      "type": "header",
+      "content": "Empty bag",
+      "content_ar": "السلة الفاضية"
+    },
+    {
+      "type": "image_picker",
+      "id": "empty_image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "default": "",
+      "info": "Optional. Something with personality beats an empty box.",
+      "info_ar": "اختياري. صورة فيها روح أحسن من مربع فاضي."
+    },
+    {
+      "type": "text",
+      "id": "empty_heading",
+      "label": "Empty message",
+      "label_ar": "رسالة السلة الفاضية",
+      "default": "Nothing in the bag yet."
+    },
+    {
+      "type": "text",
+      "id": "empty_cta_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": "Continue shopping"
+    },
+    {
+      "type": "url",
+      "id": "empty_cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_popular_picks",
+      "label": "Show \"Popular picks\"",
+      "label_ar": "إظهار \"الأكثر طلبًا\"",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "popular_picks_title",
+      "label": "\"Popular picks\" heading",
+      "label_ar": "عنوان \"الأكثر طلبًا\"",
+      "default": "Popular picks",
+      "visible_if": "{{ section.settings.show_popular_picks }}"
+    },
+    {
+      "type": "collection",
+      "id": "popular_picks_category",
+      "label": "From a collection",
+      "label_ar": "من تصنيف",
+      "info": "Leave empty to use the newest products.",
+      "info_ar": "سيبه فاضي عشان يستخدم أحدث المنتجات.",
+      "visible_if": "{{ section.settings.show_popular_picks }}"
+    },
+    {
+      "type": "range",
+      "id": "popular_picks_limit",
+      "label": "How many",
+      "label_ar": "العدد",
+      "default": 4,
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "visible_if": "{{ section.settings.show_popular_picks }}"
+    },
+    {
+      "type": "header",
+      "content": "Filled bag",
+      "content_ar": "السلة المليانة"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress_bar",
+      "label": "Show the free-shipping bar",
+      "label_ar": "إظهار شريط الشحن المجاني",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "free_shipping_threshold",
+      "label": "Free shipping over",
+      "label_ar": "شحن مجاني فوق",
+      "default": 0,
+      "min": 0,
+      "max": 5000,
+      "step": 50,
+      "info": "In your store's currency. Leave at 0 and the bar stays hidden — better than promising free delivery you have not set up in your shipping zones.",
+      "info_ar": "بعملة متجرك. سيبها 0 والشريط هيفضل مخفي — أحسن من وعد بشحن مجاني مش متظبط في مناطق الشحن.",
+      "visible_if": "{{ section.settings.show_progress_bar }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_coupon",
+      "label": "Show the discount-code field",
+      "label_ar": "إظهار خانة كود الخصم",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_marks",
+      "label": "Show payment logos",
+      "label_ar": "إظهار شعارات الدفع",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bag",
+      "name_ar": "السلة",
+      "settings": {
+        "empty_cta_link": "/products",
+        "show_popular_picks": true,
+        "popular_picks_limit": 4,
+        "show_progress_bar": true,
+        "free_shipping_threshold": 0,
+        "show_coupon": true,
+        "show_payment_marks": true
+      }
+    }
+  ]
+}

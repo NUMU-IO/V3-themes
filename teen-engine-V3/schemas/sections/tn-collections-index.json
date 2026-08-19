@@ -1,0 +1,62 @@
+{
+  "type": "tn-collections-index",
+  "name": "All collections",
+  "name_ar": "كل التصنيفات",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The /collections page: every collection in the store as a card. Uses the same card as the collection links near the footer, on purpose — a collection should look the same wherever a shopper meets it.",
+      "content_ar": "صفحة /collections: كل تصنيفات المتجر ككروت. بتستخدم نفس كارت روابط التصنيفات اللي تحت — التصنيف المفروض يبان بنفس الشكل في أي مكان."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Collections"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "One-line subtitle",
+      "label_ar": "سطر تحت العنوان",
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "label_ar": "أعمدة على الكمبيوتر",
+      "default": 3,
+      "min": 2,
+      "max": 4,
+      "step": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_counts",
+      "label": "Show the item count",
+      "label_ar": "إظهار عدد القطع",
+      "default": true,
+      "info": "Hidden per card when the store doesn't report a count — \"0 items\" on a stocked collection reads as sold out.",
+      "info_ar": "بيختفي لكل كارت لو المتجر مش راجع عدد — \"0 قطعة\" على تصنيف فيه بضاعة معناها خلص."
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "Card link wording",
+      "label_ar": "كلمة اللينك في الكارت",
+      "default": "View all"
+    }
+  ],
+  "presets": [
+    {
+      "name": "All collections",
+      "name_ar": "كل التصنيفات",
+      "settings": {
+        "columns_desktop": 3,
+        "show_counts": true
+      }
+    }
+  ]
+}

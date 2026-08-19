@@ -1,0 +1,133 @@
+{
+  "type": "tn-product-rail",
+  "name": "Product rail",
+  "name_ar": "صف منتجات",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "One row of product cards with an editorial line above it — the block the homepage is mostly made of. Add it once per group (tees, caps, new in) rather than trying to fit everything in one.",
+      "content_ar": "صف واحد من كروت المنتجات وفوقه سطر تحريري — ده البلوك اللي الصفحة الرئيسية متعملة منه. ضيفه مرة لكل مجموعة (تيشيرتات، كابات، وصل حديثًا) بدل ما تحشر كله في واحد."
+    },
+    {
+      "type": "text",
+      "id": "editorial_line",
+      "label": "Editorial line",
+      "label_ar": "السطر التحريري",
+      "default": "Easy to wear. Hard to take off.",
+      "info": "The small line above the heading. This is where the brand's voice lives — keep it short and specific.",
+      "info_ar": "السطر الصغير فوق العنوان. ده مكان صوت البراند — خليه قصير ومحدد."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "New in"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "\"View all\" link",
+      "label_ar": "رابط \"شوف الكل\"",
+      "default": "/products",
+      "info": "Leave empty to hide the link.",
+      "info_ar": "سيبه فاضي عشان اللينك يختفي."
+    },
+
+    { "type": "header", "content": "Products", "content_ar": "المنتجات" },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Which products",
+      "label_ar": "أنهي منتجات",
+      "default": "newest",
+      "options": [
+        { "value": "newest", "label": "Newest", "label_ar": "الأحدث" },
+        { "value": "category", "label": "From a collection", "label_ar": "من تصنيف" },
+        { "value": "product_list", "label": "Hand-picked", "label_ar": "مختارة يدويًا" }
+      ]
+    },
+    {
+      "type": "collection",
+      "id": "category",
+      "label": "Collection",
+      "label_ar": "التصنيف",
+      "visible_if": "{{ section.settings.source == 'category' }}"
+    },
+    {
+      "type": "product_list",
+      "id": "product_list",
+      "label": "Products",
+      "label_ar": "المنتجات",
+      "visible_if": "{{ section.settings.source == 'product_list' }}",
+      "info": "Shown in the order you arrange them here.",
+      "info_ar": "بيظهروا بالترتيب اللي تحطهم بيه هنا."
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "How many",
+      "label_ar": "العدد",
+      "default": 6,
+      "min": 2,
+      "max": 12,
+      "step": 1
+    },
+
+    { "type": "header", "content": "Layout", "content_ar": "الشكل" },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "label_ar": "التخطيط",
+      "default": "rail",
+      "options": [
+        { "value": "rail", "label": "Swipeable rail", "label_ar": "صف بيتسحب" },
+        { "value": "grid", "label": "Grid", "label_ar": "شبكة" }
+      ],
+      "info": "A rail keeps the row one line tall at every width. A grid wraps onto more rows on a phone.",
+      "info_ar": "الصف بيفضل سطر واحد في كل المقاسات. الشبكة بتنزل أسطر تانية على الموبايل."
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "label_ar": "أعمدة على الكمبيوتر",
+      "default": 4,
+      "min": 2,
+      "max": 6,
+      "step": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "Show quick add",
+      "label_ar": "إظهار الإضافة السريعة",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_swatches",
+      "label": "Show colour swatches",
+      "label_ar": "إظهار ألوان المنتج",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product rail",
+      "name_ar": "صف منتجات",
+      "settings": {
+        "editorial_line": "Easy to wear. Hard to take off.",
+        "heading": "New in",
+        "view_all_link": "/products",
+        "source": "newest",
+        "limit": 6,
+        "layout": "rail",
+        "columns_desktop": 4,
+        "show_quick_add": true,
+        "show_swatches": true
+      }
+    }
+  ]
+}

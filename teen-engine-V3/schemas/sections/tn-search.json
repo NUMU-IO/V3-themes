@@ -1,0 +1,102 @@
+{
+  "type": "tn-search",
+  "name": "Search",
+  "name_ar": "البحث",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The /search page: a bordered panel with the field, and results below once someone searches. Search matches names, tags, SKUs, colours and sizes, and it understands Arabic written with or without harakat.",
+      "content_ar": "صفحة /search: بانل بإطار فيه خانة البحث، والنتايج تحت أول ما حد يدور. البحث بيدور في الأسماء والتاجات والأكواد والألوان والمقاسات، وبيفهم العربي بحركات أو من غيرها."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Search"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Field placeholder",
+      "label_ar": "النص داخل الخانة",
+      "default": "Search"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Result columns on desktop",
+      "label_ar": "أعمدة النتايج على الكمبيوتر",
+      "default": 4,
+      "min": 2,
+      "max": 5,
+      "step": 1
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Results before \"Load more\"",
+      "label_ar": "عدد النتايج قبل \"عرض المزيد\"",
+      "default": 16,
+      "min": 8,
+      "max": 48,
+      "step": 4
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Quick link",
+      "name_ar": "لينك سريع",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "label_ar": "الاسم",
+          "default": ""
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link",
+          "label_ar": "الرابط",
+          "default": "/"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Search",
+      "name_ar": "البحث",
+      "settings": {
+        "columns_desktop": 4,
+        "products_per_page": 16
+      },
+      "blocks": [
+        {
+          "type": "link",
+          "settings": {
+            "label": "Home",
+            "url": "/"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "label": "All products",
+            "url": "/products"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "label": "Collections",
+            "url": "/collections"
+          }
+        }
+      ]
+    }
+  ]
+}

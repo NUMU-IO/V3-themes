@@ -1,0 +1,284 @@
+{
+  "type": "tn-product",
+  "name": "Product page",
+  "name_ar": "صفحة المنتج",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The whole product page. What it shows is decided by the PRODUCT, not by these settings: a cap with a colour axis gets swatches, a tee with sizes gets size buttons and a Find-my-size link, and the spec list comes from the product's own fields. The settings here only turn parts off.",
+      "content_ar": "صفحة المنتج كاملة. اللي بيظهر فيها بيتحدد من المنتج نفسه مش من الإعدادات: الكاب اللي ليه ألوان بيطلع بالسواتشز، والتيشيرت اللي ليه مقاسات بيطلع بأزرار المقاس ورابط \"اعرف مقاسك\"، وقايمة المواصفات بتيجي من بيانات المنتج. الإعدادات هنا بتقفل أجزاء بس."
+    },
+    {
+      "type": "header",
+      "content": "Gallery",
+      "content_ar": "معرض الصور"
+    },
+    {
+      "type": "select",
+      "id": "gallery_ratio",
+      "label": "Image shape",
+      "label_ar": "شكل الصورة",
+      "default": "natural",
+      "options": [
+        {
+          "value": "natural",
+          "label": "Follow the first photo",
+          "label_ar": "زي أول صورة"
+        },
+        {
+          "value": "4:5",
+          "label": "Portrait 4:5",
+          "label_ar": "طولي 4:5"
+        },
+        {
+          "value": "2:3",
+          "label": "Tall 2:3",
+          "label_ar": "طولي أكتر 2:3"
+        },
+        {
+          "value": "3:4",
+          "label": "Portrait 3:4",
+          "label_ar": "طولي 3:4"
+        },
+        {
+          "value": "1:1",
+          "label": "Square",
+          "label_ar": "مربع"
+        }
+      ],
+      "info": "\"Follow the first photo\" never crops anything, which is what a product page is for. Pick a fixed shape only if your photos are inconsistent and you want every product page the same height.",
+      "info_ar": "\"زي أول صورة\" مش بيقص حاجة من الصورة، وده المطلوب في صفحة المنتج. اختار شكل ثابت بس لو صورك مش على نفس المقاس وعايز كل الصفحات بنفس الطول."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_thumbs",
+      "label": "Show thumbnails",
+      "label_ar": "إظهار الصور المصغرة",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_zoom",
+      "label": "Show the zoom button",
+      "label_ar": "إظهار زر التكبير",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Product information",
+      "content_ar": "معلومات المنتج"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show the star rating",
+      "label_ar": "إظهار التقييم",
+      "default": true,
+      "info": "Real reviews only. A product with no reviews yet shows nothing here rather than five empty stars.",
+      "info_ar": "تقييمات حقيقية بس. المنتج اللي لسه مفيهوش تقييمات مش هيظهر عنده حاجة بدل 5 نجوم فاضية."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_save_badge",
+      "label": "Show the \"Save\" badge",
+      "label_ar": "إظهار شارة التوفير",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_assurance_strip",
+      "label": "Show the delivery / returns strip",
+      "label_ar": "إظهار شريط الشحن والاستبدال",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "assurance_1",
+      "label": "Strip — first item",
+      "label_ar": "الشريط — العنصر الأول",
+      "default": "Delivery 2–3 days",
+      "visible_if": "{{ section.settings.show_assurance_strip }}"
+    },
+    {
+      "type": "text",
+      "id": "assurance_2",
+      "label": "Strip — second item",
+      "label_ar": "الشريط — العنصر التاني",
+      "default": "Easy exchange & returns",
+      "visible_if": "{{ section.settings.show_assurance_strip }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_facts",
+      "label": "Show the spec list",
+      "label_ar": "إظهار قايمة المواصفات",
+      "default": true,
+      "info": "Built from the product's own custom fields — colour, fit, fabric, model. Add them on the product and they appear here; there is nothing to type in.",
+      "info_ar": "بتتبني من الحقول المخصصة بتاعة المنتج — اللون، القصة، الخامة، المقاس اللي لابسه الموديل. ضيفهم على المنتج وهيظهروا هنا."
+    },
+    {
+      "type": "header",
+      "content": "Sizes",
+      "content_ar": "المقاسات"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_find_my_size",
+      "label": "Show \"Find my size\"",
+      "label_ar": "إظهار \"اعرف مقاسك\"",
+      "default": true,
+      "info": "Only appears next to a size row — a product with no sizes never shows it.",
+      "info_ar": "بيظهر جنب صف المقاسات بس — المنتج اللي مالوش مقاسات مش هيبان عنده."
+    },
+    {
+      "type": "url",
+      "id": "size_guide_link",
+      "label": "Size guide page",
+      "label_ar": "صفحة دليل المقاسات",
+      "default": "/size-guide",
+      "visible_if": "{{ section.settings.show_find_my_size }}"
+    },
+    {
+      "type": "header",
+      "content": "Purchase",
+      "content_ar": "الشراء"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity",
+      "label": "Show the quantity picker",
+      "label_ar": "إظهار اختيار الكمية",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share",
+      "label": "Show the share button",
+      "label_ar": "إظهار زر المشاركة",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_buy_now",
+      "label": "Show \"Buy it now\"",
+      "label_ar": "إظهار \"اشتري دلوقتي\"",
+      "default": true,
+      "info": "Adds the item and goes straight to checkout.",
+      "info_ar": "بيضيف المنتج ويروح على الدفع على طول."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sticky_bar",
+      "label": "Sticky buy bar on phones",
+      "label_ar": "شريط شراء ثابت على الموبايل",
+      "default": true,
+      "info": "Slides up once the real Add-to-cart scrolls off screen, so it never duplicates a button that is already visible.",
+      "info_ar": "بيطلع لما زر الإضافة الأصلي يختفي من الشاشة، فمش بيكرر زر ظاهر أصلًا."
+    },
+    {
+      "type": "header",
+      "content": "Accordions",
+      "content_ar": "الأقسام المطوية"
+    },
+    {
+      "type": "text",
+      "id": "acc_1_title",
+      "label": "First accordion title",
+      "label_ar": "عنوان القسم الأول",
+      "default": "Size chart & description",
+      "info": "Holds the product's description and its size chart. Hidden when the product has neither.",
+      "info_ar": "فيه وصف المنتج وجدول المقاسات. بيختفي لو المنتج مفيهوش ولا واحد فيهم."
+    },
+    {
+      "type": "text",
+      "id": "acc_2_title",
+      "label": "Second accordion title",
+      "label_ar": "عنوان القسم التاني",
+      "default": "Shipping information"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_body",
+      "label": "Shipping information",
+      "label_ar": "معلومات الشحن",
+      "default": "",
+      "info": "Leave empty to hide this accordion.",
+      "info_ar": "سيبها فاضية عشان القسم يختفي."
+    },
+    {
+      "type": "text",
+      "id": "acc_3_title",
+      "label": "Third accordion title",
+      "label_ar": "عنوان القسم التالت",
+      "default": "Return policy"
+    },
+    {
+      "type": "richtext",
+      "id": "returns_body",
+      "label": "Return policy",
+      "label_ar": "سياسة الاسترجاع",
+      "default": "",
+      "info": "Leave empty to hide this accordion.",
+      "info_ar": "سيبها فاضية عشان القسم يختفي."
+    },
+    {
+      "type": "header",
+      "content": "Related products",
+      "content_ar": "منتجات مشابهة"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related",
+      "label": "Show related products",
+      "label_ar": "إظهار منتجات مشابهة",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "related_title",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "You may also like",
+      "visible_if": "{{ section.settings.show_related }}"
+    },
+    {
+      "type": "range",
+      "id": "related_limit",
+      "label": "How many",
+      "label_ar": "العدد",
+      "default": 4,
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "visible_if": "{{ section.settings.show_related }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product page",
+      "name_ar": "صفحة المنتج",
+      "settings": {
+        "gallery_ratio": "natural",
+        "show_thumbs": true,
+        "show_zoom": true,
+        "show_rating": true,
+        "show_save_badge": true,
+        "show_assurance_strip": true,
+        "assurance_1": "Delivery 2–3 days",
+        "assurance_2": "Easy exchange & returns",
+        "show_facts": true,
+        "show_find_my_size": true,
+        "size_guide_link": "/size-guide",
+        "show_quantity": true,
+        "show_share": true,
+        "show_buy_now": true,
+        "show_sticky_bar": true,
+        "acc_1_title": "Size chart & description",
+        "acc_2_title": "Shipping information",
+        "acc_3_title": "Return policy",
+        "show_related": true,
+        "related_limit": 4
+      }
+    }
+  ]
+}
