@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { localized, type SectionRenderProps } from "./_shared";
 
@@ -94,7 +95,22 @@ const VionneMarquee = ({ instance }: SectionRenderProps) => {
       : COLOR_PRESETS[colorScheme] ?? COLOR_PRESETS.ink;
 
   const direction = ((s.direction as string) ?? "left") as "left" | "right";
+
+  // Legacy control: a fixed loop DURATION. Kept so an existing configuration
+  // renders exactly as it did.
   const speed = Math.max(5, Math.min(180, Number(s.speed_seconds ?? 30)));
+
+  // Preferred control: an actual SPEED in px/s.
+  //
+  // A duration cannot express "how fast should this move" — the track is
+  // `width: max-content`, so the distance travelled is the width of the
+  // merchant's own text. The same 30s setting crawls with three short items
+  // and races with twenty, and turning the dial to its floor barely helps
+  // because the distance shrank along with the content. Deriving the duration
+  // from a measured width fixes that: px/s means the same thing on every
+  // store, whatever they wrote.
+  const speedPx = Number(s.scroll_speed ?? 0);
+  const usePxSpeed = Number.isFinite(speedPx) && speedPx > 0;
   const pauseOnHover = s.pause_on_hover !== false;
   const showBorders = s.show_borders === true;
   const paddingY = Math.max(2, Math.min(64, Number(s.padding_y ?? 14)));
@@ -106,16 +122,47 @@ const VionneMarquee = ({ instance }: SectionRenderProps) => {
   // identical between the two copies (no sub-pixel layout drift).
   const groupText = items.join(separator ? `   ${separator}   ` : "   ");
 
+  // Measured half-track width (one copy of the group). `null` until the first
+  // measurement lands, which is also how SSR renders — the duration falls back
+  // to the legacy value, so the banner is never frozen waiting for JS.
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const [halfWidth, setHalfWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el || !usePxSpeed) return;
+    const measure = () => setHalfWidth(el.scrollWidth / 2);
+    measure();
+    // Re-measure on resize AND on font load: a webfont swapping in after
+    // first paint changes the text width, and a duration computed against the
+    // fallback face would run at the wrong speed for the rest of the session.
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    let cancelled = false;
+    void document.fonts?.ready.then(() => {
+      if (!cancelled) measure();
+    });
+    return () => {
+      cancelled = true;
+      ro.disconnect();
+    };
+  }, [usePxSpeed, groupText]);
+
+  const duration =
+    usePxSpeed && halfWidth && halfWidth > 0
+      ? Math.max(2, Math.min(600, halfWidth / speedPx))
+      : speed;
+
   const sectionStyle = {
     paddingBlock: `${paddingY}px`,
     "--vn-marquee-bg": colors.bg,
     "--vn-marquee-fg": colors.fg,
     "--vn-marquee-border": showBorders ? colors.border || "currentColor" : "transparent",
-    "--vn-marquee-section-duration": `${speed}s`,
+    "--vn-marquee-section-duration": `${duration}s`,
   } as React.CSSProperties;
 
   const inner = (
-    <div className="vn-marquee-track" aria-hidden="true">
+    <div className="vn-marquee-track" aria-hidden="true" ref={trackRef}>
       {/* Group A — the merchant-visible content. */}
       <span
         className="vn-label whitespace-nowrap px-8"
