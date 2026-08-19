@@ -1,0 +1,84 @@
+{
+  "type": "tn-not-found",
+  "name": "404",
+  "name_ar": "٤٠٤",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The page a dead link lands on. It keeps your header and footer and offers a way back — a shopper who hits a 404 with nowhere to go simply leaves.",
+      "content_ar": "الصفحة اللي بيوصلها اللينك الميت. بتحافظ على الهيدر والفوتر وبتدي طريق يرجع بيه — الزبون اللي بيقع في 404 من غير طريق بيمشي."
+    },
+    {
+      "type": "text",
+      "id": "code",
+      "label": "Small label",
+      "label_ar": "الكلمة الصغيرة",
+      "default": "404"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "This one’s gone."
+    },
+    {
+      "type": "text",
+      "id": "body",
+      "label": "Message",
+      "label_ar": "الرسالة",
+      "default": "The link is dead or the page moved. The good stuff is still here."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": "Shop everything"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_popular_products",
+      "label": "Show popular products",
+      "label_ar": "إظهار منتجات مشهورة",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "popular_title",
+      "label": "Products heading",
+      "label_ar": "عنوان المنتجات",
+      "default": "Popular right now",
+      "visible_if": "{{ section.settings.show_popular_products }}"
+    },
+    {
+      "type": "range",
+      "id": "popular_limit",
+      "label": "How many",
+      "label_ar": "العدد",
+      "default": 4,
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "visible_if": "{{ section.settings.show_popular_products }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "404",
+      "name_ar": "٤٠٤",
+      "settings": {
+        "cta_link": "/products",
+        "show_popular_products": true,
+        "popular_limit": 4
+      }
+    }
+  ]
+}

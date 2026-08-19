@@ -1,0 +1,12 @@
+Genova bundles two typefaces, both under the SIL Open Font License, Version 1.1,
+which permits redistribution and self-hosting:
+
+  Instrument Sans      — Copyright (c) Rodrigo Fuenzalida, Jordan Egstad
+  IBM Plex Sans Arabic — Copyright (c) IBM Corp.
+
+Full licence text: https://openfontlicense.org/open-font-license-official-text/
+
+The .woff2 files here are the standard Google Fonts builds, subset to the
+unicode ranges Genova actually renders (latin + latin-ext for the grotesk,
+arabic + latin for the Arabic face). Regenerate them with
+scratchpad/selfhost_fonts.py rather than editing by hand.

@@ -1,0 +1,128 @@
+{
+  "type": "tn-faq",
+  "name": "FAQ",
+  "name_ar": "الأسئلة الشائعة",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Questions and answers. Add them straight to the section, or put them in groups once you have more than a handful. Closed answers are still found by the browser's Find on page.",
+      "content_ar": "أسئلة وأجوبة. ضيفهم على السكشن على طول، أو حطهم في مجموعات لما يبقوا كتير. الإجابات المقفولة لسه بيلاقيها بحث الصفحة في المتصفح."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Questions"
+    },
+    {
+      "type": "text",
+      "id": "intro",
+      "label": "Intro line",
+      "label_ar": "سطر المقدمة",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Still stuck?",
+      "content_ar": "لسه محتاج مساعدة؟"
+    },
+    {
+      "type": "text",
+      "id": "contact_text",
+      "label": "Closing line",
+      "label_ar": "سطر النهاية",
+      "default": "Didn’t find it?"
+    },
+    {
+      "type": "text",
+      "id": "contact_link_text",
+      "label": "Link text",
+      "label_ar": "نص الرابط",
+      "default": "Talk to us"
+    },
+    {
+      "type": "url",
+      "id": "contact_link",
+      "label": "Link",
+      "label_ar": "الرابط",
+      "default": "/contact"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "qa",
+      "name": "Question",
+      "name_ar": "سؤال",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "label_ar": "السؤال",
+          "default": ""
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "label_ar": "الإجابة",
+          "default": ""
+        }
+      ]
+    },
+    {
+      "type": "group",
+      "name": "Group",
+      "name_ar": "مجموعة",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Group title",
+          "label_ar": "عنوان المجموعة",
+          "default": ""
+        }
+      ],
+      "blocks": [
+        {
+          "type": "qa",
+          "name": "Question",
+          "name_ar": "سؤال",
+          "settings": [
+            {
+              "type": "text",
+              "id": "question",
+              "label": "Question",
+              "label_ar": "السؤال",
+              "default": ""
+            },
+            {
+              "type": "richtext",
+              "id": "answer",
+              "label": "Answer",
+              "label_ar": "الإجابة",
+              "default": ""
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "name_ar": "الأسئلة الشائعة",
+      "settings": {
+        "contact_text": "Didn’t find it?",
+        "contact_link": "/contact"
+      },
+      "blocks": [
+        {
+          "type": "qa",
+          "settings": {}
+        }
+      ]
+    }
+  ]
+}

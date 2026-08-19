@@ -1,0 +1,128 @@
+{
+  "type": "tn-bundle-builder",
+  "name": "Build a bundle",
+  "name_ar": "اعمل الباندل",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows your multibuy promotions — “any 3 for 650” and the like — as a chooser. Every price and saving on this page comes from a live promotion; there is nothing to type in and nothing that can drift from what the checkout charges. Create the promotions in Marketing → Promotions and they appear here.",
+      "content_ar": "بيعرض عروض “اشتري كذا بكذا” بتاعتك كقايمة اختيار. كل سعر وكل توفير في الصفحة دي جاي من عرض شغال فعلًا؛ مفيش حاجة تتكتب بالإيد ومفيش حاجة تختلف عن اللي الدفع بيحسبه. اعمل العروض من (التسويق ← العروض) وهتظهر هنا."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "label_ar": "السطر الصغير",
+      "default": "Pick a bundle"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Build your bundle"
+    },
+    {
+      "type": "text",
+      "id": "subcopy",
+      "label": "Sub-copy",
+      "label_ar": "السطر التوضيحي",
+      "default": "Your discount is applied automatically at checkout."
+    },
+    {
+      "type": "select",
+      "id": "present_as",
+      "label": "Show as",
+      "label_ar": "طريقة العرض",
+      "default": "page",
+      "options": [
+        {
+          "value": "page",
+          "label": "Page only",
+          "label_ar": "صفحة بس"
+        },
+        {
+          "value": "page_and_modal",
+          "label": "Page, and pop it open on the first visit",
+          "label_ar": "صفحة، وتفتح لوحدها أول زيارة"
+        }
+      ],
+      "info": "The pop-up opens once per browsing session, never again in the same session.",
+      "info_ar": "المنبثقة بتفتح مرة واحدة كل زيارة، ومش بتتكرر في نفس الزيارة."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "offer",
+      "name": "Offer styling",
+      "name_ar": "تنسيق العرض",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Optional. Dresses up ONE of your promotions — the prices still come from the promotion itself. Match it to the collection the offer covers.",
+          "content_ar": "اختياري. بيزوّق واحد من عروضك — الأسعار برضه بتيجي من العرض نفسه. اربطه بالتصنيف اللي العرض شغال عليه."
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Which offer",
+          "label_ar": "أنهي عرض",
+          "info": "The collection the promotion covers. Leave empty to style a store-wide offer.",
+          "info_ar": "التصنيف اللي العرض شغال عليه. سيبه فاضي لو العرض على المتجر كله."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "label_ar": "العنوان",
+          "default": "",
+          "info": "Overrides the promotion's own headline.",
+          "info_ar": "بيحل محل عنوان العرض نفسه."
+        },
+        {
+          "type": "text",
+          "id": "requirement",
+          "label": "Requirement line",
+          "label_ar": "سطر الشرط",
+          "default": "",
+          "info": "e.g. “Mix any caps you like”. Falls back to “Any 3 from Caps”.",
+          "info_ar": "مثلًا “اخلط أي كابات”. لو فاضي هيكتب “أي 3 من الكابات”."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "label_ar": "الصورة",
+          "info": "Leave empty to use photos of the products in the offer.",
+          "info_ar": "سيبها فاضية عشان يستخدم صور منتجات العرض."
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge",
+          "label_ar": "الشارة",
+          "default": "Most popular"
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Feature this one",
+          "label_ar": "خليه العرض المميز",
+          "default": false,
+          "info": "Otherwise the biggest saving is featured.",
+          "info_ar": "لو مفيش، أكبر توفير هو اللي بيتميز."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Build a bundle",
+      "name_ar": "اعمل الباندل",
+      "settings": {
+        "eyebrow": "Pick a bundle",
+        "present_as": "page"
+      }
+    }
+  ]
+}

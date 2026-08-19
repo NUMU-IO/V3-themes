@@ -1,0 +1,4291 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Teen (V3) — design tokens and base layer
+   ───────────────────────────────────────────────────────────────────────────
+   Everything is scoped to [data-teen-v3-app], the element main.tsx renders.
+   The theme mounts INSIDE the host's document: it does not own <html>, <head>
+   or <body>, and a bare `:root` rule here would leak the theme's type and
+   colour onto host chrome (the checkout, the password gate, the platform 404).
+
+   Every token reads through `var(--theme-<setting_id>, <default>)`. The SDK's
+   `applyGlobalStyleTokens` writes `--theme-*` custom properties from
+   `global_settings`, so a merchant edit lands as a CSS variable change and the
+   whole theme repaints without a re-render. The literal after the comma is the
+   shipped default and must match the `default` in settings_schema.json — if
+   they drift, the storefront and the editor disagree about what the theme
+   looks like out of the box.
+
+   ⚠ There is NO `@layer` in the emitted stylesheet. Tailwind's PostCSS step
+   flattens every `@layer` in this file (17 in source → 0 in dist, measured on
+   Genova). Never reason about layer precedence here; source order and
+   specificity are all that survive.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-teen-v3-app] {
+  /* ── Surfaces ────────────────────────────────────────────────────────── */
+  --tn-paper: var(--theme-background_color, #ffffff);
+  --tn-plate: var(--theme-color_plate, #f1ede9);
+  --tn-wash: var(--theme-color_wash, #f7f7f7);
+
+  /* ── Ink ─────────────────────────────────────────────────────────────── */
+  /* One token, three jobs: body text, the 1px outline that defines every card
+     and the header capsule, and the black bundle-promo surface. Measured off
+     the reference's unscaled 390px capture as exactly #121010. */
+  --tn-ink: var(--theme-text_color, #121010);
+  /* Add-to-cart is #28282A, NOT black. The orange Buy-it-now sits directly
+     beneath it; pure black makes the pair read as one control. */
+  --tn-ink-2: var(--theme-color_ink_2, #28282a);
+  --tn-ink-soft: var(--theme-color_ink_soft, #5a5a5a);
+  /* #737373, not the #7a7a7a sampled off the reference: that measures 4.29:1 on
+     white, under AA's 4.5 for body text, and this is the colour of every
+     secondary line in the theme. The corrected value is 4.74:1 and five levels
+     of grey away — imperceptible, and readable. */
+  --tn-muted: var(--theme-color_muted, #737373);
+
+  /* ── Hairlines ───────────────────────────────────────────────────────── */
+  --tn-line: var(--theme-border_color, #e1e1e1);
+
+  /* ── The three accents ───────────────────────────────────────────────────
+     ORANGE = buy / on-sale · RED = the sale price itself · LIME = the size of
+     the discount. Three jobs, no overlap. A fourth accent is a bug. */
+  --tn-primary: var(--theme-button_color, #fb4d01);
+  --tn-primary-fg: var(--theme-button_text_color, #ffffff);
+  --tn-sale: var(--theme-color_sale, #ec0505);
+  --tn-alert: var(--theme-color_alert, #e01b26);
+  --tn-lime: var(--theme-color_lime, #d9ff3d);
+  --tn-lime-ink: var(--theme-color_lime_ink, #121010);
+  --tn-cream: var(--theme-color_cream, #f7e6a1);
+
+  /* ── Bundle chooser tiles ────────────────────────────────────────────── */
+  --tn-offer-tile: var(--theme-color_offer_tile, #1f1f1f);
+  --tn-offer-tile-active: var(--theme-color_offer_tile_active, #2b3015);
+
+  /* ── Semantic ────────────────────────────────────────────────────────── */
+  --tn-assure: var(--theme-color_assure, #e0f7fa);
+  /* Darkened for the same reason: white on #8a8a8a is 3.45:1, and "Sold out"
+     is the one badge a shopper must not misread as available. 4.95:1. */
+  --tn-soldout: var(--theme-color_soldout, #707070);
+  /* Not a merchant setting: a scrim is a function, not a brand decision, and
+     exposing it invites an opaque overlay that hides the page behind it. */
+  --tn-overlay: rgba(0, 0, 0, 0.45);
+
+  /* ── Type ────────────────────────────────────────────────────────────── */
+  --tn-font-heading: var(--theme-heading_font, "Raleway"), "Manrope", system-ui, sans-serif;
+  --tn-font-body: var(--theme-body_font, "Raleway"), "Manrope", system-ui, sans-serif;
+  --tn-font-arabic: var(--theme-arabic_font, "IBM Plex Sans Arabic"), "Noto Kufi Arabic", "Cairo",
+    sans-serif;
+  --tn-base-size: calc(var(--theme-base_font_size, 16) * 1px);
+  /* The range setting is an integer in hundredths of an em so the editor slider
+     has usable steps; convert once, here. */
+  --tn-tracking: calc(var(--theme-heading_tracking, -1) * 0.01em);
+
+  /* Type scale. `clamp()` on the two display sizes only — everything smaller
+     is fixed, because fluid body copy makes line length unpredictable and this
+     theme's cards are already tightly packed. */
+  --tn-fs-display: clamp(2rem, 5vw, 3.25rem);
+  --tn-fs-title: clamp(1.6rem, 3vw, 2rem);
+  --tn-fs-heading: 1.5rem;
+  --tn-fs-card: 0.875rem;
+  --tn-fs-price: 0.875rem;
+  --tn-fs-nav: 0.875rem;
+  --tn-fs-body: 0.9375rem;
+  --tn-fs-label: 0.6875rem;
+
+  /* ── Geometry ────────────────────────────────────────────────────────── */
+  --tn-container: calc(var(--theme-container_width, 1340) * 1px);
+  /* 28px measured off the reference's 893px capture (card row starts at x=28);
+     10px off the 390px one (card row starts at x=10). */
+  --tn-gutter: 28px;
+  --tn-section-y: 80px;
+  --tn-r-card: calc(var(--theme-radius_card, 12) * 1px);
+  --tn-r-panel: calc(var(--theme-radius_panel, 18) * 1px);
+  --tn-r-chip: 8px;
+  /* White margin between a product card's border and its photo. Measured at
+     11px on all three sides of the 390px capture, and it does not scale with
+     the card, so it is a fixed value rather than a ratio. */
+  --tn-card-pad: 11px;
+
+  /* Header capsule.
+     Measured off the reference captures, not estimated: the top border sits at
+     y=10 on the 390px capture and y=14 on the 893px one, and the capsule spans
+     x=6..383 (390px) / x=4..890 (893px). So the inset is ~6px, NOT the 41px the
+     written audit quotes — that figure was taken from a different session's
+     computed box and does not match the shipped look.
+     Height is 61px on mobile and 71px on desktop, and the 71px does not scale
+     with the capture, so it is a fixed value rather than a ratio.
+     Insets are LOGICAL properties so RTL mirrors for free. */
+  --tn-header-inset: 6px;
+  --tn-header-top: 10px;
+  --tn-header-h: max(61px, calc(var(--tn-logo-h) + 22px));
+
+  /* Logo. ONE merchant control (`logo_width`) drives both axes and the capsule
+     grows to fit it, so the slider can never squash the wordmark against a
+     second, independently-computed cap — which is the bug that shipped on
+     Genova as a 56x52 "circle".
+     Height is derived at ~0.4x the width because a horizontal wordmark is the
+     shape this header is drawn for; a SHAPED (square/circle) logo uses the
+     height for both axes, so the same slider still moves it. */
+  --tn-logo-w: min(calc(var(--theme-logo_width, 96) * 1px), 45vw);
+  --tn-logo-h: min(calc(var(--theme-logo_width, 96) * 0.4px), 56px);
+
+  /* ── Motion ──────────────────────────────────────────────────────────── */
+  --tn-ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --tn-dur-fast: 180ms;
+  --tn-dur: 280ms;
+  --tn-dur-slow: 350ms;
+
+  /* ── Base ────────────────────────────────────────────────────────────── */
+  /* `relative` so a non-sticky header can position itself against the theme
+     root rather than the viewport. */
+  position: relative;
+  background: var(--tn-paper);
+  color: var(--tn-ink);
+  font-family: var(--tn-font-body);
+  font-size: var(--tn-base-size);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* The reference's mobile ladder (D12), read out of its own base.css:
+   ≤429 narrow · ≤749 mobile · 750–989 tablet · ≥990 desktop. */
+@media (max-width: 989px) {
+  [data-teen-v3-app] {
+    --tn-section-y: 56px;
+  }
+}
+
+@media (min-width: 750px) {
+  [data-teen-v3-app] {
+    --tn-header-top: 14px;
+    --tn-header-h: max(71px, calc(var(--tn-logo-h) + 26px));
+  }
+}
+
+@media (max-width: 749px) {
+  [data-teen-v3-app] {
+    --tn-section-y: 40px;
+    --tn-gutter: 16px;
+  }
+}
+
+@media (max-width: 429px) {
+  [data-teen-v3-app] {
+    --tn-gutter: 10px;
+  }
+}
+
+/* Arabic swaps the family only. Everything else — the grid, the insets, the
+   badge corners — is written with logical properties, so RTL needs no
+   per-rule mirroring. */
+[dir="rtl"] [data-teen-v3-app],
+[data-teen-v3-app][dir="rtl"] {
+  font-family: var(--tn-font-arabic);
+}
+
+[data-teen-v3-app] *,
+[data-teen-v3-app] *::before,
+[data-teen-v3-app] *::after {
+  box-sizing: border-box;
+}
+
+[data-teen-v3-app] img,
+[data-teen-v3-app] svg,
+[data-teen-v3-app] video {
+  display: block;
+  max-width: 100%;
+}
+
+[data-teen-v3-app] h1,
+[data-teen-v3-app] h2,
+[data-teen-v3-app] h3,
+[data-teen-v3-app] h4 {
+  font-family: var(--tn-font-heading);
+  font-weight: 700;
+  letter-spacing: var(--tn-tracking);
+  line-height: 1.15;
+  margin: 0;
+}
+
+[data-teen-v3-app] p {
+  margin: 0;
+}
+
+/* Focus is a visible, high-contrast ring on EVERY interactive element. Ink
+   rather than the orange accent: orange on white is 3.4:1, which is fine for a
+   large bold button label but not enough for a 2px outline a keyboard user has
+   to find. */
+[data-teen-v3-app] :focus-visible {
+  outline: 2px solid var(--tn-ink);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Component primitives
+   ───────────────────────────────────────────────────────────────────────────
+   ⚠ These are PURGED unless the literal class string appears in a file matched
+   by tailwind.config.js `content`. Never build one dynamically
+   (`tn-btn-${variant}`) — Tailwind cannot see it and the CSS is silently
+   missing in production while looking fine in dev.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  .tn-container {
+    width: 100%;
+    max-width: var(--tn-container);
+    margin-inline: auto;
+    padding-inline: var(--tn-gutter);
+  }
+
+  /* Uppercase micro-label: eyebrows, badges, nav, button text. */
+  .tn-label {
+    font-size: var(--tn-fs-label);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  /* ── Buttons ──────────────────────────────────────────────────────────
+     Pill, ≥48px tall. The reference puts a ↗ on primary CTAs; that arrow is a
+     real glyph in the markup, not a pseudo-element, so it flips with `dir` and
+     is picked up by a screen reader as part of the accessible name only when
+     the label needs it.
+
+     ⚠ Button labels are SENTENCE case, not uppercase. Every CTA in the
+     reference reads that way — "Customizae my bundle", "Search ↗",
+     "Subscribe ↗" — while the micro-labels above them ("SUMMER BUNDLE") are
+     uppercase. Uppercasing the buttons too collapses that contrast, which is
+     most of what makes the eyebrow read as an eyebrow. `.tn-label` keeps the
+     uppercase treatment; this does not. */
+  .tn-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    padding-inline: 1.75rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: normal;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--tn-dur-fast) var(--tn-ease),
+      color var(--tn-dur-fast) var(--tn-ease),
+      border-color var(--tn-dur-fast) var(--tn-ease),
+      opacity var(--tn-dur-fast) var(--tn-ease);
+  }
+
+  .tn-btn-primary {
+    background: var(--tn-primary);
+    color: var(--tn-primary-fg);
+  }
+
+  /* Charcoal, not black — see --tn-ink-2. */
+  .tn-btn-dark {
+    background: var(--tn-ink-2);
+    color: var(--tn-paper);
+  }
+
+  .tn-btn-outline {
+    background: transparent;
+    color: var(--tn-ink);
+    border-color: var(--tn-ink);
+  }
+
+  .tn-btn-cream {
+    background: var(--tn-cream);
+    color: var(--tn-ink);
+  }
+
+  .tn-btn:disabled,
+  .tn-btn[aria-disabled="true"] {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* ── Badges ───────────────────────────────────────────────────────────
+     Every badge carries a WORD as well as a colour — nothing in this theme
+     encodes meaning by colour alone (WCAG 1.4.1). */
+  /* Sentence case, NOT uppercase. Cropped and read off the captures: the card
+     pill is "On sale" and the PDP badge is "Save LE 130.00". The uppercase
+     treatment belongs to the `20% OFF` chips below and to `.tn-label`; using it
+     here as well flattens the whole page into one shouting voice. */
+  .tn-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: normal;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  /* ⚠ KNOWN AA EXCEPTION, kept deliberately. White on #fb4d01 measures 3.41:1
+     against AA's 4.5 for 12px bold text. It is the reference's signature pill
+     and the theme's single most identifying element, so it is cloned rather
+     than corrected — and it never carries information alone (the word "Sale",
+     the struck price and the red live price all say the same thing). Both
+     sides are merchant-controllable (`button_color` / `button_text_color`), so
+     a store that needs AA here can have it without a theme change. Ink on the
+     same orange would be 5.57:1 if that is ever wanted. */
+  .tn-badge-sale {
+    background: var(--tn-primary);
+    color: var(--tn-primary-fg);
+  }
+
+  .tn-badge-soldout {
+    background: var(--tn-soldout);
+    color: var(--tn-paper);
+  }
+
+  /* The promo chips DO shout — "20% OFF" is uppercase in every capture. */
+  .tn-badge-lime {
+    background: var(--tn-lime);
+    color: var(--tn-lime-ink);
+    border-radius: 999px;
+    font-size: var(--tn-fs-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .tn-badge-alert {
+    background: var(--tn-alert);
+    color: var(--tn-paper);
+    border-radius: 999px;
+    font-size: var(--tn-fs-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── Card ─────────────────────────────────────────────────────────────
+     The 1px near-black outline is the single most identifying detail of the
+     reference: no shadows anywhere, structure is entirely hairlines. */
+  .tn-card {
+    background: var(--tn-paper);
+    border: 1px solid var(--tn-ink);
+    border-radius: var(--tn-r-card);
+    overflow: hidden;
+  }
+
+  /* ── Panel ────────────────────────────────────────────────────────────
+     The larger rounded surfaces: header capsule, footer, bundle promo. */
+  .tn-panel {
+    background: var(--tn-paper);
+    border: 1px solid var(--tn-ink);
+    border-radius: var(--tn-r-panel);
+  }
+
+  .tn-panel-ink {
+    background: var(--tn-ink);
+    color: var(--tn-paper);
+    border-radius: var(--tn-r-panel);
+  }
+
+  /* ── Media plate ──────────────────────────────────────────────────────
+     Fixed aspect so a grid never reflows as images arrive.
+
+     ⚠ `display: block` is load-bearing, not tidiness. Every plate in this
+     theme is a `<span>` (it lives inside an `<a>`, where a `<div>` would be
+     invalid), and **`aspect-ratio` has no effect on an inline non-replaced
+     box**. Without this line the plate computes to zero height, the
+     absolutely-positioned card images inside it collapse with it, and every
+     product card in the grid, the rails and the quick-add sheet renders as a
+     title and a price with no picture — while the CSS looks completely
+     correct. Caught by screenshotting a rendered listing, not by any gate:
+     tsc, lint, check and verify all pass on a theme with invisible imagery. */
+  .tn-plate {
+    display: block;
+    position: relative;
+    aspect-ratio: 3 / 4;
+    background: var(--tn-plate);
+    overflow: hidden;
+  }
+
+  .tn-plate > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ── Chip (size / variant selector) ───────────────────────────────── */
+  .tn-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding-inline: 0.75rem;
+    background: var(--tn-paper);
+    border: 1px solid var(--tn-line);
+    border-radius: var(--tn-r-chip);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      border-color var(--tn-dur-fast) var(--tn-ease),
+      background-color var(--tn-dur-fast) var(--tn-ease);
+  }
+
+  .tn-chip[aria-pressed="true"],
+  .tn-chip[data-selected="true"] {
+    border-color: var(--tn-ink);
+    border-width: 2px;
+  }
+
+  /* Unavailable is struck through as well as dimmed: a shopper who cannot
+     distinguish the dim state still sees the line. */
+  .tn-chip[data-unavailable="true"] {
+    color: var(--tn-muted);
+    text-decoration: line-through;
+  }
+
+  /* ── Grid ─────────────────────────────────────────────────────────────
+     `minmax(0, 1fr)`, never a bare `1fr`. A bare `1fr` is `minmax(auto, 1fr)`
+     and that `auto` floor is a MIN-CONTENT floor: one long unbroken word or a
+     nowrap price row silently stops the track from shrinking and the whole
+     page scrolls sideways. The signature is a `scrollWidth` that stays
+     constant as the viewport narrows. Cost three separate bugs on Genova. */
+  /* Gaps measured, not chosen: 11px between the two cards at 390px (card 1 ends
+     at x=189, card 2 starts at 200) and 15px between four cards at 893px. */
+  .tn-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--tn-cols, 2), minmax(0, 1fr));
+    gap: var(--tn-grid-gap, 11px);
+  }
+
+  @media (min-width: 750px) {
+    .tn-grid {
+      --tn-cols: var(--tn-cols-tablet, 3);
+      --tn-grid-gap: 15px;
+    }
+  }
+
+  @media (min-width: 990px) {
+    .tn-grid {
+      --tn-cols: var(--tn-cols-desktop, 4);
+      --tn-grid-gap: 16px;
+    }
+  }
+
+  /* ── Section rhythm ─────────────────────────────────────────────────── */
+  .tn-section {
+    padding-block: var(--tn-section-y);
+  }
+
+  /* ── Screen-reader-only ─────────────────────────────────────────────── */
+  .tn-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Motion off — two independent switches, identical outcome
+   ───────────────────────────────────────────────────────────────────────────
+   `prefers-reduced-motion` is the shopper's device asking; `[data-tn-motion]`
+   is the merchant's `enableAnimations` global. Either one must land the page
+   in its FINISHED state — never a hidden pre-state. Genova shipped a reveal
+   bug of exactly that shape: the disabled branch returned early and left every
+   element at `opacity: 0`, so turning animations OFF made the page blank.
+
+   Zeroing `animation-delay` and `transition-delay` matters as much as the
+   durations: a 0s animation that still waits 600ms to start is a 600ms flash
+   of the pre-state.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  [data-teen-v3-app] *,
+  [data-teen-v3-app] *::before,
+  [data-teen-v3-app] *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+[data-teen-v3-app][data-tn-motion="off"] *,
+[data-teen-v3-app][data-tn-motion="off"] *::before,
+[data-teen-v3-app][data-tn-motion="off"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   tn-header — floating capsule, drawer, bundle pill
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-header {
+  position: absolute;
+  inset-inline: var(--tn-header-inset);
+  top: var(--tn-header-top);
+  z-index: 40;
+}
+
+.tn-header.is-sticky {
+  position: fixed;
+}
+
+/* The capsule is white with a hairline in BOTH states. Over the hero the
+   reference keeps it opaque rather than going transparent — the white box IS
+   the identity, and a transparent header over a busy campaign photo is
+   unreadable at exactly the moment a shopper is deciding whether to stay. */
+.tn-header-capsule {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: var(--tn-header-h);
+  padding-inline: 0.875rem;
+  background: var(--tn-paper);
+  border: 1px solid var(--tn-ink);
+  border-radius: var(--tn-r-panel);
+}
+
+@media (min-width: 990px) {
+  .tn-header-capsule {
+    gap: 1.25rem;
+    padding-inline: 1.25rem;
+  }
+}
+
+/* Reserves the capsule's space when it is NOT over a hero. */
+.tn-header-spacer {
+  height: calc(var(--tn-header-h) + var(--tn-header-top) + 8px);
+}
+
+.tn-header-lead {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.tn-header-brand {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.tn-header-brand img,
+.tn-drawer-brand img {
+  /* Never distort a wordmark. The box is bounded by the logo tokens; the image
+     fits inside it. */
+  object-fit: contain;
+}
+
+.tn-wordmark {
+  font-family: var(--tn-font-heading);
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Desktop nav. Hidden below 990: the reference drops it entirely rather than
+   scrolling it, and the drawer already carries every link. */
+.tn-header-nav {
+  display: none;
+}
+
+@media (min-width: 990px) {
+  .tn-header-nav {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    /* Flex items default to `min-width: auto`, which is a MIN-CONTENT floor —
+       the same trap as a bare `1fr` in grid. Without this, one long menu label
+       stops the row shrinking and the whole page scrolls sideways. */
+    min-width: 0;
+    gap: 1.25rem;
+    margin-inline-start: 0.5rem;
+  }
+}
+
+.tn-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding-block: 0.25rem;
+  font-size: var(--tn-fs-nav);
+  font-weight: 500;
+  color: var(--tn-ink);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--tn-dur-fast) var(--tn-ease);
+}
+
+.tn-nav-link:hover {
+  color: var(--tn-ink-soft);
+}
+
+/* The red promo chip, on a nav item or standing alone. Red rather than orange:
+   orange means "buy" everywhere else in this theme, and a nav badge is not a
+   purchase control. */
+.tn-nav-badge,
+.tn-nav-promo {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1875rem 0.4375rem;
+  background: var(--tn-alert);
+  color: var(--tn-paper);
+  border-radius: 999px;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* CSS-only dropdown: a menu that needs JS to open is a menu that is shut for
+   as long as the bundle is loading. Hover AND focus-within, and the panel is a
+   child of the group so the pointer never crosses a dead gap on the way in. */
+.tn-nav-group {
+  position: relative;
+}
+
+.tn-nav-panel {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 100%;
+  z-index: 5;
+  display: grid;
+  min-width: 190px;
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: var(--tn-paper);
+  border: 1px solid var(--tn-ink);
+  border-radius: var(--tn-r-card);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition:
+    opacity var(--tn-dur-fast) var(--tn-ease),
+    transform var(--tn-dur-fast) var(--tn-ease),
+    visibility var(--tn-dur-fast);
+}
+
+.tn-nav-group:hover .tn-nav-panel,
+.tn-nav-group:focus-within .tn-nav-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.tn-nav-sublink {
+  padding: 0.5rem 0.625rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  color: var(--tn-ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tn-nav-sublink:hover {
+  background: var(--tn-wash);
+}
+
+.tn-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  margin-inline-start: auto;
+}
+
+.tn-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  color: var(--tn-ink);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color var(--tn-dur-fast) var(--tn-ease);
+}
+
+.tn-icon-btn:hover {
+  background: var(--tn-wash);
+}
+
+.tn-bag-btn {
+  position: relative;
+}
+
+.tn-bag-count {
+  position: absolute;
+  top: 5px;
+  inset-inline-end: 4px;
+  min-width: 17px;
+  height: 17px;
+  padding-inline: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tn-primary);
+  color: var(--tn-primary-fg);
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ── Menu drawer ─────────────────────────────────────────────────────────
+   One sheet at every breakpoint. Closed state is `visibility: hidden`, not
+   `display: none`: the same removal from the tab order and the accessibility
+   tree, but it stays transitionable. */
+.tn-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--tn-overlay);
+}
+
+.tn-drawer {
+  position: fixed;
+  inset: var(--tn-header-top) var(--tn-header-inset);
+  z-index: 70;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition:
+    opacity var(--tn-dur) var(--tn-ease),
+    transform var(--tn-dur) var(--tn-ease),
+    visibility var(--tn-dur);
+}
+
+.tn-drawer.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.tn-drawer-sheet {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.5rem;
+  background: var(--tn-paper);
+  border: 1px solid var(--tn-ink);
+  border-radius: var(--tn-r-panel);
+}
+
+@media (min-width: 750px) {
+  .tn-drawer-sheet {
+    padding: 2.25rem;
+  }
+}
+
+.tn-drawer-close {
+  position: absolute;
+  top: 0.75rem;
+  inset-inline-end: 0.75rem;
+  z-index: 2;
+}
+
+.tn-drawer-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 750px) {
+  .tn-drawer-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+    gap: 3rem;
+  }
+}
+
+.tn-drawer-brand {
+  display: inline-flex;
+  margin-bottom: 2rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.tn-drawer-links {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.tn-drawer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-family: var(--tn-font-heading);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--tn-ink);
+  text-decoration: none;
+}
+
+.tn-drawer-link:hover {
+  color: var(--tn-ink-soft);
+}
+
+.tn-drawer-manifesto {
+  max-width: 42ch;
+  margin-top: 2.5rem;
+}
+
+.tn-drawer-manifesto h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.tn-drawer-manifesto p {
+  font-size: var(--tn-fs-body);
+  line-height: 1.7;
+  color: var(--tn-ink-soft);
+}
+
+.tn-drawer-socials {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+/* Featured collection card: a tall image with a white label card inset over
+   its lower edge, carrying the orange count pill. */
+.tn-drawer-feature {
+  position: relative;
+  display: block;
+  border-radius: var(--tn-r-card);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+}
+
+.tn-drawer-feature img,
+.tn-drawer-feature-plate {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  background: var(--tn-plate);
+}
+
+.tn-drawer-feature-card {
+  position: absolute;
+  inset-inline: 12%;
+  bottom: 12px;
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  background: var(--tn-paper);
+  border: 1px solid var(--tn-ink);
+  border-radius: var(--tn-r-card);
+  text-align: center;
+}
+
+.tn-drawer-feature-title {
+  font-family: var(--tn-font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+/* Orange item-count pill — used here and on the collection-link cards. */
+.tn-count-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1875rem 0.5rem;
+  background: var(--tn-primary);
+  color: var(--tn-primary-fg);
+  border-radius: 6px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+/* ── Floating build-a-bundle pill ───────────────────────────────────────── */
+.tn-bundle-pill {
+  position: fixed;
+  bottom: 16px;
+  inset-inline-end: 16px;
+  z-index: 45;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0 0.75rem 0 0.875rem;
+  background: var(--tn-ink);
+  color: var(--tn-paper);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   tn-footer
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-footer {
+  padding-block: var(--tn-section-y) 16px;
+}
+
+.tn-footer-panel {
+  padding: 2rem 1.25rem;
+  background: var(--tn-paper);
+  border: 1px solid var(--tn-ink);
+  border-radius: var(--tn-r-panel);
+}
+
+@media (min-width: 750px) {
+  .tn-footer-panel {
+    padding: 3rem 2.5rem 2rem;
+  }
+}
+
+.tn-footer-news {
+  max-width: 34rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.tn-footer-news-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.tn-footer-text {
+  font-size: var(--tn-fs-body);
+  line-height: 1.7;
+  color: var(--tn-ink-soft);
+}
+
+.tn-news-form {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+  margin-top: 1.5rem;
+}
+
+.tn-news-input {
+  width: 100%;
+  min-height: 48px;
+  padding-inline: 1rem;
+  background: var(--tn-paper);
+  border: 1px solid var(--tn-ink);
+  border-radius: 999px;
+  font: inherit;
+  font-size: var(--tn-fs-body);
+  color: var(--tn-ink);
+}
+
+.tn-news-input::placeholder {
+  color: var(--tn-muted);
+}
+
+.tn-footer-cols {
+  display: grid;
+  gap: 2rem;
+  margin-top: 2.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--tn-line);
+}
+
+@media (min-width: 750px) {
+  .tn-footer-cols {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem;
+  }
+}
+
+/* Accordion rows on mobile. `<details>` rather than a JS disclosure so a
+   closed link is still findable with the browser's own Find, and so the markup
+   works before hydration. */
+.tn-footer-cols.is-accordion {
+  gap: 0.5rem;
+}
+
+.tn-footer-cols.is-accordion .tn-footer-col {
+  padding-block: 0.25rem;
+  border-bottom: 1px solid var(--tn-line);
+}
+
+.tn-footer-col-title {
+  font-family: var(--tn-font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.tn-footer-cols.is-accordion .tn-footer-col-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  margin-bottom: 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.tn-footer-cols.is-accordion .tn-footer-col-title::-webkit-details-marker {
+  display: none;
+}
+
+.tn-footer-cols.is-accordion .tn-footer-col-title::after {
+  content: "+";
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.tn-footer-cols.is-accordion .tn-footer-col[open] .tn-footer-col-title::after {
+  content: "\2212";
+}
+
+.tn-footer-cols.is-accordion .tn-footer-col-body {
+  padding-bottom: 1rem;
+}
+
+.tn-footer-links {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tn-footer-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  font-size: var(--tn-fs-body);
+  color: var(--tn-ink-soft);
+  text-decoration: none;
+}
+
+.tn-footer-link:hover {
+  color: var(--tn-ink);
+  text-decoration: underline;
+}
+
+.tn-footer-socials {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tn-footer-bottom {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--tn-line);
+  text-align: center;
+}
+
+.tn-footer-copy {
+  font-size: 0.8125rem;
+  color: var(--tn-ink-soft);
+}
+
+.tn-pay-marks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tn-pay-mark {
+  display: inline-flex;
+}
+
+/* Editor-only note. Never rendered on a live storefront — see useInsideEditor. */
+.tn-editor-note {
+  max-width: 34rem;
+  margin: 1.5rem auto 0;
+  padding: 1rem 1.25rem;
+  background: var(--tn-wash);
+  border: 1px dashed var(--tn-line);
+  border-radius: var(--tn-r-card);
+  text-align: center;
+}
+
+.tn-editor-note .tn-label {
+  margin-bottom: 0.375rem;
+  color: var(--tn-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Product card, price, swatches, quick-add sheet
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* `position: relative` is not decoration — it stops the card's screen-reader
+   text from escaping a horizontally-scrolled rail.
+
+   `.tn-sr` is `position: absolute`, so it resolves its containing block to the
+   nearest POSITIONED ancestor. With the card static that was the theme root
+   (which is `position: relative` so the header can sit on the hero), which is
+   outside the rail's `overflow-x: auto` — so the swatch summaries of the cards
+   scrolled off the end of the rail were never clipped, and they dragged the
+   DOCUMENT's scrollable width out to the last one. Result: the home page
+   scrolled sideways by 442px at 1280, on a page where no element is wider than
+   the viewport and no ancestor reports overflow. Making the card its own
+   containing block puts them back inside the rail, where the card's own
+   `overflow: hidden` clips them.
+
+   Caught only because a full-page screenshot came out 1701px wide. */
+.tn-product-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The quick-add button anchors to THIS, not to the card. Anchored to the card
+   it positions against the whole box and lands on top of the price.
+
+   The photo is INSET inside the card, not flush to its border. Measured off the
+   reference's unscaled 390px capture: the card border box is 179x325 at x=10,
+   the photo is 158x197 at x=21 — 11px of white on the start, end and top edges.
+   The 3:4 plate in the plan was an estimate; the measured ratio is 158:197 =
+   0.802, i.e. 4:5. Getting this wrong makes every card in the theme ~10% taller
+   than the reference and stacks up to a visibly different page length. */
+.tn-card-mediawrap {
+  position: relative;
+  padding: var(--tn-card-pad) var(--tn-card-pad) 0;
+}
+
+.tn-product-card .tn-plate {
+  aspect-ratio: 4 / 5;
+  border-radius: 6px;
+}
+
+.tn-card-media {
+  display: block;
+  text-decoration: none;
+}
+
+/* Both images absolutely stacked in a fixed-ratio plate: opacity-only swap,
+   zero layout shift, no reflow when the second image lands. */
+.tn-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tn-card-img.is-secondary {
+  opacity: 0;
+  transition: opacity var(--tn-dur-slow) var(--tn-ease);
+}
+
+/* Hover only where hovering is a real interaction. On a touch device
+   `:hover` sticks after a tap and the card would keep showing image two. */
+@media (hover: hover) {
+  .tn-product-card:hover .tn-card-img.is-secondary,
+  .tn-product-card:focus-within .tn-card-img.is-secondary {
+    opacity: 1;
+  }
+}
+
+/* Offsets are measured from the PHOTO's corner, not the card's — the badge sits
+   8px inside the image, and the image is itself inset by `--tn-card-pad`. */
+.tn-card-tags {
+  position: absolute;
+  top: calc(var(--tn-card-pad) + 8px);
+  inset-inline-start: calc(var(--tn-card-pad) + 8px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  pointer-events: none;
+}
+
+/* Black square with a white plus, bottom-end of the image.
+   Measured on the reference: a 30x30 square inset 10px from the photo's bottom
+   and end edges. But 30px is below the 44px touch-target floor, so the BUTTON
+   is 44x44 and transparent and the visible square is a `::before` inset inside
+   it — full fidelity and a full-size tap target, instead of choosing one.
+   The 7px inset centres a 30px square in a 44px box; the offsets below then
+   subtract that 7px so the VISIBLE square, not the hit area, lands 10px inside
+   the photo. */
+.tn-card-quickadd {
+  position: absolute;
+  bottom: calc(10px - 7px);
+  inset-inline-end: calc(var(--tn-card-pad) + 10px - 7px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  color: var(--tn-paper);
+  border: 0;
+  cursor: pointer;
+  transition: transform var(--tn-dur-fast) var(--tn-ease);
+}
+
+.tn-card-quickadd::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  background: var(--tn-ink);
+  border-radius: 8px;
+}
+
+.tn-card-quickadd > * {
+  position: relative;
+}
+
+.tn-card-quickadd:hover {
+  transform: scale(1.06);
+}
+
+.tn-card-body {
+  display: grid;
+  justify-items: center;
+  gap: 0.375rem;
+  padding: 0.75rem 0.625rem 0.875rem;
+  text-align: center;
+}
+
+.tn-card-title {
+  font-size: var(--tn-fs-card);
+  font-weight: 700;
+  line-height: 1.3;
+  /* Two lines, then ellipsis. A third line pushes the price below the fold of
+     a two-column mobile grid and every card in the row grows to match. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tn-card-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.tn-card-title a:hover {
+  text-decoration: underline;
+}
+
+/* ── Price row ─────────────────────────────────────────────────────────────
+   `flex-wrap` and `min-width: 0` because the three-part row (price · was-price
+   · −40%) is the widest thing in a 190px card and must be allowed to wrap
+   rather than force the whole grid track wider. */
+.tn-price-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.375rem 0.5rem;
+  min-width: 0;
+  font-size: var(--tn-fs-price);
+}
+
+.tn-price {
+  font-weight: 600;
+  color: var(--tn-ink);
+}
+
+/* The sale RED, distinct from the orange badge — see price.tsx. */
+.tn-price-group.is-sale .tn-price {
+  color: var(--tn-sale);
+}
+
+.tn-price-compare {
+  color: var(--tn-muted);
+  text-decoration: line-through;
+  font-weight: 400;
+}
+
+.tn-price-percent {
+  color: var(--tn-sale);
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.tn-price-group.is-lg {
+  font-size: 1.375rem;
+  gap: 0.5rem 0.75rem;
+}
+
+.tn-price-group.is-lg .tn-price-compare {
+  font-size: 1rem;
+}
+
+/* ── Swatches ──────────────────────────────────────────────────────────── */
+.tn-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+
+.tn-swatch {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--tn-line);
+  border-radius: 3px;
+  background-size: cover;
+  background-position: center;
+}
+
+/* A named colour with no hex still gets a slot, checkered so it reads as
+   "another colour" rather than as an empty white swatch. */
+.tn-swatch.is-unknown {
+  background:
+    linear-gradient(45deg, var(--tn-line) 25%, transparent 25%, transparent 75%, var(--tn-line) 75%)
+      0 0 / 8px 8px,
+    var(--tn-paper);
+}
+
+.tn-swatch-more {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--tn-muted);
+  line-height: 16px;
+}
+
+/* ── Skeleton ──────────────────────────────────────────────────────────── */
+.tn-product-card.is-skeleton .tn-plate {
+  display: block;
+}
+
+.tn-skel-line {
+  display: block;
+  width: 80%;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--tn-wash);
+}
+
+.tn-skel-line.is-short {
+  width: 45%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Sheet — quick add now, filters and size guide later
+   Bottom sheet ≤749px, end panel above.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-sheet {
+  position: fixed;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  background: var(--tn-paper);
+  border: 1px solid var(--tn-ink);
+  /* Bottom sheet: rounded at the top only, flush to the bottom edge. */
+  border-radius: var(--tn-r-panel) var(--tn-r-panel) 0 0;
+  inset-inline: 0;
+  bottom: 0;
+  max-height: 88vh;
+}
+
+@media (min-width: 750px) {
+  .tn-sheet {
+    inset-inline-start: auto;
+    inset-inline-end: 12px;
+    top: 12px;
+    bottom: 12px;
+    width: min(420px, calc(100vw - 24px));
+    max-height: none;
+    border-radius: var(--tn-r-panel);
+  }
+}
+
+.tn-sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.625rem 0.625rem 0.625rem 1.25rem;
+  border-bottom: 1px solid var(--tn-line);
+}
+
+.tn-sheet-product {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1rem 1.25rem;
+}
+
+.tn-sheet-thumb {
+  flex: 0 0 auto;
+  width: 72px;
+  aspect-ratio: 3 / 4;
+  border-radius: 8px;
+}
+
+.tn-sheet-meta {
+  min-width: 0;
+}
+
+.tn-sheet-title {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+}
+
+.tn-sheet-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  gap: 1.25rem;
+  padding: 0 1.25rem 1.25rem;
+}
+
+.tn-sheet-loading {
+  color: var(--tn-muted);
+}
+
+.tn-sheet-done {
+  font-size: var(--tn-fs-body);
+  color: var(--tn-ink-soft);
+}
+
+.tn-sheet-actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.tn-sheet-cta {
+  margin: 0 1.25rem 1.25rem;
+}
+
+.tn-axis {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Same `<legend>` escape as .tn-facet-legend — see the note there. Applied
+   here too so the two sheets keep identical group spacing. */
+.tn-axis-legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 0.5rem;
+  color: var(--tn-muted);
+}
+
+.tn-axis-legend ~ * {
+  clear: both;
+}
+
+.tn-axis-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Status note. Red text, a bordered card AND the words — never colour alone. */
+.tn-formnote {
+  display: grid;
+  gap: 0.375rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--tn-line);
+  border-radius: var(--tn-r-chip);
+  font-size: 0.8125rem;
+  color: var(--tn-ink-soft);
+}
+
+.tn-formnote.is-error {
+  border-color: var(--tn-sale);
+  color: var(--tn-sale);
+}
+
+.tn-textlink {
+  color: var(--tn-ink);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* Mirrors a directional icon in RTL. Only the GLYPH flips — the control's
+   position is already handled by logical properties. */
+[dir="rtl"] .tn-flip-rtl {
+  transform: scaleX(-1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   tn-hero
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-hero {
+  position: relative;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+  /* Height comes from CSS, before any image loads — no CLS, and the LCP
+     element has its box from the first frame. */
+  min-height: 60svh;
+  background: var(--tn-plate);
+}
+
+.tn-hero.is-medium {
+  min-height: 52svh;
+}
+
+.tn-hero.is-large {
+  min-height: 72svh;
+}
+
+.tn-hero.is-full {
+  min-height: 100svh;
+}
+
+@media (min-width: 990px) {
+  .tn-hero.is-medium {
+    min-height: 520px;
+  }
+  .tn-hero.is-large {
+    min-height: 720px;
+  }
+}
+
+/* Bottom corners only: the top is flush with the viewport because the capsule
+   sits on it, and the bottom curves into the page. */
+.tn-hero.is-rounded {
+  border-end-start-radius: var(--tn-r-panel);
+  border-end-end-radius: var(--tn-r-panel);
+}
+
+.tn-hero-media,
+.tn-hero-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tn-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: #000;
+}
+
+.tn-hero-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: var(--tn-container);
+  margin-inline: auto;
+  padding: calc(var(--tn-header-h) + var(--tn-header-top) + 2rem) var(--tn-gutter) 3rem;
+  text-align: center;
+  color: #fff;
+}
+
+.tn-hero[data-align="start"] .tn-hero-content {
+  justify-items: start;
+  text-align: start;
+}
+
+.tn-hero[data-align="end"] .tn-hero-content {
+  justify-items: end;
+  text-align: end;
+}
+
+.tn-hero-title {
+  font-size: var(--tn-fs-display);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: inherit;
+  /* A hero heading sits on photography, and photography has bright patches
+     nothing can predict. The shadow is the belt to the scrim's braces. */
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+}
+
+.tn-hero-sub {
+  max-width: 42ch;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+}
+
+.tn-hero-cta {
+  margin-top: 0.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   tn-bundle-banner
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-bundle-banner {
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+  padding: 1.75rem 1.25rem;
+  border-radius: var(--tn-r-panel);
+  text-align: center;
+}
+
+.tn-bundle-banner.is-ink {
+  background: var(--tn-ink);
+  color: var(--tn-paper);
+}
+
+.tn-bundle-banner.is-cream {
+  background: var(--tn-cream);
+  color: var(--tn-ink);
+}
+
+/* Desktop: collage · copy · CTA on one line. Mobile: stacked, collage first —
+   the reference's own reflow, and the right one, because the collage is what
+   makes a shopper stop. */
+@media (min-width: 750px) {
+  .tn-bundle-banner {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    justify-items: start;
+    align-items: center;
+    gap: 1.75rem;
+    padding: 1.5rem 2rem;
+    text-align: start;
+  }
+}
+
+/* Overlapped like a hand of cards, each one rotated a little. */
+.tn-bundle-collage {
+  display: flex;
+  align-items: center;
+}
+
+.tn-bundle-collage img {
+  width: 62px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid var(--tn-paper);
+}
+
+.tn-bundle-collage img:not(:first-child) {
+  margin-inline-start: -22px;
+}
+
+.tn-bundle-collage img:first-child {
+  transform: rotate(-7deg);
+}
+
+.tn-bundle-collage img:last-child:not(:first-child) {
+  transform: rotate(7deg);
+}
+
+.tn-bundle-eyebrow {
+  color: currentColor;
+  opacity: 0.7;
+  margin-bottom: 0.375rem;
+}
+
+.tn-bundle-title {
+  font-size: 1.375rem;
+  color: inherit;
+}
+
+.tn-bundle-sub {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+
+.tn-bundle-cta {
+  width: 100%;
+}
+
+@media (min-width: 750px) {
+  .tn-bundle-cta {
+    width: auto;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   tn-product-rail
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-rail-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.tn-rail-headings {
+  min-width: 0;
+}
+
+.tn-rail-editorial {
+  font-size: 0.875rem;
+  color: var(--tn-ink-soft);
+  margin-bottom: 0.25rem;
+}
+
+.tn-rail-title {
+  font-size: var(--tn-fs-heading);
+}
+
+.tn-rail-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tn-rail-viewall {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--tn-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.tn-rail-arrows {
+  display: none;
+}
+
+@media (min-width: 990px) {
+  .tn-rail-arrows {
+    display: flex;
+    gap: 0.25rem;
+  }
+}
+
+/* Scroll-snap row, not a JS carousel: native swipe, keyboard scroll, no
+   half-transitioned state to get stuck in. */
+.tn-rail.is-rail {
+  display: grid;
+  grid-auto-flow: column;
+  /* `max(...)` not a bare fraction: below ~190px a card's price row stops
+     fitting and the whole track starts scrolling sideways inside itself. */
+  grid-auto-columns: max(
+    170px,
+    calc((100% - (var(--tn-rail-per-view, 4) - 1) * 12px) / var(--tn-rail-per-view, 4))
+  );
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  /* Hide the bar but keep the scrolling — the arrows and the partial card at
+     the edge are the affordance. */
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+
+.tn-rail.is-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.tn-rail.is-rail > * {
+  scroll-snap-align: start;
+}
+
+@media (max-width: 749px) {
+  .tn-rail.is-rail {
+    /* Two-and-a-bit cards visible, so it is obvious the row scrolls. */
+    grid-auto-columns: 46%;
+    gap: 10px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   tn-collection-links
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-collinks-title {
+  font-size: var(--tn-fs-heading);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.5rem;
+}
+
+.tn-collink {
+  position: relative;
+  display: block;
+  /* Extra bottom room: the label card is inset OVER the lower edge of the
+     image and needs somewhere to overhang into. */
+  padding-bottom: 3.5rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.tn-collink img,
+.tn-collink-plate {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--tn-r-card);
+  background: var(--tn-plate);
+}
+
+.tn-collink-card {
+  position: absolute;
+  inset-inline: 8%;
+  bottom: 0;
+  display: grid;
+  justify-items: center;
+  gap: 0.375rem;
+  padding: 0.75rem 0.875rem;
+  background: var(--tn-paper);
+  border: 1px solid var(--tn-ink);
+  border-radius: var(--tn-r-card);
+  text-align: center;
+}
+
+.tn-collink-name {
+  font-family: var(--tn-font-heading);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  line-height: 1.25;
+}
+
+.tn-collink-viewall {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--tn-ink-soft);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   tn-review-strip
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-reviews-inner {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.tn-reviews-title {
+  font-size: var(--tn-fs-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tn-reviews-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tn-reviews-count {
+  font-size: 0.875rem;
+  color: var(--tn-ink-soft);
+}
+
+.tn-stars {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--tn-ink);
+}
+
+.tn-star.is-empty {
+  color: var(--tn-line);
+}
+
+.tn-review {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  max-width: 48ch;
+  margin: 0;
+}
+
+.tn-review-quote {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+.tn-review-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--tn-muted);
+}
+
+.tn-review-author {
+  font-weight: 700;
+  color: var(--tn-ink);
+}
+
+.tn-review-product {
+  color: var(--tn-ink-soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.tn-reviews-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tn-reviews-index {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--tn-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   tn-shop-the-look
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-look-title {
+  font-size: var(--tn-fs-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.25rem;
+}
+
+.tn-look {
+  position: relative;
+  border-radius: var(--tn-r-panel);
+  overflow: hidden;
+}
+
+.tn-look-media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  background: var(--tn-plate);
+}
+
+@media (min-width: 750px) {
+  .tn-look-media img {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* Percentages from the START edge, so a dot stays on the same garment in RTL.
+   `left` here is the classic mirror bug. */
+.tn-look-spot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+[dir="rtl"] .tn-look-spot {
+  transform: translate(50%, -50%);
+}
+
+.tn-look-dot {
+  display: block;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: var(--tn-paper);
+  border: 2px solid var(--tn-ink);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform var(--tn-dur-fast) var(--tn-ease);
+}
+
+.tn-look-dot::after {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 8px;
+  margin: 6px auto;
+  background: var(--tn-ink);
+  border-radius: 999px;
+}
+
+.tn-look-dot:hover,
+.tn-look-dot.is-open {
+  transform: scale(1.15);
+}
+
+.tn-look-dot.is-open {
+  background: var(--tn-ink);
+}
+
+.tn-look-dot.is-open::after {
+  background: var(--tn-paper);
+}
+
+.tn-look-card {
+  position: absolute;
+  inset-inline-start: 50%;
+  top: calc(100% + 10px);
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: max-content;
+  max-width: 240px;
+  padding: 0.5rem;
+  background: var(--tn-paper);
+  border: 1px solid var(--tn-ink);
+  border-radius: var(--tn-r-card);
+  text-decoration: none;
+  color: inherit;
+}
+
+[dir="rtl"] .tn-look-card {
+  transform: translateX(50%);
+}
+
+.tn-look-card.is-plain {
+  padding: 0.5rem 0.75rem;
+}
+
+.tn-look-card img {
+  width: 44px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--tn-plate);
+}
+
+.tn-look-card-body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tn-look-card-name {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.tn-look-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tn-look-listlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding-inline: 0.875rem;
+  border: 1px solid var(--tn-line);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tn-ink);
+  text-decoration: none;
+}
+
+.tn-look-listlink:hover {
+  border-color: var(--tn-ink);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Listing pages — intro, toolbar, grid, load-more, empty
+   ───────────────────────────────────────────────────────────────────────────
+   Measured off the reference's 893px collection capture rather than estimated:
+   gutter 28px, four cards of ~196px with a ~15px gap, the toolbar's orange
+   filter square 26px at x=28, and the sort control 134x32 hard against the end
+   gutter. The intro block is centred with the paragraph capped around 620px.
+
+   ⚠ The four-column grid starts at 750px, NOT 990px. The capture is 893px wide
+   and shows four cards; the 750/990 ladder in the token block is the
+   reference's own media-query ladder for spacing, and the catalog grid does not
+   follow it. `--tn-cols-tablet` is therefore set from the SAME setting as
+   `--tn-cols-desktop` by ProductGrid, so a merchant who picks 3 columns gets 3
+   on both and nobody has to discover a second slider.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Two stacked sections each contribute a full `--tn-section-y`, so the promo
+   banner the presets put above the listing produced ~160px of white before the
+   collection title — twice the reference's rhythm. The listing owns the second
+   half of that gap, so it is the half that gives way. */
+.tn-plp {
+  padding-block-start: calc(var(--tn-section-y) * 0.5);
+}
+
+.tn-plp-intro {
+  max-width: 720px;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+
+.tn-plp-title {
+  font-size: var(--tn-fs-title);
+  margin-bottom: 0.75rem;
+}
+
+.tn-plp-subtitle {
+  font-size: var(--tn-fs-body);
+  color: var(--tn-ink-soft);
+}
+
+.tn-plp-editorial {
+  max-width: 620px;
+  margin: 0.875rem auto 0;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--tn-ink-soft);
+}
+
+.tn-plp-editorial p + p {
+  margin-top: 0.75rem;
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────
+   One flex row at every width. The COUNT is pushed to the end on a phone
+   (where the sort control has folded into the sheet) and sits beside the
+   filter button on desktop, which is what the two captures show. Done with
+   `margin-inline-start: auto` rather than a JS viewport hook — see plp.tsx. */
+.tn-plp-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.tn-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  font-family: inherit;
+  font-size: var(--tn-fs-card);
+  font-weight: 700;
+  color: var(--tn-ink);
+  cursor: pointer;
+}
+
+.tn-filter-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  background: var(--tn-primary);
+  color: var(--tn-primary-fg);
+  border-radius: 6px;
+}
+
+.tn-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 0.3rem;
+  background: var(--tn-ink);
+  color: var(--tn-paper);
+  border-radius: 999px;
+  font-size: var(--tn-fs-label);
+}
+
+/* The two labels for the one button. Exactly one is in the DOM's layout —
+   and therefore in the accessibility tree — at any width. */
+.tn-only-wide {
+  display: none;
+}
+
+.tn-plp-count {
+  margin-inline-start: auto;
+  font-size: 0.8125rem;
+  color: var(--tn-muted);
+}
+
+.tn-plp-count.is-block {
+  display: block;
+  margin: 0 0 1.25rem;
+}
+
+.tn-plp-sort {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tn-plp-sortlabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tn-ink);
+  white-space: nowrap;
+}
+
+@media (min-width: 750px) {
+  .tn-only-wide {
+    display: inline;
+  }
+
+  .tn-only-narrow {
+    display: none;
+  }
+
+  .tn-plp-count {
+    margin-inline-start: 0;
+  }
+
+  .tn-plp-sort {
+    display: flex;
+    margin-inline-start: auto;
+  }
+}
+
+/* Native <select>: the reference uses the platform control, and so does this —
+   a custom listbox here would cost keyboard behaviour, the mobile wheel picker
+   and VoiceOver's rotor for nothing. Only the box is themed. */
+.tn-select,
+.tn-input {
+  min-height: 40px;
+  padding: 0 0.75rem;
+  background: var(--tn-paper);
+  color: var(--tn-ink);
+  border: 1px solid var(--tn-line);
+  border-radius: var(--tn-r-chip);
+  font-family: inherit;
+  font-size: 0.8125rem;
+}
+
+.tn-select {
+  min-width: 150px;
+  cursor: pointer;
+}
+
+.tn-input {
+  width: 100%;
+}
+
+.tn-plp-more {
+  display: grid;
+  justify-items: center;
+  gap: 0.625rem;
+  margin-top: 2.5rem;
+}
+
+.tn-plp-progress {
+  font-size: 0.75rem;
+  color: var(--tn-muted);
+}
+
+.tn-plp-backlink {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.tn-plp-empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.625rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.tn-plp-empty-title {
+  font-family: var(--tn-font-heading);
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.tn-plp-empty .tn-btn {
+  margin-top: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Filter sheet
+   ───────────────────────────────────────────────────────────────────────────
+   Reuses .tn-sheet (bottom sheet ≤749, end panel above) so the filter panel and
+   the quick-add sheet cannot drift apart in behaviour — both get the same focus
+   trap, Escape handling and scroll lock from useOverlayBehaviour.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-filter-headtools {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tn-filter-clear {
+  font-size: 0.75rem;
+}
+
+/* The sort group is only reachable ≤749px, where the toolbar has no dropdown.
+   Hidden rather than unmounted so the sheet markup is width-independent. */
+@media (min-width: 750px) {
+  .tn-facet-sort {
+    display: none;
+  }
+}
+
+.tn-facet {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.tn-facet + .tn-facet {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--tn-line);
+}
+
+/* `float: left; width: 100%` is the standard escape from `<legend>`'s special
+   layout. A legend is painted INSIDE the fieldset's top border, so with the
+   divider above each group the rule ran straight through the words
+   "AVAILABILITY" and "COLOUR". Floating it makes it an ordinary block that
+   sits below the border like any other heading — while keeping the
+   fieldset/legend semantics a group of checkboxes needs. */
+.tn-facet-legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+  font-size: var(--tn-fs-label);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tn-muted);
+  margin-bottom: 0.375rem;
+}
+
+/* Everything after the floated legend must clear it, not just the checkbox
+   list: the price-range row did not, so it laid out BESIDE a 100%-wide float,
+   collapsed to 26px and pushed the sheet 18px sideways. `~ *` covers whatever
+   a future facet group puts in here. */
+.tn-facet-legend ~ * {
+  clear: both;
+}
+
+.tn-facet-values {
+  display: grid;
+  gap: 0.125rem;
+}
+
+/* A whole row is the hit target, not just the 16px box — 44px tall, which is
+   the touch-target rule the CLI's own lint checks for. */
+.tn-facet-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-height: 44px;
+  padding-inline: 0.25rem;
+  border-radius: var(--tn-r-chip);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.tn-facet-row:hover {
+  background: var(--tn-wash);
+}
+
+.tn-facet-row input {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  accent-color: var(--tn-primary);
+  cursor: inherit;
+}
+
+.tn-facet-row.is-disabled {
+  color: var(--tn-muted);
+  cursor: not-allowed;
+}
+
+.tn-facet-name {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tn-facet-count {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  color: var(--tn-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.tn-facet-values.is-swatch .tn-swatch {
+  flex: 0 0 auto;
+}
+
+.tn-price-range {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.tn-price-field {
+  display: grid;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+/* Sheet entrance. The blanket motion-off rules at the top of this file zero
+   the duration for both `prefers-reduced-motion` and the merchant's switch, and
+   the finished state is the natural one, so the sheet simply appears. */
+@keyframes tn-sheet-in {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+}
+
+.tn-sheet {
+  animation: tn-sheet-in var(--tn-dur) var(--tn-ease);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Search page
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-search-panel {
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.tn-search-title {
+  font-size: var(--tn-fs-title);
+}
+
+.tn-search-form {
+  display: flex;
+  gap: 0.625rem;
+  width: min(640px, 100%);
+}
+
+.tn-search-input {
+  flex: 1 1 auto;
+  /* `min-width: 0` for the same reason the grid uses `minmax(0, 1fr)`: a flex
+     item's default `min-width: auto` is a MIN-CONTENT floor, so a long
+     placeholder would stop the field shrinking and push the button off-screen
+     on a 390px phone. */
+  min-width: 0;
+  min-height: 48px;
+}
+
+.tn-search-submit {
+  flex: 0 0 auto;
+  padding-inline: 1.25rem;
+}
+
+.tn-search-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+}
+
+.tn-search-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tn-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tn-search-results {
+  margin-top: 3rem;
+}
+
+@media (max-width: 749px) {
+  .tn-search-panel {
+    padding: 2rem 1rem;
+  }
+
+  /* Stacked: side by side at 390px leaves the field around 200px, which is
+     narrower than most of the queries a shopper types. */
+  .tn-search-form {
+    flex-direction: column;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Product detail
+   ───────────────────────────────────────────────────────────────────────────
+   Measured off the reference's 893px capture: three near-equal columns —
+   gallery 261, info 261, purchase card 275, with 28px gutters between them —
+   and the accordions spanning the first two only, x=14..564. The purchase card
+   is the sole bordered box on the page.
+
+   The page gutter here is 14px, not the 28px the collection page uses; the
+   reference is internally inconsistent about this and the PDP is the tighter of
+   the two. Reproduced rather than harmonised, since the brief is a clone.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-pdp-grid {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 750px) {
+  .tn-pdp {
+    --tn-gutter: 14px;
+  }
+
+  /* Named areas rather than source order: the purchase card sits in column 3 of
+     row 1 while the accordions span columns 1-2 of row 2, which no source order
+     can express on its own. Below 750 the areas are dropped and the same four
+     children stack in DOM order — gallery, info, purchase, accordions — which
+     is exactly the reference's mobile reflow. */
+  .tn-pdp-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      "media info buy"
+      "acc   acc  .";
+    align-items: start;
+  }
+
+  .tn-pdp-media {
+    grid-area: media;
+  }
+  .tn-pdp-info {
+    grid-area: info;
+  }
+  .tn-pdp-buy {
+    grid-area: buy;
+  }
+  .tn-pdp-accordions {
+    grid-area: acc;
+  }
+}
+
+/* ── Gallery ───────────────────────────────────────────────────────────── */
+
+.tn-gallery-main {
+  position: relative;
+  /* Set from the first image's intrinsic size when gallery_ratio is "natural";
+     a fixed setting overrides it. Either way ONE ratio for every slide, so
+     paging through the gallery never resizes the column. */
+  aspect-ratio: var(--tn-gal-ratio, 4 / 5);
+  background: var(--tn-plate);
+  border-radius: var(--tn-r-card);
+  overflow: hidden;
+}
+
+.tn-gallery-track {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.tn-gallery-track::-webkit-scrollbar {
+  display: none;
+}
+
+.tn-gallery-slide {
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: center;
+}
+
+/* Contain, not cover — see the header of lib/gallery.tsx. A PDP is where the
+   product is inspected; cropping it there is the one place it is wrong. */
+.tn-gallery-media {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Stacked pair at the end edge, as the reference draws them. */
+.tn-gallery-arrows {
+  position: absolute;
+  inset-inline-end: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  gap: 6px;
+}
+
+.tn-round-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: var(--tn-paper);
+  color: var(--tn-ink);
+  border: 1px solid var(--tn-line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color var(--tn-dur-fast) var(--tn-ease);
+}
+
+.tn-round-btn:hover {
+  border-color: var(--tn-ink);
+}
+
+.tn-round-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tn-gallery-zoom {
+  position: absolute;
+  inset-inline-end: 8px;
+  bottom: 8px;
+}
+
+.tn-gallery-thumbs {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tn-gallery-thumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.tn-gallery-thumb {
+  flex: 0 0 auto;
+  width: 76px;
+  padding: 3px;
+  background: var(--tn-paper);
+  border: 1px solid var(--tn-line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tn-gallery-thumb.is-active {
+  border-color: var(--tn-ink);
+}
+
+.tn-gallery-thumb .tn-plate {
+  border-radius: 5px;
+}
+
+.tn-thumb-video {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tn-ink);
+  color: var(--tn-paper);
+}
+
+/* ── Lightbox ──────────────────────────────────────────────────────────── */
+
+.tn-scrim.is-dark {
+  background: rgba(0, 0, 0, 0.88);
+}
+
+.tn-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  place-items: center;
+  padding: 56px 16px 16px;
+  /* The wrapper covers the scrim, so clicks have to fall through it to reach
+     the click-to-close backdrop; the children take pointer events back. */
+  pointer-events: none;
+}
+
+.tn-lightbox > * {
+  pointer-events: auto;
+}
+
+.tn-lightbox-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.tn-lightbox-close {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 12px;
+}
+
+.tn-lightbox-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.tn-lightbox-count {
+  color: var(--tn-paper);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Info column ───────────────────────────────────────────────────────── */
+
+.tn-pdp-info {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  align-content: start;
+}
+
+.tn-pdp-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--tn-ink-soft);
+}
+
+.tn-stars {
+  display: inline-flex;
+  gap: 1px;
+  /* Unfilled by default; .is-full is what lights one up. */
+  color: var(--tn-line);
+}
+
+.tn-stars .is-full {
+  color: var(--tn-ink);
+}
+
+.tn-pdp-title {
+  font-size: clamp(1.35rem, 2.4vw, 1.6rem);
+}
+
+.tn-pdp-pricerow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Pale cyan reassurance strip, one row, wrapping on a narrow phone. */
+.tn-assure {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0;
+  padding: 8px 12px;
+  list-style: none;
+  background: var(--tn-assure);
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.tn-assure li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tn-facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  margin: 6px 0 0;
+  padding-inline-start: 1.15rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--tn-ink-soft);
+}
+
+.tn-facts strong {
+  color: var(--tn-ink);
+}
+
+/* The reference draws a hairline between the reassurance strip and the variant
+   rows — clearest above "Color (Pink)" on the cap page. */
+.tn-pdp-axes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--tn-line);
+}
+
+/* The axis label is sentence case with the chosen value in brackets —
+   "Size (S)" — so it is NOT the theme's uppercase micro-label. */
+.tn-pdp-axislabel {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--tn-ink);
+}
+
+.tn-axis-values.is-swatches {
+  gap: 8px;
+}
+
+/* Desktop size chips are COMPACT — measured at ~28x27 in the reference, against
+   the 44px the shared `.tn-chip` uses everywhere else. That 44px floor is a
+   touch-target rule and it stays on phones (the reference's own mobile chips
+   are ~44px too); a mouse pointer does not need it, and at 44px four chips plus
+   the "Find my size" pill no longer fit on one line in a 261px column, so the
+   button wrapped to its own row and the whole block stopped matching. Scoped to
+   the PDP so the quick-add and filter sheets keep their full-size targets. */
+@media (min-width: 750px) {
+  .tn-pdp-axes .tn-chip {
+    min-width: 30px;
+    min-height: 30px;
+    padding-inline: 0.375rem;
+  }
+
+  .tn-pdp-axes .tn-findsize {
+    min-height: 30px;
+    padding-inline: 0.75rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* A colour swatch is a BUTTON wrapping the coloured square, so the selected
+   ring sits outside the colour rather than recolouring its own edge —
+   otherwise a dark swatch and its selected state look identical. */
+.tn-swatch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.tn-swatch-btn .tn-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--tn-line);
+}
+
+.tn-swatch-btn[data-selected="true"] .tn-swatch {
+  box-shadow:
+    0 0 0 1px var(--tn-paper),
+    0 0 0 3px var(--tn-ink);
+}
+
+.tn-swatch-btn[data-unavailable="true"] .tn-swatch {
+  opacity: 0.35;
+}
+
+.tn-findsize {
+  min-height: 44px;
+  padding-inline: 1.1rem;
+  font-size: 0.8125rem;
+}
+
+/* ── Purchase block ────────────────────────────────────────────────────── */
+
+/* `minmax(0, 1fr)`, never an implicit `auto` track. An auto-sized grid track
+   has a MIN-CONTENT floor, so the quantity row's intrinsic 312px pushed the
+   whole column to 312 inside a 225px card and both purchase buttons hung out
+   past the border. Exactly the trap `.tn-grid` documents for a bare `1fr`,
+   reached from the other direction. */
+.tn-pdp-buycard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  padding: 20px;
+}
+
+@media (max-width: 749px) {
+  /* Below 750 the reference has no card — the controls sit in the flow at full
+     width, so the border and padding come off rather than boxing them in. */
+  .tn-pdp-buycard {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+  }
+}
+
+.tn-pdp-qtylabel {
+  font-size: 0.8125rem;
+  color: var(--tn-ink-soft);
+}
+
+.tn-buy-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.tn-qty {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  /* min-width: 0 for the same reason the grid uses minmax(0, 1fr): a flex
+     item's default auto minimum is a min-content floor. */
+  min-width: 0;
+  border: 1px solid var(--tn-line);
+  border-radius: var(--tn-r-chip);
+}
+
+.tn-qty-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--tn-ink);
+  cursor: pointer;
+}
+
+.tn-qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.tn-qty-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--tn-ink);
+  font-family: inherit;
+  font-size: 0.875rem;
+  text-align: center;
+  /* The native spinners duplicate the minus/plus buttons and eat the field. */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.tn-qty-input::-webkit-outer-spin-button,
+.tn-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.tn-share-btn {
+  flex: 0 0 auto;
+}
+
+.tn-buy-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+/* Squarer than the theme's pill buttons — the reference's two purchase CTAs
+   are the one place it uses a small radius. */
+.tn-buy-cta {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* ── Accordions ────────────────────────────────────────────────────────── */
+
+.tn-acc {
+  background: var(--tn-wash);
+  border-radius: 8px;
+}
+
+.tn-acc + .tn-acc {
+  margin-top: 8px;
+}
+
+.tn-acc-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.tn-acc-summary::-webkit-details-marker {
+  display: none;
+}
+
+/* The plus/minus indicator. A pseudo-element rather than an icon component so
+   it cannot get out of step with the element's own [open] state. */
+.tn-acc-summary::after {
+  content: "+";
+  flex: 0 0 auto;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.tn-acc[open] .tn-acc-summary::after {
+  content: "−";
+}
+
+.tn-acc-body {
+  padding: 0 16px 16px;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--tn-ink-soft);
+}
+
+.tn-richtext p + p,
+.tn-richtext ul,
+.tn-richtext ol {
+  margin-top: 0.75rem;
+}
+
+.tn-richtext ul,
+.tn-richtext ol {
+  padding-inline-start: 1.15rem;
+}
+
+.tn-richtext a {
+  color: var(--tn-ink);
+  text-decoration: underline;
+}
+
+/* ── Size chart ────────────────────────────────────────────────────────── */
+
+/* A wide table scrolls INSIDE its own box; the page never scrolls sideways. */
+.tn-sizetable-wrap {
+  overflow-x: auto;
+  margin-bottom: 12px;
+}
+
+.tn-sizetable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.tn-sizetable th,
+.tn-sizetable td {
+  padding: 8px 10px;
+  border: 1px solid var(--tn-line);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.tn-sizetable thead th {
+  background: var(--tn-paper);
+  font-weight: 700;
+  color: var(--tn-ink);
+}
+
+.tn-sizetable-note {
+  margin-top: 8px;
+}
+
+.tn-pdp-related {
+  margin-top: 24px;
+}
+
+/* ── Sticky purchase bar (D13) ─────────────────────────────────────────── */
+
+.tn-stickybar {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 55;
+  display: grid;
+  gap: 6px;
+  padding: 10px var(--tn-gutter) calc(10px + env(safe-area-inset-bottom, 0px));
+  background: var(--tn-paper);
+  border-top: 1px solid var(--tn-line);
+  /* Hidden with visibility + transform, not display:none: the transition needs
+     a from-state, and visibility (unlike opacity alone) also takes the bar out
+     of the tab order and the accessibility tree while it is away. */
+  visibility: hidden;
+  transform: translateY(100%);
+  transition:
+    transform var(--tn-dur) var(--tn-ease),
+    visibility var(--tn-dur) var(--tn-ease);
+}
+
+.tn-stickybar.is-visible {
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Desktop keeps the purchase card in view in its own column, so the bar would
+   be a second copy of a control that never leaves the screen. */
+@media (min-width: 750px) {
+  .tn-stickybar {
+    display: none;
+  }
+}
+
+.tn-stickybar-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tn-stickybar-thumb {
+  flex: 0 0 auto;
+  width: 40px;
+  aspect-ratio: 4 / 5;
+  border-radius: 6px;
+}
+
+.tn-stickybar-meta {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tn-stickybar-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tn-stickybar-prices {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tn-stickybar-cta {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding-inline: 1.1rem;
+  border-radius: 999px;
+}
+
+.tn-stickybar-variant {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: var(--tn-ink-soft);
+}
+
+.tn-stickybar-chosen {
+  font-weight: 700;
+  color: var(--tn-ink);
+}
+
+/* Zero above 750, where the bar itself is display:none. */
+.tn-stickybar-spacer {
+  height: 0;
+}
+
+@media (max-width: 749px) {
+  .tn-stickybar-spacer {
+    height: 96px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Cart
+   ───────────────────────────────────────────────────────────────────────────
+   Empty state measured off the reference's 893px capture: a bordered card 369
+   wide (41% of the viewport) centred, image ~205x200, two lines of bold copy,
+   then the dark pill. Everything below the empty card is Teen's own design —
+   the reference never shows a filled bag.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-cart-title {
+  margin-bottom: 1.5rem;
+}
+
+.tn-cart-empty {
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+  max-width: 380px;
+  margin-inline: auto;
+  padding: 2rem 1.75rem;
+  text-align: center;
+}
+
+.tn-cart-emptyimg {
+  max-width: 220px;
+}
+
+.tn-cart-emptytitle {
+  font-family: var(--tn-font-heading);
+  font-size: 1.1875rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.tn-cart-picks {
+  margin-top: 3.5rem;
+}
+
+.tn-cart-pickstitle {
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+/* ── Filled bag ────────────────────────────────────────────────────────── */
+
+.tn-cart-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 750px) {
+  .tn-cart-grid {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+}
+
+.tn-cart-lines {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.tn-cart-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--tn-line);
+}
+
+.tn-cart-line:first-child {
+  border-top: 1px solid var(--tn-line);
+}
+
+.tn-cart-thumb {
+  flex: 0 0 auto;
+  width: 76px;
+  aspect-ratio: 4 / 5;
+  border-radius: 8px;
+}
+
+.tn-cart-lineinfo {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tn-cart-linename {
+  font-size: var(--tn-fs-card);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.tn-cart-linename a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.tn-cart-linename a:hover {
+  text-decoration: underline;
+}
+
+.tn-cart-variant {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: var(--tn-muted);
+}
+
+.tn-cart-unit {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  color: var(--tn-ink-soft);
+}
+
+.tn-cart-lineactions {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.tn-cart-linerow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tn-cart-qty {
+  /* Overrides the PDP stepper's `flex: 1 1 auto` — here it is a fixed control
+     in a row, not the thing that fills the row. */
+  flex: 0 0 auto;
+}
+
+.tn-qty-value {
+  min-width: 32px;
+  text-align: center;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tn-cart-linetotal {
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.tn-cart-summarycard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  padding: 20px;
+}
+
+@media (min-width: 750px) {
+  .tn-cart-summary {
+    position: sticky;
+    /* Clears the floating header capsule rather than sliding under it. */
+    top: calc(var(--tn-header-h) + var(--tn-header-top) + 12px);
+  }
+}
+
+.tn-cart-couponform {
+  display: flex;
+  gap: 8px;
+}
+
+.tn-cart-couponform .tn-input {
+  min-width: 0;
+}
+
+.tn-cart-couponapplied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tn-cart-totals {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--tn-line);
+  font-size: 0.875rem;
+}
+
+.tn-cart-totals > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tn-cart-totals dt {
+  color: var(--tn-ink-soft);
+}
+
+.tn-cart-totals dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A saving is the one number on this panel that should read as good news. */
+.tn-cart-totals .is-saving dd {
+  color: var(--tn-sale);
+  font-weight: 700;
+}
+
+.tn-cart-totals .is-total {
+  padding-top: 8px;
+  border-top: 1px solid var(--tn-line);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.tn-cart-totals .is-total dt {
+  color: var(--tn-ink);
+}
+
+.tn-cart-taxnote {
+  font-size: 0.75rem;
+  color: var(--tn-muted);
+}
+
+/* ── Free-shipping progress ────────────────────────────────────────────── */
+
+.tn-freeship {
+  display: grid;
+  gap: 8px;
+}
+
+.tn-freeship-text {
+  font-size: 0.8125rem;
+  color: var(--tn-ink);
+}
+
+.tn-freeship-track {
+  height: 6px;
+  background: var(--tn-line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+/* `width` is transitioned here on purpose, against the usual "transform only"
+   rule. The fill is a childless leaf inside a fixed-height track, so the
+   reflow is bounded to a 6px box and fires only when the cart changes — not
+   per frame. `scaleX` would be cheaper in principle and worse in practice: it
+   scales the 999px end cap into an ellipse, which is exactly the sort of
+   detail this theme's hairline geometry makes visible. */
+.tn-freeship-fill {
+  display: block;
+  height: 100%;
+  background: var(--tn-ink);
+  border-radius: inherit;
+  transition: width var(--tn-dur) var(--tn-ease);
+}
+
+/* Reaching the threshold is the one moment worth spending the accent on. */
+.tn-freeship-track.is-done .tn-freeship-fill {
+  background: var(--tn-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   About
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-about-lead {
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+}
+
+@media (min-width: 750px) {
+  .tn-about-lead {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.tn-about-copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  justify-items: start;
+}
+
+.tn-about-eyebrow {
+  color: var(--tn-muted);
+}
+
+.tn-about-body {
+  font-size: var(--tn-fs-body);
+  line-height: 1.75;
+  color: var(--tn-ink-soft);
+}
+
+.tn-about-media .tn-plate {
+  aspect-ratio: 4 / 5;
+  border-radius: var(--tn-r-card);
+}
+
+.tn-about-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tn-about-values {
+  margin-top: 3rem;
+}
+
+/* One column below 750. As a `max-width` rule, NOT an inline `--tn-cols` —
+   an inline custom property outranks the media queries inside `.tn-grid` and
+   would pin the row to one column at every width. */
+@media (max-width: 749px) {
+  .tn-about-values {
+    --tn-cols: 1;
+  }
+}
+
+.tn-about-value {
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+}
+
+.tn-about-valuetitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Contact
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-contact-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 750px) {
+  .tn-contact-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  }
+}
+
+.tn-contact-methods {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.tn-contact-method {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 14px 16px;
+  color: var(--tn-ink);
+  text-decoration: none;
+  transition: border-color var(--tn-dur-fast) var(--tn-ease);
+}
+
+a.tn-contact-method:hover {
+  border-color: var(--tn-primary);
+}
+
+.tn-contact-method.is-whatsapp {
+  color: var(--tn-ink);
+}
+
+.tn-contact-methodbody {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.tn-contact-methodlabel {
+  font-size: var(--tn-fs-label);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tn-muted);
+}
+
+.tn-contact-methodvalue {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.tn-contact-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  padding: 20px;
+}
+
+.tn-contact-field {
+  display: grid;
+  gap: 6px;
+}
+
+/* The shared `.tn-input` is 40px — right for the filter sheet's price boxes,
+   too short beside a 48px submit button. Text fields inside a real form get
+   the taller box. */
+.tn-contact-field .tn-input {
+  min-height: 46px;
+}
+
+.tn-contact-fieldlabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.tn-contact-textarea {
+  min-height: 120px;
+  padding: 10px 12px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.tn-contact-map {
+  margin-top: 2.5rem;
+  border: 1px solid var(--tn-ink);
+  border-radius: var(--tn-r-card);
+  overflow: hidden;
+}
+
+.tn-contact-map iframe {
+  display: block;
+  width: 100%;
+  height: 320px;
+  border: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FAQ
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-faq-inner {
+  max-width: 820px;
+}
+
+.tn-faq-group + .tn-faq-group {
+  margin-top: 2rem;
+}
+
+.tn-faq-grouptitle {
+  margin-bottom: 0.75rem;
+  font-size: var(--tn-fs-label);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tn-muted);
+}
+
+.tn-faq-contact {
+  margin-top: 2.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--tn-ink-soft);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Account
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-account-inner {
+  max-width: 720px;
+}
+
+.tn-account-title {
+  font-size: var(--tn-fs-heading);
+}
+
+.tn-account-auth {
+  max-width: 460px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  padding: 24px;
+}
+
+.tn-account-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  background: var(--tn-wash);
+  border-radius: 999px;
+}
+
+.tn-account-tab {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 40px;
+  padding-inline: 0.75rem;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--tn-ink-soft);
+  cursor: pointer;
+}
+
+.tn-account-tab.is-active {
+  background: var(--tn-paper);
+  color: var(--tn-ink);
+}
+
+.tn-account-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.tn-account-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.tn-account-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--tn-primary);
+}
+
+.tn-account-dash {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.tn-account-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tn-account-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  padding: 20px;
+}
+
+.tn-account-paneltitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.tn-account-orders,
+.tn-account-addresses {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tn-account-order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--tn-line);
+  font-size: 0.875rem;
+}
+
+.tn-account-order:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.tn-account-order > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tn-account-ordernum {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.tn-account-ordertotal {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.tn-account-address {
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+}
+
+.tn-account-addrnote {
+  color: var(--tn-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Order confirmation
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-orderconf-inner {
+  max-width: 620px;
+}
+
+.tn-orderconf-card {
+  display: grid;
+  gap: 12px;
+  padding: 32px 24px;
+  text-align: center;
+  justify-items: center;
+}
+
+.tn-orderconf-eyebrow {
+  color: var(--tn-primary);
+}
+
+.tn-orderconf-title {
+  font-size: var(--tn-fs-title);
+}
+
+.tn-orderconf-number {
+  font-size: 0.875rem;
+  color: var(--tn-ink-soft);
+}
+
+.tn-orderconf-totals {
+  width: 100%;
+  text-align: start;
+}
+
+.tn-orderconf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   404 — branded, unlike the reference's bare Shopify error page
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-notfound-card {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  max-width: 520px;
+  margin-inline: auto;
+  padding: 3rem 1.75rem;
+  text-align: center;
+}
+
+.tn-notfound-code {
+  color: var(--tn-primary);
+  font-size: 1rem;
+  letter-spacing: 0.18em;
+}
+
+.tn-notfound-title {
+  font-size: var(--tn-fs-title);
+}
+
+.tn-notfound-picks {
+  margin-top: 3.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Build-a-Bundle
+   ───────────────────────────────────────────────────────────────────────────
+   Every colour below was sampled off the reference's bundle capture, not
+   picked: featured card #0e0e0e, unselected tile #1f1f1f, selected tile
+   #2b3015, MOST POPULAR pill #d9ff3d (the theme's existing lime, exactly), and
+   the row saving pill #e6f2eb on #1d6844.
+
+   ⚠ That green is a FOURTH accent, against D1's "three accents, three jobs".
+   D1 was written before this page was measured. The reference genuinely uses
+   two savings treatments — orange on the PDP badge, green in a white offer row
+   — and on this page orange would fight the lime pill two centimetres above it.
+   Recorded as a correction to D1 rather than silently absorbed.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-teen-v3-app] {
+  --tn-offer-card: var(--theme-color_offer_card, #0e0e0e);
+  --tn-save-bg: var(--theme-color_save_bg, #e6f2eb);
+  --tn-save-ink: var(--theme-color_save_ink, #1d6844);
+}
+
+.tn-bundle-inner {
+  max-width: 720px;
+}
+
+.tn-bundle-head {
+  margin-bottom: 1.25rem;
+}
+
+/* ⚠ `tn-bundlepage-*`, NOT `tn-bundle-*`. The bundle BANNER (a black card on
+   the home, collection and products templates) already owned
+   .tn-bundle-eyebrow / -title / -sub, styled for a dark surface. Reusing those
+   names for this light page header put dark-on-light colours on the banner's
+   black background at 2.07:1 — illegible, on three templates, and invisible in
+   every gate. Same class of mistake as an inline --tn-cols: a duplicate name
+   silently overriding styles that already worked. */
+.tn-bundlepage-eyebrow {
+  color: var(--tn-muted);
+  margin-bottom: 0.5rem;
+}
+
+.tn-bundlepage-title {
+  font-size: var(--tn-fs-title);
+  margin-bottom: 0.5rem;
+}
+
+.tn-bundlepage-sub {
+  font-size: 0.8125rem;
+  color: var(--tn-ink-soft);
+}
+
+/* ── Featured card ─────────────────────────────────────────────────────── */
+
+.tn-offer-featured {
+  background: var(--tn-offer-card);
+  color: var(--tn-paper);
+  border-radius: var(--tn-r-card);
+  overflow: hidden;
+}
+
+.tn-offer-strip {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.tn-offer-stripcell {
+  display: block;
+  /* 168x87 in the capture. A fixed ratio keeps the strip one band tall however
+     many images land in it. */
+  aspect-ratio: 1.93;
+  background: var(--tn-plate);
+  overflow: hidden;
+}
+
+.tn-offer-stripcell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tn-offer-pop {
+  position: absolute;
+  top: 10px;
+  inset-inline-start: 10px;
+}
+
+.tn-offer-featbody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  padding: 16px;
+}
+
+.tn-offer-feathead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tn-offer-feattitle {
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+/* The one round button on a dark surface — it inverts. */
+.tn-offer-go {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  background: var(--tn-paper);
+  color: var(--tn-ink);
+  border-color: transparent;
+}
+
+.tn-offer-featsub {
+  font-size: 0.75rem;
+  color: #a8a8a8;
+}
+
+.tn-offer-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 4px;
+}
+
+.tn-offer-tile {
+  display: grid;
+  gap: 2px;
+  padding: 10px 14px;
+  background: var(--tn-offer-tile);
+  border-radius: 8px;
+}
+
+/* "Active" tracks the tier the CART has reached, not a decorative default. */
+.tn-offer-tile.is-active {
+  background: var(--tn-offer-tile-active);
+}
+
+.tn-offer-tilelabel {
+  font-size: var(--tn-fs-label);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9a9a9a;
+}
+
+.tn-offer-tileprice {
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.tn-offer-tilesave {
+  font-size: 0.6875rem;
+  color: #9a9a9a;
+}
+
+.tn-offer-tile.is-active .tn-offer-tilesave {
+  color: var(--tn-lime);
+}
+
+/* ── Rows ──────────────────────────────────────────────────────────────── */
+
+.tn-offer-rows {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.tn-offer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  color: var(--tn-ink);
+  text-decoration: none;
+  transition: border-color var(--tn-dur-fast) var(--tn-ease);
+}
+
+.tn-offer-row:hover {
+  border-color: var(--tn-primary);
+}
+
+.tn-offer-rowimg {
+  position: relative;
+  flex: 0 0 auto;
+  width: 52px;
+  aspect-ratio: 1;
+  border-radius: 8px;
+}
+
+/* The reference's "+1" / "+2": how many MORE than one the bundle takes.
+   Marked `dir="ltr"` in the markup — it is a quantity notation, not prose, and
+   in an Arabic page the bidi algorithm otherwise renders it "1+". */
+.tn-offer-qty {
+  position: absolute;
+  bottom: -4px;
+  inset-inline-end: -4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 4px;
+  background: var(--tn-ink);
+  color: var(--tn-paper);
+  border: 2px solid var(--tn-paper);
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
+.tn-offer-rowbody {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3px;
+}
+
+.tn-offer-rowtitle {
+  font-size: var(--tn-fs-card);
+  font-weight: 700;
+}
+
+.tn-offer-rowreq {
+  font-size: 0.75rem;
+  color: var(--tn-muted);
+}
+
+.tn-offer-rowprices {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.tn-offer-rowprice {
+  font-weight: 700;
+  font-size: 0.9375rem;
+}
+
+.tn-offer-rowwas {
+  font-size: 0.8125rem;
+  color: var(--tn-muted);
+}
+
+/* The row saving pill — green, not the orange PDP badge. See the note above. */
+.tn-savepill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.45rem;
+  background: var(--tn-save-bg);
+  color: var(--tn-save-ink);
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tn-offer-rowextra {
+  font-size: 0.6875rem;
+  color: var(--tn-ink-soft);
+}
+
+.tn-offer-chev {
+  flex: 0 0 auto;
+  color: var(--tn-muted);
+}
+
+/* ── Live progress ─────────────────────────────────────────────────────── */
+
+.tn-offer-progress {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--tn-primary);
+}
+
+/* On the black card the orange drops below 4.5:1, so progress goes lime there
+   — the same colour the card already uses for its "discount" signal. */
+.tn-offer-progress.is-dark {
+  color: var(--tn-lime);
+}
+
+/* ── Modal presentation ────────────────────────────────────────────────── */
+
+.tn-bundle-modal {
+  position: fixed;
+  z-index: 80;
+  inset-inline: 12px;
+  top: 12px;
+  bottom: 12px;
+  margin-inline: auto;
+  width: min(560px, calc(100vw - 24px));
+  background: var(--tn-wash);
+  border: 1px solid var(--tn-ink);
+  border-radius: var(--tn-r-panel);
+  overflow: hidden;
+  animation: tn-sheet-in var(--tn-dur) var(--tn-ease);
+}
+
+.tn-bundle-modalbody {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 20px 16px 24px;
+}
+
+.tn-bundle-close {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 12px;
+  z-index: 1;
+}
+
+/* Inside the modal the header is already the dialog's own, so the page's copy
+   of it loses its top margin. */
+.tn-bundle-modalbody .tn-bundle-head {
+  padding-inline-end: 44px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Size guide
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.tn-sizeguide-inner {
+  max-width: 720px;
+}
+
+/* Segmented cm / inches control — the same pill-in-a-wash-track shape as the
+   account tabs, so the theme has one switch, not two. */
+.tn-unit-toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 12px;
+  background: var(--tn-wash);
+  border-radius: 999px;
+}
+
+.tn-unit-btn {
+  min-height: 36px;
+  padding-inline: 0.9rem;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--tn-ink-soft);
+  cursor: pointer;
+}
+
+.tn-unit-btn.is-active {
+  background: var(--tn-paper);
+  color: var(--tn-ink);
+}
+
+/* Measurements are compared DOWN a column, so they line up on the digit. */
+.tn-sizeguide-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+.tn-sizeguide-note {
+  margin-top: 12px;
+}
+
+.tn-sizeguide-measures {
+  margin-top: 2.5rem;
+}
+
+.tn-sizeguide-help {
+  margin-top: 2rem;
+}

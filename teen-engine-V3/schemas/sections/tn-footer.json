@@ -1,0 +1,176 @@
+{
+  "type": "tn-footer",
+  "name": "Footer",
+  "name_ar": "الفوتر",
+  "tag": "footer",
+  "limit": 1,
+  "max_blocks": 4,
+  "settings": [
+    { "type": "header", "content": "Newsletter", "content_ar": "النشرة البريدية" },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show the newsletter block",
+      "label_ar": "إظهار قسم النشرة",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "newsletter_action",
+      "label": "Where the email is sent",
+      "label_ar": "الإيميلات بتتبعت فين",
+      "default": "",
+      "info": "REQUIRED. NUMU does not have a built-in mailing list yet, so the theme cannot store the address for you — paste the form endpoint from Mailchimp, Klaviyo, Brevo or a Google Form. Without it the block is hidden on the live store rather than silently dropping every sign-up.",
+      "info_ar": "مطلوب. لسه مفيش قايمة بريدية جوه نومو، فالثيم مش هيقدر يحفظ الإيميل — حط رابط الفورم من Mailchimp أو Klaviyo أو Brevo أو Google Form. من غيره القسم هيتخفي في المتجر بدل ما ياخد إيميلات وتضيع."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Subscribe to our emails"
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_subtitle",
+      "label": "Subtext",
+      "label_ar": "النص",
+      "default": "Get first look at drops, offers and restocks."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_placeholder",
+      "label": "Field placeholder",
+      "label_ar": "نص الخانة",
+      "default": "Enter your email address"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_cta",
+      "label": "Button text",
+      "label_ar": "نص الزرار",
+      "default": "Subscribe"
+    },
+
+    { "type": "header", "content": "Layout", "content_ar": "الشكل" },
+    {
+      "type": "checkbox",
+      "id": "mobile_accordion",
+      "label": "Collapse columns into accordions on mobile",
+      "label_ar": "اطوي الأعمدة على الموبايل",
+      "default": true,
+      "info": "Built on <details>, so a shopper can still find a closed link with the browser's Find.",
+      "info_ar": "متعمل بـ details، يعني الزبون يقدر يلاقي أي لينك حتى وهو مقفول بخاصية البحث في المتصفح."
+    },
+
+    { "type": "header", "content": "Bottom row", "content_ar": "السطر الأخير" },
+    {
+      "type": "checkbox",
+      "id": "show_payment_marks",
+      "label": "Show payment badges",
+      "label_ar": "إظهار طرق الدفع",
+      "default": true,
+      "info": "Reads the gateways your checkout actually offers. Never shows a method you don't accept.",
+      "info_ar": "بيقرا وسائل الدفع اللي شغالة فعلاً عندك. عمره ما هيعرض وسيلة مش قابلها."
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright line",
+      "label_ar": "سطر الحقوق",
+      "default": "",
+      "info": "Leave empty for \"© {year} {store name}. All rights reserved.\"",
+      "info_ar": "سيبه فاضي وهيكتب \"© {السنة} {اسم المتجر}. كل الحقوق محفوظة.\""
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Footer column",
+      "name_ar": "عمود في الفوتر",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Column title",
+          "label_ar": "عنوان العمود",
+          "default": "Quick links"
+        },
+        {
+          "type": "select",
+          "id": "kind",
+          "label": "Column content",
+          "label_ar": "محتوى العمود",
+          "default": "links",
+          "options": [
+            { "value": "links", "label": "Links", "label_ar": "روابط" },
+            { "value": "socials", "label": "Social icons", "label_ar": "أيقونات السوشيال" },
+            { "value": "text", "label": "Text", "label_ar": "نص" }
+          ],
+          "info": "Social icons come from the URLs in Theme settings → Social.",
+          "info_ar": "أيقونات السوشيال بتيجي من الروابط اللي في إعدادات الثيم ← السوشيال ميديا."
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "label_ar": "النص",
+          "default": "",
+          "info": "Used when the column content is set to Text.",
+          "info_ar": "بيتستخدم لما تختار المحتوى \"نص\"."
+        }
+      ],
+      "blocks": [
+        {
+          "type": "link",
+          "name": "Link",
+          "name_ar": "رابط",
+          "settings": [
+            {
+              "type": "text",
+              "id": "label",
+              "label": "Label",
+              "label_ar": "الاسم",
+              "default": "Shipping & returns"
+            },
+            {
+              "type": "url",
+              "id": "url",
+              "label": "Link",
+              "label_ar": "الرابط",
+              "default": "/policies/shipping"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "name_ar": "الفوتر",
+      "settings": {},
+      "blocks": [
+        { "type": "column", "settings": { "title": "Follow us", "kind": "socials" } },
+        {
+          "type": "column",
+          "settings": { "title": "Quick links", "kind": "links" },
+          "blocks": [
+            { "type": "link", "settings": { "label": "Search", "url": "/search" } },
+            { "type": "link", "settings": { "label": "Shipping & returns", "url": "/policies/shipping" } },
+            { "type": "link", "settings": { "label": "Privacy policy", "url": "/policies/privacy" } },
+            { "type": "link", "settings": { "label": "Contact", "url": "/contact" } }
+          ]
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "About us",
+            "kind": "text",
+            "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+          }
+        }
+      ]
+    }
+  ]
+}

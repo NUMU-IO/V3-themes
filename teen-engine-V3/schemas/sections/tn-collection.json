@@ -1,0 +1,146 @@
+{
+  "type": "tn-collection",
+  "name": "Product listing",
+  "name_ar": "قائمة المنتجات",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The product grid with its filter and sort toolbar. Used on both a single collection page and the all-products page — the heading, the Collection filter and the empty-state wording change on their own, so the same section is correct in both places.",
+      "content_ar": "شبكة المنتجات مع شريط الفلترة والترتيب. بتستخدم في صفحة التصنيف الواحد وفي صفحة كل المنتجات — العنوان وفلتر التصنيف وكلام الحالة الفاضية بيتغيروا لوحدهم، فنفس السكشن صح في الاتنين."
+    },
+
+    { "type": "header", "content": "Intro", "content_ar": "المقدمة" },
+    {
+      "type": "checkbox",
+      "id": "show_intro",
+      "label": "Show the intro",
+      "label_ar": "إظهار المقدمة",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "",
+      "info": "Only used on the all-products page. Inside a collection the collection's own name always wins — a page titled \"All products\" showing one category reads as a bug.",
+      "info_ar": "بتستخدم بس في صفحة كل المنتجات. جوه التصنيف اسم التصنيف نفسه هو اللي بيظهر دايمًا."
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "One-line subtitle",
+      "label_ar": "سطر تحت العنوان",
+      "default": "",
+      "info": "The short line under the title, e.g. \"Statements without the volume.\"",
+      "info_ar": "السطر القصير تحت العنوان."
+    },
+    {
+      "type": "richtext",
+      "id": "editorial",
+      "label": "Editorial paragraph",
+      "label_ar": "الفقرة التحريرية",
+      "default": "",
+      "info": "Leave empty to use the collection's own description.",
+      "info_ar": "سيبها فاضية عشان يستخدم وصف التصنيف نفسه."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Fall back to the collection description",
+      "label_ar": "استخدم وصف التصنيف",
+      "default": true
+    },
+
+    { "type": "header", "content": "Toolbar", "content_ar": "شريط الأدوات" },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show the Filter button",
+      "label_ar": "إظهار زر الفلترة",
+      "default": true,
+      "info": "Filters are built from the colours and sizes your products actually carry. With none to offer, the button hides itself.",
+      "info_ar": "الفلاتر بتتبني من الألوان والمقاسات اللي منتجاتك فيها فعلًا. لو مفيش حاجة تتفلتر، الزر بيختفي لوحده."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort",
+      "label": "Show sorting",
+      "label_ar": "إظهار الترتيب",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "default_sort",
+      "label": "Default order",
+      "label_ar": "الترتيب الافتراضي",
+      "default": "featured",
+      "options": [
+        { "value": "featured", "label": "Featured", "label_ar": "المختارة" },
+        { "value": "az", "label": "Alphabetically, A–Z", "label_ar": "أبجديًا، أ–ي" },
+        { "value": "za", "label": "Alphabetically, Z–A", "label_ar": "أبجديًا، ي–أ" },
+        { "value": "price-asc", "label": "Price, low to high", "label_ar": "السعر، من الأقل" },
+        { "value": "price-desc", "label": "Price, high to low", "label_ar": "السعر، من الأعلى" },
+        { "value": "date-desc", "label": "Date, new to old", "label_ar": "التاريخ، الأحدث" },
+        { "value": "date-asc", "label": "Date, old to new", "label_ar": "التاريخ، الأقدم" }
+      ],
+      "info": "\"Featured\" is the order the products come back from your catalogue in.",
+      "info_ar": "\"المختارة\" هو ترتيب المنتجات زي ما بيرجع من الكتالوج."
+    },
+
+    { "type": "header", "content": "Grid", "content_ar": "الشبكة" },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "label_ar": "أعمدة على الكمبيوتر",
+      "default": 4,
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "info": "Phones always show two.",
+      "info_ar": "الموبايل دايمًا بيعرض عمودين."
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products before \"Load more\"",
+      "label_ar": "عدد المنتجات قبل \"عرض المزيد\"",
+      "default": 16,
+      "min": 8,
+      "max": 48,
+      "step": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "Show quick add",
+      "label_ar": "إظهار الإضافة السريعة",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_swatches",
+      "label": "Show colour swatches",
+      "label_ar": "إظهار ألوان المنتج",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product listing",
+      "name_ar": "قائمة المنتجات",
+      "settings": {
+        "show_intro": true,
+        "show_description": true,
+        "show_filters": true,
+        "show_sort": true,
+        "default_sort": "featured",
+        "columns_desktop": 4,
+        "products_per_page": 16,
+        "show_quick_add": true,
+        "show_swatches": true
+      }
+    }
+  ]
+}

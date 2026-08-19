@@ -1,0 +1,110 @@
+{
+  "type": "tn-shop-the-look",
+  "name": "Shop the look",
+  "name_ar": "اشتري اللوك",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "One styled photo with dots on it. Tapping a dot opens the product card for that piece. Place the dots by percentage so they stay on the right garment at every screen size.",
+      "content_ar": "صورة واحدة ستايلد وعليها نقط. لما الزبون يدوس على نقطة بيظهر كارت المنتج. حط النقط بالنسبة المئوية عشان تفضل على نفس القطعة في كل المقاسات."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Shop the look"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "default": ""
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image",
+      "label_ar": "صورة الموبايل",
+      "default": "",
+      "info": "Optional. A portrait crop keeps the dots on the garment on a phone.",
+      "info_ar": "اختياري. الصورة الطولية بتخلي النقط فاضلة على القطعة على الموبايل."
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image description",
+      "label_ar": "وصف الصورة",
+      "default": ""
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Hotspot",
+      "name_ar": "نقطة",
+      "settings": [
+        {
+          "type": "range",
+          "id": "x",
+          "label": "Horizontal position",
+          "label_ar": "المكان الأفقي",
+          "default": 50,
+          "min": 2,
+          "max": 98,
+          "step": 1,
+          "unit": "%",
+          "info": "Measured from the start edge, so it mirrors correctly in Arabic.",
+          "info_ar": "بيتقاس من ناحية البداية، عشان يتقلب صح في العربي."
+        },
+        {
+          "type": "range",
+          "id": "y",
+          "label": "Vertical position",
+          "label_ar": "المكان الرأسي",
+          "default": 50,
+          "min": 2,
+          "max": 98,
+          "step": 1,
+          "unit": "%"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product",
+          "label_ar": "المنتج"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "label_ar": "الاسم",
+          "default": "",
+          "info": "Only needed if you are not linking a product from the catalogue.",
+          "info_ar": "محتاجها بس لو مش رابط منتج من الكتالوج."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "label_ar": "الرابط",
+          "default": "",
+          "info": "Only needed if you are not linking a product from the catalogue.",
+          "info_ar": "محتاجه بس لو مش رابط منتج من الكتالوج."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop the look",
+      "name_ar": "اشتري اللوك",
+      "settings": { "heading": "Shop the look" },
+      "blocks": [
+        { "type": "hotspot", "settings": { "x": 38, "y": 34 } },
+        { "type": "hotspot", "settings": { "x": 62, "y": 70 } }
+      ]
+    }
+  ]
+}

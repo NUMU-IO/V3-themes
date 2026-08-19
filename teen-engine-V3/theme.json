@@ -1,0 +1,2228 @@
+{
+  "id": "teen-v3",
+  "name": "Teen (V3)",
+  "name_ar": "تين",
+  "author": "NUMU",
+  "version": "1.0.0",
+  "layout": "single-column",
+  "description": "Teen (V3) — a loud, card-led storefront for youth streetwear and lifestyle. A floating capsule header over a full-bleed campaign hero, hairline-outlined product cards with hover-swap imagery and grid quick-add, black bundle promos with a fluorescent-lime discount language, and a purchase-first mobile layout with a sticky add-to-cart bar.",
+  "description_ar": "تين (V3) — متجر جريء ومبني على الكروت، متعمل لملابس الشباب والستريت وير. هيدر عائم فوق بانر كامل العرض، كروت منتجات بإطار رفيع وصورة بتتبدل مع الماوس وزرار إضافة سريع، عروض باندل على خلفية سودا بلون ليموني للخصم، وتصميم موبايل مركّز على الشراء بشريط إضافة للسلة ثابت تحت.",
+  "error_template": "templates/error.html",
+  "loading_template": "templates/loading.html",
+  "presets": {
+    "templates": {
+      "home": {
+        "name": "Home",
+        "name_ar": "الرئيسية",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-hero",
+            "settings": {
+              "heading": "SUMMER DROP",
+              "subheading": "The pieces you'll actually wear.",
+              "cta_text": "Shop the drop",
+              "cta_link": "/products",
+              "height": "large",
+              "text_align": "center",
+              "overlay_opacity": 30,
+              "round_bottom": true
+            }
+          },
+          {
+            "type": "tn-bundle-banner",
+            "settings": {
+              "eyebrow": "SUMMER BUNDLE",
+              "heading": "Build your bundle",
+              "subcopy": "Four bundles. Save up to 20%.",
+              "cta_text": "Customise my bundle",
+              "cta_link": "/pages/build-a-bundle",
+              "badge_text": "20% OFF",
+              "surface": "ink"
+            }
+          },
+          {
+            "type": "tn-product-rail",
+            "settings": {
+              "editorial_line": "Easy to wear. Hard to take off.",
+              "heading": "New in",
+              "view_all_link": "/products",
+              "source": "newest",
+              "limit": 6,
+              "layout": "rail",
+              "columns_desktop": 4,
+              "show_quick_add": true,
+              "show_swatches": true
+            }
+          },
+          {
+            "type": "tn-product-rail",
+            "settings": {
+              "editorial_line": "The ones everyone keeps re-ordering.",
+              "heading": "Best sellers",
+              "view_all_link": "/collections",
+              "source": "newest",
+              "limit": 6,
+              "layout": "rail",
+              "columns_desktop": 4,
+              "show_quick_add": true,
+              "show_swatches": true
+            }
+          },
+          {
+            "type": "tn-review-strip",
+            "settings": {
+              "heading": "What people say"
+            },
+            "blocks": [
+              {
+                "type": "testimonial",
+                "settings": {
+                  "quote": "Fits exactly like the size guide said. Ordered two more the same week.",
+                  "rating": 5
+                }
+              },
+              {
+                "type": "testimonial",
+                "settings": {
+                  "quote": "Arrived in two days and the fabric is heavier than I expected — in a good way.",
+                  "rating": 5
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-shop-the-look",
+            "settings": {
+              "heading": "Shop the look"
+            },
+            "blocks": [
+              {
+                "type": "hotspot",
+                "settings": {
+                  "x": 38,
+                  "y": 34
+                }
+              },
+              {
+                "type": "hotspot",
+                "settings": {
+                  "x": 62,
+                  "y": 70
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-collection-links",
+            "settings": {
+              "heading": "Shop by category",
+              "source": "auto",
+              "limit": 4,
+              "columns_desktop": 4,
+              "show_counts": true
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "collection": {
+        "name": "Collection",
+        "name_ar": "التصنيف",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-bundle-banner",
+            "settings": {
+              "eyebrow": "SUMMER BUNDLE",
+              "heading": "Build your bundle",
+              "subcopy": "Four bundles. Save up to 20%.",
+              "cta_text": "Customise my bundle",
+              "cta_link": "/pages/build-a-bundle",
+              "badge_text": "20% OFF",
+              "surface": "ink"
+            }
+          },
+          {
+            "type": "tn-collection",
+            "settings": {
+              "show_intro": true,
+              "show_description": true,
+              "show_filters": true,
+              "show_sort": true,
+              "default_sort": "featured",
+              "columns_desktop": 4,
+              "products_per_page": 16,
+              "show_quick_add": true,
+              "show_swatches": true
+            }
+          },
+          {
+            "type": "tn-review-strip",
+            "settings": {
+              "heading": "What people say"
+            },
+            "blocks": [
+              {
+                "type": "testimonial",
+                "settings": {
+                  "quote": "Fits exactly like the size guide said. Ordered two more the same week.",
+                  "rating": 5
+                }
+              },
+              {
+                "type": "testimonial",
+                "settings": {
+                  "quote": "Arrived in two days and the fabric is heavier than I expected — in a good way.",
+                  "rating": 5
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-collection-links",
+            "settings": {
+              "heading": "Shop by category",
+              "source": "auto",
+              "limit": 4,
+              "columns_desktop": 4,
+              "show_counts": true
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "products": {
+        "name": "All products",
+        "name_ar": "كل المنتجات",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-bundle-banner",
+            "settings": {
+              "eyebrow": "SUMMER BUNDLE",
+              "heading": "Build your bundle",
+              "subcopy": "Four bundles. Save up to 20%.",
+              "cta_text": "Customise my bundle",
+              "cta_link": "/pages/build-a-bundle",
+              "badge_text": "20% OFF",
+              "surface": "ink"
+            }
+          },
+          {
+            "type": "tn-collection",
+            "settings": {
+              "show_intro": true,
+              "show_description": true,
+              "show_filters": true,
+              "show_sort": true,
+              "default_sort": "featured",
+              "columns_desktop": 4,
+              "products_per_page": 16,
+              "show_quick_add": true,
+              "show_swatches": true
+            }
+          },
+          {
+            "type": "tn-review-strip",
+            "settings": {
+              "heading": "What people say"
+            },
+            "blocks": [
+              {
+                "type": "testimonial",
+                "settings": {
+                  "quote": "Fits exactly like the size guide said. Ordered two more the same week.",
+                  "rating": 5
+                }
+              },
+              {
+                "type": "testimonial",
+                "settings": {
+                  "quote": "Arrived in two days and the fabric is heavier than I expected — in a good way.",
+                  "rating": 5
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-collection-links",
+            "settings": {
+              "heading": "Shop by category",
+              "source": "auto",
+              "limit": 4,
+              "columns_desktop": 4,
+              "show_counts": true
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "product": {
+        "name": "Product",
+        "name_ar": "المنتج",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-product",
+            "settings": {
+              "gallery_ratio": "natural",
+              "show_thumbs": true,
+              "show_zoom": true,
+              "show_rating": true,
+              "show_save_badge": true,
+              "show_assurance_strip": true,
+              "assurance_1": "Delivery 2–3 days",
+              "assurance_2": "Easy exchange & returns",
+              "show_facts": true,
+              "show_find_my_size": true,
+              "size_guide_link": "/size-guide",
+              "show_quantity": true,
+              "show_share": true,
+              "show_buy_now": true,
+              "show_sticky_bar": true,
+              "acc_1_title": "Size chart & description",
+              "acc_2_title": "Shipping information",
+              "acc_3_title": "Return policy",
+              "show_related": true,
+              "related_limit": 4
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "collections": {
+        "name": "Collections",
+        "name_ar": "التصنيفات",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-collections-index",
+            "settings": {
+              "columns_desktop": 3,
+              "show_counts": true
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "cart": {
+        "name": "Cart",
+        "name_ar": "السلة",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-cart",
+            "settings": {
+              "empty_cta_link": "/products",
+              "show_popular_picks": true,
+              "popular_picks_limit": 4,
+              "show_progress_bar": true,
+              "free_shipping_threshold": 0,
+              "show_coupon": true,
+              "show_payment_marks": true
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "search": {
+        "name": "Search",
+        "name_ar": "البحث",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-search",
+            "settings": {
+              "columns_desktop": 4,
+              "products_per_page": 16
+            },
+            "blocks": [
+              {
+                "type": "link",
+                "settings": {
+                  "label": "Home",
+                  "url": "/"
+                }
+              },
+              {
+                "type": "link",
+                "settings": {
+                  "label": "All products",
+                  "url": "/products"
+                }
+              },
+              {
+                "type": "link",
+                "settings": {
+                  "label": "Collections",
+                  "url": "/collections"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "page": {
+        "name": "Page",
+        "name_ar": "صفحة",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "bundle": {
+        "name": "Build a bundle",
+        "name_ar": "اعمل الباندل",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-bundle-builder",
+            "settings": {
+              "eyebrow": "Pick a bundle",
+              "present_as": "page"
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "about": {
+        "name": "About",
+        "name_ar": "عننا",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-about",
+            "settings": {
+              "eyebrow": "About us",
+              "heading": "Made for the ones who move different",
+              "cta_link": "/products"
+            },
+            "blocks": [
+              {
+                "type": "value",
+                "settings": {
+                  "title": "Made to last",
+                  "text": "Heavier cotton, stitched to survive a wash cycle."
+                }
+              },
+              {
+                "type": "value",
+                "settings": {
+                  "title": "Fair prices",
+                  "text": "No middlemen, no seasonal markup games."
+                }
+              },
+              {
+                "type": "value",
+                "settings": {
+                  "title": "Fast delivery",
+                  "text": "Out the door the same day, most days."
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "contact": {
+        "name": "Contact",
+        "name_ar": "اتصل بنا",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-contact",
+            "settings": {
+              "show_form": true
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "faq": {
+        "name": "FAQ",
+        "name_ar": "أسئلة شائعة",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-faq",
+            "settings": {
+              "contact_text": "Didn’t find it?",
+              "contact_link": "/contact"
+            },
+            "blocks": [
+              {
+                "type": "qa",
+                "settings": {
+                  "question": "When will my order arrive?",
+                  "answer": "<p>Two to three days in Cairo and Giza, three to five everywhere else.</p>"
+                }
+              },
+              {
+                "type": "qa",
+                "settings": {
+                  "question": "Can I exchange a size?",
+                  "answer": "<p>Yes — within 14 days, unworn and with the tags on.</p>"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "size-guide": {
+        "name": "Size guide",
+        "name_ar": "دليل المقاسات",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-size-guide",
+            "settings": {
+              "chart_unit": "cm",
+              "measure_heading": "How to measure"
+            },
+            "blocks": [
+              {
+                "type": "measure",
+                "settings": {
+                  "title": "Chest",
+                  "text": "Measure right around the fullest part of your chest, keeping the tape level and not pulled tight."
+                }
+              },
+              {
+                "type": "measure",
+                "settings": {
+                  "title": "Length",
+                  "text": "From the highest point of the shoulder straight down to the hem."
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "account": {
+        "name": "Account",
+        "name_ar": "حسابي",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-account",
+            "settings": {
+              "show_orders": true,
+              "show_addresses": true
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "order-confirmation": {
+        "name": "Order confirmation",
+        "name_ar": "تأكيد الطلب",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-order-confirmation",
+            "settings": {
+              "show_summary": true,
+              "continue_link": "/products",
+              "show_whatsapp_cta": true
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "404": {
+        "name": "Not found",
+        "name_ar": "الصفحة مش موجودة",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-not-found",
+            "settings": {
+              "cta_link": "/products",
+              "show_popular_products": true,
+              "popular_limit": 4
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "checkout": {
+        "name": "Checkout",
+        "name_ar": "إتمام الشراء",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

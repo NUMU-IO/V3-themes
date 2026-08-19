@@ -1,0 +1,253 @@
+{
+  "type": "tn-header",
+  "name": "Header",
+  "name_ar": "الهيدر",
+  "tag": "header",
+  "limit": 1,
+  "max_blocks": 10,
+  "settings": [
+    { "type": "header", "content": "Layout", "content_ar": "الشكل" },
+    {
+      "type": "paragraph",
+      "content": "Teen's header is a floating white capsule with a thin dark outline. On a page that opens with a campaign hero it sits ON the image; everywhere else it sits at the top of the page. It works out which is which on its own — no per-page setting needed.",
+      "content_ar": "هيدر Teen عبارة عن شريط أبيض عائم بإطار رفيع غامق. في الصفحات اللي بتبدأ ببانر كبير بيقعد فوق الصورة، وفي باقي الصفحات بيقعد في أول الصفحة. بيعرف لوحده الحالة الصح من غير ما تظبط أي حاجة."
+    },
+    {
+      "type": "checkbox",
+      "id": "float_over_hero",
+      "label": "Float over the hero image",
+      "label_ar": "خليه عائم فوق البانر",
+      "default": true,
+      "info": "Turn off to always keep the header above the content instead of on top of it.",
+      "info_ar": "اقفلها لو عايز الهيدر يفضل فوق المحتوى دايمًا مش فوق الصورة."
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Stay visible while scrolling",
+      "label_ar": "يفضل ظاهر وانت بتنزل",
+      "default": true
+    },
+
+    { "type": "header", "content": "Navigation", "content_ar": "القائمة" },
+    {
+      "type": "link_list_picker",
+      "id": "menu_handle",
+      "label": "Menu",
+      "label_ar": "القائمة",
+      "default": "main-menu",
+      "info": "A menu you manage under Online store → Navigation always wins over the menu items below.",
+      "info_ar": "القائمة اللي بتظبطها من (المتجر الإلكتروني ← القوائم) بتيجي قبل العناصر اللي تحت."
+    },
+    {
+      "type": "text",
+      "id": "promo_badge_text",
+      "label": "Promo badge",
+      "label_ar": "شارة العرض",
+      "default": "UP TO 20% OFF",
+      "info": "A small red pill in the menu row. Shown only when none of your own menu items carries a badge — so it still appears when you use a managed menu.",
+      "info_ar": "شارة حمرا صغيرة جنب القائمة. بتظهر بس لو مفيش عنصر من عناصر القائمة شايل شارة — عشان تفضل ظاهرة حتى لو مستخدم قائمة جاهزة."
+    },
+    {
+      "type": "url",
+      "id": "promo_badge_link",
+      "label": "Promo badge link",
+      "label_ar": "رابط شارة العرض",
+      "default": "/pages/build-a-bundle"
+    },
+
+    { "type": "header", "content": "Icons", "content_ar": "الأيقونات" },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "label_ar": "إظهار البحث",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account",
+      "label_ar": "إظهار الحساب",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Show cart",
+      "label_ar": "إظهار السلة",
+      "default": true
+    },
+
+    { "type": "header", "content": "Build-a-bundle pill", "content_ar": "زرار الباندل العائم" },
+    {
+      "type": "paragraph",
+      "content": "A small floating pill that follows the shopper on product pages. It lives in the header rather than being its own section, so it can never end up stacked on top of the platform's own promotion bar.",
+      "content_ar": "زرار صغير عائم بيفضل مع الزبون في صفحات المنتج. حطيناه جوه الهيدر مش قسم لوحده، عشان ما يحصلش إنه يتراكب فوق شريط العروض بتاع المنصة."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bundle_pill",
+      "label": "Show the floating pill",
+      "label_ar": "إظهار الزرار العائم",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "bundle_pill_text",
+      "label": "Pill text",
+      "label_ar": "نص الزرار",
+      "default": "Build a bundle"
+    },
+    {
+      "type": "text",
+      "id": "bundle_pill_badge",
+      "label": "Pill badge",
+      "label_ar": "شارة الزرار",
+      "default": "20% OFF",
+      "info": "Leave empty for no badge.",
+      "info_ar": "سيبها فاضية لو مش عايز شارة."
+    },
+    {
+      "type": "url",
+      "id": "bundle_pill_link",
+      "label": "Pill link",
+      "label_ar": "رابط الزرار",
+      "default": "/pages/build-a-bundle"
+    },
+    {
+      "type": "select",
+      "id": "bundle_pill_scope",
+      "label": "Show the pill on",
+      "label_ar": "الزرار يظهر في",
+      "default": "product",
+      "options": [
+        { "value": "product", "label": "Product pages", "label_ar": "صفحات المنتج" },
+        {
+          "value": "catalog",
+          "label": "Product & collection pages",
+          "label_ar": "صفحات المنتج والتصنيفات"
+        },
+        { "value": "all", "label": "Every page", "label_ar": "كل الصفحات" }
+      ]
+    },
+
+    { "type": "header", "content": "Menu drawer", "content_ar": "قائمة الموبايل" },
+    {
+      "type": "text",
+      "id": "drawer_manifesto_title",
+      "label": "Drawer heading",
+      "label_ar": "عنوان القائمة",
+      "default": "",
+      "info": "A short line about the brand, under the menu links. Leave empty to hide it.",
+      "info_ar": "سطر قصير عن البراند تحت روابط القائمة. سيبه فاضي عشان يختفي."
+    },
+    {
+      "type": "textarea",
+      "id": "drawer_manifesto_body",
+      "label": "Drawer text",
+      "label_ar": "نص القائمة",
+      "default": ""
+    },
+    {
+      "type": "collection",
+      "id": "drawer_featured_collection",
+      "label": "Featured collection",
+      "label_ar": "تصنيف مميز",
+      "info": "Shown as a tall card inside the drawer with its item count. Leave empty to hide it.",
+      "info_ar": "بيظهر ككارت طويل جوه القائمة مع عدد المنتجات. سيبه فاضي عشان يختفي."
+    },
+    {
+      "type": "image_picker",
+      "id": "drawer_featured_image",
+      "label": "Featured card image",
+      "label_ar": "صورة الكارت المميز",
+      "default": "",
+      "info": "Only needed if the collection has no image of its own.",
+      "info_ar": "محتاجها بس لو التصنيف مالوش صورة."
+    },
+    {
+      "type": "checkbox",
+      "id": "drawer_show_socials",
+      "label": "Show social links in the drawer",
+      "label_ar": "إظهار السوشيال في القائمة",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "nav_item",
+      "name": "Menu item",
+      "name_ar": "عنصر قائمة",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "label_ar": "الاسم",
+          "default": "New in"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "label_ar": "الرابط",
+          "default": "/products"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge",
+          "label_ar": "الشارة",
+          "default": "",
+          "info": "A small red pill next to this item, e.g. UP TO 20% OFF.",
+          "info_ar": "شارة حمرا صغيرة جنب العنصر، مثلاً: خصم لحد 20%."
+        }
+      ],
+      "blocks": [
+        {
+          "type": "nav_child",
+          "name": "Sub-item",
+          "name_ar": "عنصر فرعي",
+          "settings": [
+            {
+              "type": "text",
+              "id": "label",
+              "label": "Label",
+              "label_ar": "الاسم",
+              "default": "All products"
+            },
+            {
+              "type": "url",
+              "id": "link",
+              "label": "Link",
+              "label_ar": "الرابط",
+              "default": "/products"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header",
+      "name_ar": "الهيدر",
+      "settings": {},
+      "blocks": [
+        { "type": "nav_item", "settings": { "label": "Home", "link": "/" } },
+        {
+          "type": "nav_item",
+          "settings": {
+            "label": "Build a bundle",
+            "link": "/pages/build-a-bundle",
+            "badge": "UP TO 20% OFF"
+          }
+        },
+        { "type": "nav_item", "settings": { "label": "New in", "link": "/products" } },
+        { "type": "nav_item", "settings": { "label": "Shop", "link": "/collections" } },
+        { "type": "nav_item", "settings": { "label": "About", "link": "/about" } }
+      ]
+    }
+  ]
+}

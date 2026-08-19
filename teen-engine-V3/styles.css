@@ -1,0 +1,79 @@
+/**
+ * Teen (V3) — FALLBACK stylesheet.
+ *
+ * This is not the stylesheet the storefront normally loads. `vite.config.ts`
+ * sets `build.lib.cssFileName: "theme"`, so the COMPILED Tailwind output from
+ * src/theme.css is emitted as dist/theme.css and the plugin's fallback copy of
+ * this file no-ops.
+ *
+ * It exists for two reasons: the plugin's contract check requires a root
+ * styles.css, and it is the last line of defence — if a build ever ships
+ * without the compiled CSS, these declarations keep the storefront legible
+ * (right palette, readable type, no unstyled HTML) instead of dumping raw
+ * markup on a shopper. Keep the tokens in sync with src/theme.css; don't grow
+ * this file beyond that.
+ */
+
+[data-teen-v3-app] {
+  --tn-paper: #ffffff;
+  --tn-plate: #f1ede9;
+  --tn-wash: #f7f7f7;
+  --tn-ink: #121010;
+  --tn-ink-2: #28282a;
+  --tn-ink-soft: #5a5a5a;
+  --tn-muted: #7a7a7a;
+  --tn-line: #e1e1e1;
+  --tn-primary: #fb4d01;
+  --tn-primary-fg: #ffffff;
+  --tn-sale: #ec0505;
+  --tn-alert: #e01b26;
+  --tn-lime: #d9ff3d;
+  --tn-lime-ink: #121010;
+  --tn-cream: #f7e6a1;
+  --tn-offer-tile: #1f1f1f;
+  --tn-offer-tile-active: #2b3015;
+  --tn-assure: #e0f7fa;
+  --tn-soldout: #8a8a8a;
+  --tn-overlay: rgba(0, 0, 0, 0.45);
+  --tn-container: 1340px;
+  --tn-gutter: 24px;
+  --tn-r-card: 12px;
+  --tn-r-panel: 18px;
+
+  background: var(--tn-paper);
+  color: var(--tn-ink);
+  font-family: "Raleway", "Manrope", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+[dir="rtl"] [data-teen-v3-app],
+[data-teen-v3-app][dir="rtl"] {
+  font-family: "IBM Plex Sans Arabic", "Noto Kufi Arabic", "Cairo", sans-serif;
+}
+
+[data-teen-v3-app] img,
+[data-teen-v3-app] svg {
+  display: block;
+  max-width: 100%;
+}
+
+[data-teen-v3-app] h1,
+[data-teen-v3-app] h2,
+[data-teen-v3-app] h3 {
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0;
+}
+
+[data-teen-v3-app] .tn-container {
+  width: 100%;
+  max-width: var(--tn-container);
+  margin-inline: auto;
+  padding-inline: var(--tn-gutter);
+}
+
+[data-teen-v3-app] :focus-visible {
+  outline: 2px solid var(--tn-ink);
+  outline-offset: 2px;
+}

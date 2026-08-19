@@ -1,0 +1,363 @@
+[
+  {
+    "name": "Brand",
+    "name_ar": "العلامة التجارية",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo",
+        "label_ar": "الشعار",
+        "info": "Shown in the header capsule, the menu drawer and the footer. Leave empty to use the store name as a wordmark — Teen is designed to look right either way. A wide horizontal wordmark suits the capsule header best.",
+        "info_ar": "بيظهر في الهيدر وقائمة الموبايل والفوتر. سيبه فاضي وهنستخدم اسم المتجر كنص — التصميم شغال بالطريقتين. الشعار العريض الأفقي هو الأنسب لشكل الهيدر.",
+        "default": ""
+      },
+      {
+        "type": "select",
+        "id": "logo_shape",
+        "label": "Logo shape",
+        "label_ar": "شكل الشعار",
+        "default": "none",
+        "info": "Crops the logo into a shape. 'Original' keeps it untouched — the right choice for a wordmark.",
+        "info_ar": "بيقص الشعار في شكل. \"الأصلي\" بيسيبه زي ما هو — وده الأنسب للشعار الكتابي.",
+        "options": [
+          { "value": "none", "label": "Original", "label_ar": "الأصلي" },
+          { "value": "square", "label": "Square", "label_ar": "مربع" },
+          { "value": "rounded", "label": "Rounded square", "label_ar": "مربع بزوايا دائرية" },
+          { "value": "circle", "label": "Circle", "label_ar": "دائرة" }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo width",
+        "label_ar": "عرض الشعار",
+        "default": 96,
+        "min": 40,
+        "max": 200,
+        "step": 4,
+        "unit": "px",
+        "info": "Sets the logo's size. The header capsule grows to fit a taller logo.",
+        "info_ar": "بيحدد حجم الشعار. الهيدر بيكبر لو الشعار أطول."
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon (browser tab icon)",
+        "label_ar": "أيقونة المتصفح",
+        "default": ""
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "name_ar": "الألوان",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Teen runs on three accents and each has exactly one job: ORANGE is purchase and 'on sale', RED is the sale price itself, LIME is the size of the discount. Keeping them separate is what makes the price row readable at a glance — merging them flattens it. Everything else is white, near-black and one warm grey.",
+        "content_ar": "ثيم Teen شغال بتلات ألوان مميزة وكل واحد ليه وظيفة واحدة بس: البرتقالي للشراء و\"تخفيض\"، الأحمر لسعر التخفيض نفسه، والليموني لحجم الخصم. لما تفضلهم مفصولين، صف السعر بيبقى واضح من نظرة واحدة. الباقي أبيض وأسود مايل ورمادي دافي."
+      },
+      { "type": "header", "content": "Surfaces", "content_ar": "الخلفيات" },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Page & card background",
+        "label_ar": "خلفية الصفحة والكروت",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_plate",
+        "label": "Product image plate",
+        "label_ar": "خلفية صور المنتجات",
+        "info": "Sits behind product photos while they load and shows through transparent PNGs.",
+        "info_ar": "بيظهر ورا صور المنتجات وهي بتحمّل، وكمان من ورا الصور الشفافة.",
+        "default": "#F1EDE9"
+      },
+      {
+        "type": "color",
+        "id": "color_wash",
+        "label": "Inert fill (accordion rows)",
+        "label_ar": "الخلفية الخفيفة (صفوف التفاصيل)",
+        "default": "#F7F7F7"
+      },
+      { "type": "header", "content": "Text", "content_ar": "النصوص" },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Ink — text, hairlines & the bundle card",
+        "label_ar": "اللون الأساسي — النص والحدود وكارت الباندل",
+        "info": "One token does three jobs here: body text, the 1px outline around every card and the header, and the black bundle promo surface.",
+        "info_ar": "اللون ده بيعمل تلات حاجات: لون النص، والإطار الرفيع حوالين كل كارت والهيدر، وخلفية كارت عرض الباندل السودا.",
+        "default": "#121010"
+      },
+      {
+        "type": "color",
+        "id": "color_ink_2",
+        "label": "Charcoal (Add to cart button)",
+        "label_ar": "الرمادي الغامق (زرار الإضافة للسلة)",
+        "info": "Deliberately not pure black: the orange 'Buy it now' sits directly beneath it and the two need to read as different buttons.",
+        "info_ar": "مش أسود خالص عن قصد: زرار \"اشتري دلوقتي\" البرتقالي تحته على طول، ولازم يبانوا زرارين مختلفين.",
+        "default": "#28282A"
+      },
+      {
+        "type": "color",
+        "id": "color_ink_soft",
+        "label": "Secondary text",
+        "label_ar": "النص الثانوي",
+        "default": "#5A5A5A"
+      },
+      {
+        "type": "color",
+        "id": "color_muted",
+        "label": "Muted — captions & the old price",
+        "label_ar": "الباهت — التعليقات والسعر القديم",
+        "default": "#7A7A7A"
+      },
+      { "type": "header", "content": "Lines", "content_ar": "الخطوط" },
+      {
+        "type": "color",
+        "id": "border_color",
+        "label": "Inner dividers",
+        "label_ar": "الفواصل الداخلية",
+        "info": "Light rules inside cards and the footer. The strong outline around cards uses the Ink colour above.",
+        "info_ar": "الخطوط الخفيفة جوه الكروت والفوتر. أما الإطار القوي حوالين الكروت فبياخد لون Ink اللي فوق.",
+        "default": "#E1E1E1"
+      },
+      { "type": "header", "content": "Accents", "content_ar": "الألوان المميزة" },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "Primary — Buy it now, sale badges, count pills",
+        "label_ar": "الأساسي — اشتري دلوقتي وشارات التخفيض",
+        "default": "#FB4D01"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color",
+        "label": "Primary button text",
+        "label_ar": "لون نص الزرار الأساسي",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale price text",
+        "label_ar": "لون سعر التخفيض",
+        "info": "The live price when a product is discounted. A different red from the orange badge on purpose.",
+        "info_ar": "سعر المنتج وهو عليه تخفيض. أحمر مختلف عن البرتقالي بتاع الشارة عن قصد.",
+        "default": "#EC0505"
+      },
+      {
+        "type": "color",
+        "id": "color_alert",
+        "label": "Navigation promo badge",
+        "label_ar": "شارة العرض في القائمة",
+        "default": "#E01B26"
+      },
+      {
+        "type": "color",
+        "id": "color_lime",
+        "label": "Discount highlight (lime)",
+        "label_ar": "لون الخصم (ليموني)",
+        "info": "Reserved for the size of a saving — '20% OFF', 'MOST POPULAR'. Never used for anything else.",
+        "info_ar": "مخصص لحجم التوفير — \"خصم 20%\"، \"الأكتر طلبًا\". مش بيتستخدم في أي حاجة تانية.",
+        "default": "#D9FF3D"
+      },
+      {
+        "type": "color",
+        "id": "color_lime_ink",
+        "label": "Text on lime",
+        "label_ar": "النص فوق الليموني",
+        "default": "#121010"
+      },
+      {
+        "type": "color",
+        "id": "color_cream",
+        "label": "Bundle CTA surface (cream)",
+        "label_ar": "خلفية زرار الباندل (كريمي)",
+        "default": "#F7E6A1"
+      },
+      { "type": "header", "content": "Bundle chooser", "content_ar": "قائمة الباندل" },
+      {
+        "type": "color",
+        "id": "color_offer_tile",
+        "label": "Offer tier tile",
+        "label_ar": "خلفية خيار العرض",
+        "default": "#1F1F1F"
+      },
+      {
+        "type": "color",
+        "id": "color_offer_tile_active",
+        "label": "Offer tier tile — selected",
+        "label_ar": "خلفية خيار العرض المختار",
+        "default": "#2B3015"
+      },
+      { "type": "header", "content": "Semantic", "content_ar": "ألوان الحالة" },
+      {
+        "type": "color",
+        "id": "color_assure",
+        "label": "Delivery & returns strip",
+        "label_ar": "شريط التوصيل والاستبدال",
+        "default": "#E0F7FA"
+      },
+      {
+        "type": "color",
+        "id": "color_soldout",
+        "label": "Sold out badge",
+        "label_ar": "شارة نفد المخزون",
+        "info": "Grey on purpose. An orange sold-out badge reads as an offer.",
+        "info_ar": "رمادي عن قصد. لو خليته برتقالي الزبون هيفتكره عرض.",
+        "default": "#8A8A8A"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "name_ar": "الخطوط",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Raleway and IBM Plex Sans Arabic ship inside the theme bundle — no third-party font request, no flash of invisible text. Naming a different family here falls back to whatever the shopper's device has.",
+        "content_ar": "خطوط Raleway و IBM Plex Sans Arabic متضمنة جوه الثيم نفسه — من غير أي طلب لموقع خارجي ومن غير ما النص يختفي وهو بيحمّل. لو كتبت اسم خط تاني هنا، هيعتمد على الخطوط الموجودة على جهاز الزبون."
+      },
+      {
+        "type": "text",
+        "id": "heading_font",
+        "label": "Heading font",
+        "label_ar": "خط العناوين",
+        "default": "Raleway"
+      },
+      {
+        "type": "text",
+        "id": "body_font",
+        "label": "Body font",
+        "label_ar": "خط النصوص",
+        "default": "Raleway"
+      },
+      {
+        "type": "text",
+        "id": "arabic_font",
+        "label": "Arabic font",
+        "label_ar": "الخط العربي",
+        "default": "IBM Plex Sans Arabic"
+      },
+      {
+        "type": "range",
+        "id": "base_font_size",
+        "label": "Base text size",
+        "label_ar": "حجم النص الأساسي",
+        "default": 16,
+        "min": 14,
+        "max": 18,
+        "step": 1,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "heading_tracking",
+        "label": "Heading letter spacing",
+        "label_ar": "تباعد حروف العناوين",
+        "default": -1,
+        "min": -3,
+        "max": 3,
+        "step": 1,
+        "unit": "/100em",
+        "info": "Negative tightens headings, positive opens them up.",
+        "info_ar": "الأرقام السالبة بتقرّب الحروف، والموجبة بتباعدها."
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "name_ar": "التخطيط",
+    "settings": [
+      {
+        "type": "range",
+        "id": "container_width",
+        "label": "Maximum content width",
+        "label_ar": "أقصى عرض للمحتوى",
+        "default": 1340,
+        "min": 1100,
+        "max": 1600,
+        "step": 20,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "radius_card",
+        "label": "Card corner radius",
+        "label_ar": "استدارة زوايا الكروت",
+        "default": 12,
+        "min": 0,
+        "max": 24,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "radius_panel",
+        "label": "Panel corner radius (header, footer, hero)",
+        "label_ar": "استدارة زوايا الهيدر والفوتر والبانر",
+        "default": 18,
+        "min": 0,
+        "max": 32,
+        "step": 2,
+        "unit": "px"
+      },
+      {
+        "type": "checkbox",
+        "id": "enableStickyHeader",
+        "label": "Keep the header visible while scrolling",
+        "label_ar": "خلي الهيدر ظاهر وانت بتنزل",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enableAnimations",
+        "label": "Enable animations",
+        "label_ar": "تفعيل الحركة",
+        "info": "Turning this off stops every transition and autoplay. Shoppers whose device asks for reduced motion get that automatically, whatever this is set to.",
+        "info_ar": "لما تقفلها، كل الحركات والتشغيل التلقائي بيقفوا. والزباين اللي جهازهم طالب تقليل الحركة بياخدوا ده تلقائيًا مهما كان الإعداد ده.",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Social",
+    "name_ar": "السوشيال ميديا",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram URL",
+        "label_ar": "رابط إنستجرام",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "TikTok URL",
+        "label_ar": "رابط تيك توك",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook URL",
+        "label_ar": "رابط فيسبوك",
+        "default": ""
+      },
+      {
+        "type": "url",
+        "id": "social_whatsapp",
+        "label": "WhatsApp number or link",
+        "label_ar": "رقم أو رابط واتساب",
+        "info": "A number like 01012345678 works — the theme builds the wa.me link.",
+        "info_ar": "اكتب الرقم زي 01012345678 والثيم هيعمل لينك واتساب لوحده.",
+        "default": ""
+      }
+    ]
+  }
+]

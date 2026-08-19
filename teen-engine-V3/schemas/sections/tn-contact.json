@@ -1,0 +1,113 @@
+{
+  "type": "tn-contact",
+  "name": "Contact",
+  "name_ar": "اتصل بنا",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "WhatsApp first — it is the channel Egyptian shoppers actually use. Phone, email and hours sit beside it. The form is optional and needs somewhere to send to.",
+      "content_ar": "الواتساب الأول — ده اللي الزباين في مصر بيستخدموه فعلًا. التليفون والإيميل والمواعيد جنبه. الفورم اختياري ومحتاج مكان يبعت عليه."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Get in touch"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro",
+      "label_ar": "المقدمة",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Ways to reach you",
+      "content_ar": "طرق التواصل"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp",
+      "label": "WhatsApp number",
+      "label_ar": "رقم الواتساب",
+      "default": "",
+      "info": "Type it however you like — 01012345678, +20 101 234 5678, or a full wa.me link.",
+      "info_ar": "اكتبه بأي شكل — 01012345678 أو +20 101 234 5678 أو لينك wa.me كامل."
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_label",
+      "label": "WhatsApp button text",
+      "label_ar": "نص زر الواتساب",
+      "default": "Message us"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone",
+      "label_ar": "التليفون",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email",
+      "label_ar": "الإيميل",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Hours",
+      "label_ar": "المواعيد",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Form",
+      "content_ar": "الفورم"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_form",
+      "label": "Show a contact form",
+      "label_ar": "إظهار فورم تواصل",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "form_action",
+      "label": "Form endpoint",
+      "label_ar": "رابط استقبال الفورم",
+      "default": "",
+      "info": "NUMU has no built-in contact endpoint, so the form needs an external one (Formspree, Getform, a Google Form). Without it the form stays hidden — a form that posts nowhere loses every message silently.",
+      "info_ar": "نُمو مفيهاش endpoint جاهز للفورم، فمحتاج رابط خارجي (Formspree أو Getform أو Google Form). من غيره الفورم بيفضل مخفي — لأن فورم مش بيبعت لحد بيضيّع كل الرسايل من غير ما حد يعرف.",
+      "visible_if": "{{ section.settings.show_form }}"
+    },
+    {
+      "type": "header",
+      "content": "Map",
+      "content_ar": "الخريطة"
+    },
+    {
+      "type": "url",
+      "id": "map_url",
+      "label": "Map embed URL",
+      "label_ar": "رابط الخريطة",
+      "default": "",
+      "info": "The src from Google Maps' \"Embed a map\" share tab — the URL only, not the whole <iframe> tag.",
+      "info_ar": "الرابط اللي جوه كود التضمين من خرايط جوجل — الرابط بس، مش الكود كله."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact",
+      "name_ar": "اتصل بنا",
+      "settings": {
+        "show_form": true
+      }
+    }
+  ]
+}

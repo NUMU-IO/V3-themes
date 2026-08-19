@@ -1,0 +1,123 @@
+{
+  "type": "tn-review-strip",
+  "name": "Reviews strip",
+  "name_ar": "شريط التقييمات",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "IMPORTANT — the rating figures below are text you type, not a live number. NUMU stores reviews per product and has no store-wide average, so this theme will not invent one. Only claim what your reviews actually say.",
+      "content_ar": "مهم — أرقام التقييم اللي تحت نص بتكتبه انت، مش رقم حي. نومو بيخزن التقييمات لكل منتج لوحده ومفيش متوسط للمتجر كله، والثيم مش هيخترع رقم. اكتب اللي تقييماتك بتقوله فعلاً."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "What people say"
+    },
+    {
+      "type": "text",
+      "id": "rating_value",
+      "label": "Average rating",
+      "label_ar": "متوسط التقييم",
+      "default": "",
+      "info": "e.g. 4.9. Leave empty to hide the stars row.",
+      "info_ar": "مثلاً 4.9. سيبها فاضية عشان صف النجوم يختفي."
+    },
+    {
+      "type": "text",
+      "id": "rating_count",
+      "label": "Number of reviews",
+      "label_ar": "عدد التقييمات",
+      "default": "",
+      "info": "e.g. 138.",
+      "info_ar": "مثلاً 138."
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Advance automatically",
+      "label_ar": "يقلب لوحده",
+      "default": false,
+      "info": "Off by default. Auto-advancing text moves under people who read slowly, and it stops for anyone whose device asks for reduced motion.",
+      "info_ar": "مقفولة افتراضيًا. النص اللي بيتحرك لوحده بيهرب من اللي بيقرا بالراحة، وبيقف تلقائيًا لأي حد جهازه طالب تقليل الحركة."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Review",
+      "name_ar": "تقييم",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "What they said",
+          "label_ar": "اللي قالوه",
+          "default": "Fits exactly like the size guide said. Ordered two more."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Name",
+          "label_ar": "الاسم",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "meta",
+          "label": "Date or note",
+          "label_ar": "التاريخ أو ملاحظة",
+          "default": ""
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Stars",
+          "label_ar": "النجوم",
+          "default": 5,
+          "min": 1,
+          "max": 5,
+          "step": 1
+        },
+        {
+          "type": "text",
+          "id": "product_label",
+          "label": "Product name",
+          "label_ar": "اسم المنتج",
+          "default": ""
+        },
+        {
+          "type": "url",
+          "id": "product_link",
+          "label": "Product link",
+          "label_ar": "رابط المنتج",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews strip",
+      "name_ar": "شريط التقييمات",
+      "settings": { "heading": "What people say" },
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Fits exactly like the size guide said. Ordered two more the same week.",
+            "rating": 5
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Arrived in two days and the fabric is heavier than I expected — in a good way.",
+            "rating": 5
+          }
+        }
+      ]
+    }
+  ]
+}
