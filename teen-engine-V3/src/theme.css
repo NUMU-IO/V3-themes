@@ -564,8 +564,19 @@
   border-radius: var(--tn-r-panel);
 }
 
+/* Desktop: a 3-track grid, not a flex row.
+   The reference centres the nav in the capsule, and a flex row cannot do that
+   — `margin-inline-start: auto` on the actions packs the nav against the logo
+   (what shipped), and giving the nav `flex: 1` centres it inside its own
+   leftover space, which is only the capsule's midline when the wordmark and
+   the icon cluster happen to be the same width. Two equal `1fr` flanks around
+   an `auto` centre track put the nav on the true midline whatever the logo
+   does. `minmax(0, 1fr)` for the usual reason: a bare `1fr` has a min-content
+   floor and the widest flank would push the centre off-axis again. */
 @media (min-width: 990px) {
   .tn-header-capsule {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     gap: 1.25rem;
     padding-inline: 1.25rem;
   }
@@ -617,13 +628,10 @@
   .tn-header-nav {
     display: flex;
     align-items: center;
-    flex: 1 1 auto;
-    /* Flex items default to `min-width: auto`, which is a MIN-CONTENT floor —
-       the same trap as a bare `1fr` in grid. Without this, one long menu label
-       stops the row shrinking and the whole page scrolls sideways. */
+    justify-content: center;
+    /* Sized by the grid's `auto` centre track, so no flex sizing here. */
     min-width: 0;
     gap: 1.25rem;
-    margin-inline-start: 0.5rem;
   }
 }
 
@@ -712,6 +720,9 @@
   background: var(--tn-wash);
 }
 
+/* `margin-inline-start: auto` pins the icons to the capsule's inner end — and
+   does so in BOTH layouts: it is the end-of-row push in the mobile flex line,
+   and the end-of-track alignment inside the desktop grid's third column. */
 .tn-header-actions {
   display: flex;
   align-items: center;
@@ -1206,17 +1217,46 @@
   object-fit: cover;
 }
 
+/* NO opacity transition, deliberately.
+   A crossfade between two stacked OPAQUE photos is a double exposure for the
+   whole of its duration: at the midpoint the plate paints 50% of image one and
+   50% of image two, and on a catalogue whose two shots are different artwork
+   (rather than the same garment from two angles) the result reads as a
+   rendering fault — captured on a live card as doubled lettering and a colour
+   band across a model's face. There is no opacity curve that avoids this;
+   the only fix is to never paint both. Swap on the frame. */
 .tn-card-img.is-secondary {
   opacity: 0;
-  transition: opacity var(--tn-dur-slow) var(--tn-ease);
 }
 
 /* Hover only where hovering is a real interaction. On a touch device
-   `:hover` sticks after a tap and the card would keep showing image two. */
+   `:hover` sticks after a tap and the card would keep showing image two.
+
+   `:focus-within` is excluded while the QUICK-ADD button holds focus: clicking
+   the `+` moves focus into the card and leaves it there, so without the
+   `:has()` guard the card stays frozen on image two after the sheet closes —
+   far more obvious now that the swap is instant than it was behind a fade.
+   Keyboard focus on the title link still swaps, which is the case it is for. */
 @media (hover: hover) {
   .tn-product-card:hover .tn-card-img.is-secondary,
-  .tn-product-card:focus-within .tn-card-img.is-secondary {
+  .tn-product-card:focus-within:not(:has(.tn-card-quickadd:focus))
+    .tn-card-img.is-secondary {
     opacity: 1;
+  }
+
+  /* And take the primary DOWN, don't just cover it.
+     `object-fit: cover` guarantees the second photo fills the plate, but not
+     that it is opaque — a cut-out product shot on a transparent background is
+     ordinary in apparel, and stacked over an opaque first photo it composites
+     into exactly the doubled image this whole block exists to stop. Painting
+     one layer at a time is the only version that cannot ghost.
+
+     `:has(~ .is-secondary)` is load-bearing: without it, hovering a card that
+     has only ONE photo would hide that photo and leave a bare plate. */
+  .tn-product-card:hover .tn-card-img.is-primary:has(~ .is-secondary),
+  .tn-product-card:focus-within:not(:has(.tn-card-quickadd:focus))
+    .tn-card-img.is-primary:has(~ .is-secondary) {
+    opacity: 0;
   }
 }
 
@@ -2566,6 +2606,16 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
+/* 40px between the three columns, measured off the reference's DESKTOP capture
+   (gallery ends x=597, info starts x=638; info ends x=1038, buy card starts
+   x=1077). The 28px this shipped with came from the 893px capture, where the
+   page is two columns and the figure is a different measurement entirely. */
+@media (min-width: 990px) {
+  .tn-pdp-grid {
+    gap: 40px;
+  }
+}
+
 @media (min-width: 750px) {
   .tn-pdp {
     --tn-gutter: 14px;
@@ -2767,10 +2817,14 @@
 
 /* ── Info column ───────────────────────────────────────────────────────── */
 
+/* 18px, not 14. The reference's info column runs ~24-28px between blocks once
+   text leading is taken out of the measurement; 14 reads visibly tighter than
+   the capture and is what makes the column look like a different page even
+   though every element in it is the right one. */
 .tn-pdp-info {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 14px;
+  gap: 18px;
   align-content: start;
 }
 
@@ -2931,8 +2985,20 @@
 .tn-pdp-buycard {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 10px;
-  padding: 20px;
+  gap: 14px;
+  padding: 24px;
+}
+
+/* 40px all round on desktop — measured twice off the reference capture and it
+   agrees both ways: the card spans x=1077-1499 (422px) and its contents run
+   x=1118-1458 (340px), and vertically the card is y=68-356 with the Quantity
+   label at y=110 and the last button ending at y=317. The 20px this shipped
+   with leaves the two CTAs ~10% wider than the reference's and is the single
+   biggest reason the purchase column reads as cramped next to it. */
+@media (min-width: 990px) {
+  .tn-pdp-buycard {
+    padding: 40px;
+  }
 }
 
 @media (max-width: 749px) {
@@ -3013,10 +3079,16 @@
   flex: 0 0 auto;
 }
 
+/* 12px between the two CTAs and 24px above them — the reference sets the
+   purchase pair apart from the quantity row rather than spacing all three
+   evenly, which is what makes the card read as "choose an amount, then buy"
+   instead of a stack of three equal controls. The card's own 14px gap carries
+   the label→stepper step; this adds the remaining 10. */
 .tn-buy-actions {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 8px;
+  gap: 12px;
+  margin-block-start: 10px;
 }
 
 /* Squarer than the theme's pill buttons — the reference's two purchase CTAs

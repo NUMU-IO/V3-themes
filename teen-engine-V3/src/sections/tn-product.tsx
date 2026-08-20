@@ -58,6 +58,7 @@ import {
   type SectionRenderProps,
 } from "../lib/shared";
 import { useT, type TFunction } from "../lib/i18n";
+import { isSoldOut, variantBuyable } from "../lib/availability";
 import { Price, SaveBadge } from "../lib/price";
 import { isColorAxis, isSizeAxis, productAxes } from "../lib/filters";
 import { optionAxes } from "../lib/quick-add";
@@ -76,8 +77,26 @@ import {
   IconTruck,
 } from "../lib/icons";
 
-/* Attribute keys that are machinery, not facts. Rendering these would put
-   `variants: [object Object]` and the Arabic copy fields into the spec list. */
+/* Attribute keys that are machinery, not facts.
+ *
+ * `product.attributes` is a JSONB blob the backend forwards VERBATIM, and it is
+ * where the platform keeps its own bookkeeping as well as the merchant's copy:
+ * the oversell flag, the variant scaffolding, the Arabic strings, the size
+ * chart, the Meta catalogue id. Printing the blob is how a shopper ends up
+ * reading `Continue selling when out of stock: true` in the middle of a spec
+ * list — a real capture from a live store, and the reason this list exists.
+ *
+ * Two layers, because neither alone holds:
+ *
+ *   • the exact-key set below, for the ones with no shared shape, and
+ *   • `MACHINE_KEY_RE`, for the families that keep growing new members
+ *     (`variant_meta` arrived after `variant_combinations`, `categoryNameAr`
+ *     after `categoryName`). A denylist that has to be edited every time the
+ *     backend adds a key is a denylist that is already out of date.
+ *
+ * The object/array guard in `push` is NOT enough on its own: the flag and the
+ * catalogue id are scalars and sail straight through it.
+ */
 const NON_FACT_KEYS = new Set([
   "variants",
   "name_ar",
@@ -94,6 +113,20 @@ const NON_FACT_KEYS = new Set([
   "seo",
   "tags",
 ]);
+
+/* Matched against the LOWERCASED, separator-stripped key, so `variant_meta`,
+   `variantMeta` and `variant-meta` are all one rule. Anchored at the start:
+   a merchant's `metallic_finish` must not be eaten by the `meta` family. */
+const MACHINE_KEY_RE =
+  /^(continueselling|trackinventory|inventory|stock|quantity|variant|b2b|metacatalog|categoryname|seo|robots|canonical|sitemap|templatesuffix|internal)/;
+
+function isMachineKey(key: string): boolean {
+  const lower = key.toLowerCase();
+  // The leading-underscore convention is tested BEFORE the separators are
+  // stripped — after stripping there is no underscore left to find.
+  if (lower.startsWith("_")) return true;
+  return MACHINE_KEY_RE.test(lower.replace(/[_\- ]/g, ""));
+}
 
 const MAX_FACTS = 10;
 
@@ -131,6 +164,7 @@ function readFacts(product: Product, metafields: { key: string; value: unknown }
     if (out.length >= MAX_FACTS) return;
     const key = rawKey.trim();
     if (!key || NON_FACT_KEYS.has(key.toLowerCase()) || seen.has(key.toLowerCase())) return;
+    if (isMachineKey(key)) return;
     if (rawValue === null || rawValue === undefined) return;
     if (typeof rawValue === "object") return;
     const value = String(rawValue).trim();
@@ -208,8 +242,11 @@ function ProductBody({
   const currency = productCurrency(product);
   const price = vs.variant?.price ?? product.price;
   const compareAt = vs.variant?.compare_at_price ?? product.compare_at_price;
-  const soldOut =
-    product.in_stock === false || (vs.variant ? vs.variant.is_in_stock === false : false);
+  // One reader for both levels. Reading `product.in_stock` and
+  // `variant.is_in_stock` separately is what made an overselling product show
+  // a buyable card and a greyed-out Add to cart at the same time — the flag
+  // that lifts the limit lives on the product and the variant cannot see it.
+  const soldOut = isSoldOut(product, vs.variant);
 
   /* ── Gallery ─────────────────────────────────────────────────────────── */
   const items = useMemo<GalleryItem[]>(() => {
@@ -270,14 +307,14 @@ function ProductBody({
         const buyable = variants.some((v) => {
           const ov = (v.option_values ?? v.options ?? {}) as Record<string, string>;
           const matches = Object.entries(probe).every(([k, val]) => ov[k] === val);
-          return matches && (v.is_in_stock ?? v.in_stock ?? true);
+          return matches && variantBuyable(product, v);
         });
         if (buyable) ok.add(value);
       }
       map.set(axis.name, ok);
     }
     return map;
-  }, [product.variants, axes, vs.selection]);
+  }, [product, axes, vs.selection]);
 
   /* ── Actions ─────────────────────────────────────────────────────────── */
   const add = useCallback(async (): Promise<boolean> => {

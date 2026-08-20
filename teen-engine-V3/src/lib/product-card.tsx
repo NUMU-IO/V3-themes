@@ -27,6 +27,7 @@ import { Image, Link, type Product } from "@numueg/theme-sdk";
 import { productCurrency, productImages, productName } from "./shared";
 import { useT } from "./i18n";
 import { Price, Tag, isDiscounted } from "./price";
+import { productBuyable } from "./availability";
 import { SwatchRow, SwatchSummary, useCardColorAxis } from "./swatches";
 import { IconPlus } from "./icons";
 
@@ -71,7 +72,10 @@ export function ProductCard({
   const currency = productCurrency(product);
 
   const comingSoon = Boolean((product.tags ?? []).some((tag) => /coming[\s-]?soon/i.test(tag)));
-  const soldOut = !comingSoon && product.in_stock === false;
+  // `productBuyable`, never `product.in_stock === false`: an overselling
+  // product reports quantity 0 and is still buyable, and the card has to say
+  // the same thing the PDP and the cart say. See lib/availability.ts.
+  const soldOut = !comingSoon && !productBuyable(product);
   // `isDiscounted` parses numeric STRINGS. A `typeof === "number"` guard never
   // matches — the API sends '690.00' — and every sale badge in the theme goes
   // silently missing. See price.tsx.
