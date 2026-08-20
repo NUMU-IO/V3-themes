@@ -2,11 +2,17 @@
 /**
  * _payment-marks — payment-method badges for the footer bottom bar (B3).
  *
- * Full-color card-style badges (like real checkout trust rows): each known
- * method renders a small rounded badge in its brand colors — VISA blue,
- * Mastercard's interlocking red/orange circles, Fawry yellow, InstaPay
- * purple, Vodafone red, Apple Pay black — instead of plain text. Entries we
- * don't recognize fall back to a neutral chip, so custom values still render.
+ * Full-color card-style badges (like real checkout trust rows). Methods with
+ * an official asset (Vodafone Cash, InstaPay, Fawry) render that file; the
+ * rest are brand-coloured marks drawn inline — VISA blue, Mastercard's
+ * interlocking circles, Apple Pay black. Entries we don't recognize fall back
+ * to a neutral chip, so custom values still render.
+ *
+ * The logo files come from the HOST origin, the same place this file already
+ * fetches `/api/storefront/checkout-config` from, rather than being inlined
+ * as base64 into every theme bundle. They render at `object-contain` inside
+ * the badge — never recoloured or stretched, which is what the brand
+ * guidelines (Vodafone's especially) require.
  *
  * The list itself is merchant-editable (the footer's `payment_methods`
  * setting + `show_payment_methods` toggle); when the setting is left empty
@@ -112,6 +118,25 @@ function Word({ text, fill, italic = false, weight = 800, size = 10, w = 40 }: {
   );
 }
 
+/**
+ * An official brand asset inside a badge, from the host origin.
+ *
+ * Presentational: the badge sits in a trust row that is decorative, and the
+ * checkout names every method in text anyway.
+ */
+function LogoMark({ src, className = "h-4 w-auto" }: { src: string; className?: string }) {
+  return (
+    <img
+      src={src}
+      alt=""
+      aria-hidden="true"
+      className={`${className} object-contain`}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
 /** Apple mark (simple-icons path, CC0) for the Apple Pay badge. */
 function AppleGlyph() {
   return (
@@ -167,21 +192,23 @@ function markFor(key: string, label: string, isAr: boolean) {
         </Badge>
       );
     case "fawry":
+      // The asset carries its own yellow field, so the badge goes white.
       return (
-        <Badge bg="#FEDD00">
-          <Word text="fawry" fill="#0064B4" italic weight={800} size={10} w={36} />
+        <Badge bg="#ffffff" wide>
+          <LogoMark src="/fawry-logo.webp" className="h-4 w-auto" />
         </Badge>
       );
     case "instapay":
       return (
         <Badge bg="#ffffff" wide>
-          <Word text="InstaPay" fill="#63297B" italic weight={800} size={10} w={48} />
+          <LogoMark src="/instapay-logo.svg" className="h-3.5 w-auto" />
         </Badge>
       );
     case "vodafonecash":
+      // The full lockup, which the badge is wide enough to carry legibly.
       return (
-        <Badge bg="#E60000" wide>
-          <Word text={isAr ? "فودافون كاش" : "Vodafone Cash"} fill="#ffffff" weight={700} size={8.5} w={72} />
+        <Badge bg="#ffffff" wide>
+          <LogoMark src="/vodafone-cash-logo.png" className="h-4 w-auto" />
         </Badge>
       );
     case "meeza":
@@ -210,7 +237,7 @@ function markFor(key: string, label: string, isAr: boolean) {
 
 /**
  * One payment-method badge. `name` is the raw merchant-entered value from the
- * `payment_methods` setting; `isAr` localizes the COD/Vodafone labels.
+ * `payment_methods` setting; `isAr` localizes the COD label.
  */
 export function PaymentMark({ name, isAr }: { name: string; isAr: boolean }) {
   return (
