@@ -3,7 +3,7 @@
   "name": "Teen (V3)",
   "name_ar": "تين",
   "author": "NUMU",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "layout": "single-column",
   "description": "Teen (V3) — a loud, card-led storefront for youth streetwear and lifestyle. A floating capsule header over a full-bleed campaign hero, hairline-outlined product cards with hover-swap imagery and grid quick-add, black bundle promos with a fluorescent-lime discount language, and a purchase-first mobile layout with a sticky add-to-cart bar.",
   "description_ar": "تين (V3) — متجر جريء ومبني على الكروت، متعمل لملابس الشباب والستريت وير. هيدر عائم فوق بانر كامل العرض، كروت منتجات بإطار رفيع وصورة بتتبدل مع الماوس وزرار إضافة سريع، عروض باندل على خلفية سودا بلون ليموني للخصم، وتصميم موبايل مركّز على الشراء بشريط إضافة للسلة ثابت تحت.",
@@ -11,6 +11,120 @@
   "loading_template": "templates/loading.html",
   "presets": {
     "templates": {
+      "404": {
+        "name": "Not found",
+        "name_ar": "الصفحة مش موجودة",
+        "sections": [
+          {
+            "type": "tn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Home",
+                  "link": "/"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Build a bundle",
+                  "link": "/pages/build-a-bundle",
+                  "badge": "UP TO 20% OFF"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Shop",
+                  "link": "/collections"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "tn-not-found",
+            "settings": {
+              "cta_link": "/products",
+              "show_popular_products": true,
+              "popular_limit": 4
+            }
+          },
+          {
+            "type": "tn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Follow us",
+                  "kind": "socials"
+                }
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Quick links",
+                  "kind": "links"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Search",
+                      "url": "/search"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "url": "/policies/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "url": "/policies/privacy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "url": "/contact"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "About us",
+                  "kind": "text",
+                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
+                }
+              }
+            ]
+          }
+        ]
+      },
       "home": {
         "name": "Home",
         "name_ar": "الرئيسية",
@@ -1941,120 +2055,6 @@
               "show_summary": true,
               "continue_link": "/products",
               "show_whatsapp_cta": true
-            }
-          },
-          {
-            "type": "tn-footer",
-            "settings": {},
-            "blocks": [
-              {
-                "type": "column",
-                "settings": {
-                  "title": "Follow us",
-                  "kind": "socials"
-                }
-              },
-              {
-                "type": "column",
-                "settings": {
-                  "title": "Quick links",
-                  "kind": "links"
-                },
-                "blocks": [
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Search",
-                      "url": "/search"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Shipping & returns",
-                      "url": "/policies/shipping"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Privacy policy",
-                      "url": "/policies/privacy"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Contact",
-                      "url": "/contact"
-                    }
-                  }
-                ]
-              },
-              {
-                "type": "column",
-                "settings": {
-                  "title": "About us",
-                  "kind": "text",
-                  "text": "Tell shoppers who you are in two or three lines. This is the first thing most of them read about the brand."
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "404": {
-        "name": "Not found",
-        "name_ar": "الصفحة مش موجودة",
-        "sections": [
-          {
-            "type": "tn-header",
-            "settings": {},
-            "blocks": [
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "Home",
-                  "link": "/"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "Build a bundle",
-                  "link": "/pages/build-a-bundle",
-                  "badge": "UP TO 20% OFF"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "New in",
-                  "link": "/products"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "Shop",
-                  "link": "/collections"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "About",
-                  "link": "/about"
-                }
-              }
-            ]
-          },
-          {
-            "type": "tn-not-found",
-            "settings": {
-              "cta_link": "/products",
-              "show_popular_products": true,
-              "popular_limit": 4
             }
           },
           {

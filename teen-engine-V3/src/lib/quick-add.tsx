@@ -26,6 +26,7 @@ import { Image, Link, useCart, useVariantSelection, type Product } from "@numueg
 import { productCurrency, productImages, useFocusTrap, useOverlayBehaviour } from "./shared";
 import { useT } from "./i18n";
 import { Price } from "./price";
+import { continuesSelling } from "./availability";
 import { IconClose } from "./icons";
 
 /**
@@ -140,6 +141,9 @@ export function QuickAddSheet({ product, onClose }: { product: Product; onClose:
   useOverlayBehaviour(true, onClose);
 
   const axes = optionAxes(full);
+  // `full` first — the hydrated detail record carries `attributes`; the thin
+  // listing record the card handed us may not.
+  const oversells = continuesSelling(full) || continuesSelling(product);
   const image = productImages(full)[0] ?? productImages(product)[0];
   const price = vs.variant?.price ?? full.price ?? product.price;
   const compareAt =
@@ -258,7 +262,12 @@ export function QuickAddSheet({ product, onClose }: { product: Product; onClose:
                         const selected = vs.selection[axis.name] === value;
                         // `availability` only constrains axes not yet locked;
                         // an axis with no entry is fully available.
-                        const avail = vs.availability[axis.name];
+                        //
+                        // An overselling product has no unavailable values at
+                        // all: the SDK builds this map from variant stock, and
+                        // the flag that lifts the stock limit lives on the
+                        // product where the SDK cannot see it.
+                        const avail = oversells ? undefined : vs.availability[axis.name];
                         const unavailable = avail ? !avail.has(value) : false;
                         return (
                           <button

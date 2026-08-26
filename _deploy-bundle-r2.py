@@ -7,7 +7,13 @@ hashed chunks + import-map.json MUST sit in the same directory and be
 served as JS, or the browser rejects the module.
 
 Usage:
-  python _deploy-bundle-r2.py <slug> <version> <dist_dir>
+  python _deploy-bundle-r2.py <slug> <version> <dist_dir> [--allow-overwrite]
+
+Refuses by default to publish over a version that already exists, because the
+keys are served `immutable` for a year — see the note on `cache_control` in
+`main()`. `--allow-overwrite` is for the one legitimate case: a deliberate
+`version_bump: none` redeploy of the current version, where the operator has
+accepted that already-cached clients will not see it.
 """
 
 import os
@@ -45,10 +51,13 @@ def load_env(path: str) -> dict[str, str]:
 
 
 def main() -> int:
-    if len(sys.argv) != 4:
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    flags = {a for a in sys.argv[1:] if a.startswith("--")}
+    if len(args) != 3 or flags - {"--allow-overwrite"}:
         print(__doc__)
         return 2
-    slug, version, dist_dir = sys.argv[1], sys.argv[2], sys.argv[3]
+    slug, version, dist_dir = args
+    allow_overwrite = "--allow-overwrite" in flags
     dist = pathlib.Path(dist_dir)
     if not dist.is_dir():
         print(f"ERROR: dist dir not found: {dist}")
@@ -76,6 +85,40 @@ def main() -> int:
     # year. (This replaces the old max-age=300, which existed only to let the
     # overwrite hotfix pattern propagate.)
     cache_control = "public, max-age=31536000, immutable"
+
+    # Enforce the invariant above instead of only documenting it.
+    #
+    # It was documented and violated for months: the workflow's `push` trigger
+    # has no `version_bump` input, so every merge to main re-uploaded each
+    # theme under its UNCHANGED version. The bytes did land in R2 — but the URL
+    # never changed, so every browser and edge that had already fetched it kept
+    # serving the previous build, and the registry seed (idempotent by
+    # slug+version) updated the existing row rather than inserting one, so no
+    # merchant was ever offered the update. A silent no-op that looked green.
+    #
+    # `theme.js` is the probe: it is the one file every theme dist has, and the
+    # storefront's entry point.
+    probe = f"{slug}/{version}/theme.js"
+    if not allow_overwrite:
+        try:
+            s3.head_object(Bucket=bucket, Key=probe)
+        except Exception:
+            pass  # 404 (or no permission to check) — nothing to protect.
+        else:
+            print(
+                f"ERROR: {slug} {version} is already published "
+                f"({public}/{probe}).\n"
+                f"       Those files are served immutable for a year, so "
+                f"overwriting them\n"
+                f"       reaches nobody who has already loaded the theme. "
+                f"Bump the version in\n"
+                f"       {slug}'s theme.json (and keep package.json in "
+                f"lockstep), or pass\n"
+                f"       --allow-overwrite if you truly mean to redeploy in "
+                f"place."
+            )
+            return 1
+
     count = 0
     for path in sorted(dist.rglob("*")):
         if path.is_dir():
