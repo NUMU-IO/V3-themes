@@ -106,24 +106,33 @@ interface ResolvedProduct {
   inStock: boolean;
 }
 
-/** Per-product resolution cache + in-flight dedupe (module-level, per page). */
-const resolvedCache = new Map<string, ResolvedProduct>();
-const inflight = new Map<string, Promise<ResolvedProduct | null>>();
+/**
+ * The full detail payload, cached per product for the life of the page.
+ *
+ * Shared deliberately: quick-add needs the variant, Quick Preview needs the
+ * gallery/options/description, and a shopper who previews then adds must not
+ * pay for the same request twice. One cache, one in-flight promise.
+ */
+const detailCache = new Map<string, Record<string, unknown>>();
+const detailInflight = new Map<string, Promise<Record<string, unknown> | null>>();
 
 /**
- * Ask the detail endpoint what this product's variants actually are.
+ * Fetch (and cache) a product's DETAIL payload.
  *
- * Returns null on any failure — the caller then adds without a variant, which
- * is exactly the old behaviour, so a flaky network degrades to what shipped
- * before rather than blocking the add.
+ * The detail route is the only one that carries `variants`, `options` and the
+ * full `images` array — the SSR list reports `variants: []` and the related
+ * endpoint omits the key entirely. Returns null on any failure so callers can
+ * degrade instead of blocking.
  */
-async function resolveProduct(productId: string): Promise<ResolvedProduct | null> {
-  const cached = resolvedCache.get(productId);
+export async function fetchProductDetail(
+  productId: string,
+): Promise<Record<string, unknown> | null> {
+  const cached = detailCache.get(productId);
   if (cached) return cached;
-  const pending = inflight.get(productId);
+  const pending = detailInflight.get(productId);
   if (pending) return pending;
 
-  const task = (async (): Promise<ResolvedProduct | null> => {
+  const task = (async (): Promise<Record<string, unknown> | null> => {
     try {
       const res = await fetch(
         `/api/storefront/products/${encodeURIComponent(productId)}`,
@@ -133,28 +142,40 @@ async function resolveProduct(productId: string): Promise<ResolvedProduct | null
       // Accept the bare product and the platform `{data:{…}}` envelope.
       const body = (
         json && typeof json.data === "object" && json.data !== null ? json.data : json
-      ) as {
-        variants?: { id?: string; is_in_stock?: boolean }[];
-        in_stock?: boolean;
-        is_in_stock?: boolean;
-      };
-      const variants = Array.isArray(body.variants) ? body.variants : [];
-      const out: ResolvedProduct = {
-        variantId: variants[0]?.id,
-        variantCount: variants.length,
-        inStock: body.in_stock ?? body.is_in_stock ?? true,
-      };
-      resolvedCache.set(productId, out);
-      return out;
+      ) as Record<string, unknown>;
+      detailCache.set(productId, body);
+      return body;
     } catch {
       return null;
     } finally {
-      inflight.delete(productId);
+      detailInflight.delete(productId);
     }
   })();
 
-  inflight.set(productId, task);
+  detailInflight.set(productId, task);
   return task;
+}
+
+/**
+ * Ask the detail endpoint what this product's variants actually are.
+ *
+ * Returns null on any failure — the caller then adds without a variant, which
+ * is exactly the old behaviour, so a flaky network degrades to what shipped
+ * before rather than blocking the add.
+ */
+async function resolveProduct(productId: string): Promise<ResolvedProduct | null> {
+  const body = (await fetchProductDetail(productId)) as {
+    variants?: { id?: string; is_in_stock?: boolean }[];
+    in_stock?: boolean;
+    is_in_stock?: boolean;
+  } | null;
+  if (!body) return null;
+  const variants = Array.isArray(body.variants) ? body.variants : [];
+  return {
+    variantId: variants[0]?.id,
+    variantCount: variants.length,
+    inStock: body.in_stock ?? body.is_in_stock ?? true,
+  };
 }
 
 type QuickAddState = "idle" | "busy" | "done" | "failed";

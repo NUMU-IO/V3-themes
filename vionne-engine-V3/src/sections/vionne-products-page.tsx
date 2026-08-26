@@ -5,6 +5,7 @@ import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { asNumber, asString, localized, merchantLabelText, productImage, responsiveImg, PRODUCT_CARD_IMG, type SectionRenderProps } from "./_shared";
 import { QuickAddButton } from "./_quick-add";
+import { QuickPreviewButton } from "./_quick-preview";
 import { PricePair } from "./_price";
 import { InlineEditable } from "./_inline-editable";
 
@@ -375,8 +376,9 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
           />
         )}
 
-        {/* A8 — one-tap quick-add (single-variant products only). */}
+        {/* A8 — one-tap quick-add + Quick Preview, side by side. */}
         <QuickAddButton product={product} locale={locale} />
+        <QuickPreviewButton product={product} locale={locale} />
 
         {/* Badges: SALE + an intentional merchant label only. The generic
             tags[0] pill (the collection name) was removed — it covered the
