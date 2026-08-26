@@ -173,30 +173,12 @@ export function QuickPreviewButton({
     );
   }, [open]);
 
-  /**
-   * Scroll position at the moment the modal opened.
-   *
-   * Closing must put the shopper back exactly where they were in the grid.
-   * `.focus()` without `preventScroll` asks the browser to scroll the target
-   * into view, and the body scroll-lock/unlock around it gives the engine a
-   * second chance to pick its own position — between them a close could land
-   * the page somewhere else entirely (reported from the field as "closing it
-   * jumps me to the footer"). Neither is worth debugging on one device when
-   * both are cheap to make impossible: remember the offset, restore it, and
-   * never let focus move the viewport.
-   */
-  const scrollYRef = useRef(0);
-
-  const onOpenScrollGuard = () => {
-    scrollYRef.current = typeof window !== "undefined" ? window.scrollY : 0;
-  };
 
   const onOpen = (e: React.MouseEvent) => {
     // The card is a <Link>; without this the browser navigates to the PDP —
     // the exact round trip this feature exists to avoid.
     e.preventDefault();
     e.stopPropagation();
-    onOpenScrollGuard();
     setOpen(true);
     track("quick_preview_opened", {
       content_ids: [item?.id],
@@ -207,15 +189,10 @@ export function QuickPreviewButton({
 
   const onClose = useCallback(() => {
     setOpen(false);
-    // Return focus where the shopper left it (WCAG 2.4.3) — without letting
-    // the browser scroll to it.
+    // Return focus where the shopper left it (WCAG 2.4.3), with preventScroll
+    // so the browser doesn't scroll the trigger into view on the way. The
+    // scroll POSITION is restored by the modal's own lock effect — see there.
     triggerRef.current?.focus({ preventScroll: true });
-    // Restore the exact offset on the next frame, after the modal has
-    // unmounted and the scroll lock has been released.
-    if (typeof window !== "undefined") {
-      const y = scrollYRef.current;
-      requestAnimationFrame(() => window.scrollTo(0, y));
-    }
   }, []);
 
   // Nothing to preview (no product and no target) — render nothing.
@@ -317,16 +294,60 @@ function QuickPreviewModal({
     };
   }, [productId]);
 
-  // Esc to close + body scroll lock, both undone on unmount.
+  /**
+   * Esc to close, plus the body scroll lock — and the ONE place that owns the
+   * shopper's scroll position.
+   *
+   * `overflow: hidden` on <body> is not a scroll lock. iOS Safari (and some
+   * Android browsers) scroll the page behind the overlay anyway, so a shopper
+   * who flicked while the sheet was open — or whose browser moved the page
+   * when the URL bar collapsed — was returned somewhere else entirely on
+   * close. That is the "closing it jumps me to the footer" report.
+   *
+   * The reliable lock is to take the body out of flow at a negative offset:
+   * `position: fixed; top: -<scrollY>px`. The page physically cannot move
+   * while that holds, and undoing it restores the exact pixel.
+   *
+   * Both halves live in THIS effect on purpose. The previous attempt split
+   * them — the trigger restored the offset in a `requestAnimationFrame` while
+   * the modal released the lock in its cleanup — and nothing ordered those two
+   * against each other, so the scroll could be restored while the body was
+   * still locked (a no-op) and then released to wherever the browser liked.
+   * One owner, one deterministic order: release the styles, THEN scroll.
+   */
   useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const body = document.body;
+    const scrollY = window.scrollY;
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
+
     return () => {
-      document.body.style.overflow = prev;
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.left = prev.left;
+      body.style.right = prev.right;
+      body.style.width = prev.width;
+      body.style.overflow = prev.overflow;
+      // AFTER the styles are cleared — while the body is still fixed there is
+      // nothing for the window to scroll and this would silently do nothing.
+      window.scrollTo(0, scrollY);
       window.removeEventListener("keydown", onKey);
     };
   }, [onClose]);
