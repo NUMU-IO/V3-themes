@@ -24,6 +24,7 @@ import { InlineEditable } from "./_inline-editable";
 import { PricePair } from "./_price";
 import { entryTarget, recordRecentlyViewed, useRecentlyViewed } from "./_recently-viewed";
 import { QuickAddButton } from "./_quick-add";
+import { QuickPreviewButton } from "./_quick-preview";
 import { ReviewsSection, Stars, useProductReviews } from "./_reviews";
 
 /**
@@ -586,8 +587,9 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                     ) : (
                       <div className="absolute inset-0 vn-shimmer" />
                     )}
-                    {/* A8 — add a related product without leaving this PDP. */}
+                    {/* A8 — add or preview a related product without leaving. */}
                     <QuickAddButton product={p} locale={locale} />
+                    <QuickPreviewButton product={p} locale={locale} />
                   </div>
                   <div className="px-1">
                     <h3 className="text-sm font-medium text-[var(--vn-ink)] line-clamp-1">

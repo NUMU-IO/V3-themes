@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { asString, localized, merchantLabelText, productImage, responsiveImg, PRODUCT_CARD_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { QuickAddButton } from "./_quick-add";
+import { QuickPreviewButton } from "./_quick-preview";
 import { PricePair } from "./_price";
 
 const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) => {
@@ -101,8 +102,9 @@ const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) =
                   ) : (
                     <div className="absolute inset-0 vn-shimmer" />
                   )}
-                  {/* A8 — one-tap quick-add (single-variant products only). */}
+                  {/* A8 — one-tap quick-add + Quick Preview, side by side. */}
                   <QuickAddButton product={product} locale={locale} />
+                  <QuickPreviewButton product={product} locale={locale} />
                   {/* Merchant label — same pill as the PLP card's top-start slot. */}
                   {merchantLabelText(product, locale) && (
                     <span className="absolute top-3 start-3 vn-label px-2.5 py-1 bg-white/95 text-[var(--vn-ink)] rounded-full text-[10px]">
