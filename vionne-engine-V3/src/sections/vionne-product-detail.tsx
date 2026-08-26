@@ -22,7 +22,8 @@ import { asNumber, asString, localized, productCurrency, productImage, responsiv
 import { bestCartNudge, pdpOfferLine, promoPagePath, qtyBogoHint, useActivePromotions } from "./_promotions";
 import { InlineEditable } from "./_inline-editable";
 import { PricePair } from "./_price";
-import { recordRecentlyViewed, useRecentlyViewed } from "./_recently-viewed";
+import { entryTarget, recordRecentlyViewed, useRecentlyViewed } from "./_recently-viewed";
+import { QuickAddButton } from "./_quick-add";
 import { ReviewsSection, Stars, useProductReviews } from "./_reviews";
 
 /**
@@ -585,6 +586,8 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                     ) : (
                       <div className="absolute inset-0 vn-shimmer" />
                     )}
+                    {/* A8 — add a related product without leaving this PDP. */}
+                    <QuickAddButton product={p} locale={locale} />
                   </div>
                   <div className="px-1">
                     <h3 className="text-sm font-medium text-[var(--vn-ink)] line-clamp-1">
@@ -615,10 +618,12 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
             <div className="flex gap-4 overflow-x-auto pb-2 snap-x md:grid md:grid-cols-4 md:overflow-visible">
               {recentlyViewed.slice(0, 4).map((e) => (
                 <Link key={e.id} to={`/product/${e.slug || e.id}`} className="group block w-36 shrink-0 snap-start md:w-auto">
-                  <div className="aspect-[3/4] overflow-hidden bg-muted/30 mb-2">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-2">
                     {e.image && (
                       <img {...responsiveImg(e.image, PRODUCT_CARD_IMG)} alt={e.name} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" loading="lazy" decoding="async" />
                     )}
+                    {/* A8 — the trail is re-add fuel, not just a memory. */}
+                    <QuickAddButton target={entryTarget(e)} locale={locale} />
                   </div>
                   <h3 className="text-xs font-medium text-foreground/90 line-clamp-1">{e.name}</h3>
                   <span className="text-xs font-semibold text-foreground">
@@ -741,10 +746,12 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                   <div className="grid grid-cols-2 gap-3">
                     {pool.map((p: Product) => (
                       <Link key={p.id} to={`/product/${p.slug || p.id}`} className="group block" onClick={() => setDrawerOpen(false)}>
-                        <div className="aspect-[3/4] overflow-hidden bg-muted/30 mb-1.5">
+                        <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-1.5">
                           {productImage(p) && (
                             <img {...responsiveImg(productImage(p), PRODUCT_CARD_IMG)} alt={p.name} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" loading="lazy" decoding="async" />
                           )}
+                          {/* A8 — add the pairing without closing the drawer. */}
+                          <QuickAddButton product={p} locale={locale} />
                         </div>
                         <p className="text-xs font-medium line-clamp-1">{p.name}</p>
                         <p className="text-xs font-semibold">

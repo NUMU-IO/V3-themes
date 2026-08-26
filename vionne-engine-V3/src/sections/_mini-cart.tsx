@@ -4,9 +4,13 @@
  *
  * Keeps the shopper in context instead of navigating away to /cart: line
  * items with qty steppers + remove, subtotal, checkout/view-bag CTAs, and —
- * the AOV part — a "You may also like" list underneath with red "Shop Now"
- * links (related products of the first item, catalog fallback, in-cart
- * products excluded).
+ * the AOV part — a "You may also like" list underneath, each row with a
+ * one-tap quick-add (related products of the first item, catalog fallback,
+ * in-cart products excluded).
+ *
+ * Those rows used to end in a red "Shop Now" link, which took a shopper who
+ * was one tap from checkout and sent them back out to a PDP. The thumbnail and
+ * name still link there for anyone who wants the detail; the add happens here.
  *
  * Bottom sheet on mobile, end-side panel on md+. `role="dialog"` +
  * aria-modal, Esc + backdrop close, body scroll-lock while open.
@@ -16,14 +20,14 @@ import {
   Link,
   Money,
   useCart,
-  useProducts,
   useRelatedProducts,
   type Product,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Banknote, Check, Minus, Plus, ShieldCheck, ShoppingBag, Tag, Truck, X } from "lucide-react";
-import { localized, productCurrency, productImage, responsiveImg, useFreeShippingThreshold, THUMB_IMG } from "./_shared";
+import { localized, productCurrency, productImage, responsiveImg, useFreeShippingThreshold, THUMB_IMG, useStoreProducts } from "./_shared";
 import { cartNudges, promoPagePath, useActivePromotions, visibleCodeOffers } from "./_promotions";
 import { PricePair } from "./_price";
+import { QuickAddPill } from "./_quick-add";
 
 export function MiniCartDrawer({ open, onClose, locale }: {
   open: boolean;
@@ -31,7 +35,11 @@ export function MiniCartDrawer({ open, onClose, locale }: {
   locale: string;
 }) {
   const { cart, updateQuantity, removeItem } = useCart();
-  const { products: catalogProducts } = useProducts();
+  // The drawer opens on EVERY route, and the host pre-fetches products only on
+  // catalog ones — so this fallback pool was empty exactly where the drawer is
+  // most used (cart, checkout, account, any CMS page). `useStoreProducts`
+  // fetches for itself and accepts every envelope.
+  const catalogProducts = useStoreProducts(12);
   // CRO — free-shipping progress INSIDE the drawer. The threshold lives on the
   // cart SECTION's settings; read it cross-section (see useFreeShippingThreshold)
   // so the drawer, the cart page and the FAQ always quote the same number.
@@ -287,11 +295,14 @@ export function MiniCartDrawer({ open, onClose, locale }: {
               </p>
               <ul className="space-y-3">
                 {suggestions.map((p: Product) => (
-                  <li key={p.id} className="vn-sheet-item">
+                  // The quick-add sits OUTSIDE the <Link>, not nested in it:
+                  // the row's own click closes the drawer and navigates, which
+                  // is the opposite of what an add should do here.
+                  <li key={p.id} className="vn-sheet-item flex items-center gap-3">
                     <Link
                       to={`/product/${p.slug || p.id}`}
                       onClick={onClose}
-                      className="flex items-center gap-3 group"
+                      className="flex items-center gap-3 group min-w-0 flex-1"
                     >
                       {productImage(p) ? (
                         <img {...responsiveImg(productImage(p), THUMB_IMG)} alt={p.name} className="w-12 h-14 object-cover rounded-md shrink-0" loading="lazy" decoding="async" />
@@ -299,7 +310,7 @@ export function MiniCartDrawer({ open, onClose, locale }: {
                         <div className="w-12 h-14 vn-shimmer rounded-md shrink-0" />
                       )}
                       <div className="min-w-0 flex-1">
-                        <p className="text-[13px] font-medium line-clamp-1">{p.name}</p>
+                        <p className="text-[13px] font-medium line-clamp-1 group-hover:underline">{p.name}</p>
                         <PricePair
                           price={p.variants?.[0]?.price ?? p.price ?? 0}
                           compareAt={p.variants?.[0]?.compare_at_price ?? p.compare_at_price}
@@ -307,10 +318,10 @@ export function MiniCartDrawer({ open, onClose, locale }: {
                           size="sm"
                         />
                       </div>
-                      <span className="text-[12px] font-semibold text-[var(--vn-sale)] shrink-0 group-hover:underline">
-                        {localized(locale, "Shop Now", "اتسوّقي الآن")}
-                      </span>
                     </Link>
+                    {/* Was a red "Shop Now" link — it sent a shopper who was one
+                        tap from checkout back out to a PDP. Add in place. */}
+                    <QuickAddPill product={p} locale={locale} />
                   </li>
                 ))}
               </ul>
