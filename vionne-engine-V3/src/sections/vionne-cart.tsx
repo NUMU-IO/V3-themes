@@ -18,6 +18,7 @@ import { asNumber, asString, localized, productCurrency, productImage, responsiv
 import { InlineEditable } from "./_inline-editable";
 import { cartNudges, promoPagePath, useActivePromotions, visibleCodeOffers, type VisibleCodeOffer } from "./_promotions";
 import { QuickAddBar } from "./_quick-add";
+import { QuickPreviewButton } from "./_quick-preview";
 import { entryTarget, useRecentlyViewed } from "./_recently-viewed";
 
 /**
@@ -674,6 +675,7 @@ function CartRecommendations({ inCartIds, seedProductId, title, sectionId, local
                   ) : (
                     <div className="absolute inset-0 vn-shimmer" />
                   )}
+                  <QuickPreviewButton product={p} locale={locale} />
                 </div>
                 <h3 className="text-[13px] font-medium text-foreground/90 line-clamp-1">{p.name}</h3>
                 <span className="text-sm font-semibold text-foreground">
@@ -757,6 +759,7 @@ function CartRecentlyViewed({ inCartIds, title, sectionId, locale }: {
                 ) : (
                   <div className="absolute inset-0 vn-shimmer" />
                 )}
+                <QuickPreviewButton target={{ id: e.id, name: e.name, slug: e.slug, image: e.image }} locale={locale} />
               </div>
               <h3 className="text-[13px] font-medium text-foreground/90 line-clamp-1">{e.name}</h3>
               <span className="text-sm font-semibold text-foreground">

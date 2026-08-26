@@ -14,6 +14,7 @@ import {
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { QuickAddButton } from "./_quick-add";
+import { QuickPreviewButton } from "./_quick-preview";
 import { PricePair } from "./_price";
 
 /**
@@ -143,6 +144,7 @@ const VionneNewArrivals = ({ instance, sectionId }: SectionRenderProps) => {
           )}
           {labelText && <span className="vn-na-pill">{labelText}</span>}
           <QuickAddButton product={product} locale={locale} />
+          <QuickPreviewButton product={product} locale={locale} />
         </div>
         <div className="vn-na-meta">
           <span className="vn-na-name">{product.name}</span>

@@ -28,6 +28,7 @@ import { localized, productCurrency, productImage, responsiveImg, useFreeShippin
 import { cartNudges, promoPagePath, useActivePromotions, visibleCodeOffers } from "./_promotions";
 import { PricePair } from "./_price";
 import { QuickAddPill } from "./_quick-add";
+import { QuickPreviewButton } from "./_quick-preview";
 
 export function MiniCartDrawer({ open, onClose, locale }: {
   open: boolean;
@@ -321,6 +322,7 @@ export function MiniCartDrawer({ open, onClose, locale }: {
                     </Link>
                     {/* Was a red "Shop Now" link — it sent a shopper who was one
                         tap from checkout back out to a PDP. Add in place. */}
+                    <QuickPreviewButton product={p} locale={locale} variant="inline" />
                     <QuickAddPill product={p} locale={locale} />
                   </li>
                 ))}

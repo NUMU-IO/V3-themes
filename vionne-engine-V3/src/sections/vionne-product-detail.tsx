@@ -626,6 +626,7 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                     )}
                     {/* A8 — the trail is re-add fuel, not just a memory. */}
                     <QuickAddButton target={entryTarget(e)} locale={locale} />
+                    <QuickPreviewButton target={{ id: e.id, name: e.name, slug: e.slug, image: e.image }} locale={locale} />
                   </div>
                   <h3 className="text-xs font-medium text-foreground/90 line-clamp-1">{e.name}</h3>
                   <span className="text-xs font-semibold text-foreground">
@@ -754,6 +755,7 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                           )}
                           {/* A8 — add the pairing without closing the drawer. */}
                           <QuickAddButton product={p} locale={locale} />
+                          <QuickPreviewButton product={p} locale={locale} />
                         </div>
                         <p className="text-xs font-medium line-clamp-1">{p.name}</p>
                         <p className="text-xs font-semibold">
