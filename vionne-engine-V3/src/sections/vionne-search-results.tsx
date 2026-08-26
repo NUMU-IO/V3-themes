@@ -13,6 +13,7 @@ import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { asNumber, asString, localized, merchantLabelText, responsiveImg, usePageData, PRODUCT_CARD_IMG, type SectionRenderProps, productImage } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
+import { QuickAddButton } from "./_quick-add";
 
 /**
  * vionne-search-results — body for the `search` template. Seeds its query from
@@ -169,6 +170,8 @@ function SearchCard({ product }: { product: Product }) {
             {merchantLabel}
           </span>
         )}
+        {/* A8 — one-tap quick-add, same control as every other grid. */}
+        <QuickAddButton product={product} locale={locale} />
       </div>
       <div className="mt-3 px-1">
         <h3 className="text-sm font-medium text-[var(--vn-ink)] line-clamp-1">

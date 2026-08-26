@@ -134,6 +134,21 @@
     },
     {
       "type": "checkbox",
+      "id": "show_recently_viewed",
+      "label": "Show \"Recently viewed\" in the bag",
+      "label_ar": "إظهار «شفتيها قريب» في الشنطة",
+      "default": true,
+      "info": "The shopper's own browse trail, with one-tap add. Also shown on an empty bag."
+    },
+    {
+      "type": "text",
+      "id": "recently_viewed_title",
+      "label": "\"Recently viewed\" title",
+      "label_ar": "عنوان «شفتيها قريب»",
+      "default": ""
+    },
+    {
+      "type": "checkbox",
       "id": "show_promo_nudge",
       "label": "Show active-offer nudge (auto discounts)",
       "label_ar": "إظهار تنبيه العروض التلقائية",

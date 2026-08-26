@@ -5,9 +5,11 @@ export { asArray, asBool, asImageAlt, asImageUrl, asNumber, asString, localized,
 import { createContext, useContext, useEffect, useState } from "react";
 import {
   useCollections,
+  useProducts,
   useShop,
   useThemeSettings,
   type Collection,
+  type Product,
   type SectionInstance,
 } from "@numueg/theme-sdk";
 
@@ -116,6 +118,92 @@ export function useStoreCollections(): Collection[] {
       cancelled = true;
     };
   }, [havePage, storeId]);
+
+  return havePage ? fromPage : fetched;
+}
+
+/**
+ * The store catalog, on any route — the products twin of `useStoreCollections`.
+ *
+ * Same gap, same cause. The host pre-fetches `page.data.products` only on the
+ * catalog routes (`/`, `/products`, `/products/[slug]`, `/collections`,
+ * `/search`), so `useProducts()` is EMPTY on `/cart`, `/checkout`, `/account`
+ * and every CMS page. That is exactly where the bag's "You may also like" rail
+ * and the mini-cart's suggestions live, and both documented a "fall back to the
+ * catalog" path that could therefore never run: whenever the related-products
+ * lookup came back thin, the rail silently disappeared from the one page where
+ * an extra item is worth the most.
+ *
+ * And the SDK's `fetchIfMissing` escape hatch does not close it either — it
+ * reads `data.products` while `/api/products` answers the platform envelope
+ * `{ success, data: { items: [...] } }`, so it fetches and commits an empty
+ * list. (Fixed at the source too, but a theme federates against whatever SDK
+ * the host serves and cannot assume that fix has shipped — the same reasoning
+ * that produced `useStoreCollections`.)
+ */
+const productPoolCache = new Map<string, Product[]>();
+const productPoolInflight = new Map<string, Promise<Product[]>>();
+
+function fetchProductPool(storeId: string, limit: number): Promise<Product[]> {
+  const key = `${storeId}:${limit}`;
+  const cached = productPoolCache.get(key);
+  if (cached) return Promise.resolve(cached);
+  const pending = productPoolInflight.get(key);
+  if (pending) return pending;
+
+  const task = fetch(
+    `/api/products?store_id=${encodeURIComponent(storeId)}&limit=${limit}`,
+    { credentials: "include" },
+  )
+    .then((r) => (r.ok ? r.json() : null))
+    .then((json) => {
+      // Same four shapes as collections: the platform envelope's paginated
+      // `{ data: { items } }`, a bare `{ data: [] }`, the SDK's documented
+      // `{ products: [] }`, and a plain array.
+      const raw = Array.isArray(json)
+        ? json
+        : Array.isArray(json?.data?.items)
+          ? json.data.items
+          : Array.isArray(json?.data)
+            ? json.data
+            : Array.isArray(json?.products)
+              ? json.products
+              : [];
+      const list = raw as Product[];
+      productPoolCache.set(key, list);
+      return list;
+    })
+    .catch(() => [] as Product[])
+    .finally(() => {
+      productPoolInflight.delete(key);
+    });
+
+  productPoolInflight.set(key, task);
+  return task;
+}
+
+export function useStoreProducts(limit = 12): Product[] {
+  // SSR-provided list first — free, already in the payload, no request.
+  const { products: fromPage } = useProducts();
+  const shop = useShop();
+  const [fetched, setFetched] = useState<Product[]>([]);
+
+  const havePage = fromPage.length > 0;
+  const storeId = shop?.id;
+
+  useEffect(() => {
+    if (havePage || !storeId) return;
+    let cancelled = false;
+    // Shared cache + in-flight dedupe: the cart rail and the mini-cart (which
+    // the header mounts on every page) both want this pool, and without it
+    // /cart fired two identical requests on every load.
+    fetchProductPool(storeId, limit).then((list) => {
+      if (!cancelled) setFetched(list);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [havePage, storeId, limit]);
 
   return havePage ? fromPage : fetched;
 }

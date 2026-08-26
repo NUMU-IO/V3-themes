@@ -14,9 +14,11 @@ import {
   type Product,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Check, Copy, Minus, Plus, ShoppingBag, Tag, Truck, X } from "lucide-react";
-import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps, useStoreProducts } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { cartNudges, promoPagePath, useActivePromotions, visibleCodeOffers, type VisibleCodeOffer } from "./_promotions";
+import { QuickAddBar } from "./_quick-add";
+import { entryTarget, useRecentlyViewed } from "./_recently-viewed";
 
 /**
  * vionne-cart — the cart template body.
@@ -126,6 +128,11 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
   const recsTitle =
     asString(s.recommendations_title) ||
     localized(locale, "You may also like", "ممكن يعجبك كمان");
+  // A8 — the shopper's own browse trail, in the bag (on by default).
+  const showCartRecentlyViewed = s.show_recently_viewed !== false;
+  const cartRecentlyViewedTitle =
+    asString(s.recently_viewed_title) ||
+    localized(locale, "Recently viewed", "شفتيها قريب");
 
   const items: CartItem[] = demoMode ? demoItems : realItems;
   const currency = cart?.currency;
@@ -158,7 +165,9 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
   if (isEmpty) {
     return (
       <section
-        className="bg-background min-h-[70vh] flex items-center justify-center"
+        // flex-col so the recently-viewed rail below stacks under the centred
+        // empty-state block instead of sitting beside it.
+        className="bg-background min-h-[70vh] flex flex-col items-center justify-center"
         data-vn-section={sectionId}
         data-testid="storefront-cart"
       >
@@ -180,6 +189,21 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
             <ArrowRight size={13} aria-hidden="true" className="rtl:rotate-180" />
           </Link>
         </div>
+
+        {/* An empty bag is the highest-value place for the trail: it's the one
+            page with nothing on it, and "pick up where you left off" beats a
+            lone "continue shopping" button. Renders nothing when the trail is
+            empty, so a first-time visitor still sees the original layout. */}
+        {showCartRecentlyViewed && (
+          <div className="w-full container mx-auto px-4 md:px-6">
+            <CartRecentlyViewed
+              inCartIds={EMPTY_ID_SET}
+              title={cartRecentlyViewedTitle}
+              sectionId={sectionId}
+              locale={locale}
+            />
+          </div>
+        )}
       </section>
     );
   }
@@ -539,6 +563,16 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
             locale={locale}
           />
         )}
+
+        {/* A8 — the shopper's own trail, under the algorithm's guesses. */}
+        {showCartRecentlyViewed && (
+          <CartRecentlyViewed
+            inCartIds={new Set(items.map((it) => it.product_id))}
+            title={cartRecentlyViewedTitle}
+            sectionId={sectionId}
+            locale={locale}
+          />
+        )}
       </div>
     </section>
   );
@@ -605,28 +639,18 @@ function CartRecommendations({ inCartIds, seedProductId, title, sectionId, local
   sectionId: string;
   locale: string;
 }) {
-  const { products } = useProducts();
+  // `useStoreProducts` (not `useProducts`) because the host pre-fetches
+  // products only on catalog routes — never on /cart. Without it this "fall
+  // back to the catalog" pool was ALWAYS empty here, so whenever the related
+  // lookup came back thin (no shared category, sparse catalog) the whole rail
+  // silently vanished from the one page where an extra item is worth the most.
+  const products = useStoreProducts(12);
   const related = useRelatedProducts(seedProductId, { limit: 8 });
-  const { addItem } = useCart();
-  const [addingId, setAddingId] = useState<string | null>(null);
-  const [addedId, setAddedId] = useState<string | null>(null);
 
   const pool = (related.items.length > 0 ? related.items : products)
     .filter((p) => !inCartIds.has(p.id))
     .slice(0, 4);
   if (pool.length === 0) return null;
-
-  const quickAdd = async (p: Product) => {
-    if (addingId) return;
-    setAddingId(p.id);
-    try {
-      await addItem(p.id, p.variants?.[0]?.id, 1);
-      setAddedId(p.id);
-      setTimeout(() => setAddedId(null), 2000);
-    } finally {
-      setAddingId(null);
-    }
-  };
 
   return (
     <div className="mt-12 pt-8 border-t border-[var(--vn-border)]" data-testid="storefront-cart-recs">
@@ -635,9 +659,6 @@ function CartRecommendations({ inCartIds, seedProductId, title, sectionId, local
       </h2>
       <div className="flex gap-4 overflow-x-auto pb-2 snap-x md:grid md:grid-cols-4 md:overflow-visible">
         {pool.map((p) => {
-          const multiVariant = (p.variants?.length ?? 0) > 1;
-          const busy = addingId === p.id;
-          const done = addedId === p.id;
           return (
             <div key={p.id} className="w-40 shrink-0 snap-start md:w-auto">
               <Link to={`/product/${p.slug || p.id}`} className="group block">
@@ -659,37 +680,94 @@ function CartRecommendations({ inCartIds, seedProductId, title, sectionId, local
                   <Money amount={p.variants?.[0]?.price ?? p.price ?? 0} currency={productCurrency(p)} />
                 </span>
               </Link>
-              {multiVariant ? (
-                <Link
-                  to={`/product/${p.slug || p.id}`}
-                  className="vn-btn vn-btn-outline-dark w-full mt-2.5 !h-9 text-[10px]"
-                >
-                  {localized(locale, "Choose options", "اختاري المقاس/اللون")}
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => quickAdd(p)}
-                  disabled={busy}
-                  className="vn-btn vn-btn-outline-dark w-full mt-2.5 !h-9 text-[10px] disabled:opacity-50"
-                  data-testid="storefront-cart-recs-add"
-                >
-                  {done ? (
-                    <>
-                      <Check size={12} /> {localized(locale, "Added", "اتضافت")}
-                    </>
-                  ) : busy ? (
-                    localized(locale, "Adding…", "بنضيف…")
-                  ) : (
-                    <>
-                      <Plus size={12} /> {localized(locale, "Add", "أضيفي")}
-                    </>
-                  )}
-                </button>
-              )}
+              {/* Was a second, near-identical quick-add implementation living
+                  only in this file — it never gated its ✓ on the write
+                  succeeding, and its multi-variant check read a `variants`
+                  array the related-products payload doesn't even send. */}
+              <QuickAddBar product={p} locale={locale} />
             </div>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * A stable empty Set for the empty-bag rail.
+ *
+ * Module-level on purpose: `CartRecentlyViewed` snapshots this prop with a
+ * `useState` initializer, and a fresh `new Set()` per render would be a new
+ * identity on every pass.
+ */
+const EMPTY_ID_SET: Set<string> = new Set();
+
+/**
+ * CartRecentlyViewed — the shopper's own browse trail, in the bag (A8).
+ *
+ * The trail already existed but rendered ONLY on the PDP — the one page where
+ * it does least work, because a shopper reading a product page is already
+ * engaged. The bag is where it earns: it's the page where someone decides
+ * whether they're finished, and until now the only rail here was "You may also
+ * like" — an algorithm's guess. This is the shopper's own shortlist, one tap
+ * away, which is a far better second-item prompt than a recommendation.
+ *
+ * Rendered under the recommendations rail on a populated bag, and on the EMPTY
+ * bag too, where it turns a dead end into a way back in.
+ */
+function CartRecentlyViewed({ inCartIds, title, sectionId, locale }: {
+  inCartIds: Set<string>;
+  title: string;
+  sectionId: string;
+  locale: string;
+}) {
+  const entries = useRecentlyViewed();
+  // Snapshot the in-cart set ONCE, rather than filtering it live.
+  //
+  // Live filtering would make a card vanish the instant its own quick-add
+  // succeeded: the shopper taps "Add", the ✓ never gets to render, and the
+  // thing they just added disappears from under the cursor. The parent only
+  // reaches this branch after the cart has settled (it returns early while
+  // loading), so the first value is the real one.
+  const [excluded] = useState(() => inCartIds);
+  const pool = entries.filter((e) => !excluded.has(e.id)).slice(0, 4);
+  if (pool.length === 0) return null;
+
+  return (
+    <div
+      className="mt-12 pt-8 border-t border-[var(--vn-border)]"
+      data-testid="storefront-cart-recently-viewed"
+    >
+      <h2 className="vn-heading text-lg md:text-xl mb-5 text-[var(--vn-ink)]">
+        <InlineEditable sectionId={sectionId} settingKey="recently_viewed_title" value={title} />
+      </h2>
+      <div className="flex gap-4 overflow-x-auto pb-2 snap-x md:grid md:grid-cols-4 md:overflow-visible">
+        {pool.map((e) => (
+          <div key={e.id} className="w-40 shrink-0 snap-start md:w-auto">
+            <Link to={`/product/${e.slug || e.id}`} className="group block">
+              <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-2.5">
+                {e.image ? (
+                  <img
+                    {...responsiveImg(e.image, PRODUCT_CARD_IMG)}
+                    alt={e.name}
+                    className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div className="absolute inset-0 vn-shimmer" />
+                )}
+              </div>
+              <h3 className="text-[13px] font-medium text-foreground/90 line-clamp-1">{e.name}</h3>
+              <span className="text-sm font-semibold text-foreground">
+                <Money amount={e.price} currency={e.currency} />
+              </span>
+            </Link>
+            {/* The entry carries the variant it was viewed with, so this adds
+                without the resolve roundtrip the grids need. */}
+            <QuickAddBar target={entryTarget(e)} locale={locale} />
+          </div>
+        ))}
       </div>
     </div>
   );
