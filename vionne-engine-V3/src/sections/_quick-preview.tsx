@@ -125,15 +125,36 @@ const LOW_STOCK_AT = 5;
  * no hover to reveal them with and a control you cannot discover is not a
  * feature.
  */
+export interface QuickPreviewTarget {
+  id: string;
+  name: string;
+  slug?: string;
+  image?: string;
+}
+
 export function QuickPreviewButton({
   product,
+  target,
   locale,
   className = "",
+  variant = "floating",
 }: {
-  product: Product;
+  product?: Product;
+  /** For surfaces with no full `Product` (the recently-viewed trail). */
+  target?: QuickPreviewTarget;
   locale: string;
   className?: string;
+  /**
+   * `floating` overlays a card image (grids and rails); `inline` is a compact
+   * button for list rows that have no image to overlay (the mini-cart).
+   */
+  variant?: "floating" | "inline";
 }) {
+  const item: QuickPreviewTarget | null =
+    target ??
+    (product
+      ? { id: product.id, name: product.name, slug: product.slug, image: productImage(product) }
+      : null);
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const { track } = useAnalytics();
@@ -152,24 +173,58 @@ export function QuickPreviewButton({
     );
   }, [open]);
 
+  /**
+   * Scroll position at the moment the modal opened.
+   *
+   * Closing must put the shopper back exactly where they were in the grid.
+   * `.focus()` without `preventScroll` asks the browser to scroll the target
+   * into view, and the body scroll-lock/unlock around it gives the engine a
+   * second chance to pick its own position — between them a close could land
+   * the page somewhere else entirely (reported from the field as "closing it
+   * jumps me to the footer"). Neither is worth debugging on one device when
+   * both are cheap to make impossible: remember the offset, restore it, and
+   * never let focus move the viewport.
+   */
+  const scrollYRef = useRef(0);
+
+  const onOpenScrollGuard = () => {
+    scrollYRef.current = typeof window !== "undefined" ? window.scrollY : 0;
+  };
+
   const onOpen = (e: React.MouseEvent) => {
     // The card is a <Link>; without this the browser navigates to the PDP —
     // the exact round trip this feature exists to avoid.
     e.preventDefault();
     e.stopPropagation();
+    onOpenScrollGuard();
     setOpen(true);
     track("quick_preview_opened", {
-      content_ids: [product.id],
+      content_ids: [item?.id],
       content_type: "product",
-      item_name: product.name,
+      item_name: item?.name,
     });
   };
 
   const onClose = useCallback(() => {
     setOpen(false);
-    // Return focus where the shopper left it (WCAG 2.4.3).
-    triggerRef.current?.focus();
+    // Return focus where the shopper left it (WCAG 2.4.3) — without letting
+    // the browser scroll to it.
+    triggerRef.current?.focus({ preventScroll: true });
+    // Restore the exact offset on the next frame, after the modal has
+    // unmounted and the scroll lock has been released.
+    if (typeof window !== "undefined") {
+      const y = scrollYRef.current;
+      requestAnimationFrame(() => window.scrollTo(0, y));
+    }
   }, []);
+
+  // Nothing to preview (no product and no target) — render nothing.
+  if (!item) return null;
+
+  const shell =
+    variant === "inline"
+      ? `shrink-0 inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--vn-border)] text-[var(--vn-ink)] transition-colors hover:border-[var(--vn-ink)] ${className}`
+      : `absolute bottom-2.5 end-14 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-[var(--vn-ink)] shadow-md transition-all hover:bg-white md:opacity-0 md:translate-y-1 md:group-hover:opacity-100 md:group-hover:translate-y-0 ${className}`;
 
   return (
     <>
@@ -177,10 +232,10 @@ export function QuickPreviewButton({
         ref={triggerRef}
         type="button"
         onClick={onOpen}
-        aria-label={localized(locale, `Quick preview: ${product.name}`, `نظرة سريعة: ${product.name}`)}
+        aria-label={localized(locale, `Quick preview: ${item?.name ?? ""}`, `نظرة سريعة: ${item?.name ?? ""}`)}
         aria-haspopup="dialog"
         data-testid="storefront-quick-preview-trigger"
-        className={`absolute bottom-2.5 end-14 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-[var(--vn-ink)] shadow-md transition-all hover:bg-white md:opacity-0 md:translate-y-1 md:group-hover:opacity-100 md:group-hover:translate-y-0 ${className}`}
+        className={shell}
       >
         <Eye size={16} aria-hidden="true" />
       </button>
@@ -213,10 +268,10 @@ export function QuickPreviewButton({
       {open && portalHost
         ? createPortal(
             <QuickPreviewModal
-              productId={product.id}
-              initialName={product.name}
-              initialImage={productImage(product)}
-              initialSlug={product.slug}
+              productId={item!.id}
+              initialName={item!.name}
+              initialImage={item!.image}
+              initialSlug={item!.slug}
               locale={locale}
               onClose={onClose}
             />,
@@ -292,7 +347,7 @@ function QuickPreviewModal({
       );
     // Move focus in once the panel exists.
     const first = focusables()[0];
-    (first ?? panel).focus();
+    (first ?? panel).focus({ preventScroll: true });
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Tab") return;

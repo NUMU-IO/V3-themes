@@ -67,6 +67,35 @@ const VionneSlideshow = ({ instance, sectionId }: SectionRenderProps) => {
 
   const alignment = asString(s.text_alignment, "start") as "start" | "center";
 
+  /**
+   * Post-hydration remount key for the hero image. Fixes: on a phone, a
+   * merchant's separate MOBILE hero was ignored and the desktop bitmap showed.
+   *
+   * The storefront server-renders theme sections, and the server has no
+   * viewport — so SSR always emits the DESKTOP image. On the client
+   * `HeroMedia` immediately computes the correct choice from `matchMedia`, but
+   * React does NOT repair a mismatched `src`/`srcSet` during hydration (it
+   * reconciles the tree, not every attribute of an already-matching <img>), so
+   * the desktop bitmap stayed on screen. Confirmed live: 6/6 cold loads at
+   * 390px painted desktop while `matchMedia` was true, `mobileSrc` was present
+   * and HeroMedia's own `isMobile` state was already `true`. Resizing across
+   * the breakpoint fixed it (that fires a `change` event and a real re-render);
+   * reloading never did.
+   *
+   * Flipping this flag after mount changes HeroMedia's `key`, so React
+   * unmounts and remounts it. The second mount is a pure client render with no
+   * server HTML to reconcile against, so it paints the right bitmap using
+   * HeroMedia's own (correct) logic — no fork of the component needed.
+   *
+   * The proper fix is a repair effect inside `HeroMedia` and it is already
+   * merged in the SDK (0.13.3), but a theme federates against whatever SDK the
+   * host serves, so this ships the fix with the THEME and works today.
+   * Desktop-only heroes are unaffected: with no `mobileSrc`, both mounts
+   * render the identical URL.
+   */
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+
   // Merchant-uploaded slide images arrive as `{ url, alt }` objects; pull the
   // URL via asImageUrl so they render (raw object → broken image, the "green
   // blob" the merchant saw). Text coerced so a bound field can't crash a slide.
@@ -156,6 +185,9 @@ const VionneSlideshow = ({ instance, sectionId }: SectionRenderProps) => {
           >
             {sl.image ? (
               <HeroMedia
+                // See `hydrated` above — remounting after hydration is what
+                // makes a merchant's mobile hero actually appear on a phone.
+                key={sl.imageMobile ? `hero-${i}-${hydrated ? "c" : "s"}` : `hero-${i}`}
                 src={sl.image}
                 alt={sl.headline || `Slide ${i + 1}`}
                 transform={sl.imageTransform}
