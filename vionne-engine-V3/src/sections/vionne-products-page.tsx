@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Link, Money, useListingHeading, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, asString, localized, merchantLabelText, productImage, responsiveImg, PRODUCT_CARD_IMG, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, merchantLabelText, productImage, responsiveImg, PRODUCT_CARD_IMG, type SectionRenderProps, productHref } from "./_shared";
 import { QuickAddButton } from "./_quick-add";
 import { QuickPreviewButton } from "./_quick-preview";
 import { PricePair } from "./_price";
@@ -342,7 +342,7 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
 
   return (
     <Link
-      to={`/product/${product.slug || product.id}`}
+      to={productHref(product.slug || product.id)}
       className={
         "vn-product-card group block " +
         (list ? "sm:flex sm:items-center sm:gap-5" : "")

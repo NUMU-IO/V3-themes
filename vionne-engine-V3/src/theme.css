@@ -487,6 +487,38 @@
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.55) 100%);
 }
 
+/* Hero framing, driven by the custom properties <VionneHero> writes inline.
+   The values live in variables rather than inline CSS properties for one
+   reason: an inline `object-position` cannot be overridden by a media query, so
+   a merchant who framed the mobile hero differently from the desktop one had no
+   way to express that. Here the media query below simply switches which
+   variable is read — and because these are animatable properties, crossing the
+   breakpoint eases the crop instead of snapping it. */
+.vn-hero-img {
+  object-fit: cover;
+  object-position: var(--vn-hero-op, 50% 50%);
+  transform: var(--vn-hero-tf, none);
+  transform-origin: var(--vn-hero-to, 50% 50%);
+  transition:
+    object-position 320ms ease,
+    transform 320ms ease;
+}
+
+/* Mobile framing falls back to the desktop variable, so a hero with no separate
+   mobile transform renders byte-identically to before. */
+@media (max-width: 767px) {
+  .vn-hero-img {
+    object-position: var(--vn-hero-op-m, var(--vn-hero-op, 50% 50%));
+    transform: var(--vn-hero-tf-m, var(--vn-hero-tf, none));
+    transform-origin: var(--vn-hero-to-m, var(--vn-hero-to, 50% 50%));
+  }
+}
+
+/* The eased reframe is motion the visitor did not ask for. */
+@media (prefers-reduced-motion: reduce) {
+  .vn-hero-img { transition: none; }
+}
+
 .vn-slide-dot {
   /* Visible dot stays 8x8 (rendered via ::before) while the button itself
      is a 24x24 tap target — meets WCAG 2.5.5 / Lighthouse touch-target. */
@@ -946,6 +978,9 @@
 @media (prefers-reduced-motion: reduce) {
   .vn-na-track { animation: none; }
   .vn-na-viewport { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
-  /* Without motion the duplicate is just repeated content to scroll past. */
-  .vn-na-track > .vn-na-card[aria-hidden="true"] { display: none; }
+  /* Without motion the duplicate is just repeated content to scroll past.
+     Keyed off data-vn-clone, not aria-hidden — the clone stopped being
+     aria-hidden when that turned out to be an axe `aria-hidden-focus` failure
+     (see vionne-new-arrivals.tsx). */
+  .vn-na-track > .vn-na-card[data-vn-clone="true"] { display: none; }
 }

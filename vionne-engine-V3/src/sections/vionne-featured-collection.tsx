@@ -1,7 +1,7 @@
 "use client";
 import { Link, Money, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
-import { asString, localized, merchantLabelText, productImage, responsiveImg, PRODUCT_CARD_IMG, type SectionRenderProps } from "./_shared";
+import { asString, localized, merchantLabelText, productImage, responsiveImg, PRODUCT_CARD_IMG, type SectionRenderProps, productHref } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { QuickAddButton } from "./_quick-add";
 import { QuickPreviewButton } from "./_quick-preview";
@@ -85,7 +85,7 @@ const VionneFeaturedCollection = ({ instance, sectionId }: SectionRenderProps) =
             {displayProducts.map((product) => (
               <Link
                 key={product.id}
-                to={`/product/${product.slug || product.id}`}
+                to={productHref(product.slug || product.id)}
                 className="vn-product-card group block"
                 data-testid="storefront-product-card"
               >

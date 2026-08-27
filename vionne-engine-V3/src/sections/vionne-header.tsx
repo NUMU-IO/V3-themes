@@ -21,7 +21,7 @@ import {
   asNumber,
   asString,
   localized,
-  logoSrc,
+  logoImg,
   readBlocks,
   responsiveImg,
   useInheritedChrome,
@@ -329,7 +329,21 @@ export default function VionneHeader({ instance, sectionId }: SectionRenderProps
           >
             {logoUrl ? (
               <img
-                src={logoSrc(logoUrl)}
+                // Real `srcSet`/`sizes` instead of one fixed 384w rendition:
+                // the shaped slot is 48 CSS px tall on a phone and 56 on
+                // desktop, so a phone was downloading eight times the pixels it
+                // could show. `sizes` states the widest the box ever gets in
+                // each branch — the shaped box is square, the fixed-width
+                // branch states its own width, and the bare branch is a
+                // wordmark in a 28/32px-tall slot.
+                {...logoImg(
+                  logoUrl,
+                  logoShaped
+                    ? "(min-width: 768px) 56px, 48px"
+                    : logoWidth
+                      ? `${logoWidth}px`
+                      : "(min-width: 768px) 160px, 128px",
+                )}
                 alt={brandName}
                 decoding="async"
                 className={

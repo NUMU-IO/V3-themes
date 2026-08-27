@@ -24,7 +24,7 @@ import {
   type Product,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Banknote, Check, Minus, Plus, ShieldCheck, ShoppingBag, Tag, Truck, X } from "lucide-react";
-import { localized, productCurrency, productImage, responsiveImg, useFreeShippingThreshold, THUMB_IMG, useStoreProducts } from "./_shared";
+import { localized, productCurrency, productImage, responsiveImg, useFreeShippingThreshold, THUMB_IMG, useStoreProducts, productHref } from "./_shared";
 import { cartNudges, promoPagePath, useActivePromotions, visibleCodeOffers } from "./_promotions";
 import { PricePair } from "./_price";
 import { QuickAddPill } from "./_quick-add";
@@ -301,7 +301,7 @@ export function MiniCartDrawer({ open, onClose, locale }: {
                   // is the opposite of what an add should do here.
                   <li key={p.id} className="vn-sheet-item flex items-center gap-3">
                     <Link
-                      to={`/product/${p.slug || p.id}`}
+                      to={productHref(p.slug || p.id)}
                       onClick={onClose}
                       className="flex items-center gap-3 group min-w-0 flex-1"
                     >

@@ -10,7 +10,7 @@ import {
   productImage,
   responsiveImg,
   NA_CARD_IMG,
-  type SectionRenderProps,
+  type SectionRenderProps, productHref,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { QuickAddButton } from "./_quick-add";
@@ -113,21 +113,38 @@ const VionneNewArrivals = ({ instance, sectionId }: SectionRenderProps) => {
   const durationSeconds = Math.max(8, half.length * speed);
 
   // The track is rendered twice and translated by -50%, which is what makes the
-  // loop seamless. The clone is aria-hidden so screen readers and the a11y tree
-  // see each product exactly once.
+  // loop seamless. The clone is kept out of the tab order (see the card below
+  // for why it is NOT aria-hidden) and marked `data-vn-clone` so the
+  // reduced-motion rule in theme.css can drop it.
   const renderCard = (product: (typeof items)[number], clone: boolean, i: number) => {
     const labelText = merchantLabelText(product, locale);
     const img = productImage(product);
     return (
       <Link
         key={`${clone ? "c" : "o"}-${i}-${product.id}`}
-        to={`/product/${product.slug || product.id}`}
+        to={productHref(product.slug || product.id)}
         className="vn-na-card group"
-        // The duplicate exists only so the loop has something to run into. Hide
-        // it from assistive tech and keyboard order so each product is
-        // announced and tabbed exactly once.
-        aria-hidden={clone || undefined}
+        // The duplicate exists only so the loop has something to run into, so
+        // it is kept OUT OF THE TAB ORDER — each product is tabbed once.
+        //
+        // It is deliberately NOT `aria-hidden`. It used to be, and that was an
+        // outright accessibility failure (axe `aria-hidden-focus`, and the only
+        // thing costing the store its Lighthouse a11y + agentic-browsing
+        // scores): the card is an <a> and carries the quick-add / quick-preview
+        // <button>s, so `aria-hidden` hid a subtree that was still focusable and
+        // still clickable. `tabindex="-1"` does not repair that — axe treats it
+        // as an unreliable hiding strategy precisely because the element stays
+        // reachable by pointer and by script.
+        //
+        // The two correct fixes for a cloned slide are "remove it from the DOM"
+        // or "make it `inert`", and BOTH are wrong here: this ribbon scrolls
+        // continuously, so a clone is under the shopper's thumb roughly half the
+        // time. Marking it inert would silently swallow those taps. Duplicated
+        // content in the accessibility tree is a redundancy, not a violation —
+        // a dead product card is a lost sale. So the clone stays real, and only
+        // its tab stop is suppressed.
         tabIndex={clone ? -1 : undefined}
+        data-vn-clone={clone ? "true" : undefined}
         data-testid={clone ? undefined : "storefront-product-card"}
       >
         <div className="vn-na-media">

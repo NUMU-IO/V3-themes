@@ -704,10 +704,7 @@ export const THUMB_IMG = {
  * The logo is the one image the theme was still rendering straight off the
  * CDN, and it's above the fold on every page: vionne's was a 35.8 KB webp
  * painted into a 48–56 px-tall box, so ~35 KB of it was thrown away on the
- * first request of every visit. The slot is height-constrained and never more
- * than a couple hundred CSS px wide, so a single 384w rendition covers 2× DPR
- * at any sane wordmark aspect ratio — no `srcSet`/`sizes` needed for a box
- * whose width we don't control.
+ * first request of every visit.
  *
  * GIF and SVG pass through untouched: the optimizer would freeze an animated
  * logo on its first frame and rasterizing a vector only makes it heavier.
@@ -715,6 +712,50 @@ export const THUMB_IMG = {
 export function logoSrc(url: string | null | undefined): string {
   if (!url || /\.(gif|svg)(?:[?#]|$)/i.test(url)) return url || "";
   return imgSrc(url, 384);
+}
+
+/**
+ * `logoSrc` plus a real `srcSet`/`sizes`, for a slot whose CSS width is known.
+ *
+ * A single 384w rendition was chosen originally on the reasoning that the slot
+ * width is not knowable. It is, for the shaped-logo path: `logoImgStyle` gives
+ * the box a fixed pixel edge and the header caps it at `max-h-12 md:max-h-14`.
+ * Measured on vionneeg.com at 412px/DPR 1.75 the header logo rendered **48 CSS
+ * px wide from a 384 px file** — an eightfold overshoot, and 17 KB of the
+ * mobile image budget on the first paint of every page.
+ *
+ * Callers pass the rendered CSS width as a `sizes` string; the browser then
+ * picks 128 on a phone and 256 on a 2× desktop instead of always taking 384.
+ * `src` still points at the 384w rendition so a browser that ignores `srcSet`
+ * is no worse off than before.
+ */
+export function logoImg(
+  url: string | null | undefined,
+  sizes: string,
+): { src: string; srcSet?: string; sizes?: string } {
+  const src = logoSrc(url);
+  if (!src || /\.(gif|svg)(?:[?#]|$)/i.test(url || "")) return { src };
+  const srcSet = imgSrcSet(url, [128, 256, 384]);
+  return srcSet ? { src, srcSet, sizes } : { src };
+}
+
+/**
+ * The CANONICAL product URL.
+ *
+ * The storefront serves a PDP at both `/product/<slug>` (singular) and
+ * `/products/<slug>` (plural) — the singular route is a same-render alias added
+ * because most V3 themes link that way, and it does not redirect. But
+ * `generateMetadata`, the sitemap and the Product JSON-LD all use the PLURAL
+ * form, so every internal link this theme emitted pointed at a URL that
+ * immediately declared a different URL canonical. Google consolidates that, but
+ * it splits internal link signals and spends crawl budget proving the two are
+ * the same page.
+ *
+ * One helper so the two can never drift again. The singular route stays in
+ * place — old links, shared URLs and the other themes still resolve there.
+ */
+export function productHref(slugOrId: string | null | undefined): string {
+  return `/products/${slugOrId ?? ""}`;
 }
 
 /**

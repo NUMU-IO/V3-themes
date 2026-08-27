@@ -18,7 +18,7 @@ import {
 } from "@numueg/theme-sdk";
 import { Check, Minus, Plus, ShoppingBag, Tag, Truck, RotateCcw, ShieldCheck, ArrowRight, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PDP_MAIN_IMG, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PDP_MAIN_IMG, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps, productHref } from "./_shared";
 import { bestCartNudge, pdpOfferLine, promoPagePath, qtyBogoHint, useActivePromotions } from "./_promotions";
 import { InlineEditable } from "./_inline-editable";
 import { PricePair } from "./_price";
@@ -571,7 +571,7 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
               {related.items.map((p) => (
                 <Link
                   key={p.id}
-                  to={`/product/${p.slug || p.id}`}
+                  to={productHref(p.slug || p.id)}
                   className="vn-product-card group block"
                   data-testid="storefront-product-card"
                 >
@@ -619,7 +619,7 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
             </h2>
             <div className="flex gap-4 overflow-x-auto pb-2 snap-x md:grid md:grid-cols-4 md:overflow-visible">
               {recentlyViewed.slice(0, 4).map((e) => (
-                <Link key={e.id} to={`/product/${e.slug || e.id}`} className="group block w-36 shrink-0 snap-start md:w-auto">
+                <Link key={e.id} to={productHref(e.slug || e.id)} className="group block w-36 shrink-0 snap-start md:w-auto">
                   <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-2">
                     {e.image && (
                       <img {...responsiveImg(e.image, PRODUCT_CARD_IMG)} alt={e.name} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" loading="lazy" decoding="async" />
@@ -748,7 +748,7 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                   <p className="vn-eyebrow mb-3">{localized(locale, "Goes well with", "يتناسب معها")}</p>
                   <div className="grid grid-cols-2 gap-3">
                     {pool.map((p: Product) => (
-                      <Link key={p.id} to={`/product/${p.slug || p.id}`} className="group block" onClick={() => setDrawerOpen(false)}>
+                      <Link key={p.id} to={productHref(p.slug || p.id)} className="group block" onClick={() => setDrawerOpen(false)}>
                         <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-1.5">
                           {productImage(p) && (
                             <img {...responsiveImg(productImage(p), PRODUCT_CARD_IMG)} alt={p.name} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" loading="lazy" decoding="async" />
