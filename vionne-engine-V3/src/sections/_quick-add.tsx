@@ -58,7 +58,7 @@
 import { useState } from "react";
 import { Link, requestNavigate, useCart, type Product } from "@numueg/theme-sdk";
 import { AlertCircle, Check, Plus, SlidersHorizontal } from "lucide-react";
-import { localized } from "./_shared";
+import { localized, productHref } from "./_shared";
 
 /**
  * The minimum a surface needs to know to add a line.
@@ -195,7 +195,7 @@ export function useQuickAdd(target: QuickAddTarget) {
   // Flips when resolution reveals a product the surface thought was simple.
   const [discoveredOptions, setDiscoveredOptions] = useState(false);
 
-  const href = `/product/${target.slug || target.id}`;
+  const href = productHref(target.slug || target.id);
   const needsOptions = discoveredOptions || (target.variantCount ?? 0) > 1;
   const soldOut = target.inStock === false;
 

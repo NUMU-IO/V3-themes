@@ -14,7 +14,7 @@ import {
   type Product,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Check, Copy, Minus, Plus, ShoppingBag, Tag, Truck, X } from "lucide-react";
-import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps, useStoreProducts } from "./_shared";
+import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps, useStoreProducts, productHref } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { cartNudges, promoPagePath, useActivePromotions, visibleCodeOffers, type VisibleCodeOffer } from "./_promotions";
 import { QuickAddBar } from "./_quick-add";
@@ -662,7 +662,7 @@ function CartRecommendations({ inCartIds, seedProductId, title, sectionId, local
         {pool.map((p) => {
           return (
             <div key={p.id} className="w-40 shrink-0 snap-start md:w-auto">
-              <Link to={`/product/${p.slug || p.id}`} className="group block">
+              <Link to={productHref(p.slug || p.id)} className="group block">
                 <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-2.5">
                   {productImage(p) ? (
                     <img
@@ -746,7 +746,7 @@ function CartRecentlyViewed({ inCartIds, title, sectionId, locale }: {
       <div className="flex gap-4 overflow-x-auto pb-2 snap-x md:grid md:grid-cols-4 md:overflow-visible">
         {pool.map((e) => (
           <div key={e.id} className="w-40 shrink-0 snap-start md:w-auto">
-            <Link to={`/product/${e.slug || e.id}`} className="group block">
+            <Link to={productHref(e.slug || e.id)} className="group block">
               <div className="relative aspect-[3/4] overflow-hidden bg-muted/30 mb-2.5">
                 {e.image ? (
                   <img

@@ -11,7 +11,7 @@ import {
 } from "@numueg/theme-sdk";
 import { Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, asString, localized, merchantLabelText, responsiveImg, usePageData, PRODUCT_CARD_IMG, type SectionRenderProps, productImage } from "./_shared";
+import { asNumber, asString, localized, merchantLabelText, responsiveImg, usePageData, PRODUCT_CARD_IMG, type SectionRenderProps, productImage, productHref } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { QuickAddButton } from "./_quick-add";
 import { QuickPreviewButton } from "./_quick-preview";
@@ -150,7 +150,7 @@ function SearchCard({ product }: { product: Product }) {
   const merchantLabel = merchantLabelText(product, locale);
   return (
     <Link
-      to={`/product/${product.slug || product.id}`}
+      to={productHref(product.slug || product.id)}
       className="vn-product-card group block"
       data-testid="storefront-product-card"
     >

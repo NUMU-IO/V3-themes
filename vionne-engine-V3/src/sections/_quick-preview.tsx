@@ -64,7 +64,7 @@ import {
   useStoreProducts,
   PDP_MAIN_IMG,
   PRODUCT_CARD_IMG,
-  THUMB_IMG,
+  THUMB_IMG, productHref,
 } from "./_shared";
 import { fetchProductDetail, QuickAddBar } from "./_quick-add";
 import {
@@ -452,7 +452,7 @@ function QuickPreviewModal({
         {failed ? (
           <FailedState
             locale={locale}
-            href={`/product/${initialSlug || productId}`}
+            href={productHref(initialSlug || productId)}
             onClose={onClose}
           />
         ) : detail ? (
@@ -920,7 +920,7 @@ function PreviewBody({
             </span>
 
             <Link
-              to={`/product/${slug}`}
+              to={productHref(slug)}
               onClick={onClose}
               className="mt-2.5 block text-center vn-label text-[10px] text-[var(--vn-muted)] hover:text-[var(--vn-ink)] transition-colors"
             >
@@ -1209,7 +1209,7 @@ function CompleteTheLook({
         {pool.map((p) => (
           <div key={p.id}>
             <Link
-              to={`/product/${p.slug || p.id}`}
+              to={productHref(p.slug || p.id)}
               onClick={() => {
                 track("quick_preview_related_click", {
                   content_ids: [p.id],
