@@ -917,6 +917,47 @@
    rendered twice and shifted -50%, which is what makes the loop seamless;
    the duration is a CSS var so the merchant's speed setting drives it. */
 .vn-na { padding: 2.5rem 0 2rem; }
+/* Promo banner, WIDE layout: scrim.
+ *
+ * The copy sits at the bottom on phones and at the inline-start edge on
+ * desktop, so that is where the darkening has to be — a uniform tint either
+ * washes out the artwork or leaves white text on a bright sky. Written here
+ * rather than as `bg-gradient-to-r` because that utility is PHYSICAL: in
+ * Arabic the copy moves to the right and the dark half would stay on the
+ * left, which is exactly the class of bug DESIGN.md's logical-properties rule
+ * exists to prevent.
+ *
+ * The stops are chosen so white text stays legible over a white image: 0.6
+ * black over #fff is #666, ~5.7:1 against white. Everything left of the 45%
+ * stop is darker still, and that is the whole text column.
+ */
+.vn-promo-scrim {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.78) 0%,
+    rgba(0, 0, 0, 0.6) 38%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+}
+@media (min-width: 768px) {
+  .vn-promo-scrim {
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.72) 0%,
+      rgba(0, 0, 0, 0.6) 45%,
+      rgba(0, 0, 0, 0.1) 100%
+    );
+  }
+  [dir="rtl"] .vn-promo-scrim {
+    background: linear-gradient(
+      to left,
+      rgba(0, 0, 0, 0.72) 0%,
+      rgba(0, 0, 0, 0.6) 45%,
+      rgba(0, 0, 0, 0.1) 100%
+    );
+  }
+}
+
 .vn-na-head {
   display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between;
   gap: 0.75rem; margin-bottom: 1.25rem;

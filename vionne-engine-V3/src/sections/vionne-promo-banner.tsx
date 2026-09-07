@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useCart, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps } from "./_shared";
@@ -36,6 +36,11 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
   const isAuto = mode === "auto";
   const size = asString(s.size) || "standard";
   const isTall = size === "tall";
+  // `card` (default) = text beside a square image, the original shape.
+  // `wide` = one full-bleed image with the copy over it — the format the
+  // collections index wants above its grid, where a bordered card reads as
+  // another tile rather than as the offer.
+  const isWide = asString(s.layout) === "wide";
 
   // Hooks must run before any early return (rules of hooks) — `useActivePromotions`
   // is a no-op server-side and resolves on hydrate.
@@ -89,6 +94,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
 
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(!imageUrl);
+  const imgRef = useRef<HTMLImageElement | null>(null);
 
   // `imageError`/`imageLoading` are seeded from `useState` on FIRST render only.
   // In the live editor the section re-renders (applyDraft) when the merchant
@@ -98,7 +104,13 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
   useEffect(() => {
     if (imageUrl) {
       setImageError(false);
-      setImageLoading(true);
+      // A CACHED image can finish loading — and fire `onLoad` — before this
+      // effect runs. Unconditionally setting `imageLoading` back to true then
+      // left the <img> at `opacity-0` with nothing left to flip it back, so
+      // the banner rendered as a bare scrim over the band colour on every
+      // repeat visit. Ask the DOM whether the bytes are already here instead
+      // of assuming they aren't.
+      setImageLoading(!imgRef.current?.complete);
     } else {
       setImageError(true);
       setImageLoading(false);
@@ -132,6 +144,106 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
     );
   }
 
+  // Copy and media are built ONCE and placed by whichever layout is active.
+  // Sharing them is the point: a second section would be a second thing to
+  // keep in step with the offer engine, and the whole reason this section
+  // exists is that typed copy drifts away from what checkout charges.
+  const copy = (
+    <>
+      {badge && (
+        <span
+          className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-3 ${
+            isWide ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
+          }`}
+        >
+          <InlineEditable sectionId={sectionId} settingKey="badge_text" value={badge} />
+        </span>
+      )}
+      <h3
+        className={`font-black mb-2 ${isWide ? "text-white" : "text-foreground"} ${
+          isTall ? "text-3xl md:text-5xl" : "text-2xl md:text-3xl"
+        }`}
+      >
+        <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
+      </h3>
+      {subtitle && (
+        <p
+          className={`mb-4 ${isWide ? "text-white/85" : "text-muted-foreground"} ${
+            isTall ? "text-base md:text-lg" : "text-sm"
+          }`}
+        >
+          <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
+        </p>
+      )}
+      {/* Over artwork the ink-filled pill goes invisible; the slideshow hero
+          already solved this with the light outline variant. */}
+      <Link
+        to={ctaLink}
+        className={`vn-btn ${isWide ? "vn-btn-outline-light" : "vn-btn-filled shadow-md"}`}
+      >
+        <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
+        <ArrowLeft size={16} className="rtl:rotate-180" />
+      </Link>
+    </>
+  );
+
+  const media = imageError ? (
+    <div className="w-full h-full store-gradient flex items-center justify-center">
+      <ShoppingBag className="h-16 w-16 text-white/60" />
+    </div>
+  ) : (
+    <>
+      {imageLoading && <div className="absolute inset-0 bg-muted animate-pulse" />}
+      <img
+        ref={imgRef}
+        // `wide` renders the image container-wide, so EDITORIAL_IMG's
+        // "60vw on tablet" would under-fetch and upscale. Same ladder,
+        // honest widths.
+        {...responsiveImg(
+          imageUrl,
+          isWide
+            ? { widths: EDITORIAL_IMG.widths, sizes: "(min-width: 1280px) 1280px, 100vw" }
+            : EDITORIAL_IMG,
+        )}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className={`w-full h-full object-cover transition-opacity duration-300 ${
+          imageLoading ? "opacity-0" : "opacity-100"
+        }`}
+        style={applyImageTransform(imageTransform, "cover")}
+        onLoad={() => setImageLoading(false)}
+        onError={() => {
+          setImageLoading(false);
+          setImageError(true);
+        }}
+      />
+    </>
+  );
+
+  if (isWide) {
+    return (
+      <section className={isTall ? "py-10" : "py-6"}>
+        <div className="container mx-auto px-4">
+          <div
+            className={`relative overflow-hidden rounded-2xl bg-[var(--vn-band)] ${
+              isTall ? "aspect-[3/4] md:aspect-[16/6]" : "aspect-[4/3] md:aspect-[16/5]"
+            }`}
+          >
+            <div className="absolute inset-0">{media}</div>
+            {/* Direction-aware scrim — see `.vn-promo-scrim` in theme.css. */}
+            <div className="vn-promo-scrim absolute inset-0" />
+            {/* `text-start` / `items-start`, not `text-left`: this section is
+                rendered in Arabic RTL as often as in English. */}
+            <div className="absolute inset-0 flex flex-col items-center justify-end text-center p-6 md:items-start md:justify-center md:text-start md:p-12">
+              {copy}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={isTall ? "py-10" : "py-6"}>
       <div className="container mx-auto px-4">
@@ -141,33 +253,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
               isTall ? "p-8 md:p-14 md:min-h-[22rem]" : "p-6 md:p-10"
             }`}
           >
-            <div className="flex-1 text-center md:text-right">
-              {badge && (
-                <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-3">
-                  <InlineEditable sectionId={sectionId} settingKey="badge_text" value={badge} />
-                </span>
-              )}
-              <h3
-                className={`font-black mb-2 text-foreground ${
-                  isTall ? "text-3xl md:text-5xl" : "text-2xl md:text-3xl"
-                }`}
-              >
-                <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
-              </h3>
-              {subtitle && (
-                <p
-                  className={`text-muted-foreground mb-4 ${
-                    isTall ? "text-base md:text-lg" : "text-sm"
-                  }`}
-                >
-                  <InlineEditable sectionId={sectionId} settingKey="subtitle" value={subtitle} multiline />
-                </p>
-              )}
-              <Link to={ctaLink} className="vn-btn vn-btn-filled shadow-md">
-                <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
-                <ArrowLeft size={16} className="rtl:rotate-180" />
-              </Link>
-            </div>
+            <div className="flex-1 text-center md:text-right">{copy}</div>
             <div
               className={`relative rounded-2xl overflow-hidden shadow-lg shrink-0 ${
                 isTall
@@ -175,32 +261,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
                   : "w-48 h-48 md:w-56 md:h-56"
               }`}
             >
-              {imageError ? (
-                <div className="w-full h-full store-gradient flex items-center justify-center">
-                  <ShoppingBag className="h-16 w-16 text-white/60" />
-                </div>
-              ) : (
-                <>
-                  {imageLoading && (
-                    <div className="absolute inset-0 bg-muted animate-pulse rounded-2xl" />
-                  )}
-                  <img
-                    {...responsiveImg(imageUrl, EDITORIAL_IMG)}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    className={`w-full h-full object-cover transition-opacity duration-300 ${
-                      imageLoading ? "opacity-0" : "opacity-100"
-                    }`}
-                    style={applyImageTransform(imageTransform, "cover")}
-                    onLoad={() => setImageLoading(false)}
-                    onError={() => {
-                      setImageLoading(false);
-                      setImageError(true);
-                    }}
-                  />
-                </>
-              )}
+              {media}
             </div>
           </div>
         </div>

@@ -31,6 +31,19 @@
     },
     {
       "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "label_ar": "الشكل",
+      "info": "Wide puts the image full-width with the text over it — better above a collections grid, where a card just looks like another tile. Crop the image around 16:5 for Wide.",
+      "info_ar": "العريض بيحط الصورة على العرض كله والنص فوقها — أحسن فوق شبكة التشكيلات، لأن الكارت بيبان زي أي مربع تاني. اقصّي الصورة قريب من 16:5 للعريض.",
+      "default": "card",
+      "options": [
+        { "value": "card", "label": "Image beside text", "label_ar": "صورة جنب النص" },
+        { "value": "wide", "label": "Wide banner (text over image)", "label_ar": "بانر عريض (نص فوق الصورة)" }
+      ]
+    },
+    {
+      "type": "select",
       "id": "size",
       "label": "Size",
       "label_ar": "الحجم",
