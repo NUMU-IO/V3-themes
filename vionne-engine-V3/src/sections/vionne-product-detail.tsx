@@ -221,7 +221,17 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
   // Tags drive the eyebrow labels (V2 showed product.tags as uppercase chips).
   const tags = (product.tags ?? []).filter(Boolean);
 
-  const options = product.options ?? [];
+  // The storefront's option axes carry more than the raw values: `hex_values`
+  // is the merchant's real swatch colour and `values_ar` / `name_ar` the
+  // Arabic copy, both indexed in step with `values`
+  // (NUMU-api storefront/public.py::_resolve_options_for_product).
+  const options = (product.options ?? []) as {
+    name: string;
+    name_ar?: string;
+    values: string[];
+    values_ar?: string[];
+    hex_values?: string[];
+  }[];
 
   return (
     <div className="bg-background" data-testid="storefront-product-detail">
@@ -404,25 +414,45 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
               const isColor = opt.name.toLowerCase().includes("color")
                 || opt.name.toLowerCase().includes("colour")
                 || opt.name.toLowerCase().includes("لون");
+              // Arabic copy when the merchant supplied it. The VALUE itself
+              // stays the English key everywhere it is compared or sent
+              // (selection, availability, add-to-cart) — only the visible
+              // text is swapped, so translating can't break variant matching.
+              const axisLabel = localized(locale, opt.name, opt.name_ar || opt.name);
+              const labelFor = (value: string) => {
+                const i = opt.values.indexOf(value);
+                const ar = i >= 0 ? opt.values_ar?.[i] : undefined;
+                return localized(locale, value, ar || value);
+              };
               return (
                 <div key={opt.name} className="mb-6">
                   <label className="vn-label text-[10px] text-[var(--vn-muted)] mb-2 block">
-                    {opt.name}
-                    {selected ? `: ${selected}` : ""}
+                    {axisLabel}
+                    {selected ? `: ${labelFor(selected)}` : ""}
                   </label>
                   <div className="flex gap-2 flex-wrap">
-                    {opt.values.map((value) => {
+                    {opt.values.map((value, valueIndex) => {
                       // availability map only lists values for *unselected* axes;
                       // when an axis is already chosen treat all its values as
                       // pickable (so the customer can switch).
                       const soldOut = avail ? !avail.has(value) : false;
                       const active = selected === value;
+                      // The swatch used to paint `backgroundColor: value`, i.e.
+                      // the literal label — "Taupe" is not a CSS colour, so the
+                      // dot rendered empty for every shade that isn't a CSS
+                      // keyword. Use the merchant's hex, and only fall back to
+                      // the label when it happens to be a real colour keyword.
+                      const swatch = opt.hex_values?.[valueIndex] || value;
                       return (
                         <button
                           type="button"
                           key={value}
                           onClick={() => vs.select(opt.name, value)}
-                          aria-label={soldOut ? `${value} — sold out` : value}
+                          aria-label={
+                            soldOut
+                              ? `${labelFor(value)} — ${localized(locale, "sold out", "خلص المخزون")}`
+                              : labelFor(value)
+                          }
                           className={
                             isColor
                               ? "flex items-center gap-2 px-3 py-2 text-sm transition-colors border " +
@@ -443,10 +473,10 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                           {isColor && (
                             <span
                               className="w-4 h-4 rounded-full border border-[var(--vn-border)]"
-                              style={{ backgroundColor: value }}
+                              style={{ backgroundColor: swatch }}
                             />
                           )}
-                          {value}
+                          {labelFor(value)}
                         </button>
                       );
                     })}
