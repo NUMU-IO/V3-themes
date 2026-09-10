@@ -1,0 +1,96 @@
+{
+  "type": "pw-hero",
+  "name": "Shopfront",
+  "name_ar": "الواجهة",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The top of the home page. A bookshop has no single hero product, so this sells the SHOP — a promise in large type, an optional photograph of the room, and a note in the margin. With no photograph it stays a type-and-colour band, which is a finished look, not a placeholder.",
+      "content_ar": "أعلى الصفحة الرئيسية. المكتبة مالهاش منتج واحد تعرضه، فالقسم ده بيبيع المحل نفسه — جملة كبيرة، وصورة اختيارية للمكان، وملاحظة على الجنب. من غير صورة بيفضل شريط لون وخط، وده شكل نهائي مش مكان فاضي."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above",
+      "label_ar": "السطر الصغير فوق",
+      "default": "EST. 1971"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Headline",
+      "label_ar": "العنوان",
+      "default": "A million books, and one of them is yours."
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Supporting line",
+      "label_ar": "السطر التوضيحي",
+      "default": "New, used and rare on the same shelf. Come in for one book, leave with four."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button",
+      "label_ar": "الزر",
+      "default": "Browse used books"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    },
+    {
+      "type": "text",
+      "id": "secondary_text",
+      "label": "Second button",
+      "label_ar": "الزر الثاني",
+      "default": "Staff picks"
+    },
+    {
+      "type": "url",
+      "id": "secondary_link",
+      "label": "Second button link",
+      "label_ar": "رابط الزر الثاني",
+      "default": "/collections/staff-picks"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Photograph",
+      "label_ar": "الصورة",
+      "default": "",
+      "info": "A photo of the shop beats a stock image of books every time.",
+      "info_ar": "صورة للمحل نفسه أحسن من صورة كتب جاهزة."
+    },
+    {
+      "type": "checkbox",
+      "id": "tall_image",
+      "label": "Tall photograph",
+      "label_ar": "صورة طولية",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "hand_note",
+      "label": "Hand-written note",
+      "label_ar": "ملاحظة مكتوبة",
+      "default": "More\nBooks\nMore\nPeople"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shopfront",
+      "name_ar": "الواجهة",
+      "settings": {
+        "eyebrow": "EST. 1971",
+        "heading": "A million books, and one of them is yours.",
+        "cta_text": "Browse used books",
+        "cta_link": "/products"
+      }
+    }
+  ]
+}

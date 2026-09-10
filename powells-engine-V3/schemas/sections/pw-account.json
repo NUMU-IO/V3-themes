@@ -1,0 +1,40 @@
+{
+  "type": "pw-account",
+  "name": "Account",
+  "name_ar": "الحساب",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Sign in, register, password reset, order history and saved addresses — all one section, because the platform sends this page under ten different names and ten copies would drift apart.",
+      "content_ar": "تسجيل الدخول وإنشاء حساب واستعادة كلمة السر وسجل الطلبات والعناوين — كلها قسم واحد، لأن المنصة بتبعت الصفحة دي بعشر أسماء مختلفة وعشر نسخ هيختلفوا عن بعض."
+    },
+    {
+      "type": "text",
+      "id": "login_heading",
+      "label": "Sign-in heading",
+      "label_ar": "عنوان تسجيل الدخول",
+      "default": "Sign in"
+    },
+    {
+      "type": "text",
+      "id": "register_heading",
+      "label": "Register heading",
+      "label_ar": "عنوان إنشاء الحساب",
+      "default": "Create an account"
+    },
+    {
+      "type": "textarea",
+      "id": "aside_text",
+      "label": "Note beside the form",
+      "label_ar": "الملاحظة جنب الفورم",
+      "default": "An account keeps your order history, your addresses and the books you have set aside."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Account",
+      "name_ar": "الحساب",
+      "settings": {}
+    }
+  ]
+}

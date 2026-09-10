@@ -1,0 +1,141 @@
+{
+  "type": "pw-collection",
+  "name": "Shelf",
+  "name_ar": "الرف",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The browsing page: filters down one side, sorted books beside them. Filters are built from your own products' options, so a store that records Format and Condition on its variants gets those filters automatically — nothing to configure.",
+      "content_ar": "صفحة التصفح: الفلاتر على جنب والكتب جنبها. الفلاتر بتتبني من اختيارات منتجاتك نفسها، يعني لو بتسجل الشكل والحالة على المتغيرات هتلاقي الفلاتر دي ظهرت لوحدها — من غير أي إعداد."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Used Books",
+      "info": "Ignored on a collection page, which uses the collection's own name.",
+      "info_ar": "بيتجاهل في صفحة التصنيف، لأنها بتستخدم اسم التصنيف."
+    },
+    {
+      "type": "text",
+      "id": "rail_title",
+      "label": "Filters heading",
+      "label_ar": "عنوان الفلاتر",
+      "default": "Browse"
+    },
+    {
+      "type": "textarea",
+      "id": "rail_note",
+      "label": "Note under the filters",
+      "label_ar": "ملاحظة تحت الفلاتر",
+      "default": "Good\nBooks\nBuild\nBetter\nDays"
+    },
+    {
+      "type": "textarea",
+      "id": "results_note",
+      "label": "Note beside the heading",
+      "label_ar": "ملاحظة جنب العنوان",
+      "default": "Discover\nnew (to you)\nfavorites"
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "How many books to load",
+      "label_ar": "عدد الكتب المحمّلة",
+      "default": 48,
+      "min": 12,
+      "max": 96,
+      "step": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show the wishlist heart",
+      "label_ar": "إظهار قلب المفضلة",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shelf",
+      "name_ar": "الرف",
+      "settings": {
+        "heading": "Used Books",
+        "rail_title": "Browse",
+        "max_products": 48,
+        "show_wishlist": true
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "type": "filter",
+      "name": "Filter row",
+      "name_ar": "صف فلتر",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "One row in the filter rail. The values under it are read from your own products — a row whose source has nothing under it is hidden rather than shown empty.",
+          "content_ar": "صف واحد في شريط الفلاتر. القيم اللي تحته بتتقري من منتجاتك — والصف اللي مفيش تحته حاجة بيتخفي بدل ما يظهر فاضي."
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "label_ar": "الاسم",
+          "default": "FORMAT"
+        },
+        {
+          "type": "select",
+          "id": "source",
+          "label": "Filter by",
+          "label_ar": "الفلترة حسب",
+          "default": "option",
+          "options": [
+            {
+              "value": "category",
+              "label": "Category",
+              "label_ar": "التصنيف"
+            },
+            {
+              "value": "product_type",
+              "label": "Product type",
+              "label_ar": "نوع المنتج"
+            },
+            {
+              "value": "option",
+              "label": "A product option",
+              "label_ar": "اختيار من المنتج"
+            },
+            {
+              "value": "price",
+              "label": "Price",
+              "label_ar": "السعر"
+            },
+            {
+              "value": "brand",
+              "label": "Brand / author",
+              "label_ar": "الماركة أو المؤلف"
+            },
+            {
+              "value": "tag",
+              "label": "Tag",
+              "label_ar": "الوسم"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "option_name",
+          "label": "Which option",
+          "label_ar": "أي اختيار",
+          "default": "Format",
+          "info": "The option axis name, exactly as it appears on your products — Format, Condition, Size.",
+          "info_ar": "اسم الاختيار زي ما هو على منتجاتك — Format أو Condition أو المقاس.",
+          "visible_if": "{{ block.settings.source == 'option' }}"
+        }
+      ]
+    }
+  ]
+}

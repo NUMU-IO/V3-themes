@@ -1,0 +1,35 @@
+{
+  "type": "pw-search",
+  "name": "Search results",
+  "name_ar": "نتائج البحث",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Results for whatever was typed in the masthead, in the same shelf layout as the browsing page.",
+      "content_ar": "نتائج اللي اتكتب في خانة البحث، بنفس شكل صفحة التصفح."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading before a search",
+      "label_ar": "العنوان قبل البحث",
+      "default": "Search for books"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show the wishlist heart",
+      "label_ar": "إظهار قلب المفضلة",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Search results",
+      "name_ar": "نتائج البحث",
+      "settings": {
+        "show_wishlist": true
+      }
+    }
+  ]
+}

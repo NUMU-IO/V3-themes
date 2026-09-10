@@ -1,0 +1,28 @@
+{
+  "type": "pw-blog",
+  "name": "Journal",
+  "name_ar": "المدونة",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The shop's writing — the index and a single post, from one section. In a used bookshop the staff review IS the merchandising, so this is not decorative content.",
+      "content_ar": "كتابات المحل — الفهرس والمقال الواحد من قسم واحد. في مكتبة كتب مستعملة، مراجعة البائع هي اللي بتبيع، فالمحتوى ده مش زينة."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading when there is no blog name",
+      "label_ar": "العنوان لو مفيش اسم للمدونة",
+      "default": "Journal"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Journal",
+      "name_ar": "المدونة",
+      "settings": {
+        "heading": "Journal"
+      }
+    }
+  ]
+}

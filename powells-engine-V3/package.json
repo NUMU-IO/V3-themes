@@ -1,0 +1,30 @@
+{
+  "name": "powells-v3",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Powell's (V3) — a lavender bookstore storefront for used and rare books: filter-rail collections, condition-priced editions, staff-pick notes and hand-drawn marginalia",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 5175",
+    "typecheck": "tsc --noEmit",
+    "lint": "node ../../numu-theme-cli/dist/index.js lint",
+    "check": "node ../../numu-theme-cli/dist/index.js check",
+    "verify": "node ../../numu-theme-cli/dist/index.js verify"
+  },
+  "dependencies": {
+    "@numueg/theme-kit": "^0.1.0",
+    "@numueg/theme-sdk": "^0.13.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@numueg/theme-plugin": "^0.6.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "typescript": "^5.5.0",
+    "vite": "^6.0.0"
+  }
+}

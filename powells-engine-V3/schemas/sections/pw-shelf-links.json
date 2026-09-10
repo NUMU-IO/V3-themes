@@ -1,0 +1,69 @@
+{
+  "type": "pw-shelf-links",
+  "name": "Browse by shelf",
+  "name_ar": "تصفح حسب الرف",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Tiles for your collections — the way in for someone who has no title in mind. Leave the tiles below empty and your store's own collections are used, images and counts included.",
+      "content_ar": "مربعات لتصنيفاتك — الطريق لحد داخل من غير عنوان في باله. سيب المربعات تحت فاضية وهيستخدم تصنيفات متجرك بصورها وأعدادها."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Browse by shelf"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "How many tiles",
+      "label_ar": "عدد المربعات",
+      "default": 6,
+      "min": 3,
+      "max": 12,
+      "step": 1
+    }
+  ],
+  "blocks": [
+    {
+      "type": "shelf",
+      "name": "Tile",
+      "name_ar": "مربع",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "label_ar": "العنوان",
+          "default": "Fiction"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "label_ar": "الرابط",
+          "default": "/collections"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "label_ar": "الصورة",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Browse by shelf",
+      "name_ar": "تصفح حسب الرف",
+      "settings": {
+        "heading": "Browse by shelf",
+        "limit": 6
+      }
+    }
+  ]
+}

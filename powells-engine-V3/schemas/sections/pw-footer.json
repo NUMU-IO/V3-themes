@@ -1,0 +1,79 @@
+{
+  "type": "pw-footer",
+  "name": "Footer",
+  "name_ar": "الفوتر",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Link columns and one paragraph about the shop. Add a column block for each group of links.",
+      "content_ar": "أعمدة لينكات وفقرة عن المحل. ضيف عمود لكل مجموعة لينكات."
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Shop name",
+      "label_ar": "اسم المحل",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "about",
+      "label": "About the shop",
+      "label_ar": "عن المحل",
+      "default": ""
+    },
+    {
+      "type": "textarea",
+      "id": "hand_note",
+      "label": "Hand-written note",
+      "label_ar": "ملاحظة مكتوبة",
+      "default": "Good\nBooks\nBuild\nBetter\nDays"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Link column",
+      "name_ar": "عمود لينكات",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Column title",
+          "label_ar": "عنوان العمود",
+          "default": "Shop"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "link",
+          "name": "Link",
+          "name_ar": "لينك",
+          "settings": [
+            {
+              "type": "text",
+              "id": "label",
+              "label": "Label",
+              "label_ar": "الاسم",
+              "default": ""
+            },
+            {
+              "type": "url",
+              "id": "link",
+              "label": "Link",
+              "label_ar": "الرابط",
+              "default": "/"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "name_ar": "الفوتر",
+      "settings": {}
+    }
+  ]
+}
