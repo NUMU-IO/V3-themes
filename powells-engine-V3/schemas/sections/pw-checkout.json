@@ -1,0 +1,50 @@
+{
+  "type": "pw-checkout",
+  "name": "Checkout",
+  "name_ar": "إتمام الشراء",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A one-page checkout inside the theme, instead of handing the shopper to the platform's step pages. Card details are always captured by the payment gateway, never by this page.",
+      "content_ar": "صفحة دفع واحدة جوه الثيم، بدل ما الزبون يتنقل لصفحات المنصة. بيانات الكارت بتتاخد عند بوابة الدفع دايمًا، مش في الصفحة دي."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Checkout"
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_cod",
+      "label": "Offer cash on delivery",
+      "label_ar": "إتاحة الدفع عند الاستلام",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "card_note",
+      "label": "Note under the card option",
+      "label_ar": "ملاحظة تحت الدفع بالكارت",
+      "default": "You'll finish payment on your bank's secure page."
+    },
+    {
+      "type": "text",
+      "id": "reassurance",
+      "label": "Line under the button",
+      "label_ar": "سطر تحت الزر",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Checkout",
+      "name_ar": "إتمام الشراء",
+      "settings": {
+        "heading": "Checkout",
+        "allow_cod": true
+      }
+    }
+  ]
+}

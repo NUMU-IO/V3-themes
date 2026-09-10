@@ -1,0 +1,74 @@
+/**
+ * Powell's (V3) — FALLBACK stylesheet.
+ *
+ * This is not the stylesheet the storefront normally loads. `vite.config.ts`
+ * sets `build.lib.cssFileName: "theme"`, so the compiled output of
+ * src/theme.css is emitted as dist/theme.css and the plugin's fallback copy of
+ * this file no-ops.
+ *
+ * It exists for two reasons: the plugin's contract check requires a root
+ * styles.css, and it is the last line of defence — if a build ever ships
+ * without the compiled CSS, these declarations keep the storefront legible
+ * (right palette, readable type, no unstyled HTML) instead of dumping raw
+ * markup on a shopper. Keep the tokens in sync with src/theme.css; don't grow
+ * this file beyond that.
+ */
+
+[data-powells-v3-app] {
+  --pw-paper: #f7f4fd;
+  --pw-paper-deep: #ece5f8;
+  --pw-rail: #e6ddf6;
+  --pw-band-top: #cabbe9;
+  --pw-band-bot: #ded4f3;
+  --pw-nav: #f4f0fc;
+  --pw-surface: #ffffff;
+  --pw-ink: #3d2963;
+  --pw-ink-soft: #5c4489;
+  --pw-muted: #786aa0;
+  --pw-line: #c6b8e4;
+  --pw-accent: #6f42a8;
+  --pw-accent-fg: #ffffff;
+  --pw-strike: #a99cc4;
+  --pw-stock: #3f7a5c;
+
+  background: var(--pw-paper);
+  color: var(--pw-ink);
+  font-family: "EB Garamond", Georgia, "Times New Roman", serif;
+  font-size: 17px;
+}
+
+[data-powells-v3-app] img {
+  max-width: 100%;
+  display: block;
+}
+
+[data-powells-v3-app] a {
+  color: var(--pw-ink);
+}
+
+[data-powells-v3-app] .pw-container {
+  max-width: 1514px;
+  margin-inline: auto;
+  padding-inline: 22px;
+}
+
+[data-powells-v3-app] .pw-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 26px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+[data-powells-v3-app] .pw-btn-primary {
+  background: var(--pw-accent);
+  color: var(--pw-accent-fg);
+}
+
+[data-powells-v3-app] .pw-btn-ghost {
+  border-color: var(--pw-line);
+}

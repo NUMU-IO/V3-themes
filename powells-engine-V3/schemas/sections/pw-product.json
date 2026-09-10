@@ -1,0 +1,121 @@
+{
+  "type": "pw-product",
+  "name": "Book page",
+  "name_ar": "صفحة الكتاب",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A used-book page. Each variant is shown as a priced EDITION with its own condition line, because a shopper here is choosing a copy, not just a title. Condition comes from a variant option named Condition; the bibliographic rows come from the bookstore custom fields (books.isbn, books.publisher, books.pages, …).",
+      "content_ar": "صفحة كتاب مستعمل. كل متغير بيظهر كنسخة بسعرها وحالتها، لأن الزبون هنا بيختار نسخة مش عنوان بس. الحالة بتيجي من اختيار اسمه Condition على المتغير؛ وبيانات الكتاب بتيجي من الحقول المخصصة (books.isbn وbooks.publisher وbooks.pages)."
+    },
+    {
+      "type": "text",
+      "id": "home_label",
+      "label": "Breadcrumb: home",
+      "label_ar": "مسار: الرئيسية",
+      "default": "Home"
+    },
+    {
+      "type": "text",
+      "id": "listing_label",
+      "label": "Breadcrumb: listing",
+      "label_ar": "مسار: القائمة",
+      "default": "Books"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show the rating",
+      "label_ar": "إظهار التقييم",
+      "default": true,
+      "info": "Reads books.rating and books.rating_count.",
+      "info_ar": "بيقرأ books.rating وbooks.rating_count."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show the wishlist button",
+      "label_ar": "إظهار زر المفضلة",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "low_stock_at",
+      "label": "Warn when copies drop to",
+      "label_ar": "تحذير لما النسخ توصل",
+      "default": 5,
+      "min": 1,
+      "max": 20,
+      "step": 1
+    },
+    {
+      "type": "header",
+      "content": "Staff pick",
+      "content_ar": "اختيار الفريق"
+    },
+    {
+      "type": "text",
+      "id": "staff_pick_title",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "A Staff Pick"
+    },
+    {
+      "type": "textarea",
+      "id": "staff_pick_text",
+      "label": "Note",
+      "label_ar": "الملاحظة",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "staff_pick_by",
+      "label": "Signed",
+      "label_ar": "التوقيع",
+      "default": "",
+      "info": "A bookseller's name. The per-book fields books.staff_pick and books.staff_pick_by override these.",
+      "info_ar": "اسم البائع. الحقول books.staff_pick وbooks.staff_pick_by بتتغلب على دول."
+    },
+    {
+      "type": "header",
+      "content": "Also bought",
+      "content_ar": "اشتروا كمان"
+    },
+    {
+      "type": "text",
+      "id": "related_title",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Customers Also Bought"
+    },
+    {
+      "type": "range",
+      "id": "related_limit",
+      "label": "How many",
+      "label_ar": "العدد",
+      "default": 5,
+      "min": 3,
+      "max": 6,
+      "step": 1
+    },
+    {
+      "type": "text",
+      "id": "no_product_hint",
+      "label": "Editor hint",
+      "label_ar": "تلميح المحرر",
+      "default": "Open a book to preview this page."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Book page",
+      "name_ar": "صفحة الكتاب",
+      "settings": {
+        "show_rating": true,
+        "show_wishlist": true,
+        "low_stock_at": 5,
+        "related_limit": 5
+      }
+    }
+  ]
+}

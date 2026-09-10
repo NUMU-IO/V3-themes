@@ -1,0 +1,46 @@
+{
+  "type": "pw-reviews",
+  "name": "Reader reviews",
+  "name_ar": "آراء القراء",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Real reviews left by your customers, with the rating spread. Hidden entirely on a book with no reviews yet — an empty '0 reviews' block advertises the wrong thing. Reading is public; writing one needs the shopper to sign in.",
+      "content_ar": "آراء حقيقية من زباينك مع توزيع التقييمات. بيختفي تمامًا على الكتاب اللي لسه مفيهوش آراء — بلوك '٠ آراء' بيوصل رسالة غلط. القراءة متاحة للكل؛ الكتابة محتاجة تسجيل دخول."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "What our readers are saying"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "How many to show",
+      "label_ar": "عدد الآراء",
+      "default": 8,
+      "min": 3,
+      "max": 20,
+      "step": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_distribution",
+      "label": "Show the rating spread",
+      "label_ar": "إظهار توزيع التقييمات",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reader reviews",
+      "name_ar": "آراء القراء",
+      "settings": {
+        "limit": 8,
+        "show_distribution": true
+      }
+    }
+  ]
+}

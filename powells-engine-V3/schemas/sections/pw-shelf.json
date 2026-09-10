@@ -1,0 +1,109 @@
+{
+  "type": "pw-shelf",
+  "name": "Shelf row",
+  "name_ar": "صف كتب",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A scrolling row of books under a heading — new arrivals, staff picks, under $10. Add this section more than once with different sources; that is how the home page is built.",
+      "content_ar": "صف كتب بيتمرر تحت عنوان — وصل حديثًا، اختيارات الفريق، أقل من ١٠. ضيف القسم ده أكتر من مرة بمصادر مختلفة؛ كده بتتبني الصفحة الرئيسية."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "New arrivals"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Hand-written note",
+      "label_ar": "ملاحظة مكتوبة",
+      "default": ""
+    },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Which books",
+      "label_ar": "أي كتب",
+      "default": "newest",
+      "options": [
+        {
+          "value": "newest",
+          "label": "Newest first",
+          "label_ar": "الأحدث"
+        },
+        {
+          "value": "sale",
+          "label": "Reduced",
+          "label_ar": "المخفّض"
+        },
+        {
+          "value": "cheapest",
+          "label": "Cheapest first",
+          "label_ar": "الأرخص"
+        },
+        {
+          "value": "collection",
+          "label": "From one collection",
+          "label_ar": "من تصنيف واحد"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "collection",
+      "label": "Collection",
+      "label_ar": "التصنيف",
+      "default": "",
+      "info": "The collection's name or handle.",
+      "info_ar": "اسم التصنيف أو معرّفه.",
+      "visible_if": "{{ section.settings.source == 'collection' }}"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "How many",
+      "label_ar": "العدد",
+      "default": 6,
+      "min": 3,
+      "max": 12,
+      "step": 1
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "See-all link",
+      "label_ar": "لينك عرض الكل",
+      "default": "See all"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "See-all link goes to",
+      "label_ar": "الرابط",
+      "default": "/products"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show the wishlist heart",
+      "label_ar": "إظهار قلب المفضلة",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shelf row",
+      "name_ar": "صف كتب",
+      "settings": {
+        "heading": "New arrivals",
+        "source": "newest",
+        "limit": 6,
+        "view_all_text": "See all",
+        "view_all_link": "/products"
+      }
+    }
+  ]
+}

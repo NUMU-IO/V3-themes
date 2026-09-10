@@ -1,0 +1,52 @@
+<!-- Teen (V3) — static BYOT loading state.
+     Shown by the host between "we know which theme this store uses" and "the
+     bundle has mounted". It is a SKELETON of Teen's actual first screen — the
+     floating capsule header over a full-bleed hero — not a spinner, so the
+     layout does not jump when the real markup replaces it.
+
+     No text at all, in either language: a skeleton that says "Loading…" has to
+     pick a language before the bundle has told us which one, and gets it wrong
+     half the time. Shape communicates the same thing in both.
+
+     `prefers-reduced-motion` kills the pulse. `aria-hidden` plus a polite
+     status line keeps it out of the accessibility tree — a screen reader
+     should hear "Loading", not a list of empty boxes. -->
+<meta charset="utf-8" />
+<style>
+  @keyframes tn-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+  .tn-skel {
+    background: #f1ede9;
+    animation: tn-pulse 1.4s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tn-skel { animation: none; }
+  }
+</style>
+<div style="min-height:100vh;background:#ffffff;position:relative;overflow:hidden">
+  <div aria-hidden="true">
+    <!-- hero plate, rounded at the bottom like the real one -->
+    <div class="tn-skel" style="height:min(800px,72vh);border-radius:0 0 18px 18px"></div>
+
+    <!-- capsule header floating over it -->
+    <div
+      style="position:absolute;inset-inline:clamp(6px,3vw,41px);top:clamp(6px,2vw,24px);height:71px;background:#ffffff;border:1px solid #121010;border-radius:18px;display:flex;align-items:center;gap:1rem;padding-inline:1.25rem"
+    >
+      <div class="tn-skel" style="width:22px;height:14px;border-radius:2px"></div>
+      <div class="tn-skel" style="width:96px;height:18px;border-radius:4px"></div>
+      <div style="flex:1"></div>
+      <div class="tn-skel" style="width:20px;height:20px;border-radius:999px"></div>
+      <div class="tn-skel" style="width:20px;height:20px;border-radius:999px"></div>
+      <div class="tn-skel" style="width:20px;height:20px;border-radius:999px"></div>
+    </div>
+
+    <!-- first product row below the fold edge -->
+    <div style="max-width:1340px;margin:48px auto 0;padding-inline:24px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+      <div class="tn-skel" style="aspect-ratio:3/4;border-radius:12px"></div>
+      <div class="tn-skel" style="aspect-ratio:3/4;border-radius:12px"></div>
+    </div>
+  </div>
+  <span role="status" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap">Loading</span>
+</div>

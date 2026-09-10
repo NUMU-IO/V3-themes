@@ -1,0 +1,110 @@
+{
+  "type": "pw-cart",
+  "name": "Cart",
+  "name_ar": "السلة",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The cart, in both states. Each line shows the copy's condition, so two lines of the same title stay tellable apart. While you are editing, an empty cart shows two sample lines so you can style that half too — shoppers never see them.",
+      "content_ar": "السلة بحالتيها. كل سطر بيوري حالة النسخة، عشان لو نفس العنوان اتكرر تعرف تفرق. وانت بتعدل، السلة الفاضية بتوريك سطرين تجربة عشان تنسق الشكل — الزباين مش بيشوفوهم."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Your Cart"
+    },
+    {
+      "type": "text",
+      "id": "home_label",
+      "label": "Breadcrumb: home",
+      "label_ar": "مسار: الرئيسية",
+      "default": "Home"
+    },
+    {
+      "type": "text",
+      "id": "hand_note",
+      "label": "Hand-written note",
+      "label_ar": "ملاحظة مكتوبة",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Empty cart",
+      "content_ar": "السلة الفاضية"
+    },
+    {
+      "type": "text",
+      "id": "empty_heading",
+      "label": "Empty message",
+      "label_ar": "رسالة السلة الفاضية",
+      "default": "Your cart is empty."
+    },
+    {
+      "type": "text",
+      "id": "empty_cta_text",
+      "label": "Button text",
+      "label_ar": "نص الزر",
+      "default": "Start browsing"
+    },
+    {
+      "type": "url",
+      "id": "empty_cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/products"
+    },
+    {
+      "type": "header",
+      "content": "Filled cart",
+      "content_ar": "السلة المليانة"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress_bar",
+      "label": "Show the free-shipping bar",
+      "label_ar": "إظهار شريط الشحن المجاني",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "free_shipping_threshold",
+      "label": "Free shipping over",
+      "label_ar": "شحن مجاني فوق",
+      "default": 0,
+      "min": 0,
+      "max": 5000,
+      "step": 50,
+      "info": "In your store's currency. Leave at 0 and the bar stays hidden — better than promising free delivery you have not set up in your shipping zones.",
+      "info_ar": "بعملة متجرك. سيبها 0 والشريط هيفضل مخفي — أحسن من وعد بشحن مجاني مش متظبط في مناطق الشحن."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_coupon",
+      "label": "Show the discount-code field",
+      "label_ar": "إظهار خانة كود الخصم",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "reassurance",
+      "label": "Line under the button",
+      "label_ar": "سطر تحت الزر",
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cart",
+      "name_ar": "السلة",
+      "settings": {
+        "heading": "Your Cart",
+        "empty_cta_link": "/products",
+        "show_progress_bar": true,
+        "free_shipping_threshold": 0,
+        "show_coupon": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "type": "pw-header",
+  "name": "Masthead",
+  "name_ar": "الهيدر",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The shopfront sign. The lavender band carries the name, the search field and the marginalia; the pale row beneath carries only the menu. Leave the menu links empty and the store's own menu is used instead.",
+      "content_ar": "لافتة المحل. الشريط البنفسجي فيه الاسم وخانة البحث والرسومات؛ والصف الفاتح تحته فيه القائمة بس. سيب لينكات القائمة فاضية وهيستخدم قائمة متجرك الأصلية."
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Shop name",
+      "label_ar": "اسم المحل",
+      "default": "",
+      "info": "Leave empty to use the store name.",
+      "info_ar": "سيبه فاضي عشان يستخدم اسم المتجر."
+    },
+    {
+      "type": "text",
+      "id": "established",
+      "label": "Established line",
+      "label_ar": "سنة التأسيس",
+      "default": "EST. 1971"
+    },
+    {
+      "type": "text",
+      "id": "strapline",
+      "label": "Under the name",
+      "label_ar": "تحت الاسم",
+      "default": "CITY of BOOKS"
+    },
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Hand-written note",
+      "label_ar": "الملاحظة المكتوبة",
+      "default": "More\nBooks\nMore\nPeople"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "label_ar": "نص خانة البحث",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "menu_handle",
+      "label": "Menu to use",
+      "label_ar": "القائمة المستخدمة",
+      "default": "main-menu",
+      "info": "Only used when you have not added menu links below.",
+      "info_ar": "بيستخدم بس لو مضفتش لينكات تحت."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "label_ar": "إظهار البحث",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Show the cart button",
+      "label_ar": "إظهار زر السلة",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "nav_item",
+      "name": "Menu link",
+      "name_ar": "لينك في القائمة",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "label_ar": "الاسم",
+          "default": "USED"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "label_ar": "الرابط",
+          "default": "/products"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_caret",
+          "label": "Show the dropdown arrow",
+          "label_ar": "إظهار سهم القائمة",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Masthead",
+      "name_ar": "الهيدر",
+      "settings": {
+        "established": "EST. 1971",
+        "strapline": "CITY of BOOKS",
+        "show_search": true,
+        "show_cart": true
+      }
+    }
+  ]
+}

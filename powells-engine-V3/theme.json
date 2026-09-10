@@ -1,0 +1,1833 @@
+{
+  "id": "powells-v3",
+  "name": "Powell's (V3)",
+  "name_ar": "باول",
+  "author": "NUMU",
+  "version": "1.0.0",
+  "layout": "sidebar-left",
+  "description": "Powell's (V3) — a lavender bookshop storefront built for used and rare stock. A filter rail faceted from your own product options, a book page that sells COPIES rather than titles (each variant priced with its own condition and shelf), staff-pick notes signed by a bookseller, and hand-drawn marginalia you can switch off.",
+  "description_ar": "باول (V3) — متجر كتب بلون بنفسجي متعمل للكتب المستعملة والنادرة. شريط فلاتر بيتبني من اختيارات منتجاتك، وصفحة كتاب بتبيع نسخة مش عنوان (كل متغير بسعره وحالته والفرع اللي فيه)، وملاحظات مكتوبة بإمضاء البائع، ورسومات يدوية تقدر تقفلها.",
+  "error_template": "templates/error.html",
+  "loading_template": "templates/loading.html",
+  "presets": {
+    "templates": {
+      "home": {
+        "name": "Home",
+        "name_ar": "الرئيسية",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-hero",
+            "settings": {
+              "eyebrow": "EST. 1971",
+              "heading": "A million books, and one of them is yours.",
+              "body": "New, used and rare on the same shelf. Come in for one book, leave with four.",
+              "cta_text": "Browse used books",
+              "cta_link": "/products",
+              "secondary_text": "Staff picks",
+              "secondary_link": "/collections/staff-picks",
+              "hand_note": "More\nBooks\nMore\nPeople"
+            }
+          },
+          {
+            "type": "pw-shelf",
+            "settings": {
+              "heading": "Just off the truck",
+              "note": "new (to you)",
+              "source": "newest",
+              "limit": 6,
+              "view_all_text": "See all used books",
+              "view_all_link": "/products"
+            }
+          },
+          {
+            "type": "pw-shelf-links",
+            "settings": {
+              "heading": "Browse by shelf",
+              "limit": 6
+            }
+          },
+          {
+            "type": "pw-editorial",
+            "settings": {
+              "eyebrow": "THIS MONTH",
+              "heading": "What we're pressing into people's hands",
+              "body": "<p>Every book on this page passed through a bookseller's hands before it reached the shelf. We read them, we price them, and we tell you honestly what shape they're in.</p><p>Used stock is graded by a person, not a machine — so a cracked spine is described as a cracked spine, and the price reflects it.</p>",
+              "signature": "Renee, Blue Room",
+              "cta_text": "About the shop",
+              "cta_link": "/pages/about",
+              "image_first": true
+            }
+          },
+          {
+            "type": "pw-shelf",
+            "settings": {
+              "heading": "Under $10",
+              "source": "cheapest",
+              "limit": 6,
+              "view_all_text": "See all",
+              "view_all_link": "/products"
+            }
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "collection": {
+        "name": "Collection",
+        "name_ar": "التصنيف",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-collection",
+            "settings": {
+              "heading": "Used Books",
+              "rail_title": "Browse",
+              "rail_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "results_note": "Discover\nnew (to you)\nfavorites",
+              "max_products": 48,
+              "show_wishlist": true
+            },
+            "blocks": [
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "CATEGORY",
+                  "source": "category"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "PRODUCT TYPE",
+                  "source": "product_type"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "FORMAT",
+                  "source": "option",
+                  "option_name": "Format"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "CONDITION",
+                  "source": "option",
+                  "option_name": "Condition"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "PRICE",
+                  "source": "price"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "AUTHOR",
+                  "source": "brand"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "SUBJECT",
+                  "source": "tag"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "products": {
+        "name": "All books",
+        "name_ar": "كل الكتب",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-collection",
+            "settings": {
+              "heading": "Used Books",
+              "rail_title": "Browse",
+              "rail_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "results_note": "Discover\nnew (to you)\nfavorites",
+              "max_products": 48,
+              "show_wishlist": true
+            },
+            "blocks": [
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "CATEGORY",
+                  "source": "category"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "PRODUCT TYPE",
+                  "source": "product_type"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "FORMAT",
+                  "source": "option",
+                  "option_name": "Format"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "CONDITION",
+                  "source": "option",
+                  "option_name": "Condition"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "PRICE",
+                  "source": "price"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "AUTHOR",
+                  "source": "brand"
+                }
+              },
+              {
+                "type": "filter",
+                "settings": {
+                  "label": "SUBJECT",
+                  "source": "tag"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "collections": {
+        "name": "Collections",
+        "name_ar": "التصنيفات",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-collections-index",
+            "settings": {
+              "heading": "Browse the shelves",
+              "limit": 24
+            }
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "product": {
+        "name": "Book",
+        "name_ar": "الكتاب",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-product",
+            "settings": {
+              "listing_label": "Used Books",
+              "staff_pick_title": "A Powell's Staff Pick",
+              "show_rating": true,
+              "related_limit": 5
+            }
+          },
+          {
+            "type": "pw-reviews",
+            "settings": {
+              "limit": 8,
+              "show_distribution": true
+            }
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "cart": {
+        "name": "Cart",
+        "name_ar": "السلة",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-cart",
+            "settings": {
+              "heading": "Your Cart",
+              "show_progress_bar": true,
+              "show_coupon": true,
+              "reassurance": "Every order keeps a used book in circulation."
+            }
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "checkout": {
+        "name": "Checkout",
+        "name_ar": "إتمام الشراء",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": false,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-checkout",
+            "settings": {
+              "heading": "Checkout",
+              "allow_cod": true
+            }
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "search": {
+        "name": "Search",
+        "name_ar": "البحث",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-search",
+            "settings": {}
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "page": {
+        "name": "Page",
+        "name_ar": "صفحة",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "account": {
+        "name": "Account",
+        "name_ar": "الحساب",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-account",
+            "settings": {}
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "order-confirmation": {
+        "name": "Order confirmation",
+        "name_ar": "تأكيد الطلب",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": false,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-order-confirmation",
+            "settings": {
+              "cta_link": "/products"
+            }
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "404": {
+        "name": "Page not found",
+        "name_ar": "صفحة غير موجودة",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-not-found",
+            "settings": {}
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "blog": {
+        "name": "Journal",
+        "name_ar": "المدونة",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-blog",
+            "settings": {
+              "heading": "Journal"
+            }
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

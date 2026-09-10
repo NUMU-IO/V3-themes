@@ -1,0 +1,81 @@
+{
+  "type": "pw-editorial",
+  "name": "Shop's voice",
+  "name_ar": "صوت المحل",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Image beside words — the staff pick of the month, the story of the building, why you buy used stock. Sign it with a real name: a recommendation with a person behind it is the reason a bookshop keeps customers.",
+      "content_ar": "صورة جنب كلام — اختيار الشهر، حكاية المكان، ليه بتشتري كتب مستعملة. وقّعها باسم حقيقي: الترشيح اللي وراه شخص هو سبب رجوع الزباين."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above",
+      "label_ar": "السطر الصغير فوق",
+      "default": "THIS MONTH"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "What we're pressing into people's hands"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Text",
+      "label_ar": "النص",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "signature",
+      "label": "Signed",
+      "label_ar": "التوقيع",
+      "default": "",
+      "info": "A bookseller's name, in the hand-written face.",
+      "info_ar": "اسم البائع، بخط اليد."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button",
+      "label_ar": "الزر",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link",
+      "label_ar": "رابط الزر",
+      "default": "/pages/about"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "label_ar": "الصورة",
+      "default": ""
+    },
+    {
+      "type": "checkbox",
+      "id": "image_first",
+      "label": "Image on the starting side",
+      "label_ar": "الصورة في أول السطر",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop's voice",
+      "name_ar": "صوت المحل",
+      "settings": {
+        "eyebrow": "THIS MONTH",
+        "heading": "What we're pressing into people's hands",
+        "image_first": true
+      }
+    }
+  ]
+}
