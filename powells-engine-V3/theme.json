@@ -3,7 +3,7 @@
   "name": "Powell's (V3)",
   "name_ar": "باول",
   "author": "NUMU",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "layout": "sidebar-left",
   "description": "Powell's (V3) — a lavender bookshop storefront built for used and rare stock. A filter rail faceted from your own product options, a book page that sells COPIES rather than titles (each variant priced with its own condition and shelf), staff-pick notes signed by a bookseller, and hand-drawn marginalia you can switch off.",
   "description_ar": "باول (V3) — متجر كتب بلون بنفسجي متعمل للكتب المستعملة والنادرة. شريط فلاتر بيتبني من اختيارات منتجاتك، وصفحة كتاب بتبيع نسخة مش عنوان (كل متغير بسعره وحالته والفرع اللي فيه)، وملاحظات مكتوبة بإمضاء البائع، ورسومات يدوية تقدر تقفلها.",
@@ -11,6 +11,131 @@
   "loading_template": "templates/loading.html",
   "presets": {
     "templates": {
+      "404": {
+        "name": "Page not found",
+        "name_ar": "صفحة غير موجودة",
+        "sections": [
+          {
+            "type": "pw-header",
+            "settings": {
+              "established": "EST. 1971",
+              "strapline": "CITY of BOOKS",
+              "tagline": "More\nBooks\nMore\nPeople",
+              "show_search": true,
+              "show_cart": true
+            },
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BROWSE",
+                  "link": "/collections",
+                  "show_caret": true
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "USED",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "STAFF PICKS",
+                  "link": "/collections/staff-picks"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "GIFTS",
+                  "link": "/collections/gifts"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "BLOG",
+                  "link": "/blogs"
+                }
+              }
+            ]
+          },
+          {
+            "type": "pw-not-found",
+            "settings": {}
+          },
+          {
+            "type": "pw-footer",
+            "settings": {
+              "about": "An independent bookshop. New, used and rare, on the same shelf.",
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+            },
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "SHOP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Used books",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Staff picks",
+                      "link": "/collections/staff-picks"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Gift cards",
+                      "link": "/products"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "HELP"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping",
+                      "link": "/pages/shipping"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Returns",
+                      "link": "/pages/returns"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/pages/contact"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
       "home": {
         "name": "Home",
         "name_ar": "الرئيسية",
@@ -1506,131 +1631,6 @@
             "settings": {
               "cta_link": "/products"
             }
-          },
-          {
-            "type": "pw-footer",
-            "settings": {
-              "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
-            },
-            "blocks": [
-              {
-                "type": "column",
-                "settings": {
-                  "title": "SHOP"
-                },
-                "blocks": [
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Used books",
-                      "link": "/products"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Staff picks",
-                      "link": "/collections/staff-picks"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Gift cards",
-                      "link": "/products"
-                    }
-                  }
-                ]
-              },
-              {
-                "type": "column",
-                "settings": {
-                  "title": "HELP"
-                },
-                "blocks": [
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Shipping",
-                      "link": "/pages/shipping"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Returns",
-                      "link": "/pages/returns"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Contact",
-                      "link": "/pages/contact"
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "404": {
-        "name": "Page not found",
-        "name_ar": "صفحة غير موجودة",
-        "sections": [
-          {
-            "type": "pw-header",
-            "settings": {
-              "established": "EST. 1971",
-              "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
-              "show_search": true,
-              "show_cart": true
-            },
-            "blocks": [
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "BROWSE",
-                  "link": "/collections",
-                  "show_caret": true
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "USED",
-                  "link": "/products"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "STAFF PICKS",
-                  "link": "/collections/staff-picks"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "GIFTS",
-                  "link": "/collections/gifts"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "BLOG",
-                  "link": "/blogs"
-                }
-              }
-            ]
-          },
-          {
-            "type": "pw-not-found",
-            "settings": {}
           },
           {
             "type": "pw-footer",

@@ -1,6 +1,6 @@
 {
   "name": "powells-v3",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Powell's (V3) — a lavender bookstore storefront for used and rare books: filter-rail collections, condition-priced editions, staff-pick notes and hand-drawn marginalia",
   "type": "module",
