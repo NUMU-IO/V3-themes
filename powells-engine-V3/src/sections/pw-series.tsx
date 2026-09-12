@@ -1,21 +1,5 @@
-import { Image, Link, Money } from "@numueg/theme-sdk";
+import { Image, Link, Money, type ProductSeries } from "@numueg/theme-sdk";
 import { asString, usePageData, type SectionRenderProps } from "../lib/shared";
-
-interface ProductSeries {
-  name: string;
-  description?: string | null;
-  cover_image_url?: string | null;
-  products: Array<{
-    product_id: string;
-    name: string;
-    slug: string;
-    cover_image_url?: string | null;
-    volume_label?: string | null;
-    position: number;
-    price?: number;
-    price_currency?: string;
-  }>;
-}
 
 export default function PwSeries({}: SectionRenderProps) {
   const series = usePageData()?.data?.series as ProductSeries | undefined;
