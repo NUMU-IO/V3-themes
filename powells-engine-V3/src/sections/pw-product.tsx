@@ -123,7 +123,12 @@ export default function PwProduct({ instance }: SectionRenderProps) {
   const cover = images[imageIndex] ?? images[0];
 
   const stock = asNumber((chosen as unknown as Record<string, unknown>)?.inventory_quantity, 0);
-  const inStock = stock > 0;
+  const fulfillmentType = asString(
+    (chosen as unknown as Record<string, unknown>)?.fulfillment_type,
+  ) || "physical";
+  const tracksInventory =
+    (chosen as unknown as Record<string, unknown>)?.track_inventory !== false;
+  const inStock = !tracksInventory || stock > 0;
   const branch = asString(metaMap["books.shelf_location"]);
 
   const onAdd = async () => {
@@ -219,7 +224,8 @@ export default function PwProduct({ instance }: SectionRenderProps) {
               {variants.map((variant) => {
                 const v = variant as unknown as Record<string, unknown>;
                 const isChosen = chosen ? String(variant.id) === String(chosen.id) : false;
-                const available = asNumber(v.inventory_quantity, 0) > 0;
+                const available =
+                  v.track_inventory === false || asNumber(v.inventory_quantity, 0) > 0;
                 // Cents → major. `variant.price.amount` is the trap this whole
                 // theme's money handling is written around.
                 const amount = centsToMajor(
@@ -239,7 +245,11 @@ export default function PwProduct({ instance }: SectionRenderProps) {
                     <span className="pw-dot" aria-hidden="true" />
                     <span>
                       {variantLabel(variant, product.name)}
-                      {conditionOf(variant) && <small>{conditionOf(variant)}</small>}
+                      <small>
+                        {asString(v.fulfillment_type) === "digital"
+                          ? "Digital copy"
+                          : conditionOf(variant)}
+                      </small>
                     </span>
                     <span className="amt">
                       <Money amount={amount} />
@@ -267,6 +277,13 @@ export default function PwProduct({ instance }: SectionRenderProps) {
             {inStock && branch && <em>{` — ${branch}`}</em>}
           </p>
 
+          {fulfillmentType === "digital" && (
+            <p className="pw-synopsis">
+              Digital copy — available to download securely after payment. No shipping
+              required.
+            </p>
+          )}
+
           <div className="pw-buyrow">
             <div className="pw-qty">
               <button
@@ -280,7 +297,13 @@ export default function PwProduct({ instance }: SectionRenderProps) {
               <button
                 type="button"
                 aria-label={t("product.increase", "Increase quantity")}
-                onClick={() => setQty((n) => Math.min(Math.max(stock, 1), n + 1))}
+                onClick={() =>
+                  setQty((n) =>
+                    fulfillmentType === "digital"
+                      ? 1
+                      : Math.min(Math.max(stock, 1), n + 1),
+                  )
+                }
               >
                 +
               </button>
@@ -304,6 +327,37 @@ export default function PwProduct({ instance }: SectionRenderProps) {
               </button>
             )}
           </div>
+
+          {((product as unknown as { series?: Array<Record<string, unknown>> })
+            .series ?? [])
+            .slice(0, 1)
+            .map((series) => {
+              const previous = series.previous as Record<string, unknown> | undefined;
+              const next = series.next as Record<string, unknown> | undefined;
+              return (
+                <aside className="pw-staffpick" key={asString(series.id)}>
+                  <div>
+                    <h4>Part of {asString(series.name)}</h4>
+                    <p>
+                      {asString(series.volume_label) &&
+                        `Book ${asString(series.volume_label)} · `}
+                      {asNumber(series.count)} books in this series
+                    </p>
+                    <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                      {previous && (
+                        <Link to={`/products/${asString(previous.slug)}`}>
+                          ← Previous book
+                        </Link>
+                      )}
+                      <Link to={`/series/${asString(series.slug)}`}>View series</Link>
+                      {next && (
+                        <Link to={`/products/${asString(next.slug)}`}>Next book →</Link>
+                      )}
+                    </div>
+                  </div>
+                </aside>
+              );
+            })}
 
           {staffPick && (
             <aside className="pw-staffpick">

@@ -52,6 +52,7 @@ import PwShelfLinks from "./sections/pw-shelf-links";
 import PwEditorial from "./sections/pw-editorial";
 import PwCollection from "./sections/pw-collection";
 import PwProduct from "./sections/pw-product";
+import PwSeries from "./sections/pw-series";
 import PwCart from "./sections/pw-cart";
 import PwCheckout from "./sections/pw-checkout";
 import PwSearch from "./sections/pw-search";
@@ -78,6 +79,7 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "pw-editorial": PwEditorial,
   "pw-collection": PwCollection,
   "pw-product": PwProduct,
+  "pw-series": PwSeries,
   "pw-cart": PwCart,
   "pw-checkout": PwCheckout,
   "pw-search": PwSearch,
@@ -91,12 +93,20 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
 
-const BUILTIN_TEMPLATES =
-  (
+const BUILTIN_TEMPLATES: Record<string, MaybeOrderedTemplate> = {
+  ...(
     themeManifest as unknown as {
       presets?: { templates?: Record<string, MaybeOrderedTemplate> };
     }
-  ).presets?.templates ?? {};
+  ).presets?.templates,
+  series: {
+    sections: [
+      { type: "pw-header", settings: {} },
+      { type: "pw-series", settings: {} },
+      { type: "pw-footer", settings: {} },
+    ],
+  },
+};
 
 const HEADER_TYPES = new Set(["pw-header", "header"]);
 const FOOTER_TYPES = new Set(["pw-footer", "footer"]);
