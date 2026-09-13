@@ -5,8 +5,8 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "A used-book page. Each variant is shown as a priced EDITION with its own condition line, because a shopper here is choosing a copy, not just a title. Condition comes from a variant option named Condition; the bibliographic rows come from the bookstore custom fields (books.isbn, books.publisher, books.pages, …).",
-      "content_ar": "صفحة كتاب مستعمل. كل متغير بيظهر كنسخة بسعرها وحالتها، لأن الزبون هنا بيختار نسخة مش عنوان بس. الحالة بتيجي من اختيار اسمه Condition على المتغير؛ وبيانات الكتاب بتيجي من الحقول المخصصة (books.isbn وbooks.publisher وbooks.pages)."
+      "content": "Each option axis on the book (Format, Paper, Condition…) is shown as a row of chips, so the shopper picks one value per axis. Books whose variants have no options are shown as a list of priced editions instead. The bibliographic rows come from the bookstore custom fields (books.isbn, books.publisher, books.pages, …).",
+      "content_ar": "كل اختيار على الكتاب (النوع، الورق، الحالة…) بيظهر كصف أزرار، والزبون بيختار قيمة من كل صف. الكتب اللي متغيراتها من غير اختيارات بتظهر كقائمة نسخ بأسعارها. وبيانات الكتاب بتيجي من الحقول المخصصة (books.isbn وbooks.publisher وbooks.pages)."
     },
     {
       "type": "text",
@@ -46,6 +46,95 @@
       "default": 5,
       "min": 1,
       "max": 20,
+      "step": 1
+    },
+    {
+      "type": "header",
+      "content": "Reassurance",
+      "content_ar": "الضمانات"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust",
+      "label": "Show shipping, returns and care notes",
+      "label_ar": "إظهار الشحن والإرجاع والتغليف",
+      "default": true,
+      "info": "Leave a text empty to use the built-in wording in the shopper's language.",
+      "info_ar": "سيب أي نص فاضي عشان يستخدم الصياغة الجاهزة بلغة الزبون."
+    },
+    {
+      "type": "text",
+      "id": "trust_shipping_title",
+      "label": "Shipping",
+      "label_ar": "الشحن",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "trust_shipping_text",
+      "label": "Shipping detail",
+      "label_ar": "تفاصيل الشحن",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "trust_returns_title",
+      "label": "Returns",
+      "label_ar": "الإرجاع",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "trust_returns_text",
+      "label": "Returns detail",
+      "label_ar": "تفاصيل الإرجاع",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "trust_quality_title",
+      "label": "Care",
+      "label_ar": "التغليف",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "trust_quality_text",
+      "label": "Care detail",
+      "label_ar": "تفاصيل التغليف",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Recently viewed",
+      "content_ar": "شفتها مؤخرًا"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recent",
+      "label": "Show recently viewed books",
+      "label_ar": "إظهار الكتب اللي اتشافت مؤخرًا",
+      "default": true,
+      "info": "Kept in the shopper's own browser — nothing is sent to the store.",
+      "info_ar": "بيتحفظ في متصفح الزبون بس — مفيش حاجة بتتبعت للمتجر."
+    },
+    {
+      "type": "text",
+      "id": "recent_title",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "",
+      "info": "Leave empty to use the built-in wording in the shopper's language.",
+      "info_ar": "سيبه فاضي عشان يستخدم الصياغة الجاهزة بلغة الزبون."
+    },
+    {
+      "type": "range",
+      "id": "recent_limit",
+      "label": "How many",
+      "label_ar": "العدد",
+      "default": 5,
+      "min": 3,
+      "max": 8,
       "step": 1
     },
     {
@@ -113,6 +202,7 @@
       "settings": {
         "show_rating": true,
         "show_wishlist": true,
+        "show_trust": true,
         "low_stock_at": 5,
         "related_limit": 5
       }

@@ -14,6 +14,11 @@
  * deliberate promise about how the shop is organised. Their VALUES are derived
  * from the products on the page — see lib/facets.ts for why counts are not
  * fetched, and why a row with nothing under it is dropped instead of shown.
+ *
+ * On narrow screens the rail stacks above the grid, so it collapses behind a
+ * "Filters" toggle — otherwise a phone shopper scrolls past the whole rail
+ * before seeing a single book. The collapse is CSS-only above the breakpoint,
+ * so desktop is unaffected and server markup is identical.
  */
 
 import { useMemo, useState } from "react";
@@ -62,6 +67,7 @@ export default function PwCollection({ instance }: SectionRenderProps) {
   const [sort, setSort] = useState<SortKey>("relevance");
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState<Record<string, string[]>>({});
+  const [railOpen, setRailOpen] = useState(false);
 
   /**
    * The rail's rows are merchant blocks — the labels and their order are a
@@ -116,82 +122,101 @@ export default function PwCollection({ instance }: SectionRenderProps) {
       return { ...prev, [axis]: next };
     });
 
-  const anySelected = Object.values(selected).some((v) => v.length > 0);
+  const activeCount = Object.values(selected).reduce((n, v) => n + v.length, 0);
   const railTitle = asString(s.rail_title) || t("collection.browse", "Browse");
   const railNote = asString(s.rail_note);
   const resultsNote = asString(s.results_note);
+  const railId = `pw-rail-${instance.type}`;
 
   return (
     <div className="pw-body">
-      <aside className="pw-rail">
-        {ornaments && (
-          <span style={{ color: "var(--pw-ink-soft)", opacity: 0.75, display: "block" }}>
-            <Sprig size={72} />
-          </span>
-        )}
-        <h2>{railTitle}</h2>
-
-        <div className="pw-filters">
-          {facets.map((facet) => {
-            const isOpen = open[facet.id] ?? false;
-            return (
-              <div key={facet.id}>
-                <button
-                  type="button"
-                  className="pw-filter"
-                  aria-expanded={isOpen}
-                  onClick={() => setOpen((p) => ({ ...p, [facet.id]: !isOpen }))}
-                >
-                  {facet.label}
-                  <span className="pw-sign" aria-hidden="true">
-                    {isOpen ? "−" : "+"}
-                  </span>
-                </button>
-                {isOpen && (
-                  <div className="pw-filter-body">
-                    {facet.values.map(({ value, count }) => (
-                      <label className="pw-check" key={value}>
-                        <input
-                          type="checkbox"
-                          checked={(selected[facet.id] ?? []).includes(value)}
-                          onChange={() => toggle(facet.id, value)}
-                        />
-                        <span>{value}</span>
-                        <span className="n">{count}</span>
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {anySelected && (
+      <aside className="pw-rail" data-empty={facets.length === 0 || undefined}>
+        {facets.length > 0 && (
           <button
             type="button"
-            className="pw-linkbtn"
-            style={{ marginBlockStart: 18 }}
-            onClick={() => setSelected({})}
+            className="pw-btn pw-btn-ghost pw-rail-toggle"
+            aria-expanded={railOpen}
+            aria-controls={railId}
+            onClick={() => setRailOpen((o) => !o)}
           >
-            {t("collection.clear_filters", "Clear filters")}
+            <span>
+              {t("collection.filters", "Filters")}
+              {activeCount > 0 && ` (${activeCount})`}
+            </span>
+            <IconChevron />
           </button>
         )}
 
-        {ornaments && railNote && (
-          <div className="pw-rail-foot">
-            <span style={{ color: "var(--pw-ink-soft)" }}>
-              <BookStack />
+        <div id={railId} className="pw-rail-panel" data-open={railOpen}>
+          {ornaments && (
+            <span className="pw-rail-sprig" style={{ color: "var(--pw-ink-soft)", opacity: 0.75, display: "block" }}>
+              <Sprig size={72} />
             </span>
-            <span className="pw-hand">
-              {railNote.split("\n").map((line, i) => (
-                <span key={`${line}-${i}`} style={{ display: "block" }}>
-                  {line}
-                </span>
-              ))}
-            </span>
+          )}
+          <h2>{railTitle}</h2>
+
+          <div className="pw-filters">
+            {facets.map((facet) => {
+              const isOpen = open[facet.id] ?? false;
+              return (
+                <div key={facet.id}>
+                  <button
+                    type="button"
+                    className="pw-filter"
+                    aria-expanded={isOpen}
+                    onClick={() => setOpen((p) => ({ ...p, [facet.id]: !isOpen }))}
+                  >
+                    {facet.label}
+                    <span className="pw-sign" aria-hidden="true">
+                      {isOpen ? "−" : "+"}
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="pw-filter-body">
+                      {facet.values.map(({ value, count }) => (
+                        <label className="pw-check" key={value}>
+                          <input
+                            type="checkbox"
+                            checked={(selected[facet.id] ?? []).includes(value)}
+                            onChange={() => toggle(facet.id, value)}
+                          />
+                          <span>{value}</span>
+                          <span className="n">{count}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        )}
+
+          {activeCount > 0 && (
+            <button
+              type="button"
+              className="pw-linkbtn"
+              style={{ marginBlockStart: 18 }}
+              onClick={() => setSelected({})}
+            >
+              {t("collection.clear_filters", "Clear filters")}
+            </button>
+          )}
+
+          {ornaments && railNote && (
+            <div className="pw-rail-foot">
+              <span style={{ color: "var(--pw-ink-soft)" }}>
+                <BookStack />
+              </span>
+              <span className="pw-hand">
+                {railNote.split("\n").map((line, i) => (
+                  <span key={`${line}-${i}`} style={{ display: "block" }}>
+                    {line}
+                  </span>
+                ))}
+              </span>
+            </div>
+          )}
+        </div>
       </aside>
 
       <div className="pw-main">

@@ -1,36 +1,29 @@
 /**
  * pw-product — the book page.
  *
- * The whole design turns on one idea a general-purpose PDP does not have: in a
- * used bookshop the shopper is choosing a COPY, not a product. The same title
- * exists as a $6.50 mass-market with a cracked spine and a $17.95 like-new
- * hardcover, and the price, the condition and the branch it sits in all change
- * together. So the variant picker is not a row of swatches — it is a list of
- * priced editions, each with its own condition line, and it is the tallest
- * thing on the page after the cover.
+ * The edition picker, price line and quantity stepper live in lib/variants.tsx
+ * so quick look buys exactly the way this page does.
  *
- * ⚠ MONEY UNITS. `product.price` is in MAJOR units; `variant.price.amount` is
- * in CENTS. Both appear on this page. Every variant figure below goes through
- * `centsToMajor` and every product figure does not — mixing them up is a
- * silent 100× error that looks plausible on a cheap paperback.
+ * The page body is keyed by product id. `useVariantSelection` seeds its state
+ * once, on mount, so a soft navigation from one book to another would otherwise
+ * keep the previous book's selection — and match no edition of the new one.
+ *
+ * ⚠ MONEY UNITS. `product.price` is in MAJOR units; variant prices are in
+ * CENTS. See lib/variants.tsx, which owns every variant figure on this page.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Image,
   Link,
-  Money,
   RichText,
   useCart,
   useMetafields,
   useProductOptional,
   useRelatedProducts,
   useResolvedSettings,
-  useVariantSelection,
   type Product,
-  type ProductVariant,
 } from "@numueg/theme-sdk";
-import { centsToMajor } from "@numueg/theme-kit";
 import {
   asBool,
   asNumber,
@@ -43,69 +36,23 @@ import {
 import { useProductReviews } from "../lib/store-data";
 import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
-import { IconHeart, Twinkle } from "../lib/ornaments";
-
-/**
- * The line under an edition's name: what shape the book is in.
- *
- * A bookseller records this as a `condition` option axis on the variant, or as
- * a `books.condition` metafield when the whole copy shares one. Neither is
- * mandatory, and a variant with no condition simply shows its option values
- * instead — better than printing an invented grade next to a real price.
- */
-function conditionOf(variant: ProductVariant): string {
-  const v = variant as unknown as Record<string, unknown>;
-  const values = (v.option_values ?? {}) as Record<string, unknown>;
-  for (const [axis, value] of Object.entries(values)) {
-    if (axis.toLowerCase().includes("condition")) return asString(value);
-  }
-  return "";
-}
-
-function variantLabel(variant: ProductVariant, fallback: string): string {
-  const v = variant as unknown as Record<string, unknown>;
-  const values = Object.values((v.option_values ?? {}) as Record<string, unknown>)
-    .map((x) => asString(x))
-    .filter(Boolean);
-  return values.join(" · ") || asString(v.name) || fallback;
-}
+import { setCartDrawer } from "../lib/cart-drawer";
+import { useBookOffer } from "../lib/promotions";
+import { entryAsProduct, recordRecentlyViewed, useRecentlyViewed } from "../lib/recently-viewed";
+import {
+  buyLabel,
+  conditionOf,
+  EditionList,
+  OptionChips,
+  PriceLine,
+  QtyStepper,
+  useVariantPicker,
+} from "../lib/variants";
+import { IconHeart, IconReturn, IconShield, IconTruck, Twinkle } from "../lib/ornaments";
 
 export default function PwProduct({ instance }: SectionRenderProps) {
-  const s = useResolvedSettings(instance);
-  const t = useT();
-  const ornaments = useOrnaments();
+  const s = useResolvedSettings(instance) as Record<string, unknown>;
   const product = useProductOptional();
-  const metafields = useMetafields("product");
-  const { addItem, loading: cartBusy } = useCart();
-  const { items: related } = useRelatedProducts(product?.id, {
-    limit: asNumber(s.related_limit, 5),
-  });
-  // Real reviews when the shop has them. The books.rating pair below is the
-  // fallback for a store with no review history yet — never the other way
-  // round: a typed-in number must not override what customers actually said.
-  const { stats: reviewStats } = useProductReviews(product?.id, 1);
-
-  const [qty, setQty] = useState(1);
-  const [imageIndex, setImageIndex] = useState(0);
-  const [added, setAdded] = useState(false);
-
-  const variants = useMemo(
-    () => ((product as unknown as { variants?: ProductVariant[] })?.variants ?? []),
-    [product],
-  );
-  const selection = useVariantSelection(product ?? ({} as never));
-  const [chosenId, setChosenId] = useState<string | null>(null);
-  const chosen =
-    variants.find((v) => String(v.id) === chosenId) ?? selection.variant ?? variants[0] ?? null;
-
-  const metaMap = useMemo(() => {
-    const out: Record<string, unknown> = {};
-    for (const field of metafields) {
-      const f = field as unknown as Record<string, unknown>;
-      out[`${asString(f.namespace)}.${asString(f.key)}`] = f.value;
-    }
-    return out;
-  }, [metafields]);
 
   if (!product) {
     // The customizer mounts this template with no product in context. A blank
@@ -118,42 +65,79 @@ export default function PwProduct({ instance }: SectionRenderProps) {
     );
   }
 
-  const images = productImages(product);
-  const author = productAuthor(product, metaMap);
-  const cover = images[imageIndex] ?? images[0];
+  return <BookPage key={product.id} product={product} s={s} />;
+}
 
-  const stock = asNumber((chosen as unknown as Record<string, unknown>)?.inventory_quantity, 0);
-  const fulfillmentType = asString(
-    (chosen as unknown as Record<string, unknown>)?.fulfillment_type,
-  ) || "physical";
-  const tracksInventory =
-    (chosen as unknown as Record<string, unknown>)?.track_inventory !== false;
-  const inStock = !tracksInventory || stock > 0;
+function BookPage({ product, s }: { product: Product; s: Record<string, unknown> }) {
+  const t = useT();
+  const ornaments = useOrnaments();
+  const metafields = useMetafields("product");
+  const { addItem, loading: cartBusy } = useCart();
+  const { items: related } = useRelatedProducts(product.id, {
+    limit: asNumber(s.related_limit, 5),
+  });
+  // Real reviews when the shop has them. The books.rating pair below is the
+  // fallback for a store with no review history yet — never the other way
+  // round: a typed-in number must not override what customers actually said.
+  const { stats: reviewStats } = useProductReviews(product.id, 1);
+  const picker = useVariantPicker(product);
+
+  const [qty, setQty] = useState(1);
+  const [imageIndex, setImageIndex] = useState(0);
+  const [added, setAdded] = useState(false);
+
+  const metaMap = useMemo(() => {
+    const out: Record<string, unknown> = {};
+    for (const field of metafields) {
+      const f = field as unknown as Record<string, unknown>;
+      out[`${asString(f.namespace)}.${asString(f.key)}`] = f.value;
+    }
+    return out;
+  }, [metafields]);
+
+  const author = productAuthor(product, metaMap);
+  useEffect(() => {
+    recordRecentlyViewed(product, author);
+  }, [product, author]);
+  const recent = useRecentlyViewed(String(product.id));
+
+  const offer = useBookOffer(
+    String(product.id),
+    asString((product as unknown as Record<string, unknown>).category_id),
+    picker.price,
+    picker.currency,
+  );
+
+  const images = productImages(product);
+  const cover = images[imageIndex] ?? images[0];
+  const { chosen, unavailableCombo, inStock, stock, tracksInventory, fulfillmentType } = picker;
+  const shownQty = Math.min(qty, picker.maxQty);
   const branch = asString(metaMap["books.shelf_location"]);
 
   const onAdd = async () => {
-    if (!inStock) return;
+    if (!inStock || unavailableCombo) return;
     const result = await addItem(
       String(product.id),
       chosen ? String(chosen.id) : undefined,
-      qty,
-      (chosen as unknown as { option_values?: Record<string, string> })?.option_values,
+      shownQty,
+      picker.optionValues,
     );
     if (result?.ok) {
       setAdded(true);
+      setCartDrawer(true);
       window.setTimeout(() => setAdded(false), 2500);
     }
   };
 
   const specs: Array<[string, string]> = [
-    ["ISBN", asString(metaMap["books.isbn"])],
-    [t("product.sku", "SKU"), asString((chosen as unknown as Record<string, unknown>)?.sku)],
-    ["Publisher", asString(metaMap["books.publisher"])],
-    ["Pages", asString(metaMap["books.pages"])],
-    ["Language", asString(metaMap["books.language"])],
-    ["Edition year", asString(metaMap["books.edition_year"])],
+    [t("product.isbn", "ISBN"), asString(metaMap["books.isbn"])],
+    [t("product.sku", "SKU"), picker.sku],
+    [t("product.publisher", "Publisher"), asString(metaMap["books.publisher"])],
+    [t("product.pages", "Pages"), asString(metaMap["books.pages"])],
+    [t("product.language", "Language"), asString(metaMap["books.language"])],
+    [t("product.edition_year", "Edition year"), asString(metaMap["books.edition_year"])],
     [t("product.condition", "Condition"), chosen ? conditionOf(chosen) : ""],
-    ["Shelf location", branch],
+    [t("product.shelf_location", "Shelf location"), branch],
   ].filter((row): row is [string, string] => Boolean(row[1]));
 
   // Reviews win over the typed-in fallback whenever the shop has any.
@@ -162,6 +146,26 @@ export default function PwProduct({ instance }: SectionRenderProps) {
 
   const staffPick = asString(metaMap["books.staff_pick"]) || asString(s.staff_pick_text);
   const staffPickBy = asString(metaMap["books.staff_pick_by"]) || asString(s.staff_pick_by);
+
+  const trust = [
+    fulfillmentType !== "digital" && {
+      icon: <IconTruck />,
+      title: asString(s.trust_shipping_title) || t("product.trust_shipping", "Fast shipping"),
+      text: asString(s.trust_shipping_text) || t("product.trust_shipping_text", "2–5 days"),
+    },
+    {
+      icon: <IconReturn />,
+      title: asString(s.trust_returns_title) || t("product.trust_returns", "Easy returns"),
+      text: asString(s.trust_returns_text) || t("product.trust_returns_text", "14 days"),
+    },
+    {
+      icon: <IconShield />,
+      title: asString(s.trust_quality_title) || t("product.trust_packed", "Packed with care"),
+      text: asString(s.trust_quality_text) || t("product.trust_packed_text", "Every copy checked"),
+    },
+  ].filter((row): row is Exclude<typeof row, false> => Boolean(row));
+
+  const recentShown = asBool(s.show_recent, true) ? recent.slice(0, asNumber(s.recent_limit, 5)) : [];
 
   return (
     <div className="pw-container" style={{ paddingBlock: "30px 80px" }}>
@@ -219,107 +223,44 @@ export default function PwProduct({ instance }: SectionRenderProps) {
             </p>
           )}
 
-          {variants.length > 0 && (
-            <div className="pw-editions" role="radiogroup" aria-label={t("product.choose_edition", "Choose an edition")}>
-              {variants.map((variant) => {
-                const v = variant as unknown as Record<string, unknown>;
-                const isChosen = chosen ? String(variant.id) === String(chosen.id) : false;
-                const available =
-                  v.track_inventory === false || asNumber(v.inventory_quantity, 0) > 0;
-                // Cents → major. `variant.price.amount` is the trap this whole
-                // theme's money handling is written around.
-                const amount = centsToMajor(
-                  asNumber((v.price as Record<string, unknown> | undefined)?.amount, 0),
-                );
-                const compareAt = asNumber(v.compare_at_price, 0);
-                return (
-                  <button
-                    key={String(variant.id)}
-                    type="button"
-                    role="radio"
-                    className="pw-edition"
-                    aria-checked={isChosen}
-                    disabled={!available}
-                    onClick={() => setChosenId(String(variant.id))}
-                  >
-                    <span className="pw-dot" aria-hidden="true" />
-                    <span>
-                      {variantLabel(variant, product.name)}
-                      <small>
-                        {asString(v.fulfillment_type) === "digital"
-                          ? "Digital copy"
-                          : conditionOf(variant)}
-                      </small>
-                    </span>
-                    <span className="amt">
-                      <Money amount={amount} />
-                      {compareAt > 0 && (
-                        <s>
-                          <Money amount={centsToMajor(compareAt)} />
-                        </s>
-                      )}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
+          <PriceLine picker={picker} />
+          {offer && <p className="pw-offer">{offer}</p>}
 
-          <p className={inStock ? "pw-stock" : "pw-stock out"}>
-            <span className="pw-dot-g" aria-hidden="true" />
-            {inStock ? t("product.in_stock", "In stock") : t("product.out_of_stock", "Currently unavailable")}
-            {inStock && stock <= asNumber(s.low_stock_at, 5) && (
-              <em>
-                {" — "}
-                {t("product.copies_left", "{{count}} copies left").replace("{{count}}", String(stock))}
-              </em>
-            )}
-            {inStock && branch && <em>{` — ${branch}`}</em>}
-          </p>
+          <OptionChips picker={picker} />
+          <EditionList picker={picker} productName={product.name} />
+
+          {!unavailableCombo && (
+            <p className={inStock ? "pw-stock" : "pw-stock out"}>
+              <span className="pw-dot-g" aria-hidden="true" />
+              {inStock ? t("product.in_stock", "In stock") : t("product.out_of_stock", "Currently unavailable")}
+              {inStock && tracksInventory && stock > 0 && stock <= asNumber(s.low_stock_at, 5) && (
+                <em>
+                  {" — "}
+                  {t("product.copies_left", "{{count}} copies left").replace("{{count}}", String(stock))}
+                </em>
+              )}
+              {inStock && branch && <em>{` — ${branch}`}</em>}
+            </p>
+          )}
 
           {fulfillmentType === "digital" && (
             <p className="pw-synopsis">
-              Digital copy — available to download securely after payment. No shipping
-              required.
+              {t(
+                "product.digital_note",
+                "Digital copy — available to download securely after payment. No shipping required.",
+              )}
             </p>
           )}
 
           <div className="pw-buyrow">
-            <div className="pw-qty">
-              <button
-                type="button"
-                aria-label={t("product.decrease", "Decrease quantity")}
-                onClick={() => setQty((n) => Math.max(1, n - 1))}
-              >
-                −
-              </button>
-              <output aria-live="polite">{qty}</output>
-              <button
-                type="button"
-                aria-label={t("product.increase", "Increase quantity")}
-                onClick={() =>
-                  setQty((n) =>
-                    fulfillmentType === "digital"
-                      ? 1
-                      : Math.min(Math.max(stock, 1), n + 1),
-                  )
-                }
-              >
-                +
-              </button>
-            </div>
+            <QtyStepper value={shownQty} max={picker.maxQty} onChange={setQty} />
             <button
               type="button"
               className="pw-btn pw-btn-primary"
-              style={{ flex: 1 }}
-              disabled={!inStock || cartBusy}
+              disabled={!inStock || unavailableCombo || cartBusy}
               onClick={onAdd}
             >
-              {added
-                ? t("product.added", "Added to cart")
-                : cartBusy
-                  ? t("product.adding", "Adding...")
-                  : t("product.add_to_cart", "Add to Cart")}
+              {buyLabel(picker, t, added, cartBusy)}
             </button>
             {asBool(s.show_wishlist, true) && (
               <button type="button" className="pw-btn pw-btn-ghost" aria-label={t("product.wishlist", "Add to wishlist")}>
@@ -328,36 +269,46 @@ export default function PwProduct({ instance }: SectionRenderProps) {
             )}
           </div>
 
-          {((product as unknown as { series?: Array<Record<string, unknown>> })
-            .series ?? [])
-            .slice(0, 1)
-            .map((series) => {
-              const previous = series.previous as Record<string, unknown> | undefined;
-              const next = series.next as Record<string, unknown> | undefined;
-              return (
-                <aside className="pw-staffpick" key={asString(series.id)}>
-                  <div>
-                    <h4>Part of {asString(series.name)}</h4>
-                    <p>
-                      {asString(series.volume_label) &&
-                        `Book ${asString(series.volume_label)} · `}
-                      {asNumber(series.count)} books in this series
-                    </p>
-                    <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                      {previous && (
-                        <Link to={`/products/${asString(previous.slug)}`}>
-                          ← Previous book
-                        </Link>
-                      )}
-                      <Link to={`/series/${asString(series.slug)}`}>View series</Link>
-                      {next && (
-                        <Link to={`/products/${asString(next.slug)}`}>Next book →</Link>
-                      )}
-                    </div>
-                  </div>
-                </aside>
-              );
-            })}
+          {asBool(s.show_trust, true) && trust.length > 0 && (
+            <ul className="pw-trust">
+              {trust.map((row) => (
+                <li key={row.title}>
+                  {row.icon}
+                  <span>
+                    <b>{row.title}</b>
+                    {row.text && ` · ${row.text}`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {(product.series ?? []).slice(0, 1).map((series) => (
+            <aside className="pw-staffpick" key={series.id}>
+              <div>
+                <h4>{t("product.series_part", "Part of {{name}}").replace("{{name}}", series.name)}</h4>
+                <p>
+                  {series.volume_label &&
+                    `${t("product.series_book", "Book {{volume}}").replace("{{volume}}", series.volume_label)} · `}
+                  {t("product.series_count", "{{count}} books in this series").replace(
+                    "{{count}}",
+                    String(series.count),
+                  )}
+                </p>
+                <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                  {series.previous && (
+                    <Link to={`/products/${series.previous.slug}`}>
+                      {t("product.series_prev", "← Previous book")}
+                    </Link>
+                  )}
+                  <Link to={`/series/${series.slug}`}>{t("product.series_view", "View series")}</Link>
+                  {series.next && (
+                    <Link to={`/products/${series.next.slug}`}>{t("product.series_next", "Next book →")}</Link>
+                  )}
+                </div>
+              </div>
+            </aside>
+          ))}
 
           {staffPick && (
             <aside className="pw-staffpick">
@@ -409,6 +360,17 @@ export default function PwProduct({ instance }: SectionRenderProps) {
           <div className="pw-grid">
             {related.map((item: Product) => (
               <ProductCard key={item.id} product={item} showWishlist={false} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {recentShown.length > 0 && (
+        <section className="pw-related">
+          <h2>{asString(s.recent_title) || t("recent.title", "Recently viewed")}</h2>
+          <div className="pw-grid">
+            {recentShown.map((entry) => (
+              <ProductCard key={entry.id} product={entryAsProduct(entry)} showWishlist={false} />
             ))}
           </div>
         </section>

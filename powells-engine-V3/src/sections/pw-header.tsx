@@ -1,5 +1,5 @@
 /**
- * pw-header — the masthead and the navigation row.
+ * pw-header — the announcement strip, the masthead and the navigation row.
  *
  * Two bands, and the split is deliberate: the lavender masthead carries
  * identity and search, the pale row below carries only navigation. That is
@@ -11,13 +11,26 @@
  * that has never opened the customizer still gets its real menu rather than
  * this theme's invented one.
  *
+ * On narrow screens the storefront art (and the cart pill drawn into it) is
+ * hidden and the navigation row collapses, so the masthead grows a menu button
+ * and a cart button of its own. Both cart entry points are real links to
+ * /cart that open the cart drawer instead once JavaScript is running.
+ *
+ * The announcement strip is merchant blocks above the masthead. Scrolling
+ * renders the messages twice and slides the track by half its width, so the
+ * copy lands exactly where the original started and the loop has no seam. The
+ * duplicate is hidden from assistive tech and unfocusable; the loop pauses on
+ * hover and focus; reduced motion (the OS setting or the theme's own switch)
+ * shows the messages still. Outside the marketplace demo, no blocks means no
+ * strip — this theme never invents an offer for a real store.
+ *
  * ⚠ The masthead is global chrome, so it renders on `/cart`, `/checkout` and
  * `/account` too — routes the host ships NO page data for. Nothing in here may
  * read `page.data`; the cart count comes from `useCart`, which fetches for
  * itself.
  */
 
-import { useState, type FormEvent } from "react";
+import { useState, type CSSProperties, type FormEvent, type MouseEvent } from "react";
 import {
   Link,
   requestNavigate,
@@ -26,19 +39,67 @@ import {
   useResolvedSettings,
   useShop,
 } from "@numueg/theme-sdk";
-import { asBool, asString, readBlockNodes, useOrnaments, type SectionRenderProps } from "../lib/shared";
+import {
+  asBool,
+  asNumber,
+  asString,
+  readBlockNodes,
+  useDemo,
+  useOrnaments,
+  type SectionRenderProps,
+} from "../lib/shared";
 import { useT } from "../lib/i18n";
-import { IconCart, IconChevron, IconSearch, LogoSprig, Storefront, Twinkle } from "../lib/ornaments";
+import { Drawer, setCartDrawer } from "../lib/cart-drawer";
+import {
+  IconCart,
+  IconChevron,
+  IconMenu,
+  IconSearch,
+  LogoSprig,
+  Storefront,
+  Twinkle,
+} from "../lib/ornaments";
+
+interface NavLink {
+  label: string;
+  href: string;
+  hasChildren: boolean;
+  children: Array<{ label: string; href: string }>;
+}
+
+interface Message {
+  text: string;
+  link: string;
+}
+
+function MessageText({ text, link, hidden = false }: Message & { hidden?: boolean }) {
+  const tabIndex = hidden ? -1 : undefined;
+  if (!link) return <>{text}</>;
+  if (/^https?:\/\//.test(link)) {
+    return (
+      <a href={link} target="_blank" rel="noopener noreferrer" tabIndex={tabIndex}>
+        {text}
+      </a>
+    );
+  }
+  return (
+    <Link to={link} tabIndex={tabIndex}>
+      {text}
+    </Link>
+  );
+}
 
 export default function PwHeader({ instance }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const t = useT();
   const shop = useShop();
+  const demo = useDemo();
   const { cart } = useCart();
   const { items: menuItems } = useNavigation(asString(s.menu_handle) || "main-menu");
   const ornaments = useOrnaments();
 
   const [query, setQuery] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const storeName = asString(s.brand_name) || shop?.name || "";
   const established = asString(s.established);
@@ -47,21 +108,42 @@ export default function PwHeader({ instance }: SectionRenderProps) {
   const showSearch = asBool(s.show_search, true);
   const showCart = asBool(s.show_cart, true);
 
-  const blockLinks = readBlockNodes(instance, "nav_item").map((b) => ({
+  const blockMessages: Message[] = readBlockNodes(instance, "announcement")
+    .map((b) => ({ text: asString(b.settings.text), link: asString(b.settings.link) }))
+    .filter((m) => m.text);
+  const messages: Message[] =
+    blockMessages.length > 0
+      ? blockMessages
+      : demo
+        ? [
+            { text: t("announce.demo_1", "New arrivals on the shelves every week"), link: "/products" },
+            { text: t("announce.demo_2", "Staff picks, hand-chosen by our booksellers"), link: "" },
+          ]
+        : [];
+  const scroll = asBool(s.announcement_scroll, true);
+  const loopSeconds = asNumber(s.announcement_speed, 35);
+
+  const blockLinks: NavLink[] = readBlockNodes(instance, "nav_item").map((b) => ({
     label: asString(b.settings.label),
     href: asString(b.settings.link) || "/",
     hasChildren: asBool(b.settings.show_caret, false),
+    children: [],
   }));
-  const links =
+  const links: NavLink[] =
     blockLinks.length > 0
       ? blockLinks
       : (menuItems ?? []).map((item) => ({
           label: item.title ?? "",
           href: item.url ?? "/",
           hasChildren: Boolean(item.children?.length),
+          children: (item.children ?? []).map((child) => ({
+            label: child.title ?? "",
+            href: child.url ?? "/",
+          })),
         }));
 
   const itemCount = cart?.items?.reduce((n, i) => n + (i.quantity ?? 0), 0) ?? 0;
+  const cartLabel = `${t("nav.cart", "Cart")} (${itemCount})`;
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -70,9 +152,72 @@ export default function PwHeader({ instance }: SectionRenderProps) {
     requestNavigate(`/search?q=${encodeURIComponent(q)}`);
   };
 
+  const openCart = (e: MouseEvent) => {
+    e.preventDefault();
+    setCartDrawer(true);
+  };
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <header>
+      {messages.length > 0 && (
+        <div
+          className="pw-announce"
+          data-scroll={scroll ? "on" : "off"}
+          style={{ "--pw-announce-duration": `${loopSeconds}s` } as CSSProperties}
+        >
+          {scroll ? (
+            <div className="pw-announce-track">
+              <ul className="pw-announce-group" aria-label={t("announce.label", "Announcements")}>
+                {messages.map((m, i) => (
+                  <li key={i}>
+                    <MessageText {...m} />
+                  </li>
+                ))}
+              </ul>
+              <ul className="pw-announce-group" aria-hidden="true">
+                {messages.map((m, i) => (
+                  <li key={i}>
+                    <MessageText {...m} hidden />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <ul className="pw-announce-group static" aria-label={t("announce.label", "Announcements")}>
+              {messages.map((m, i) => (
+                <li key={i}>
+                  <MessageText {...m} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
       <div className="pw-band">
+        {links.length > 0 && (
+          <button
+            type="button"
+            className="pw-iconbtn pw-menu-btn"
+            aria-label={t("nav.menu", "Menu")}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(true)}
+          >
+            <IconMenu />
+          </button>
+        )}
+        {showCart && (
+          <Link to="/cart" className="pw-iconbtn pw-cart-btn" aria-label={cartLabel} onClick={openCart}>
+            <IconCart size={20} />
+            {itemCount > 0 && (
+              <span className="pw-count-badge" aria-hidden="true">
+                {itemCount}
+              </span>
+            )}
+          </Link>
+        )}
+
         <div className="pw-band-inner">
           <Link to="/" className="pw-logo">
             {/* One drawing, mirrored — two hand-authored vines would drift. */}
@@ -140,7 +285,7 @@ export default function PwHeader({ instance }: SectionRenderProps) {
               </>
             )}
             {showCart && (
-              <Link to="/cart" className="pw-cartpill">
+              <Link to="/cart" className="pw-cartpill" onClick={openCart}>
                 <IconCart />
                 {t("nav.cart", "Cart")} <b>({itemCount})</b>
               </Link>
@@ -160,6 +305,41 @@ export default function PwHeader({ instance }: SectionRenderProps) {
             ))}
           </div>
         </nav>
+      )}
+
+      {menuOpen && (
+        <Drawer
+          side="start"
+          title={t("nav.menu", "Menu")}
+          closeLabel={t("drawer.close", "Close")}
+          onClose={closeMenu}
+        >
+          <ul className="pw-menu-list">
+            {links.map((link, i) => (
+              <li key={`${link.href}-${i}`}>
+                <Link to={link.href} onClick={closeMenu}>
+                  {link.label}
+                </Link>
+                {link.children.length > 0 && (
+                  <ul>
+                    {link.children.map((child, j) => (
+                      <li key={`${child.href}-${j}`}>
+                        <Link to={child.href} onClick={closeMenu}>
+                          {child.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+            <li>
+              <Link to="/account" onClick={closeMenu}>
+                {t("nav.account", "My account")}
+              </Link>
+            </li>
+          </ul>
+        </Drawer>
       )}
     </header>
   );

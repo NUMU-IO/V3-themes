@@ -67,6 +67,33 @@
       "label": "Show the cart button",
       "label_ar": "إظهار زر السلة",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Announcement bar",
+      "content_ar": "شريط الإعلانات"
+    },
+    {
+      "type": "paragraph",
+      "content": "Add Announcement blocks to show a strip above the masthead. Scrolling messages loop and pause on hover; shoppers who prefer reduced motion see them still.",
+      "content_ar": "ضيف بلوكات إعلان عشان يظهر شريط فوق الهيدر. الرسائل المتحركة بتلف وبتقف لما الماوس يعدي عليها؛ واللي مفعّل تقليل الحركة بيشوفها ثابتة."
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_scroll",
+      "label": "Scroll the messages",
+      "label_ar": "تحريك الرسائل",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "announcement_speed",
+      "label": "Seconds per loop",
+      "label_ar": "ثواني اللفة الواحدة",
+      "default": 35,
+      "min": 10,
+      "max": 90,
+      "step": 5
     }
   ],
   "blocks": [
@@ -97,6 +124,27 @@
           "default": false
         }
       ]
+    },
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "name_ar": "إعلان",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Message",
+          "label_ar": "الرسالة",
+          "default": ""
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "label_ar": "الرابط",
+          "default": ""
+        }
+      ]
     }
   ],
   "presets": [
@@ -107,7 +155,9 @@
         "established": "EST. 1971",
         "strapline": "CITY of BOOKS",
         "show_search": true,
-        "show_cart": true
+        "show_cart": true,
+        "announcement_scroll": true,
+        "announcement_speed": 35
       }
     }
   ]
