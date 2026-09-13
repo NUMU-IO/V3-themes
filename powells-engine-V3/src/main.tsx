@@ -349,7 +349,7 @@ const v3Handle = {
   mount_returns: "MountResult" as const,
   // ⚠ Version lives in THREE places and they must match: theme.json,
   // package.json, and this literal.
-  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.1.0" },
+  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.1.1" },
   mount,
 };
 export default v3Handle;

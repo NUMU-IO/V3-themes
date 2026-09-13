@@ -745,18 +745,16 @@
   align-items: center;
   gap: 22px;
 }
+/* Just the product image: no panel, padding or shadow around it. Book covers
+   are photographed as the whole product, so a frame only shrinks them. */
 .pw-pdp-stage {
   width: 100%;
-  padding: 40px 20px 34px;
   display: grid;
   place-items: center;
-  background: linear-gradient(180deg, var(--pw-surface) 0%, var(--pw-paper-deep) 100%);
-  border: 1px solid var(--pw-rail-edge);
 }
 .pw-pdp-stage img {
-  max-height: 430px;
-  width: auto;
-  box-shadow: 3px 5px 18px rgba(61, 41, 99, 0.26);
+  width: 100%;
+  height: auto;
 }
 .pw-pdp-thumbs {
   display: flex;
@@ -2374,12 +2372,6 @@
   .pw-sortbar {
     margin: 18px 0 22px;
   }
-  .pw-pdp-stage {
-    padding: 24px 12px;
-  }
-  .pw-pdp-stage img {
-    max-height: 340px;
-  }
   .pw-pdp-sections,
   .pw-related {
     margin-block-start: 44px;
@@ -2548,11 +2540,9 @@
   gap: 12px;
   margin-block: 10px 16px;
 }
-.pw-look .pw-pdp-stage {
-  padding: 22px 12px;
-}
 .pw-look .pw-pdp-stage img {
-  max-height: 300px;
+  width: auto;
+  max-height: 360px;
 }
 .pw-look .pw-pdp-thumbs button {
   width: 48px;
