@@ -32,6 +32,7 @@ import {
   type MaybeOrderedTemplate,
 } from "./lib/template-utils";
 import { DemoContext, PageDataContext, usePageData, type MountPageData } from "./lib/shared";
+import { CartDrawer } from "./lib/cart-drawer";
 
 /**
  * Section registry — the single source of truth for what this bundle can
@@ -267,6 +268,7 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
       {footer.map(({ id, instance }) => (
         <RenderSection key={id} sectionId={id} instance={instance} />
       ))}
+      <CartDrawer />
     </div>
   );
 }
@@ -347,7 +349,7 @@ const v3Handle = {
   mount_returns: "MountResult" as const,
   // ⚠ Version lives in THREE places and they must match: theme.json,
   // package.json, and this literal.
-  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.0.0" },
+  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.1.0" },
   mount,
 };
 export default v3Handle;
@@ -402,6 +404,7 @@ if (import.meta.env.DEV && typeof window !== "undefined" && typeof document !== 
           section_groups: {},
         },
         locale: params.get("locale") === "ar" ? "ar" : "en",
+        demo: params.get("demo") === "1",
         initialCart: DEV_CART as never,
         page: devPage(template, slug) as never,
         currentTemplate: template,

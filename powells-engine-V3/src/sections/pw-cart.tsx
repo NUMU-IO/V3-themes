@@ -15,10 +15,15 @@
  * The condition badge on each line is what makes this a used-bookshop cart:
  * two lines can carry the same title at different prices, and without the
  * grade the shopper cannot tell which copy is which.
+ *
+ * Promotion nudges sit above the totals. When this section's own free-shipping
+ * meter is showing, the promotion engine's free-shipping nudge is skipped so
+ * the shopper is not told the same thing twice in two different ways.
  */
 
 import { useState, type FormEvent } from "react";
 import { Image, Link, Money, useCart, useResolvedSettings } from "@numueg/theme-sdk";
+import { formatMoney } from "@numueg/theme-kit";
 import {
   asBool,
   asNumber,
@@ -28,6 +33,7 @@ import {
   type SectionRenderProps,
 } from "../lib/shared";
 import { useT } from "../lib/i18n";
+import { CartNudges } from "../lib/promotions";
 
 /** A stand-in cart so the customizer can style the filled state. */
 const SAMPLE_ITEMS = [
@@ -192,16 +198,15 @@ export default function PwCart({ instance }: SectionRenderProps) {
           <aside className="pw-summary">
             <h2>{t("cart.summary", "Order Summary")}</h2>
 
+            <CartNudges skipFreeShipping={showMeter} />
+
             {showMeter && (
               <div className="pw-meter">
                 <p>
                   {remaining > 0
                     ? t("cart.free_shipping_left", "{{amount}} away from free shipping").replace(
                         "{{amount}}",
-                        new Intl.NumberFormat(undefined, {
-                          style: "currency",
-                          currency: currency || "USD",
-                        }).format(remaining),
+                        formatMoney(remaining, currency),
                       )
                     : t("cart.free_shipping_hit", "You have free shipping.")}
                 </p>

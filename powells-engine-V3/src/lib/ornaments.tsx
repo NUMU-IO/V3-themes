@@ -341,3 +341,114 @@ export function IconChevron({ size = 12 }: { size?: number }) {
     </svg>
   );
 }
+
+export function IconMenu({ size = 22 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+    >
+      <path d="M3 5.5h14M3 10h14M3 14.5h14" />
+    </svg>
+  );
+}
+
+export function IconClose({ size = 20 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+    >
+      <path d="M5 5l10 10M15 5L5 15" />
+    </svg>
+  );
+}
+
+export function IconTruck({ size = 20 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M1.5 4.5h10v8h-10zM11.5 7.5h3.6l3.4 3.2v1.8h-7" />
+      <circle cx="5" cy="14.8" r="1.6" />
+      <circle cx="14.6" cy="14.8" r="1.6" />
+    </svg>
+  );
+}
+
+export function IconReturn({ size = 20 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 8a6.5 6.5 0 1 1 1.4 6.2" />
+      <path d="M3.5 3.5V8H8" />
+    </svg>
+  );
+}
+
+export function IconShield({ size = 20 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M10 2l6.5 2.5v5c0 4-2.8 7-6.5 8.5C6.3 16.5 3.5 13.5 3.5 9.5v-5z" />
+      <path d="M7 10l2.2 2.2L13.3 8" />
+    </svg>
+  );
+}
+
+export function IconEye({ size = 17 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M1.5 10S4.6 4.5 10 4.5 18.5 10 18.5 10 15.4 15.5 10 15.5 1.5 10 1.5 10z" />
+      <circle cx="10" cy="10" r="2.6" />
+    </svg>
+  );
+}
