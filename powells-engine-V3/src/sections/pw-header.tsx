@@ -6,6 +6,12 @@
  * inline-end edge — wishlist (with its count), account, and a cart pill that
  * shows the running total. The menu sits in a quieter row beneath.
  *
+ * The shop's mark is the Powells lockup — the store name set large in caps
+ * with the line beneath it, between two mirrored vines — unless the merchant
+ * uploads a logo in THIS section. The store-level logo is deliberately not
+ * used: it is often a profile photo, not a wordmark, and it replaced the name
+ * on live stores.
+ *
  * Navigation comes from merchant blocks when the merchant has added any, and
  * falls back to the store's own menu (`useNavigation`) otherwise. On narrow
  * screens the menu row collapses into a drawer behind a menu button and the
@@ -43,12 +49,21 @@ import {
   isInlineImage,
   readBlockNodes,
   useDemo,
+  useOrnaments,
   type SectionRenderProps,
 } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { Drawer, setCartDrawer } from "../lib/cart-drawer";
 import { setWishlistDrawer, useShopWishlist } from "../lib/wishlist";
-import { IconCart, IconChevron, IconHeart, IconMenu, IconSearch, IconUser } from "../lib/ornaments";
+import {
+  IconCart,
+  IconChevron,
+  IconHeart,
+  IconMenu,
+  IconSearch,
+  IconUser,
+  LogoSprig,
+} from "../lib/ornaments";
 
 interface NavLink {
   label: string;
@@ -84,6 +99,7 @@ export default function PwHeader({ instance }: SectionRenderProps) {
   const t = useT();
   const shop = useShop();
   const demo = useDemo();
+  const ornaments = useOrnaments();
   const { cart } = useCart();
   const wishlist = useShopWishlist();
   const { items: menuItems } = useNavigation(asString(s.menu_handle) || "main-menu");
@@ -93,7 +109,7 @@ export default function PwHeader({ instance }: SectionRenderProps) {
 
   const storeName = asString(s.brand_name) || shop?.name || "";
   const strapline = asString(s.strapline);
-  const logo = asImageUrl(s.logo) || asString((shop as unknown as Record<string, unknown> | null)?.logo_url);
+  const logo = asImageUrl(s.logo);
   const showName = !logo || asBool(s.show_name_with_logo, false);
   const showSearch = asBool(s.show_search, true);
   const showCart = asBool(s.show_cart, true);
@@ -210,10 +226,23 @@ export default function PwHeader({ instance }: SectionRenderProps) {
               </span>
             )}
             {showName && (
-              <span className="pw-logo-type">
-                <span className="pw-wordmark">{storeName}</span>
-                {strapline && <span className="pw-sub">{strapline}</span>}
-              </span>
+              <>
+                {/* One drawing, mirrored — two hand-authored vines would drift. */}
+                {ornaments && !logo && (
+                  <span className="pw-logo-vine" aria-hidden="true">
+                    <LogoSprig size={46} />
+                  </span>
+                )}
+                <span className="pw-logo-type">
+                  <span className="pw-wordmark">{storeName}</span>
+                  {strapline && <span className="pw-sub">{strapline}</span>}
+                </span>
+                {ornaments && !logo && (
+                  <span className="pw-logo-vine flipped" aria-hidden="true">
+                    <LogoSprig size={46} />
+                  </span>
+                )}
+              </>
             )}
           </Link>
 

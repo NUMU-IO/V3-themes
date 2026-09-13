@@ -14,8 +14,8 @@
       "label": "Logo",
       "label_ar": "اللوجو",
       "default": "",
-      "info": "Leave empty to use the store logo, or the shop name if there is none.",
-      "info_ar": "سيبه فاضي عشان يستخدم لوجو المتجر، أو اسم المحل لو مفيش لوجو."
+      "info": "Leave empty to show the shop name in the Powells lockup.",
+      "info_ar": "سيبه فاضي عشان يظهر اسم المحل بشكل باول."
     },
     {
       "type": "checkbox",
