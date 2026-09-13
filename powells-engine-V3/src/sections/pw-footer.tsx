@@ -1,10 +1,12 @@
 /**
- * pw-footer — link columns over a hairline, and the shop's own line about
- * itself.
+ * pw-footer — the shop's name and a line about itself, link columns, and the
+ * copyright row. Compact on purpose: it closes the page, it does not compete
+ * with it.
  *
  * Columns are nested blocks (`column → link`), which is why this reads them
  * with `readBlockNodes` rather than theme-kit's flat `readBlocks`: the latter
- * hands back only a settings bag and cannot recurse.
+ * hands back only a settings bag and cannot recurse. A column with no links is
+ * not rendered — an empty "SHOP" heading is a promise with nothing behind it.
  *
  * Global chrome, so it renders on data-less routes. It reads nothing from
  * `page.data`.
@@ -26,13 +28,14 @@ export default function PwFooter({ instance }: SectionRenderProps) {
   const about = asString(s.about);
   const note = asString(s.hand_note);
 
-  const columns = readBlockNodes(instance, "column").map((column) => ({
-    title: asString(column.settings.title),
-    links: readBlockNodes(column, "link").map((l) => ({
-      label: asString(l.settings.label),
-      href: asString(l.settings.link) || "/",
-    })),
-  }));
+  const columns = readBlockNodes(instance, "column")
+    .map((column) => ({
+      title: asString(column.settings.title),
+      links: readBlockNodes(column, "link")
+        .map((l) => ({ label: asString(l.settings.label), href: asString(l.settings.link) || "/" }))
+        .filter((l) => l.label),
+    }))
+    .filter((column) => column.links.length > 0);
 
   /**
    * The year is read AFTER mount, not during render.
@@ -49,23 +52,15 @@ export default function PwFooter({ instance }: SectionRenderProps) {
     <footer className="pw-footer">
       <div className="pw-footer-inner">
         <div className="pw-footer-brand">
-          <h3 style={{ fontFamily: "var(--pw-font-heading)", fontSize: "1.5rem", letterSpacing: 0 }}>
-            {storeName}
-          </h3>
+          <h3 className="pw-footer-name">{storeName}</h3>
           {about && <p>{about}</p>}
           {ornaments && note && (
-            <div style={{ display: "flex", alignItems: "flex-end", gap: 12, marginBlockStart: 22 }}>
-              <span style={{ color: "var(--pw-ink-soft)" }}>
-                <BookStack size={70} />
+            <p className="pw-footer-note">
+              <span aria-hidden="true">
+                <BookStack size={30} />
               </span>
-              <span className="pw-hand">
-                {note.split("\n").map((line, i) => (
-                  <span key={`${line}-${i}`} style={{ display: "block" }}>
-                    {line}
-                  </span>
-                ))}
-              </span>
-            </div>
+              <span className="pw-hand">{note.split("\n").join(" ")}</span>
+            </p>
           )}
         </div>
 

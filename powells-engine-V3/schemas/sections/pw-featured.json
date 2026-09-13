@@ -1,0 +1,129 @@
+{
+  "type": "pw-featured",
+  "name": "Books + banner",
+  "name_ar": "كتب + بانر",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A row of book tiles under a heading, with one promo banner beside it. The banner shows only when you give it a title or an image.",
+      "content_ar": "صف كتب تحت عنوان، وجنبه بانر عرض واحد. البانر بيظهر بس لما تحط له عنوان أو صورة."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "Newly released"
+    },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Which books",
+      "label_ar": "أي كتب",
+      "default": "newest",
+      "options": [
+        {
+          "value": "newest",
+          "label": "Newest first",
+          "label_ar": "الأحدث"
+        },
+        {
+          "value": "sale",
+          "label": "Reduced",
+          "label_ar": "المخفّض"
+        },
+        {
+          "value": "cheapest",
+          "label": "Cheapest first",
+          "label_ar": "الأرخص"
+        },
+        {
+          "value": "collection",
+          "label": "From one collection",
+          "label_ar": "من تصنيف واحد"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "collection",
+      "label": "Collection",
+      "label_ar": "التصنيف",
+      "default": "",
+      "info": "The collection's name or handle.",
+      "info_ar": "اسم التصنيف أو معرّفه.",
+      "visible_if": "{{ section.settings.source == 'collection' }}"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "label": "How many books",
+      "label_ar": "عدد الكتب",
+      "default": 3,
+      "min": 2,
+      "max": 8,
+      "step": 1
+    },
+    {
+      "type": "header",
+      "content": "Promo banner",
+      "content_ar": "بانر العرض"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_promo",
+      "label": "Show the banner",
+      "label_ar": "إظهار البانر",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "promo_eyebrow",
+      "label": "Small line above",
+      "label_ar": "السطر الصغير فوق",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "promo_title",
+      "label": "Banner title",
+      "label_ar": "عنوان البانر",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "promo_button",
+      "label": "Button",
+      "label_ar": "الزر",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "promo_link",
+      "label": "Banner link",
+      "label_ar": "رابط البانر",
+      "default": "/products"
+    },
+    {
+      "type": "image_picker",
+      "id": "promo_image",
+      "label": "Banner image",
+      "label_ar": "صورة البانر",
+      "default": "",
+      "info": "A tall image works best, such as a book photographed on a table.",
+      "info_ar": "الأفضل صورة طولية، زي كتاب متصور على ترابيزة."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Books + banner",
+      "name_ar": "كتب + بانر",
+      "settings": {
+        "heading": "Newly released",
+        "source": "newest",
+        "limit": 3,
+        "show_promo": true
+      }
+    }
+  ]
+}

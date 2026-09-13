@@ -174,5 +174,19 @@
   "preview.failed": "معرفناش نحمّل الكتاب ده دلوقتي.",
   "announce.label": "إعلانات",
   "announce.demo_1": "كتب جديدة على الرفوف كل أسبوع",
-  "announce.demo_2": "اختيارات الفريق، منتقاة بإيد بائعينا"
+  "announce.demo_2": "اختيارات الفريق، منتقاة بإيد بائعينا",
+  "nav.wishlist": "المفضلة",
+  "wishlist.title": "المفضلة",
+  "wishlist.empty": "مفيش كتب محفوظة لسه. دوس على القلب في أي كتاب عشان يتحفظ هنا.",
+  "wishlist.unavailable": "الكتاب ده مبقاش متاح",
+  "product.wishlisted": "محفوظ في المفضلة",
+  "product.category": "التصنيف",
+  "product.share": "شارك",
+  "product.share_on": "شارك على {{network}}",
+  "product.tab_description": "الوصف",
+  "product.tab_specs": "مواصفات الكتاب",
+  "product.tab_quality": "الجودة",
+  "product.tab_delivery": "التوصيل",
+  "product.quality_default": "كل نسخة بتتراجع بإيدينا قبل الشحن وبتتقيّم بصراحة، فالحالة اللي بتختارها هي اللي بتوصلك.",
+  "featured.shop_now": "تسوق دلوقتي"
 }

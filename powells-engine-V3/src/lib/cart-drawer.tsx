@@ -22,28 +22,33 @@ import { useT } from "./i18n";
 import { IconClose } from "./ornaments";
 import { CartNudges } from "./promotions";
 
-let cartOpen = false;
-const listeners = new Set<() => void>();
-
-export function setCartDrawer(open: boolean): void {
-  cartOpen = open;
-  listeners.forEach((listener) => listener());
-}
-
-function subscribe(listener: () => void) {
-  listeners.add(listener);
-  return () => {
-    listeners.delete(listener);
+/** An open/closed flag that unrelated sections can flip without a shared parent. */
+export function createOpenStore() {
+  let open = false;
+  const listeners = new Set<() => void>();
+  const subscribe = (listener: () => void) => {
+    listeners.add(listener);
+    return () => {
+      listeners.delete(listener);
+    };
+  };
+  return {
+    set(next: boolean) {
+      open = next;
+      listeners.forEach((listener) => listener());
+    },
+    useOpen: () =>
+      useSyncExternalStore(
+        subscribe,
+        () => open,
+        () => false,
+      ),
   };
 }
 
-export function useCartDrawerOpen(): boolean {
-  return useSyncExternalStore(
-    subscribe,
-    () => cartOpen,
-    () => false,
-  );
-}
+const cartStore = createOpenStore();
+export const setCartDrawer = (open: boolean): void => cartStore.set(open);
+export const useCartDrawerOpen = (): boolean => cartStore.useOpen();
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
