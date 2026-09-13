@@ -284,7 +284,10 @@ jobs:
           SEED_TEST: ${{ github.event_name != 'push' && github.event.inputs.seed_test != 'false' }}
           SEED_PROD: ${{ github.event.inputs.seed_prod != 'false' }}
           CONTAINER: numu-api-test
-          # PROD api lives as the `api` compose service in /opt/numu-api on EC2.
+          # PROD api is the blue/green local slot container on EC2 (see
+          # NUMU-api ops/deploy-blue-green.sh LOCAL_NAME). EC2_DIR is kept for
+          # the compose fallback on a box that has not been cut over.
+          EC2_API_CONTAINER: numu-api-prod
           EC2_DIR: /opt/numu-api
         run: |
           set -u
@@ -329,11 +332,15 @@ jobs:
             # theme + continue so later themes still deploy.
             #
             # TEST = `docker exec` against the named `numu-api-test` container on
-            # the droplet. PROD = `docker compose exec` against the `api` service
-            # in /opt/numu-api on EC2 (no fixed container name; compose resolves
-            # it). Both seed scripts read THEME_DIR + THEME_BUNDLE_BASE; the
-            # marketplace script auto-resolves the developer to each env's
-            # admin@numueg.app user.
+            # the droplet. PROD = the blue/green LOCAL slot `numu-api-prod` on
+            # EC2 (NUMU-api ops/deploy-blue-green.sh names it; traffic goes
+            # through `numu-api-router`). The blue/green cutover removed the
+            # `api` compose service, so `docker compose exec api` now fails with
+            # `service "api" is not running` — that is what failed the #70
+            # deploy. Compose `api` stays only as a fallback for a box that has
+            # not been cut over. Both seed scripts read THEME_DIR +
+            # THEME_BUNDLE_BASE; the marketplace script auto-resolves the
+            # developer to each env's admin@numueg.app user.
             seed_theme() {
               $SSH "$DROPLET" "docker start $CONTAINER >/dev/null 2>&1 || true"
               tar -C "$d/dist" -cf - . | $SSH "$DROPLET" \
@@ -342,11 +349,21 @@ jobs:
                 && $SSH "$DROPLET" "docker exec -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $CONTAINER python scripts/seed_marketplace_theme.py"
             }
             seed_theme_ec2() {
-              $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose start api >/dev/null 2>&1 || true"
+              local exec_api target
+              if $SSH_EC2 "$EC2" "docker inspect $EC2_API_CONTAINER >/dev/null 2>&1"; then
+                $SSH_EC2 "$EC2" "docker start $EC2_API_CONTAINER >/dev/null 2>&1 || true"
+                exec_api="docker exec -i"
+                target="$EC2_API_CONTAINER"
+              else
+                $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose start api >/dev/null 2>&1 || true"
+                exec_api="cd $EC2_DIR && docker compose exec -T"
+                target=api
+              fi
+              echo "prod seed via $target"
               tar -C "$d/dist" -cf - . | $SSH_EC2 "$EC2" \
-                "cd $EC2_DIR && docker compose exec -T api sh -c 'rm -rf /tmp/seed-dist && mkdir -p /tmp/seed-dist && tar -C /tmp/seed-dist -xf -'" \
-                && $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose exec -T -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE api python scripts/seed_numu_theme.py" \
-                && $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose exec -T -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE api python scripts/seed_marketplace_theme.py"
+                "$exec_api $target sh -c 'rm -rf /tmp/seed-dist && mkdir -p /tmp/seed-dist && tar -C /tmp/seed-dist -xf -'" \
+                && $SSH_EC2 "$EC2" "$exec_api -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $target python scripts/seed_numu_theme.py" \
+                && $SSH_EC2 "$EC2" "$exec_api -e THEME_DIR=/tmp/seed-dist -e THEME_BUNDLE_BASE=$BUNDLE_BASE $target python scripts/seed_marketplace_theme.py"
             }
 
             theme_failed=0
@@ -372,7 +389,7 @@ jobs:
             if [ "$SEED_PROD" = "true" ]; then
               if ! seed_theme_ec2; then
                 echo "::warning::prod (EC2) seed failed for $d; ensuring api is up and retrying once"
-                $SSH_EC2 "$EC2" "cd $EC2_DIR && docker compose start api >/dev/null 2>&1 || true; sleep 8" || true
+                $SSH_EC2 "$EC2" "docker start $EC2_API_CONTAINER >/dev/null 2>&1 || (cd $EC2_DIR && docker compose start api >/dev/null 2>&1) || true; sleep 8" || true
                 if ! seed_theme_ec2; then
                   echo "::error::prod seed failed for $d (check EC2 api container / prod DB reachability)"
                   theme_failed=1
