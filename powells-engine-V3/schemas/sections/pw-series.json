@@ -1,0 +1,7 @@
+{
+  "type": "pw-series",
+  "name": "Book series",
+  "name_ar": "سلسلة كتب",
+  "settings": [],
+  "presets": [{ "name": "Book series", "name_ar": "سلسلة كتب" }]
+}

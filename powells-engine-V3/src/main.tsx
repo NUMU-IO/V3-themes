@@ -32,6 +32,7 @@ import {
   type MaybeOrderedTemplate,
 } from "./lib/template-utils";
 import { DemoContext, PageDataContext, usePageData, type MountPageData } from "./lib/shared";
+import { CartDrawer } from "./lib/cart-drawer";
 
 /**
  * Section registry — the single source of truth for what this bundle can
@@ -52,6 +53,7 @@ import PwShelfLinks from "./sections/pw-shelf-links";
 import PwEditorial from "./sections/pw-editorial";
 import PwCollection from "./sections/pw-collection";
 import PwProduct from "./sections/pw-product";
+import PwSeries from "./sections/pw-series";
 import PwCart from "./sections/pw-cart";
 import PwCheckout from "./sections/pw-checkout";
 import PwSearch from "./sections/pw-search";
@@ -78,6 +80,7 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "pw-editorial": PwEditorial,
   "pw-collection": PwCollection,
   "pw-product": PwProduct,
+  "pw-series": PwSeries,
   "pw-cart": PwCart,
   "pw-checkout": PwCheckout,
   "pw-search": PwSearch,
@@ -91,12 +94,20 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
 
-const BUILTIN_TEMPLATES =
-  (
+const BUILTIN_TEMPLATES: Record<string, MaybeOrderedTemplate> = {
+  ...(
     themeManifest as unknown as {
       presets?: { templates?: Record<string, MaybeOrderedTemplate> };
     }
-  ).presets?.templates ?? {};
+  ).presets?.templates,
+  series: {
+    sections: [
+      { type: "pw-header", settings: {} },
+      { type: "pw-series", settings: {} },
+      { type: "pw-footer", settings: {} },
+    ],
+  },
+};
 
 const HEADER_TYPES = new Set(["pw-header", "header"]);
 const FOOTER_TYPES = new Set(["pw-footer", "footer"]);
@@ -257,6 +268,7 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
       {footer.map(({ id, instance }) => (
         <RenderSection key={id} sectionId={id} instance={instance} />
       ))}
+      <CartDrawer />
     </div>
   );
 }
@@ -337,7 +349,7 @@ const v3Handle = {
   mount_returns: "MountResult" as const,
   // ⚠ Version lives in THREE places and they must match: theme.json,
   // package.json, and this literal.
-  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.0.0" },
+  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.1.0" },
   mount,
 };
 export default v3Handle;
@@ -392,6 +404,7 @@ if (import.meta.env.DEV && typeof window !== "undefined" && typeof document !== 
           section_groups: {},
         },
         locale: params.get("locale") === "ar" ? "ar" : "en",
+        demo: params.get("demo") === "1",
         initialCart: DEV_CART as never,
         page: devPage(template, slug) as never,
         currentTemplate: template,

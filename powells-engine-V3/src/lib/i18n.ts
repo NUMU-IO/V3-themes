@@ -50,3 +50,10 @@ export function useT(): TFunction {
     [hostT, messages],
   );
 }
+
+/** Substitute `{{name}}` placeholders; unknown names are left as written. */
+export function fill(template: string, vars: Record<string, string | number>): string {
+  return template.replace(/\{\{(\w+)\}\}/g, (match, key: string) =>
+    key in vars ? String(vars[key]) : match,
+  );
+}
