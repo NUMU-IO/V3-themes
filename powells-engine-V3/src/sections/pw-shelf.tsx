@@ -12,13 +12,12 @@
  */
 
 import { useMemo } from "react";
-import { Link, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
+import { Link, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import { asBool, asNumber, asString, useOrnaments, type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
+import { pickBooks, type BookSource } from "../lib/pick-books";
 import { Twinkle } from "../lib/ornaments";
-
-type Source = "newest" | "sale" | "cheapest" | "collection";
 
 export default function PwShelf({ instance }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
@@ -29,44 +28,14 @@ export default function PwShelf({ instance }: SectionRenderProps) {
   // that ship none — hence fetchIfMissing.
   const { products } = useProducts({ limit: 48, fetchIfMissing: true });
 
-  const source = (asString(s.source) || "newest") as Source;
+  const source = (asString(s.source) || "newest") as BookSource;
   const limit = asNumber(s.limit, 5);
-  const collectionHandle = asString(s.collection).toLowerCase();
+  const collection = asString(s.collection);
 
-  const picks = useMemo(() => {
-    const withMeta = products as Array<Product & Record<string, unknown>>;
-    let list = withMeta;
-
-    if (source === "collection" && collectionHandle) {
-      list = withMeta.filter((p) => {
-        const category = (p.category ?? {}) as Record<string, unknown>;
-        return (
-          String(category.id ?? "").toLowerCase() === collectionHandle ||
-          String(category.name ?? "").toLowerCase() === collectionHandle
-        );
-      });
-      // A handle that matches nothing falls back to everything rather than
-      // rendering an empty row — a merchant mistyping a collection name should
-      // see books, not a hole in their home page.
-      if (list.length === 0) list = withMeta;
-    }
-
-    const copy = [...list];
-    switch (source) {
-      case "sale":
-        return copy
-          .filter((p) => Number(p.compare_at_price ?? 0) > Number(p.price ?? 0))
-          .slice(0, limit);
-      case "cheapest":
-        return copy.sort((a, b) => Number(a.price ?? 0) - Number(b.price ?? 0)).slice(0, limit);
-      case "newest":
-        return copy
-          .sort((a, b) => String(b.created_at ?? "").localeCompare(String(a.created_at ?? "")))
-          .slice(0, limit);
-      default:
-        return copy.slice(0, limit);
-    }
-  }, [products, source, collectionHandle, limit]);
+  const picks = useMemo(
+    () => pickBooks(products, source, collection, limit),
+    [products, source, collection, limit],
+  );
 
   if (picks.length === 0) return null;
 

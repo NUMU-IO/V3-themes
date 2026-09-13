@@ -5,8 +5,24 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "The shopfront sign. The lavender band carries the name, the search field and the marginalia; the pale row beneath carries only the menu. Leave the menu links empty and the store's own menu is used instead.",
-      "content_ar": "لافتة المحل. الشريط البنفسجي فيه الاسم وخانة البحث والرسومات؛ والصف الفاتح تحته فيه القائمة بس. سيب لينكات القائمة فاضية وهيستخدم قائمة متجرك الأصلية."
+      "content": "One band with your logo, a wide search field, and the wishlist, account and cart buttons; the menu sits in a row beneath. Leave the menu links empty and the store's own menu is used instead.",
+      "content_ar": "شريط واحد فيه اللوجو وخانة بحث عريضة وأزرار المفضلة والحساب والسلة؛ والقائمة في صف تحته. سيب لينكات القائمة فاضية وهيستخدم قائمة متجرك الأصلية."
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo",
+      "label_ar": "اللوجو",
+      "default": "",
+      "info": "Leave empty to use the store logo, or the shop name if there is none.",
+      "info_ar": "سيبه فاضي عشان يستخدم لوجو المتجر، أو اسم المحل لو مفيش لوجو."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_name_with_logo",
+      "label": "Show the shop name next to the logo",
+      "label_ar": "إظهار اسم المحل جنب اللوجو",
+      "default": false
     },
     {
       "type": "text",
@@ -19,24 +35,10 @@
     },
     {
       "type": "text",
-      "id": "established",
-      "label": "Established line",
-      "label_ar": "سنة التأسيس",
-      "default": "EST. 1971"
-    },
-    {
-      "type": "text",
       "id": "strapline",
       "label": "Under the name",
       "label_ar": "تحت الاسم",
       "default": "CITY of BOOKS"
-    },
-    {
-      "type": "textarea",
-      "id": "tagline",
-      "label": "Hand-written note",
-      "label_ar": "الملاحظة المكتوبة",
-      "default": "More\nBooks\nMore\nPeople"
     },
     {
       "type": "text",
@@ -59,6 +61,20 @@
       "id": "show_search",
       "label": "Show search",
       "label_ar": "إظهار البحث",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show the wishlist button",
+      "label_ar": "إظهار زر المفضلة",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show the account button",
+      "label_ar": "إظهار زر الحساب",
       "default": true
     },
     {
@@ -152,9 +168,10 @@
       "name": "Masthead",
       "name_ar": "الهيدر",
       "settings": {
-        "established": "EST. 1971",
         "strapline": "CITY of BOOKS",
         "show_search": true,
+        "show_wishlist": true,
+        "show_account": true,
         "show_cart": true,
         "announcement_scroll": true,
         "announcement_speed": 35

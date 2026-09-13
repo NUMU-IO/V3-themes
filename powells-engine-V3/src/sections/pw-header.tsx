@@ -1,38 +1,34 @@
 /**
- * pw-header — the announcement strip, the masthead and the navigation row.
+ * pw-header — the announcement strip, the masthead and the menu row.
  *
- * Two bands, and the split is deliberate: the lavender masthead carries
- * identity and search, the pale row below carries only navigation. That is
- * what makes a bookshop header feel like a shopfront sign over a shelf label
- * rather than one dense toolbar.
+ * The masthead is one band: the shop's mark on the inline-start edge, a wide
+ * search field in the middle, and the shopper's own controls on the
+ * inline-end edge — wishlist (with its count), account, and a cart pill that
+ * shows the running total. The menu sits in a quieter row beneath.
  *
  * Navigation comes from merchant blocks when the merchant has added any, and
- * falls back to the store's own menu (`useNavigation`) otherwise — so a store
- * that has never opened the customizer still gets its real menu rather than
- * this theme's invented one.
- *
- * On narrow screens the storefront art (and the cart pill drawn into it) is
- * hidden and the navigation row collapses, so the masthead grows a menu button
- * and a cart button of its own. Both cart entry points are real links to
- * /cart that open the cart drawer instead once JavaScript is running.
+ * falls back to the store's own menu (`useNavigation`) otherwise. On narrow
+ * screens the menu row collapses into a drawer behind a menu button and the
+ * search field drops to its own row. The cart pill is a real link to /cart that
+ * opens the cart drawer once JavaScript is running; the wishlist heart opens
+ * the wishlist drawer, because the platform has no wishlist page.
  *
  * The announcement strip is merchant blocks above the masthead. Scrolling
  * renders the messages twice and slides the track by half its width, so the
- * copy lands exactly where the original started and the loop has no seam. The
- * duplicate is hidden from assistive tech and unfocusable; the loop pauses on
- * hover and focus; reduced motion (the OS setting or the theme's own switch)
- * shows the messages still. Outside the marketplace demo, no blocks means no
- * strip — this theme never invents an offer for a real store.
+ * loop has no seam. The duplicate is hidden from assistive tech and
+ * unfocusable; the loop pauses on hover and focus; reduced motion shows the
+ * messages still. Outside the marketplace demo, no blocks means no strip.
  *
  * ⚠ The masthead is global chrome, so it renders on `/cart`, `/checkout` and
  * `/account` too — routes the host ships NO page data for. Nothing in here may
- * read `page.data`; the cart count comes from `useCart`, which fetches for
- * itself.
+ * read `page.data`; cart and wishlist state come from their own hooks.
  */
 
 import { useState, type CSSProperties, type FormEvent, type MouseEvent } from "react";
 import {
+  Image,
   Link,
+  Money,
   requestNavigate,
   useCart,
   useNavigation,
@@ -41,24 +37,18 @@ import {
 } from "@numueg/theme-sdk";
 import {
   asBool,
+  asImageUrl,
   asNumber,
   asString,
+  isInlineImage,
   readBlockNodes,
   useDemo,
-  useOrnaments,
   type SectionRenderProps,
 } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { Drawer, setCartDrawer } from "../lib/cart-drawer";
-import {
-  IconCart,
-  IconChevron,
-  IconMenu,
-  IconSearch,
-  LogoSprig,
-  Storefront,
-  Twinkle,
-} from "../lib/ornaments";
+import { setWishlistDrawer, useShopWishlist } from "../lib/wishlist";
+import { IconCart, IconChevron, IconHeart, IconMenu, IconSearch, IconUser } from "../lib/ornaments";
 
 interface NavLink {
   label: string;
@@ -95,18 +85,20 @@ export default function PwHeader({ instance }: SectionRenderProps) {
   const shop = useShop();
   const demo = useDemo();
   const { cart } = useCart();
+  const wishlist = useShopWishlist();
   const { items: menuItems } = useNavigation(asString(s.menu_handle) || "main-menu");
-  const ornaments = useOrnaments();
 
   const [query, setQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
   const storeName = asString(s.brand_name) || shop?.name || "";
-  const established = asString(s.established);
   const strapline = asString(s.strapline);
-  const tagline = asString(s.tagline);
+  const logo = asImageUrl(s.logo) || asString((shop as unknown as Record<string, unknown> | null)?.logo_url);
+  const showName = !logo || asBool(s.show_name_with_logo, false);
   const showSearch = asBool(s.show_search, true);
   const showCart = asBool(s.show_cart, true);
+  const showWishlist = asBool(s.show_wishlist, true);
+  const showAccount = asBool(s.show_account, true);
 
   const blockMessages: Message[] = readBlockNodes(instance, "announcement")
     .map((b) => ({ text: asString(b.settings.text), link: asString(b.settings.link) }))
@@ -143,7 +135,9 @@ export default function PwHeader({ instance }: SectionRenderProps) {
         }));
 
   const itemCount = cart?.items?.reduce((n, i) => n + (i.quantity ?? 0), 0) ?? 0;
-  const cartLabel = `${t("nav.cart", "Cart")} (${itemCount})`;
+  // Cart money is MAJOR units — never divide.
+  const cartTotal = cart?.total ?? cart?.subtotal ?? 0;
+  const wishCount = wishlist.items.length;
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -196,53 +190,41 @@ export default function PwHeader({ instance }: SectionRenderProps) {
       )}
 
       <div className="pw-band">
-        {links.length > 0 && (
-          <button
-            type="button"
-            className="pw-iconbtn pw-menu-btn"
-            aria-label={t("nav.menu", "Menu")}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen(true)}
-          >
-            <IconMenu />
-          </button>
-        )}
-        {showCart && (
-          <Link to="/cart" className="pw-iconbtn pw-cart-btn" aria-label={cartLabel} onClick={openCart}>
-            <IconCart size={20} />
-            {itemCount > 0 && (
-              <span className="pw-count-badge" aria-hidden="true">
-                {itemCount}
-              </span>
-            )}
-          </Link>
-        )}
-
         <div className="pw-band-inner">
-          <Link to="/" className="pw-logo">
-            {/* One drawing, mirrored — two hand-authored vines would drift. */}
-            {ornaments && (
-              <span className="pw-logo-vine">
-                <LogoSprig size={62} />
+          {links.length > 0 && (
+            <button
+              type="button"
+              className="pw-iconbtn pw-menu-btn"
+              aria-label={t("nav.menu", "Menu")}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(true)}
+            >
+              <IconMenu />
+            </button>
+          )}
+
+          <Link to="/" className="pw-logo" aria-label={storeName}>
+            {logo && (
+              <span className="pw-logo-img">
+                <Image src={logo} alt={showName ? "" : storeName} responsive={!isInlineImage(logo)} priority />
               </span>
             )}
-            <span className="pw-logo-type">
-              {established && <span className="pw-est">{`→  ${established}  ←`}</span>}
-              <span className="pw-wordmark">{storeName}</span>
-              {strapline && <span className="pw-sub">{strapline}</span>}
-            </span>
-            {ornaments && (
-              <span className="pw-logo-vine flipped">
-                <LogoSprig size={62} />
+            {showName && (
+              <span className="pw-logo-type">
+                <span className="pw-wordmark">{storeName}</span>
+                {strapline && <span className="pw-sub">{strapline}</span>}
               </span>
             )}
           </Link>
 
-          {showSearch ? (
+          {showSearch && (
             <form className="pw-search" role="search" onSubmit={onSearch}>
               <label className="pw-sr" htmlFor={`pw-q-${instance.type}`}>
                 {t("search.label", "Search for books")}
               </label>
+              <button type="submit" aria-label={t("search.submit", "Search")}>
+                <IconSearch size={19} />
+              </button>
               <input
                 id={`pw-q-${instance.type}`}
                 type="search"
@@ -253,41 +235,45 @@ export default function PwHeader({ instance }: SectionRenderProps) {
                   t("search.placeholder", "Search for books, authors, titles...")
                 }
               />
-              <button type="submit" aria-label={t("search.submit", "Search")}>
-                <IconSearch />
-              </button>
             </form>
-          ) : (
-            <span />
           )}
 
-          <div className="pw-band-art" style={{ color: "var(--pw-ink-soft)" }}>
-            {ornaments && tagline && (
-              <span className="pw-tagline">
-                {/* The strapline is written as one string with line breaks so a
-                    merchant controls where it wraps — this is set at a rakish
-                    angle and an automatic wrap lands wrong every time. */}
-                {tagline.split("\n").map((line, i) => (
-                  <span key={`${line}-${i}`} style={{ display: "block" }}>
-                    {line}
+          <div className="pw-actions">
+            {showWishlist && (
+              <button
+                type="button"
+                className="pw-iconbtn"
+                aria-label={`${t("nav.wishlist", "Wishlist")} (${wishCount})`}
+                aria-haspopup="dialog"
+                onClick={() => setWishlistDrawer(true)}
+              >
+                <IconHeart size={19} />
+                {wishCount > 0 && (
+                  <span className="pw-count-badge" aria-hidden="true">
+                    {wishCount}
                   </span>
-                ))}
-              </span>
+                )}
+              </button>
             )}
-            {ornaments && (
-              <>
-                <span className="pw-storefront">
-                  <Storefront signText={storeName} width={430} />
-                </span>
-                <span className="pw-twinkle">
-                  <Twinkle size={40} />
-                </span>
-              </>
+            {showAccount && (
+              <Link to="/account" className="pw-iconbtn pw-account-btn" aria-label={t("nav.account", "My account")}>
+                <IconUser />
+              </Link>
             )}
             {showCart && (
-              <Link to="/cart" className="pw-cartpill" onClick={openCart}>
-                <IconCart />
-                {t("nav.cart", "Cart")} <b>({itemCount})</b>
+              <Link
+                to="/cart"
+                className="pw-cartpill"
+                aria-label={`${t("nav.cart", "Cart")} (${itemCount})`}
+                onClick={openCart}
+              >
+                <IconCart size={18} />
+                <span className="amt">
+                  <Money amount={cartTotal} currency={cart?.currency} />
+                </span>
+                <span className="pw-count-badge" aria-hidden="true">
+                  {itemCount}
+                </span>
               </Link>
             )}
           </div>
@@ -300,7 +286,7 @@ export default function PwHeader({ instance }: SectionRenderProps) {
             {links.map((link, i) => (
               <Link key={`${link.href}-${i}`} to={link.href}>
                 {link.label}
-                {link.hasChildren && <IconChevron size={11} />}
+                {link.hasChildren && <IconChevron size={10} />}
               </Link>
             ))}
           </div>

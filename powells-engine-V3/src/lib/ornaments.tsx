@@ -452,3 +452,71 @@ export function IconEye({ size = 17 }: { size?: number }) {
     </svg>
   );
 }
+
+export function IconUser({ size = 20 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+    >
+      <circle cx="10" cy="7" r="3.4" />
+      <path d="M3.5 17.5c1.2-3.2 3.7-4.8 6.5-4.8s5.3 1.6 6.5 4.8" />
+    </svg>
+  );
+}
+
+export function IconCheck({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 10.5l4 4 8-9" />
+    </svg>
+  );
+}
+
+export function IconFacebook({ size = 17 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" fill="currentColor">
+      <path d="M11 18v-6.5h2.2l.3-2.6H11V7.3c0-.8.2-1.3 1.3-1.3h1.3V3.7c-.2 0-1-.1-2-.1-2 0-3.3 1.2-3.3 3.4v1.9H6.1v2.6h2.2V18z" />
+    </svg>
+  );
+}
+
+export function IconXLogo({ size = 16 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" fill="currentColor">
+      <path d="M14.6 3h2.5l-5.4 6.2L18 17h-5l-3.9-5.1L4.6 17H2.1l5.8-6.6L2 3h5.1l3.5 4.7zm-.9 12.6h1.4L6.4 4.3H4.9z" />
+    </svg>
+  );
+}
+
+export function IconLinkedin({ size = 17 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" fill="currentColor">
+      <path d="M4.5 7.5h2.8V16H4.5zM5.9 3.4a1.6 1.6 0 110 3.2 1.6 1.6 0 010-3.2zM9 7.5h2.7v1.2c.4-.7 1.3-1.4 2.7-1.4 2.9 0 3.4 1.9 3.4 4.3V16H15v-3.9c0-.9 0-2.2-1.3-2.2s-1.6 1-1.6 2.1v4H9z" />
+    </svg>
+  );
+}
+
+export function IconWhatsapp({ size = 17 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true" fill="currentColor">
+      <path d="M10 2.2a7.7 7.7 0 00-6.6 11.7L2.3 17.8l4-1a7.7 7.7 0 103.7-14.6zm0 14a6.3 6.3 0 01-3.2-.9l-.2-.1-2.4.6.6-2.3-.2-.3A6.3 6.3 0 1110 16.2zm3.5-4.7c-.2-.1-1.1-.6-1.3-.6-.2-.1-.3-.1-.4.1l-.6.7c-.1.1-.2.1-.4 0a5.2 5.2 0 01-2.6-2.3c-.2-.3.2-.3.6-1 .1-.1 0-.2 0-.3l-.6-1.4c-.2-.4-.3-.3-.4-.3h-.4a.7.7 0 00-.5.2 2.2 2.2 0 00-.7 1.6 3.8 3.8 0 00.8 2 8.7 8.7 0 003.3 2.9c1.2.5 1.7.6 2.3.5.4-.1 1.1-.5 1.3-.9.2-.4.2-.8.1-.9z" />
+    </svg>
+  );
+}
