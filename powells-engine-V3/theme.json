@@ -3,7 +3,7 @@
   "name": "Powell's (V3)",
   "name_ar": "باول",
   "author": "NUMU",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "layout": "sidebar-left",
   "description": "Powell's (V3) — a lavender bookshop storefront built for used and rare stock. A filter rail faceted from your own product options, a book page that sells COPIES rather than titles (each variant priced with its own condition and shelf), staff-pick notes signed by a bookseller, and hand-drawn marginalia you can switch off.",
   "description_ar": "باول (V3) — متجر كتب بلون بنفسجي متعمل للكتب المستعملة والنادرة. شريط فلاتر بيتبني من اختيارات منتجاتك، وصفحة كتاب بتبيع نسخة مش عنوان (كل متغير بسعره وحالته والفرع اللي فيه)، وملاحظات مكتوبة بإمضاء البائع، ورسومات يدوية تقدر تقفلها.",
@@ -18,9 +18,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },
@@ -143,9 +141,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },
@@ -199,6 +195,19 @@
               "secondary_text": "Staff picks",
               "secondary_link": "/collections/staff-picks",
               "hand_note": "More\nBooks\nMore\nPeople"
+            }
+          },
+          {
+            "type": "pw-featured",
+            "settings": {
+              "heading": "Newly released",
+              "source": "newest",
+              "limit": 3,
+              "show_promo": true,
+              "promo_eyebrow": "OUR PICK THIS MONTH",
+              "promo_title": "The book everyone is asking about",
+              "promo_button": "Shop now",
+              "promo_link": "/products"
             }
           },
           {
@@ -317,9 +326,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },
@@ -502,9 +509,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },
@@ -687,9 +692,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },
@@ -815,9 +818,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },
@@ -952,9 +953,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },
@@ -1082,9 +1081,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": false,
               "show_cart": true
             },
@@ -1210,9 +1207,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },
@@ -1335,9 +1330,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },
@@ -1456,9 +1449,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },
@@ -1581,9 +1572,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": false,
               "show_cart": true
             },
@@ -1708,9 +1697,7 @@
           {
             "type": "pw-header",
             "settings": {
-              "established": "EST. 1971",
               "strapline": "CITY of BOOKS",
-              "tagline": "More\nBooks\nMore\nPeople",
               "show_search": true,
               "show_cart": true
             },

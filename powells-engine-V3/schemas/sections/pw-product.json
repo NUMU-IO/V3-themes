@@ -105,6 +105,24 @@
       "default": ""
     },
     {
+      "type": "textarea",
+      "id": "quality_text",
+      "label": "Quality tab text",
+      "label_ar": "نص تبويب الجودة",
+      "default": "",
+      "info": "How you grade and check copies. Leave empty for the built-in wording in the shopper's language.",
+      "info_ar": "إزاي بتقيّم وتراجع النسخ. سيبه فاضي عشان يستخدم الصياغة الجاهزة بلغة الزبون."
+    },
+    {
+      "type": "textarea",
+      "id": "delivery_text",
+      "label": "Delivery tab text",
+      "label_ar": "نص تبويب التوصيل",
+      "default": "",
+      "info": "Extra delivery details shown under shipping and returns.",
+      "info_ar": "تفاصيل توصيل إضافية بتظهر تحت الشحن والإرجاع."
+    },
+    {
       "type": "header",
       "content": "Recently viewed",
       "content_ar": "شفتها مؤخرًا"

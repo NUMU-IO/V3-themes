@@ -63,6 +63,8 @@ import PwCollectionsIndex from "./sections/pw-collections-index";
 import PwBlog from "./sections/pw-blog";
 import PwReviews from "./sections/pw-reviews";
 import PwNotFound from "./sections/pw-not-found";
+import PwFeatured from "./sections/pw-featured";
+import { WishlistDrawer } from "./lib/wishlist";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
@@ -75,6 +77,7 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // One listing section serves `/collections/<slug>` AND `/products`: they are
   // the same page with a different heading and a different product source.
   "pw-hero": PwHero,
+  "pw-featured": PwFeatured,
   "pw-shelf": PwShelf,
   "pw-shelf-links": PwShelfLinks,
   "pw-editorial": PwEditorial,
@@ -269,6 +272,7 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
         <RenderSection key={id} sectionId={id} instance={instance} />
       ))}
       <CartDrawer />
+      <WishlistDrawer />
     </div>
   );
 }
@@ -349,7 +353,7 @@ const v3Handle = {
   mount_returns: "MountResult" as const,
   // ⚠ Version lives in THREE places and they must match: theme.json,
   // package.json, and this literal.
-  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.1.1" },
+  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.2.0" },
   mount,
 };
 export default v3Handle;

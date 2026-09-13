@@ -174,5 +174,19 @@
   "preview.failed": "We couldn't load this book right now.",
   "announce.label": "Announcements",
   "announce.demo_1": "New arrivals on the shelves every week",
-  "announce.demo_2": "Staff picks, hand-chosen by our booksellers"
+  "announce.demo_2": "Staff picks, hand-chosen by our booksellers",
+  "nav.wishlist": "Wishlist",
+  "wishlist.title": "Wishlist",
+  "wishlist.empty": "No saved books yet. Tap the heart on any book to keep it here.",
+  "wishlist.unavailable": "This book is no longer available",
+  "product.wishlisted": "Saved to wishlist",
+  "product.category": "Category",
+  "product.share": "Share",
+  "product.share_on": "Share on {{network}}",
+  "product.tab_description": "Description",
+  "product.tab_specs": "Book specification",
+  "product.tab_quality": "Quality",
+  "product.tab_delivery": "Delivery",
+  "product.quality_default": "Every copy is checked by hand before it ships and graded honestly, so the condition you choose is the condition you receive.",
+  "featured.shop_now": "Shop now"
 }

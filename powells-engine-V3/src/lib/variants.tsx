@@ -144,14 +144,14 @@ export function buyLabel(picker: VariantPicker, t: TFunction, added: boolean, bu
 export function PriceLine({ picker }: { picker: VariantPicker }) {
   return (
     <p className="pw-pdp-price">
-      <b>
-        <Money amount={picker.price} currency={picker.currency} />
-      </b>
       {picker.compareAt > picker.price && (
         <s>
           <Money amount={picker.compareAt} currency={picker.currency} />
         </s>
       )}
+      <b>
+        <Money amount={picker.price} currency={picker.currency} />
+      </b>
     </p>
   );
 }
