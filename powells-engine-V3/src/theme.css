@@ -575,6 +575,11 @@
   column-gap: 42px;
   row-gap: 46px;
 }
+.pw-more {
+  display: flex;
+  justify-content: center;
+  margin-block-start: 48px;
+}
 @media (max-width: 1180px) {
   .pw-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));

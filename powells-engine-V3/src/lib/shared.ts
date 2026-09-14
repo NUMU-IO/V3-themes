@@ -203,5 +203,25 @@ export function productAuthor(
   const fromMeta = asString(asRecord(metafields ?? {})["books.author"]);
   if (fromMeta) return fromMeta;
   const p = product as unknown as Record<string, unknown>;
-  return asString(p.brand) || asString(p.vendor);
+  // `attributes.author` is third because it is the fallback a bookseller is
+  // pushed to: the API accepts `brand` on a product but never persists it,
+  // so a catalogue imported today carries its authors here.
+  return asString(p.brand) || asString(p.vendor) || asString(asRecord(p.attributes).author);
+}
+
+/**
+ * The format line — "Used Trade Paperback".
+ *
+ * A bookseller writes the format into `product_type`, which is also where the
+ * platform keeps its own kind of product. A store that never set a format
+ * carries "physical" on every book, and printing that under every title reads
+ * as a bug to the shopper, so the platform's own values resolve to nothing at
+ * all rather than to a word no bookseller wrote.
+ */
+const PLATFORM_TYPES = new Set(["physical", "digital", "service", "bundle", "gift_card", "giftcard"]);
+
+export function bookFormat(product: Product | null | undefined): string {
+  if (!product) return "";
+  const value = asString((product as unknown as Record<string, unknown>).product_type);
+  return PLATFORM_TYPES.has(value.toLowerCase().replace(/[\s-]+/g, "_")) ? "" : value;
 }

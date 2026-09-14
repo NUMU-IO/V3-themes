@@ -19,6 +19,8 @@
   "collection.empty": "الرف ده لسه فاضي.",
   "collection.empty_cta": "تصفح كل الكتب",
   "collection.clear_filters": "مسح الفلاتر",
+  "collection.more": "اعرض كتب أكتر",
+  "collection.loading": "بيحمّل…",
   "product.by": "تأليف",
   "product.ratings": "تقييم",
   "product.write_review": "اكتب تقييم",
