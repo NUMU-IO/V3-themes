@@ -23,7 +23,7 @@
 import { useState } from "react";
 import { Image, Link, Money, useCart, type Product } from "@numueg/theme-sdk";
 import { IconEye } from "./ornaments";
-import { isInlineImage, productAuthor, productImages } from "./shared";
+import { bookFormat, isInlineImage, productAuthor, productImages } from "./shared";
 import { setCartDrawer } from "./cart-drawer";
 import { fetchProductDetail } from "./product-detail";
 import { QuickLook } from "./quick-look";
@@ -32,8 +32,6 @@ import { fill, useT } from "./i18n";
 
 export interface ProductCardProps {
   product: Product;
-  /** Rendered under the byline: "Used Trade Paperback". */
-  formatLabel?: string;
   showWishlist?: boolean;
   showQuickAdd?: boolean;
   variant?: "shelf" | "tile";
@@ -45,7 +43,6 @@ const hasChoices = (product: Product) =>
 
 export function ProductCard({
   product,
-  formatLabel,
   showWishlist = true,
   showQuickAdd = true,
   variant = "shelf",
@@ -58,6 +55,7 @@ export function ProductCard({
   const href = `/products/${product.slug ?? product.id}`;
   const cover = productImages(product)[0];
   const author = productAuthor(product);
+  const format = bookFormat(product);
 
   /**
    * `product.price` is in MAJOR units and variant prices are in CENTS.
@@ -130,7 +128,7 @@ export function ProductCard({
           {t("product.by", "by")} {author}
         </p>
       )}
-      {formatLabel && <p className="pw-format">{formatLabel}</p>}
+      {format && <p className="pw-format">{format}</p>}
       <p className="pw-price">
         <b>
           <Money amount={price ?? 0} currency={product.currency} />

@@ -19,6 +19,8 @@
   "collection.empty": "No books on this shelf yet.",
   "collection.empty_cta": "Browse everything",
   "collection.clear_filters": "Clear filters",
+  "collection.more": "Show more books",
+  "collection.loading": "Loading…",
   "product.by": "by",
   "product.ratings": "ratings",
   "product.write_review": "Write a review",

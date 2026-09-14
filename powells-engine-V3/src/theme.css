@@ -258,10 +258,12 @@
   padding: 16px 40px;
 }
 
+/* The Powells lockup: the store name large in caps with the line beneath it,
+   between two mirrored vines. An uploaded header logo replaces it. */
 .pw-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
   min-width: 0;
   text-decoration: none;
   color: inherit;
@@ -270,9 +272,20 @@
   max-height: 60px;
   width: auto;
 }
+.pw-logo-vine {
+  flex: 0 0 auto;
+  display: block;
+  color: var(--pw-ink-soft);
+  opacity: 0.95;
+}
+/* The inline-end vine is the other one mirrored, not a second drawing. */
+.pw-logo-vine.flipped {
+  transform: scaleX(-1);
+}
 .pw-logo-type {
   min-width: 0;
   line-height: 1;
+  text-align: center;
 }
 .pw-wordmark,
 .pw-sub {
@@ -280,16 +293,20 @@
 }
 .pw-wordmark {
   font-family: var(--pw-font-heading);
-  font-weight: 800;
-  font-size: clamp(1.5rem, 2.2vw, 2.1rem);
-  letter-spacing: 0.01em;
+  font-weight: 900;
+  font-size: clamp(1.7rem, 2.4vw, 2.4rem);
+  /* Set in caps regardless of how the merchant typed the store name. */
+  text-transform: uppercase;
+  letter-spacing: 0.015em;
+  line-height: 0.92;
   color: var(--pw-ink);
   white-space: nowrap;
 }
 .pw-sub {
-  margin-block-start: 5px;
-  font-size: 0.76rem;
-  letter-spacing: 0.16em;
+  margin-block-start: 6px;
+  font-family: var(--pw-font-heading);
+  font-size: 0.8rem;
+  letter-spacing: 0.19em;
   text-transform: uppercase;
   color: var(--pw-ink-soft);
   white-space: nowrap;
@@ -557,6 +574,11 @@
   grid-template-columns: repeat(var(--pw-cols), minmax(0, 1fr));
   column-gap: 42px;
   row-gap: 46px;
+}
+.pw-more {
+  display: flex;
+  justify-content: center;
+  margin-block-start: 48px;
 }
 @media (max-width: 1180px) {
   .pw-grid {
@@ -1944,8 +1966,11 @@
   .pw-logo-img img {
     max-height: 44px;
   }
+  .pw-logo-vine {
+    display: none;
+  }
   .pw-wordmark {
-    font-size: clamp(1.2rem, 5.6vw, 1.5rem);
+    font-size: clamp(1.25rem, 6vw, 1.6rem);
     white-space: normal;
   }
   .pw-sub {

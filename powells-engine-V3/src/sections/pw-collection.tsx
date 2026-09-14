@@ -39,6 +39,7 @@ import {
   type SectionRenderProps,
 } from "../lib/shared";
 import { buildFacets, matchesFilters, type FacetSource } from "../lib/facets";
+import { useMoreProducts } from "../lib/more-products";
 import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
 import { BookStack, IconChevron, Sprig, Twinkle } from "../lib/ornaments";
@@ -54,10 +55,10 @@ export default function PwCollection({ instance }: SectionRenderProps) {
   // `fetchIfMissing` because this section is also mounted on routes where the
   // host ships no `page.data.products` — /search with an empty query, and a
   // collection the storefront rendered from cache.
-  const { products, loading } = useProducts({
-    limit: asNumber(s.max_products, 48),
-    fetchIfMissing: true,
-  });
+  const pageSize = asNumber(s.max_products, 48);
+  const { products: firstPage, loading } = useProducts({ limit: pageSize, fetchIfMissing: true });
+  const more = useMoreProducts(firstPage, pageSize);
+  const products = more.products;
 
   const heading = useListingHeading({
     title: asString(s.heading),
@@ -295,18 +296,29 @@ export default function PwCollection({ instance }: SectionRenderProps) {
             )}
           </div>
         ) : (
-          <div className={cx("pw-grid")}>
-            {sorted.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                showWishlist={asBool(s.show_wishlist, true)}
-                formatLabel={asString(
-                  (product as unknown as Record<string, unknown>).product_type,
-                )}
-              />
-            ))}
-          </div>
+          <>
+            <div className={cx("pw-grid")}>
+              {sorted.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  showWishlist={asBool(s.show_wishlist, true)}
+                />
+              ))}
+            </div>
+            {more.canLoadMore && (
+              <div className="pw-more">
+                <button
+                  type="button"
+                  className="pw-btn pw-btn-ghost"
+                  disabled={more.loading}
+                  onClick={more.loadMore}
+                >
+                  {more.loading ? t("collection.loading", "Loading…") : t("collection.more", "Show more books")}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

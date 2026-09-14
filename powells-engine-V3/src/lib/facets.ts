@@ -21,6 +21,7 @@
 
 import type { Product } from "@numueg/theme-sdk";
 import { asArray, asNumber, asRecord, asString } from "@numueg/theme-kit";
+import { bookFormat, productAuthor } from "./shared";
 
 export type FacetSource = "category" | "product_type" | "option" | "price" | "brand" | "tag";
 
@@ -77,11 +78,11 @@ export function valuesFor(
       return name ? [name] : [];
     }
     case "product_type": {
-      const value = asString(p.product_type);
+      const value = bookFormat(product);
       return value ? [value] : [];
     }
     case "brand": {
-      const value = asString(p.brand) || asString(p.vendor);
+      const value = productAuthor(product);
       return value ? [value] : [];
     }
     case "tag":

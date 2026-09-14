@@ -65,11 +65,7 @@ export default function PwShelf({ instance }: SectionRenderProps) {
       <div className="pw-rail-scroll">
         {picks.map((product) => (
           <div className="pw-rail-item" key={product.id}>
-            <ProductCard
-              product={product}
-              showWishlist={asBool(s.show_wishlist, true)}
-              formatLabel={asString((product as unknown as Record<string, unknown>).product_type)}
-            />
+            <ProductCard product={product} showWishlist={asBool(s.show_wishlist, true)} />
           </div>
         ))}
       </div>

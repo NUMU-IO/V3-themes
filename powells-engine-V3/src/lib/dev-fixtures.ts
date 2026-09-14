@@ -64,6 +64,14 @@ interface DevBook {
   ratio?: number;
   /** [label, condition, cents, stock] */
   editions: Array<[string, string, number, number]>;
+  /**
+   * Shaped like a book that arrived through a bulk import rather than through
+   * the bookshop's own hand: no metafields, the author in `attributes` because
+   * the API drops `brand`, and the platform's own "physical" sitting in
+   * `product_type` where a format belongs. Both of those are what a real
+   * imported catalogue looks like, so one fixture carries them.
+   */
+  imported?: boolean;
 }
 
 const BOOKS: DevBook[] = [
@@ -212,7 +220,8 @@ const BOOKS: DevBook[] = [
     author: "Jen Stevenson",
     price: 10.5,
     compare_at_price: 19.95,
-    product_type: "Used Trade Paperback",
+    product_type: "physical",
+    imported: true,
     bg: "#5f9c63",
     fg: "#f6f2e6",
     editions: [["Trade Paperback", "Very good", 1050, 2]],
@@ -227,7 +236,8 @@ function toProduct(book: DevBook) {
     name: book.name,
     // `brand` is where a bookseller puts the author — same field the Meta feed
     // and Product JSON-LD read. See productAuthor() in lib/shared.
-    brand: book.author,
+    brand: book.imported ? null : book.author,
+    attributes: book.imported ? { author: book.author } : {},
     description:
       "<p>A fixture synopsis, standing in for the merchant's own copy so the " +
       "typography below the fold is real. Two paragraphs, because one never " +
@@ -257,7 +267,7 @@ function toProduct(book: DevBook) {
       { name: "Format", position: 1, values: book.editions.map((e) => e[0]) },
       { name: "Condition", position: 2, values: book.editions.map((e) => e[1]) },
     ],
-    metafields: [
+    metafields: book.imported ? [] : [
       { namespace: "books", key: "author", value: book.author },
       { namespace: "books", key: "isbn", value: `978${book.id.replace(/\D/g, "")}0457806` },
       { namespace: "books", key: "publisher", value: "Fixture Press" },
