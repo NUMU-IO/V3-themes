@@ -335,6 +335,37 @@ export const DEV_CART = {
   ],
 };
 
+/**
+ * What the host's detail route would answer for one book.
+ *
+ * Quick look and quick-add both resolve a book through `/api/storefront/
+ * products/<id>` — the only payload that says whether a book has editions —
+ * and the harness has no such route, so both features looked broken in dev
+ * while working on a real store.
+ *
+ * ⚠ The real route ships variant money as MAJOR-unit STRINGS, which
+ * product-detail.ts converts to cents. The fixtures hold cents, so they are
+ * converted BACK here: a stub that skips this would quietly hide a bug in that
+ * conversion, which is the one thing this payload exists to exercise.
+ */
+export function devDetail(idOrSlug: string) {
+  const product = DEV_PRODUCTS.find((p) => p.id === idOrSlug || p.slug === idOrSlug);
+  if (!product) return null;
+  return {
+    ...product,
+    price: product.price.toFixed(2),
+    compare_at_price: product.compare_at_price?.toFixed(2) ?? null,
+    currency: "USD",
+    is_in_stock: true,
+    variants: product.variants.map((variant) => ({
+      ...variant,
+      price: (variant.price.amount / 100).toFixed(2),
+      compare_at_price: null,
+      is_in_stock: variant.inventory_quantity > 0,
+    })),
+  };
+}
+
 /** The `page` payload the host would ship for a given template. */
 export function devPage(template: string, slug?: string) {
   switch (template) {

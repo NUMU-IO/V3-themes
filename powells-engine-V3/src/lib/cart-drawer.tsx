@@ -15,12 +15,23 @@
  * overrides in scope.
  */
 
-import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { Image, Link, Money, useCart } from "@numueg/theme-sdk";
+import {
+  Image,
+  Link,
+  Money,
+  requestNavigate,
+  useCart,
+  useProducts,
+  useRelatedProducts,
+  type Product,
+} from "@numueg/theme-sdk";
 import { useT } from "./i18n";
 import { IconClose } from "./ornaments";
 import { CartNudges } from "./promotions";
+import { fetchProductDetail } from "./product-detail";
+import { bookFormat, productAuthor, productImages } from "./shared";
 
 /** An open/closed flag that unrelated sections can flip without a shared parent. */
 export function createOpenStore() {
@@ -53,8 +64,17 @@ export const useCartDrawerOpen = (): boolean => cartStore.useOpen();
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 
+/**
+ * The overlay shell.
+ *
+ * Two shapes, one implementation: `side` slides a panel in from an edge, and
+ * `modal` centres a card. A modal is a drawer as far as focus, Escape, the
+ * scrim, the scroll lock and the portal are concerned, and those are the parts
+ * that are easy to get subtly wrong — so there is one of them, not two.
+ */
 export function Drawer({
   side,
+  modal = false,
   title,
   closeLabel,
   onClose,
@@ -63,6 +83,7 @@ export function Drawer({
   children,
 }: {
   side: "start" | "end";
+  modal?: boolean;
   title: string;
   closeLabel: string;
   onClose: () => void;
@@ -113,14 +134,14 @@ export function Drawer({
   const host = document.querySelector<HTMLElement>("[data-powells-v3-app]") ?? document.body;
 
   return createPortal(
-    <div className="pw-drawer-root">
+    <div className={`pw-drawer-root${modal ? " modal" : ""}`}>
       <div className="pw-drawer-scrim" aria-hidden="true" onClick={onClose} />
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`pw-drawer ${side}${wide ? " wide" : ""}`}
+        className={`pw-drawer ${modal ? "popup" : side}${wide ? " wide" : ""}`}
       >
         <div className="pw-drawer-head">
           <h2>{title}</h2>
@@ -139,6 +160,91 @@ export function Drawer({
       </div>
     </div>,
     host,
+  );
+}
+
+/**
+ * "You may also like" — a short row under the cart lines.
+ *
+ * Related to what is ALREADY in the cart, because that is the only thing the
+ * shopper has told us. With an empty cart there is nothing to relate to, so it
+ * falls back to the shop's own listing rather than showing an empty rail.
+ *
+ * A book with editions to choose is not added blind: it links to its page
+ * instead, the same rule quick-add follows on a card. Listing payloads report
+ * `variants: []` either way, so the detail payload decides — on click, never on
+ * render, so opening the cart costs nothing.
+ */
+function CartSuggestions({ items, onClose }: { items: Array<{ product_id: string }>; onClose: () => void }) {
+  const t = useT();
+  const { addItem, loading } = useCart();
+  const [busy, setBusy] = useState<string | null>(null);
+  const { items: related } = useRelatedProducts(items[0]?.product_id ?? null, { limit: 6 });
+  const { products: fallback } = useProducts({ limit: 12, fetchIfMissing: items.length === 0 });
+
+  const inCart = new Set(items.map((item) => String(item.product_id)));
+  const source: Product[] = related.length > 0 ? related : fallback;
+  const picks = source.filter((product) => !inCart.has(String(product.id))).slice(0, 4);
+  if (picks.length === 0) return null;
+
+  const quickAdd = async (product: Product) => {
+    setBusy(String(product.id));
+    const resolved =
+      (product.variants?.length ?? 0) > 0 ? product : ((await fetchProductDetail(String(product.id))) ?? product);
+    const choices =
+      (resolved.variants?.length ?? 0) > 1 ||
+      (resolved.options ?? []).some((option) => (option.values?.length ?? 0) > 1);
+    if (choices) {
+      setBusy(null);
+      onClose();
+      requestNavigate(`/products/${resolved.slug ?? resolved.id}`);
+      return;
+    }
+    const variant = resolved.variants?.[0];
+    await addItem(String(product.id), variant ? String(variant.id) : undefined, 1, variant?.option_values);
+    setBusy(null);
+  };
+
+  return (
+    <section className="pw-alsolike">
+      <h3>{t("cart.also_like", "You may also like")}</h3>
+      {picks.map((product) => {
+        const cover = productImages(product)[0];
+        const author = productAuthor(product);
+        const format = bookFormat(product);
+        return (
+          <div className="pw-alsoline" key={product.id}>
+            <Link to={`/products/${product.slug ?? product.id}`} onClick={onClose} aria-label={product.name}>
+              {cover ? (
+                <Image src={cover} alt={product.name} responsive={false} loading="lazy" />
+              ) : (
+                <span className="pw-blank" />
+              )}
+            </Link>
+            <div>
+              <h4>
+                <Link to={`/products/${product.slug ?? product.id}`} onClick={onClose}>
+                  {product.name}
+                </Link>
+              </h4>
+              {author && <p className="pw-byline">{`${t("product.by", "by")} ${author}`}</p>}
+              {format && <p className="pw-format">{format}</p>}
+              <p className="pw-alsoprice">
+                <Money amount={product.price ?? 0} currency={product.currency} />
+              </p>
+            </div>
+            <button
+              type="button"
+              className="pw-btn pw-btn-ghost pw-alsoadd"
+              disabled={loading || busy === String(product.id)}
+              onClick={() => void quickAdd(product)}
+            >
+              {busy === String(product.id) ? t("product.adding", "Adding...") : t("cart.add", "Add")}
+            </button>
+          </div>
+        );
+      })}
+    </section>
   );
 }
 
@@ -191,12 +297,15 @@ function CartDrawerPanel() {
       }
     >
       {items.length === 0 ? (
-        <div className="pw-empty">
-          <p>{t("cart.empty", "Your cart is empty.")}</p>
-          <Link className="pw-btn pw-btn-primary" to="/products" onClick={close}>
-            {t("cart.empty_cta", "Start browsing")}
-          </Link>
-        </div>
+        <>
+          <div className="pw-empty">
+            <p>{t("cart.empty", "Your cart is empty.")}</p>
+            <Link className="pw-btn pw-btn-primary" to="/products" onClick={close}>
+              {t("cart.empty_cta", "Start browsing")}
+            </Link>
+          </div>
+          <CartSuggestions items={items} onClose={close} />
+        </>
       ) : (
         <>
           <CartNudges />
@@ -253,6 +362,7 @@ function CartDrawerPanel() {
               </p>
             </div>
           ))}
+          <CartSuggestions items={items} onClose={close} />
         </>
       )}
     </Drawer>
