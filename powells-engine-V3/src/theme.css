@@ -1552,6 +1552,61 @@
   width: 100%;
   box-shadow: 4px 6px 22px rgba(61, 41, 99, 0.24);
 }
+
+/* ── The cover wall ───────────────────────────────────────────────────────
+   Three columns of the shop's own jackets, the middle one dropped so the
+   block reads as books on a shelf rather than a spreadsheet of thumbnails.
+   The far edge fades into the band so the grid ends without a hard seam. */
+.pw-hero.has-wall .pw-hero-inner {
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  padding-block: 60px 64px;
+}
+.pw-hero-wall {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+  /* The wall is a backdrop, so it may never set the hero's height: it is
+     capped and the overflow is cropped by the same fade that ends it. */
+  max-height: clamp(300px, 30vw, 430px);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+}
+/* Per-column tilt and drop. Written as nth-child rules, not arithmetic on an
+   index: CSS `%` is the unit, not a modulo, so `calc(var(--i) % 3)` is invalid
+   and the whole transform is dropped — silently, which is how the first
+   version of this shipped looking like a plain grid. */
+.pw-hero-spine {
+  display: block;
+}
+.pw-hero-spine:nth-child(3n + 1) {
+  transform: rotate(-1.5deg);
+}
+.pw-hero-spine:nth-child(3n + 2) {
+  transform: translateY(18px) rotate(0.9deg);
+}
+.pw-hero-spine:nth-child(3n) {
+  transform: translateY(6px) rotate(1.8deg);
+}
+.pw-hero-spine img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 5px 8px 20px rgba(35, 22, 58, 0.28);
+}
+/* Past six covers the rest are depth, not content — they only appear where
+   there is room for a third row without crowding the type. */
+.pw-hero-spine:nth-child(n + 7) {
+  display: none;
+}
+@media (min-width: 1240px) {
+  .pw-hero-spine:nth-child(n + 7) {
+    display: block;
+  }
+}
 /* With no photograph the note sits with the copy rather than floating in the
    space where the photograph would have been. */
 .pw-hero-note {
@@ -1673,11 +1728,22 @@
     padding-inline: 22px;
   }
   .pw-hero-inner,
-  .pw-hero.has-image .pw-hero-inner {
+  .pw-hero.has-image .pw-hero-inner,
+  .pw-hero.has-wall .pw-hero-inner {
     grid-template-columns: minmax(0, 1fr);
     padding-inline: 22px;
   }
   .pw-hero-note {
+    display: none;
+  }
+  /* Stacked under the copy the wall becomes a strip: three covers, no drop. */
+  .pw-hero-wall {
+    gap: 12px;
+  }
+  .pw-hero-spine {
+    transform: none;
+  }
+  .pw-hero-spine:nth-child(n + 4) {
     display: none;
   }
   .pw-editorial {
@@ -2034,6 +2100,38 @@
   }
 }
 
+/* Modal: the same shell, centred as a card. Quick look reads as a book held
+   up to the light rather than a panel shoved in from the side. */
+.pw-drawer-root.modal {
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.pw-drawer.popup {
+  position: relative;
+  inset: auto;
+  width: min(880px, 100%);
+  max-height: min(88vh, 860px);
+  border-radius: 18px;
+  overflow: hidden;
+  animation: pw-pop 0.22s ease;
+}
+.pw-drawer.popup .pw-drawer-body {
+  padding: 22px 26px 26px;
+}
+@keyframes pw-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-drawer,
+  .pw-drawer-scrim {
+    animation: none;
+  }
+}
+
 .pw-drawer-head {
   display: flex;
   align-items: center;
@@ -2067,6 +2165,66 @@
   padding: 16px 22px calc(16px + env(safe-area-inset-bottom));
   background: var(--pw-surface);
   border-block-start: 1px solid var(--pw-line);
+}
+
+/* "You may also like", under the cart lines. */
+.pw-alsolike {
+  margin-block-start: 26px;
+  padding-block-start: 18px;
+  border-block-start: 1px solid var(--pw-line);
+}
+.pw-alsolike h3 {
+  margin: 0 0 12px;
+  font-family: var(--pw-font-heading);
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: var(--pw-ink);
+}
+.pw-alsoline {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding-block: 10px;
+}
+.pw-alsoline + .pw-alsoline {
+  border-block-start: 1px dashed var(--pw-line);
+}
+.pw-alsoline img,
+.pw-alsoline .pw-blank {
+  width: 52px;
+  height: 74px;
+  object-fit: contain;
+  border-radius: 3px;
+  box-shadow: 0 4px 10px rgba(35, 22, 58, 0.16);
+}
+.pw-alsoline h4 {
+  margin: 0;
+  font-family: var(--pw-font-heading);
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+.pw-alsoline h4 a {
+  color: var(--pw-ink);
+  text-decoration: none;
+}
+.pw-alsoline h4 a:hover {
+  text-decoration: underline;
+}
+.pw-alsoline .pw-byline,
+.pw-alsoline .pw-format {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+}
+.pw-alsoprice {
+  margin: 4px 0 0;
+  font-weight: 700;
+  color: var(--pw-accent-ink, var(--pw-ink));
+}
+.pw-alsoadd {
+  padding-inline: 14px;
+  white-space: nowrap;
 }
 .pw-drawer-foot .pw-sumrow.total {
   margin: 0;
@@ -2483,6 +2641,12 @@
 .pw-drawer.wide {
   width: min(560px, 100vw);
 }
+/* A wide POPUP is wide enough for the cover and the details side by side —
+   the side-panel width would stack them into a column and push the buy row
+   under the fold. Declared after `.wide` because they tie on specificity. */
+.pw-drawer.popup.wide {
+  width: min(880px, 100%);
+}
 .pw-card-look {
   position: absolute;
   bottom: 8px;
@@ -2515,17 +2679,39 @@
   color: var(--pw-accent);
 }
 
+/* Two columns inside the popup: the cover holds its own column and the
+   details — title, price, chips, buy row — read down the other, so nothing is
+   pushed below the fold on a laptop. One column once that no longer fits. */
 .pw-look {
   display: grid;
+  grid-template-columns: minmax(200px, 300px) minmax(0, 1fr);
+  column-gap: 34px;
+  align-items: start;
+}
+.pw-look > *:not(.pw-look-media) {
+  grid-column: 2;
 }
 .pw-look-media {
+  grid-column: 1;
+  grid-row: 1 / span 10;
   display: grid;
   gap: 12px;
-  margin-block: 10px 16px;
+  margin-block: 4px 16px;
 }
 .pw-look .pw-pdp-stage img {
   width: auto;
-  max-height: 360px;
+  max-height: 380px;
+}
+@media (max-width: 760px) {
+  .pw-look {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pw-look > *:not(.pw-look-media) {
+    grid-column: 1;
+  }
+  .pw-look-media {
+    grid-row: auto;
+  }
 }
 .pw-look .pw-pdp-thumbs button {
   width: 48px;

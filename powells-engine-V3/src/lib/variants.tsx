@@ -38,9 +38,38 @@ function variantLabel(variant: ProductVariant, fallback: string): string {
   return values.join(" · ") || asString(variant.name) || fallback;
 }
 
-/** Variant money is CENTS, shipped either as a number or as `{ amount }`. */
-export function variantCents(value: unknown): number {
-  return typeof value === "number" ? value : asNumber(asRecord(value).amount, 0);
+/** The raw figure, however the payload shipped it: a number, a string, `{ amount }`. */
+function rawAmount(value: unknown): number {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") return Number(value) || 0;
+  return asNumber(asRecord(value).amount, 0);
+}
+
+/**
+ * Which unit THIS product's variants are priced in.
+ *
+ * The convention says variant money is cents, and the SDK's own payloads keep
+ * it — but the host server-renders a product page with `"price": 460`, a MAJOR
+ * number, and reading that as cents turns 520 into 5.20 on the page. Neither
+ * shape is going away, and a bare number cannot say which it is.
+ *
+ * `product.price` can, though: it is MAJOR by definition and it is one of the
+ * variant prices (the cheapest, normally). So both readings are tried and the
+ * one that lands near the product's own price wins. No variants, or no product
+ * price to compare against, and the documented convention stands.
+ */
+function variantsAreMajor(product: Product): boolean {
+  const productMajor = asNumber(product.price, 0);
+  const raws = (product.variants ?? []).map((v) => rawAmount(v.price)).filter((n) => n > 0);
+  if (productMajor <= 0 || raws.length === 0) return false;
+  const lowest = Math.min(...raws);
+  return Math.abs(lowest - productMajor) <= Math.abs(lowest / 100 - productMajor);
+}
+
+/** A variant figure in MAJOR units, whichever unit the payload used. */
+export function variantMajor(product: Product, value: unknown): number {
+  const raw = rawAmount(value);
+  return variantsAreMajor(product) ? raw : centsToMajor(raw);
 }
 
 export function useVariantPicker(product: Product) {
@@ -80,10 +109,10 @@ export function useVariantPicker(product: Product) {
       : product.in_stock !== false;
   const maxQty = fulfillmentType === "digital" ? 1 : tracksInventory && stock > 0 ? stock : 99;
 
-  const variantMajor = chosen ? centsToMajor(variantCents(cv.price)) : 0;
-  const price = variantMajor > 0 ? variantMajor : asNumber(product.price, 0);
+  const chosenMajor = chosen ? variantMajor(product, cv.price) : 0;
+  const price = chosenMajor > 0 ? chosenMajor : asNumber(product.price, 0);
   const compareAt = chosen
-    ? centsToMajor(variantCents(cv.compare_at_price))
+    ? variantMajor(product, cv.compare_at_price)
     : asNumber(product.compare_at_price, 0);
   const currency = asString(cv.price_currency) || product.currency;
 
@@ -109,6 +138,7 @@ export function useVariantPicker(product: Product) {
   };
 
   return {
+    product,
     options,
     variants,
     hasAxes,
@@ -204,7 +234,7 @@ export function EditionList({ picker, productName }: { picker: VariantPicker; pr
         const isChosen = picker.chosen ? String(variant.id) === String(picker.chosen.id) : false;
         const available =
           variant.track_inventory === false || asNumber(variant.inventory_quantity, 0) > 0;
-        const compare = variantCents(variant.compare_at_price);
+        const compare = variantMajor(picker.product, variant.compare_at_price);
         return (
           <button
             key={String(variant.id)}
@@ -225,10 +255,10 @@ export function EditionList({ picker, productName }: { picker: VariantPicker; pr
               </small>
             </span>
             <span className="amt">
-              <Money amount={centsToMajor(variantCents(variant.price))} currency={picker.currency} />
+              <Money amount={variantMajor(picker.product, variant.price)} currency={picker.currency} />
               {compare > 0 && (
                 <s>
-                  <Money amount={centsToMajor(compare)} currency={picker.currency} />
+                  <Money amount={compare} currency={picker.currency} />
                 </s>
               )}
             </span>

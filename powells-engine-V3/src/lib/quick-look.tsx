@@ -27,6 +27,7 @@ export function QuickLook({ product, onClose }: { product: Product; onClose: () 
   return (
     <Drawer
       side="end"
+      modal
       wide
       title={t("preview.title", "Quick look")}
       closeLabel={t("drawer.close", "Close")}

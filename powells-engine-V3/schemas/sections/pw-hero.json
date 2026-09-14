@@ -74,6 +74,37 @@
       "default": false
     },
     {
+      "type": "checkbox",
+      "id": "show_covers",
+      "label": "Show a wall of your book covers",
+      "label_ar": "إظهار حائط من أغلفة كتبك",
+      "default": true,
+      "info": "Used when you have not uploaded a photograph. Needs at least six books with covers.",
+      "info_ar": "بيستخدم لو مرفعتش صورة. محتاج ٦ كتب على الأقل بأغلفة."
+    },
+    {
+      "type": "select",
+      "id": "cover_source",
+      "label": "Covers to show",
+      "label_ar": "الأغلفة المعروضة",
+      "default": "newest",
+      "options": [
+        { "value": "newest", "label": "Newest arrivals", "label_ar": "أحدث الوصول" },
+        { "value": "sale", "label": "Reduced books", "label_ar": "الكتب المخفضة" },
+        { "value": "cheapest", "label": "Cheapest first", "label_ar": "الأرخص أولاً" },
+        { "value": "collection", "label": "One collection", "label_ar": "مجموعة واحدة" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "cover_collection",
+      "label": "Collection handle",
+      "label_ar": "اسم المجموعة",
+      "default": "",
+      "info": "Only used when the covers come from one collection.",
+      "info_ar": "بيستخدم بس لو الأغلفة من مجموعة واحدة."
+    },
+    {
       "type": "textarea",
       "id": "hand_note",
       "label": "Hand-written note",

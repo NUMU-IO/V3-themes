@@ -7,21 +7,23 @@
  * aside in the margin, and an optional photograph of the room itself sitting
  * beside the type rather than under it.
  *
- * With no image set it stays a type-and-colour band — deliberately good-looking
- * empty, because a merchant who has not uploaded a shop photo yet should get a
- * finished hero, not a grey placeholder box.
+ * With no photograph the shop's own covers build the picture instead — see the
+ * cover wall below — and a shop too new to fill one still gets a finished
+ * type-and-colour band rather than a grey placeholder box.
  */
 
-import { Image, Link, useResolvedSettings } from "@numueg/theme-sdk";
+import { Image, Link, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import {
   asBool,
   asImageAlt,
   asImageUrl,
   asString,
   isInlineImage,
+  productImages,
   useOrnaments,
   type SectionRenderProps,
 } from "../lib/shared";
+import { pickBooks, type BookSource } from "../lib/pick-books";
 import { Twinkle } from "../lib/ornaments";
 
 export default function PwHero({ instance }: SectionRenderProps) {
@@ -39,8 +41,27 @@ export default function PwHero({ instance }: SectionRenderProps) {
   const image = asImageUrl(s.image);
   const alt = asImageAlt(s.image) || heading;
 
+  /**
+   * The cover wall: the shop's own books stacked beside the promise.
+   *
+   * A bookshop's hero image is its stock, and this shop has thousands of
+   * jackets that a photograph of the room could never beat. An uploaded image
+   * still wins — a merchant who chose a picture meant it — and a shop with too
+   * few covers to build a wall falls back to the plain type band rather than a
+   * gappy grid.
+   */
+  const wallSource = (asString(s.cover_source) || "newest") as BookSource;
+  const { products } = useProducts({ limit: 24, fetchIfMissing: true });
+  const wall = asBool(s.show_covers, true) && !image
+    ? pickBooks(products, wallSource, asString(s.cover_collection), 12)
+        .map((product) => ({ id: String(product.id), name: product.name, src: productImages(product)[0] }))
+        .filter((book) => Boolean(book.src))
+        .slice(0, 9)
+    : [];
+  const hasWall = wall.length >= 6;
+
   return (
-    <section className={`pw-hero${image ? " has-image" : ""}`}>
+    <section className={`pw-hero${image ? " has-image" : hasWall ? " has-wall" : ""}`}>
       <div className="pw-hero-inner">
         <div className="pw-hero-copy">
           {eyebrow && (
@@ -70,10 +91,20 @@ export default function PwHero({ instance }: SectionRenderProps) {
           {/* With no photograph the note belongs WITH the copy. Floated into
               the empty half it read as a stray drawing in a blank field —
               and the empty half itself is now not rendered at all. */}
-          {ornaments && note && !image && (
+          {ornaments && note && !image && !hasWall && (
             <span className="pw-hero-note pw-hand">{note.split("\n").join(" ")}</span>
           )}
         </div>
+
+        {hasWall && (
+          <div className="pw-hero-wall" aria-hidden="true">
+            {wall.map((book, i) => (
+              <span key={book.id} className="pw-hero-spine">
+                <Image src={book.src} alt="" responsive={!isInlineImage(book.src)} priority={i < 3} />
+              </span>
+            ))}
+          </div>
+        )}
 
         {image && (
           <div className="pw-hero-media">
@@ -88,7 +119,7 @@ export default function PwHero({ instance }: SectionRenderProps) {
           </div>
         )}
 
-        {ornaments && note && image && (
+        {ornaments && note && (image || hasWall) && (
           <span className="pw-hero-note pw-hand">
             {note.split("\n").map((line, i) => (
               <span key={`${line}-${i}`} style={{ display: "block" }}>
