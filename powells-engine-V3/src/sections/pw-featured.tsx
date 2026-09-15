@@ -7,7 +7,6 @@
  * or an image — this section never invents an offer for a real store.
  */
 
-import { useMemo } from "react";
 import { Image, Link, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import {
   asBool,
@@ -21,22 +20,20 @@ import {
 } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
-import { pickBooks, type BookSource } from "../lib/pick-books";
+import type { BookSource } from "../lib/pick-books";
+import { useShelfBooks } from "../lib/shelf-books";
 import { Twinkle } from "../lib/ornaments";
 
 export default function PwFeatured({ instance }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const t = useT();
   const ornaments = useOrnaments();
-  const { products } = useProducts({ limit: 48, fetchIfMissing: true });
+  const { products } = useProducts({ limit: 300, fetchIfMissing: true });
 
   const source = (asString(s.source) || "newest") as BookSource;
   const limit = asNumber(s.limit, 3);
   const collection = asString(s.collection);
-  const picks = useMemo(
-    () => pickBooks(products, source, collection, limit),
-    [products, source, collection, limit],
-  );
+  const picks = useShelfBooks(products, source, collection, limit);
 
   const heading = asString(s.heading);
   const promoTitle = asString(s.promo_title);

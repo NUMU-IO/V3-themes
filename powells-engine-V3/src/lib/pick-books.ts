@@ -2,9 +2,13 @@
  * Choose the books for a home-page row from the store's product list.
  *
  * Shared by the shelf rail and the books-plus-banner section so both read
- * "newest", "reduced", "cheapest" and "one collection" the same way. A
- * collection handle that matches nothing falls back to everything: a merchant
- * mistyping a collection name should see books, not a hole in the home page.
+ * "newest", "reduced", "cheapest" and "one collection" the same way.
+ *
+ * A collection handle that matches nothing returns nothing. It used to fall
+ * back to every book, meant as forgiveness for a typo — but on a real store a
+ * genre simply missing from the page's slice of the catalogue produced four
+ * shelves titled Romance, Classics, Literary fiction and Best prices showing the
+ * same three books. An absent shelf is honest; a mislabelled one is not.
  */
 
 import type { Product } from "@numueg/theme-sdk";
@@ -29,7 +33,6 @@ export function pickBooks(products: Product[], source: BookSource, collection: s
         tags.includes(handle)
       );
     });
-    if (list.length === 0) list = withMeta;
   }
 
   const copy = [...list];
