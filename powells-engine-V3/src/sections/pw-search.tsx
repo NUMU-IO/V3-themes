@@ -19,6 +19,7 @@ import { asBool, asString, type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
 import { SceneSearch, Twinkle } from "../lib/ornaments";
+import { openRequestForm } from "../lib/request-form";
 import { useOrnaments } from "../lib/shared";
 
 export default function PwSearch({ instance }: SectionRenderProps) {
@@ -76,6 +77,11 @@ export default function PwSearch({ instance }: SectionRenderProps) {
           {ornaments && !loading && query && <SceneSearch width={240} />}
           <p>{loading ? "…" : t("search.no_results", "No books matched that search.")}</p>
           {!loading && <p className="pw-hand">{t("search.try", "Try an author, a title, or an ISBN.")}</p>}
+          {!loading && query && (
+            <button type="button" className="pw-btn pw-btn-primary pw-request-cta" onClick={openRequestForm}>
+              {t("request.search_cta", "Request this book")}
+            </button>
+          )}
           <Link className="pw-btn pw-btn-ghost" to="/products">
             {t("collection.empty_cta", "Browse everything")}
           </Link>
