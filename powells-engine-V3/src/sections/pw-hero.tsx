@@ -119,7 +119,9 @@ export default function PwHero({ instance }: SectionRenderProps) {
           </div>
         )}
 
-        {ornaments && note && (image || hasWall) && (
+        {/* Beside a photograph only. With the cover wall filling that side,
+            the note had nowhere to sit and fell under the buttons. */}
+        {ornaments && note && image && (
           <span className="pw-hero-note pw-hand">
             {note.split("\n").map((line, i) => (
               <span key={`${line}-${i}`} style={{ display: "block" }}>
