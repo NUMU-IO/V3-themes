@@ -13,7 +13,7 @@
       "id": "heading",
       "label": "Heading",
       "label_ar": "العنوان",
-      "default": "Used Books",
+      "default": "All Books",
       "info": "Ignored on a collection page, which uses the collection's own name.",
       "info_ar": "بيتجاهل في صفحة التصنيف، لأنها بتستخدم اسم التصنيف."
     },
@@ -61,7 +61,7 @@
       "name": "Shelf",
       "name_ar": "الرف",
       "settings": {
-        "heading": "Used Books",
+        "heading": "All Books",
         "rail_title": "Browse",
         "max_products": 48,
         "show_wishlist": true

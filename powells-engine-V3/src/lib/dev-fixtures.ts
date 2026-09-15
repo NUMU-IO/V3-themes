@@ -290,7 +290,7 @@ function toProduct(book: DevBook) {
 export const DEV_PRODUCTS = BOOKS.map(toProduct);
 
 export const DEV_COLLECTIONS = [
-  { id: "c1", slug: "used-books", name: "Used Books", description: "" },
+  { id: "c1", slug: "all-books", name: "All Books", description: "" },
   { id: "c2", slug: "staff-picks", name: "Staff Picks", description: "" },
 ];
 
