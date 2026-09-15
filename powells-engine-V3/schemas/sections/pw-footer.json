@@ -9,6 +9,15 @@
       "content_ar": "أعمدة لينكات وفقرة عن المحل. ضيف عمود لكل مجموعة لينكات."
     },
     {
+      "type": "textarea",
+      "id": "statement",
+      "label": "Closing line",
+      "label_ar": "جملة الختام",
+      "default": "",
+      "info": "A large serif line across the top of the footer.",
+      "info_ar": "جملة كبيرة بخط العناوين فوق الفوتر."
+    },
+    {
       "type": "text",
       "id": "brand_name",
       "label": "Shop name",

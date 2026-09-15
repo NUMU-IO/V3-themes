@@ -27,7 +27,7 @@ import { asArray, asNumber, asRecord, asString } from "./shared";
 
 const CAP = 480;
 
-function normalize(entry: unknown): Product {
+export function normalizeListingProduct(entry: unknown): Product {
   const raw = asRecord(entry);
   const price = asNumber(raw.price, Number(asString(raw.price)) || 0);
   const compareAt = raw.compare_at_price;
@@ -71,7 +71,7 @@ export function useMoreProducts(seed: Product[], pageSize: number): MoreProducts
       .then((json) => {
         const body = asRecord(json);
         const inner = asRecord(body.data ?? body);
-        const items = asArray(inner.items ?? body.data ?? json).map(normalize);
+        const items = asArray(inner.items ?? body.data ?? json).map(normalizeListingProduct);
         const seen = new Set(seed.map((p) => String(p.id)));
         const tail = items.filter((p) => p.id && !seen.has(String(p.id)));
         setExtra(tail);

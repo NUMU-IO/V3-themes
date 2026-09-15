@@ -64,6 +64,8 @@ interface DevBook {
   ratio?: number;
   /** [label, condition, cents, stock] */
   editions: Array<[string, string, number, number]>;
+  /** No cover anywhere, so the fallback jacket renders in the harness. */
+  noCover?: boolean;
   /**
    * Shaped like a book that arrived through a bulk import rather than through
    * the bookshop's own hand: no metafields, the author in `attributes` because
@@ -162,6 +164,7 @@ const BOOKS: DevBook[] = [
     price: 9.95,
     compare_at_price: 17.99,
     product_type: "Used Trade Paperback",
+    noCover: true,
     bg: "#f0e4d6",
     fg: "#4a2a30",
     editions: [["Trade Paperback", "Very good", 995, 2]],
@@ -228,8 +231,48 @@ const BOOKS: DevBook[] = [
   },
 ];
 
+/** Three fixtures read as one series, so the card line and the reading order render. */
+const SERIES_IDS = ["b9", "b2", "b8"];
+
+function seriesFor(id: string) {
+  const index = SERIES_IDS.indexOf(id);
+  if (index < 0) return [];
+  const products = SERIES_IDS.map((bookId, i) => {
+    const book = BOOKS.find((b) => b.id === bookId) as DevBook;
+    return {
+      product_id: bookId,
+      name: book.name,
+      slug: book.slug,
+      cover_image_url: cover(book.name, book.bg, book.fg, book.ratio),
+      volume_label: String(i + 1),
+      position: i + 1,
+    };
+  });
+  return [
+    {
+      id: "s1",
+      name: "The Fixture Court Series",
+      slug: "fixture-court",
+      volume_label: String(index + 1),
+      position: index + 1,
+      count: products.length,
+      previous: products[index - 1] ?? null,
+      next: products[index + 1] ?? null,
+      products,
+    },
+  ];
+}
+
+const LABELS: Record<string, { key: string; text: string; condition?: string; quantity?: number }> = {
+  b1: { key: "used", text: "USED", condition: "Very Good" },
+  b3: { key: "rare", text: "RARE" },
+  b7: { key: "limited", text: "LIMITED", quantity: 2 },
+  b9: { key: "new", text: "NEW" },
+};
+
 function toProduct(book: DevBook) {
   const image = cover(book.name, book.bg, book.fg, book.ratio);
+  const label = LABELS[book.id];
   return {
     id: book.id,
     slug: book.slug,
@@ -237,7 +280,14 @@ function toProduct(book: DevBook) {
     // `brand` is where a bookseller puts the author — same field the Meta feed
     // and Product JSON-LD read. See productAuthor() in lib/shared.
     brand: book.imported ? null : book.author,
-    attributes: book.imported ? { author: book.author } : {},
+    attributes: {
+      ...(book.imported ? { author: book.author } : {}),
+      formats: [...new Set(book.editions.map((e) => e[0]))],
+      ...(label ? { label: { key: label.key, text: label.text } } : {}),
+      ...(label?.condition ? { condition: label.condition } : {}),
+    },
+    quantity: label?.quantity ?? 40,
+    series: seriesFor(book.id),
     description:
       "<p>A fixture synopsis, standing in for the merchant's own copy so the " +
       "typography below the fold is real. Two paragraphs, because one never " +
@@ -250,8 +300,8 @@ function toProduct(book: DevBook) {
     category: { id: book.category.toLowerCase().replace(/\s+/g, "-"), name: book.category },
     tags: book.tags,
     created_at: `2026-0${(Number(book.id.slice(1)) % 9) + 1}-12T00:00:00Z`,
-    images: [image],
-    image_url: image,
+    images: book.noCover ? [] : [image],
+    image_url: book.noCover ? undefined : image,
     variants: book.editions.map(([label, condition, cents, stock], i) => ({
       id: `${book.id}-v${i + 1}`,
       product_id: book.id,
@@ -290,7 +340,7 @@ function toProduct(book: DevBook) {
 export const DEV_PRODUCTS = BOOKS.map(toProduct);
 
 export const DEV_COLLECTIONS = [
-  { id: "c1", slug: "used-books", name: "Used Books", description: "" },
+  { id: "c1", slug: "all-books", name: "All Books", description: "" },
   { id: "c2", slug: "staff-picks", name: "Staff Picks", description: "" },
 ];
 
@@ -334,6 +384,17 @@ export const DEV_CART = {
     },
   ],
 };
+
+/** What the host's search route would answer: books whose title or author holds the term. */
+export function devSearch(query: string, limit: number) {
+  const q = query.trim().toLowerCase();
+  const products = q
+    ? DEV_PRODUCTS.filter((p) =>
+        `${p.name} ${p.brand ?? ""} ${Object.values(p.attributes).join(" ")}`.toLowerCase().includes(q),
+      ).slice(0, limit)
+    : [];
+  return { query, products, collections: [], pages: [], articles: [], total: products.length };
+}
 
 /**
  * What the host's detail route would answer for one book.

@@ -64,7 +64,12 @@ import PwBlog from "./sections/pw-blog";
 import PwReviews from "./sections/pw-reviews";
 import PwNotFound from "./sections/pw-not-found";
 import PwFeatured from "./sections/pw-featured";
+import PwCampaign from "./sections/pw-campaign";
+import PwSeriesFeature from "./sections/pw-series-feature";
+import PwGrading from "./sections/pw-grading";
+import PwNewsletter from "./sections/pw-newsletter";
 import { WishlistDrawer } from "./lib/wishlist";
+import { SceneReading } from "./lib/ornaments";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
@@ -93,6 +98,10 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "pw-blog": PwBlog,
   "pw-reviews": PwReviews,
   "pw-not-found": PwNotFound,
+  "pw-campaign": PwCampaign,
+  "pw-series-feature": PwSeriesFeature,
+  "pw-grading": PwGrading,
+  "pw-newsletter": PwNewsletter,
 };
 
 // `lib-*` types come from the NUMU section library in the host's SDK
@@ -179,6 +188,11 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const cmsBlock =
     cmsTitle || cmsBody ? (
       <div className="pw-container" style={{ maxWidth: "72ch", padding: "56px 0" }}>
+        {pageCtx?.handle === "about" && globals.show_ornaments !== false && (
+          <div className="pw-page-art">
+            <SceneReading width={300} />
+          </div>
+        )}
         {cmsTitle && (
           <h1
             style={{
@@ -355,7 +369,7 @@ const v3Handle = {
   mount_returns: "MountResult" as const,
   // ⚠ Version lives in THREE places and they must match: theme.json,
   // package.json, and this literal.
-  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.2.0" },
+  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.3.0" },
   mount,
 };
 export default v3Handle;
@@ -392,7 +406,7 @@ if (import.meta.env.DEV && typeof window !== "undefined" && typeof document !== 
 
     // Fixtures are imported lazily and only under DEV, so the module never
     // reaches either shipped bundle.
-    void import("./lib/dev-fixtures").then(({ DEV_CART, devDetail, devPage }) => {
+    void import("./lib/dev-fixtures").then(({ DEV_CART, devDetail, devPage, devSearch }) => {
       // The harness has no host API. Answering the one route the theme calls
       // keeps quick look and quick-add exercisable here instead of failing in
       // a way a real store never would.
@@ -401,6 +415,15 @@ if (import.meta.env.DEV && typeof window !== "undefined" && typeof document !== 
       if (browser) browser.fetch = (input, init) => {
         const url =
           typeof input === "string" ? input : input instanceof Request ? input.url : String(input);
+        if (url.includes("/api/storefront/search")) {
+          const params = new URL(url, "http://dev.local").searchParams;
+          return Promise.resolve(
+            new Response(
+              JSON.stringify({ data: devSearch(params.get("q") ?? "", Number(params.get("limit")) || 6) }),
+              { headers: { "Content-Type": "application/json" } },
+            ),
+          );
+        }
         const match = /\/api\/storefront\/products\/([^/?#]+)/.exec(url);
         const detail = match ? devDetail(decodeURIComponent(match[1])) : null;
         return detail
@@ -424,7 +447,7 @@ if (import.meta.env.DEV && typeof window !== "undefined" && typeof document !== 
         themeSettings: {
           schema_version: 3,
           theme_id: "powells-v3",
-          global_settings: {},
+          global_settings: { free_shipping_threshold: Number(params.get("ship") ?? 0) },
           templates: {},
           section_groups: {},
         },

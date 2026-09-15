@@ -20,7 +20,7 @@
  */
 
 import type { Product } from "@numueg/theme-sdk";
-import { asArray, asNumber, asRecord, asString } from "@numueg/theme-kit";
+import { asArray, asRecord, asString } from "@numueg/theme-kit";
 import { bookFormat, productAuthor } from "./shared";
 
 export type FacetSource = "category" | "product_type" | "option" | "price" | "brand" | "tag";
@@ -31,16 +31,54 @@ export interface FacetRow {
   source: FacetSource;
   /** Which option axis, when `source` is "option". */
   optionName?: string;
+  /** The bands this row was built with, when `source` is "price". */
+  bands?: PriceBand[];
   values: Array<{ value: string; count: number }>;
 }
 
-/** Price bands, in the store's own units. Open-ended at the top. */
-const PRICE_BANDS: Array<[string, number, number]> = [
-  ["Under 10", 0, 10],
-  ["10 – 20", 10, 20],
-  ["20 – 50", 20, 50],
-  ["50 and over", 50, Number.POSITIVE_INFINITY],
-];
+type PriceBand = [label: string, from: number, below: number];
+
+/** A product's own price, whether the payload shipped it as a number or a string. */
+function priceOf(product: Product): number {
+  const n = Number((product as unknown as Record<string, unknown>).price);
+  return Number.isFinite(n) ? n : 0;
+}
+
+/**
+ * Price bands drawn from the books on the shelf.
+ *
+ * Fixed "under 10 / 10–20 / 20–50" bands were written for a dollar shop. In a
+ * riyal or pound catalogue every book lands in the top band, the row has one
+ * value, and a one-value row is dropped — so the price filter simply vanished.
+ * A shelf with a handful of distinct prices gets one band per price; a wider
+ * spread is split at its quartiles, rounded to a clean figure. Either way the
+ * bands divide the books actually on the page.
+ */
+export function priceBands(products: Product[]): PriceBand[] {
+  const distinct = [...new Set(products.map(priceOf).filter((n) => n > 0))].sort((a, b) => a - b);
+  if (distinct.length === 0) return [];
+  if (distinct.length <= 6) {
+    return distinct.map((price, i): PriceBand => [
+      String(price),
+      price,
+      distinct[i + 1] ?? Number.POSITIVE_INFINITY,
+    ]);
+  }
+  const clean = (n: number) => {
+    const step = 10 ** Math.max(0, Math.floor(Math.log10(n)) - 1);
+    return Math.round(n / step) * step;
+  };
+  const edges = [...new Set([0.25, 0.5, 0.75].map((q) => clean(distinct[Math.floor(q * (distinct.length - 1))])))];
+  const bands: PriceBand[] = [];
+  let from = 0;
+  for (const edge of edges) {
+    if (edge <= from) continue;
+    bands.push([from === 0 ? `Under ${edge}` : `${from} – ${edge}`, from, edge]);
+    from = edge;
+  }
+  bands.push([`${from} and over`, from, Number.POSITIVE_INFINITY]);
+  return bands;
+}
 
 /** Every option axis on a product, read from both shapes in the wild. */
 export function axesOf(product: Product): Record<string, string[]> {
@@ -70,11 +108,16 @@ export function valuesFor(
   product: Product,
   source: FacetSource,
   optionName?: string,
+  bands?: PriceBand[],
 ): string[] {
   const p = product as unknown as Record<string, unknown>;
   switch (source) {
     case "category": {
-      const name = asString(asRecord(p.category).name) || asString(p.category_name);
+      // A catalogue imported from a spreadsheet often carries its category as
+      // the genre tag and never gets a platform category at all, which left
+      // the Category row empty and dropped. The first tag is that genre.
+      const name =
+        asString(asRecord(p.category).name) || asString(p.category_name) || asString(asArray(p.tags)[0]);
       return name ? [name] : [];
     }
     case "product_type": {
@@ -92,8 +135,8 @@ export function valuesFor(
       return axesOf(product)[optionName.toLowerCase()] ?? [];
     }
     case "price": {
-      const price = asNumber(p.price, 0);
-      const band = PRICE_BANDS.find(([, lo, hi]) => price >= lo && price < hi);
+      const price = priceOf(product);
+      const band = (bands ?? []).find(([, from, below]) => price >= from && price < below);
       return band ? [band[0]] : [];
     }
     default:
@@ -106,27 +149,26 @@ export function buildFacets(
   products: Product[],
   rows: Array<{ id: string; label: string; source: FacetSource; optionName?: string }>,
 ): FacetRow[] {
+  const bands = priceBands(products);
   return rows
     .map((row) => {
       const counts: Record<string, number> = {};
       for (const product of products) {
-        for (const value of valuesFor(product, row.source, row.optionName)) {
+        for (const value of valuesFor(product, row.source, row.optionName, bands)) {
           counts[value] = (counts[value] ?? 0) + 1;
         }
       }
       const values = Object.entries(counts).map(([value, count]) => ({ value, count }));
-      // Price bands keep their declared order; everything else is
+      // Price bands keep their ascending order; everything else is
       // most-common-first, which is what makes a long author list usable.
       if (row.source === "price") {
         values.sort(
-          (a, b) =>
-            PRICE_BANDS.findIndex(([l]) => l === a.value) -
-            PRICE_BANDS.findIndex(([l]) => l === b.value),
+          (a, b) => bands.findIndex(([l]) => l === a.value) - bands.findIndex(([l]) => l === b.value),
         );
       } else {
         values.sort((a, b) => b.count - a.count || a.value.localeCompare(b.value));
       }
-      return { ...row, values };
+      return { ...row, bands, values };
     })
     // One value cannot narrow anything — it is a label, not a filter.
     .filter((row) => row.values.length > 1);
@@ -141,6 +183,6 @@ export function matchesFilters(
   return rows.every((row) => {
     const wanted = selected[row.id] ?? [];
     if (wanted.length === 0) return true;
-    return valuesFor(product, row.source, row.optionName).some((v) => wanted.includes(v));
+    return valuesFor(product, row.source, row.optionName, row.bands).some((v) => wanted.includes(v));
   });
 }

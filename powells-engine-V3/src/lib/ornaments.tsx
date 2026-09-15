@@ -18,6 +18,8 @@
  * reproduction, and primitives stay legible to the next person to edit them.
  */
 
+import type { ReactNode } from "react";
+
 const line = {
   fill: "none",
   stroke: "currentColor",
@@ -270,7 +272,147 @@ export function Twinkle({ size = 26 }: { size?: number }) {
   );
 }
 
+/* ── Scenes ─────────────────────────────────────────────────────────────────
+   The larger drawings for empty states and editorial panels. Same language as
+   the marginalia — thin line in currentColor — set on a pale lavender field
+   (`--pw-scene-field`), so every one of them reads as part of one hand. */
+
+function Scene({ width, children }: { width: number; children: ReactNode }) {
+  return (
+    <svg
+      className="pw-scene"
+      width={width}
+      height={width * 0.75}
+      viewBox="0 0 240 180"
+      aria-hidden="true"
+      {...line}
+      strokeWidth={1.3}
+    >
+      <ellipse cx="120" cy="96" rx="96" ry="72" fill="var(--pw-scene-field)" stroke="none" />
+      {children}
+    </svg>
+  );
+}
+
+/** An empty tote with a bookmark ribbon: the cart with nothing in it yet. */
+export function SceneEmptyBag({ width = 220 }: { width?: number }) {
+  return (
+    <Scene width={width}>
+      <path d="M70 70h100l-8 84H78z" fill="var(--pw-paper)" />
+      <path d="M96 70c0-22 10-34 24-34s24 12 24 34" />
+      <path d="M150 70v44l-7-6-7 6V70" fill="var(--pw-scene-field)" />
+      <Blossom cx={62} cy={150} r={8} />
+      <Leaf x={66} y={160} length={16} angle={-20} />
+      <path d="M186 58l4-10 4 10-10-4 10-4z" />
+    </Scene>
+  );
+}
+
+/** A magnifier over an open book with nothing on its pages: no results. */
+export function SceneSearch({ width = 220 }: { width?: number }) {
+  return (
+    <Scene width={width}>
+      <path d="M52 118c22-10 46-10 68 2 22-12 46-12 68-2v34c-22-10-46-10-68 2-22-12-46-12-68-2z" fill="var(--pw-paper)" />
+      <path d="M120 120v34" />
+      <path d="M64 128c14-5 30-5 44 1M132 129c14-6 30-6 44-1" strokeOpacity="0.45" strokeDasharray="3 4" />
+      <circle cx="150" cy="70" r="26" fill="var(--pw-paper)" />
+      <path d="M168 89l22 22" strokeWidth={3} />
+      <path d="M144 64c0-6 12-6 12 0 0 5-6 5-6 11M150 82v1" />
+    </Scene>
+  );
+}
+
+/** A shelf with one book fallen over: the page that isn't there. */
+export function SceneLost({ width = 220 }: { width?: number }) {
+  return (
+    <Scene width={width}>
+      <path d="M40 132h160M40 138h160" />
+      <rect x="64" y="72" width="16" height="60" rx="1" fill="var(--pw-paper)" />
+      <rect x="82" y="80" width="14" height="52" rx="1" fill="var(--pw-paper)" />
+      <path d="M100 132l18-58 14 4-18 58" fill="var(--pw-paper)" />
+      <path d="M146 132v-10l44-12v10z" fill="var(--pw-paper)" />
+      <path d="M170 60c8-8 20-6 22 4" />
+      <path d="M58 52l3-8 3 8-8-3 8-3z" />
+    </Scene>
+  );
+}
+
+/** A gift card tied with ribbon, a book tucked behind it. */
+export function SceneGift({ width = 220 }: { width?: number }) {
+  return (
+    <Scene width={width}>
+      <rect x="116" y="44" width="46" height="70" rx="2" fill="var(--pw-paper)" transform="rotate(8 139 79)" />
+      <rect x="54" y="74" width="120" height="74" rx="8" fill="var(--pw-paper)" />
+      <path d="M54 102h120M100 74v74" />
+      <path d="M100 102c-16-18-30-10-22-2 6 6 22 2 22 2zM100 102c14-18 30-12 22-2-6 6-22 2-22 2z" />
+      <path d="M140 126h22M140 134h14" strokeOpacity="0.55" />
+    </Scene>
+  );
+}
+
+/** A magnifier held over a book's worn corner, a grade tag on a string. */
+export function SceneGrading({ width = 220 }: { width?: number }) {
+  return (
+    <Scene width={width}>
+      <rect x="62" y="40" width="70" height="104" rx="3" fill="var(--pw-paper)" transform="rotate(-6 97 92)" />
+      <path d="M72 44l-2 100" strokeOpacity="0.5" transform="rotate(-6 97 92)" />
+      <path d="M84 70h34M84 78h24" strokeOpacity="0.5" transform="rotate(-6 97 92)" />
+      <path d="M122 40l10 10" transform="rotate(-6 97 92)" />
+      <circle cx="140" cy="104" r="28" fill="var(--pw-paper)" fillOpacity="0.7" />
+      <path d="M160 124l24 24" strokeWidth={3} />
+      <path d="M130 96c4 3 8 3 12 0M128 108c6 2 12 2 18-1" strokeOpacity="0.6" />
+      <path d="M160 52c8 4 14 10 16 18" strokeDasharray="2 3" />
+      <rect x="168" y="68" width="30" height="18" rx="3" fill="var(--pw-paper)" transform="rotate(14 183 77)" />
+      <path d="M176 77h14" transform="rotate(14 183 77)" />
+    </Scene>
+  );
+}
+
+/** An envelope with a book slipped inside: the reading club letter. */
+export function SceneLetter({ width = 220 }: { width?: number }) {
+  return (
+    <Scene width={width}>
+      <rect x="92" y="34" width="56" height="78" rx="2" fill="var(--pw-paper)" transform="rotate(-8 120 73)" />
+      <path d="M104 52h30M104 60h20" strokeOpacity="0.5" transform="rotate(-8 120 73)" />
+      <path d="M58 86h124v62H58z" fill="var(--pw-paper)" />
+      <path d="M58 86l62 38 62-38" />
+      <path d="M58 148l46-34M182 148l-46-34" strokeOpacity="0.6" />
+      <circle cx="120" cy="124" r="7" fill="var(--pw-scene-field)" />
+      <Blossom cx={190} cy={70} r={7} />
+      <Leaf x={186} y={80} length={14} angle={70} />
+      <path d="M44 60l3-8 3 8-8-3 8-3z" />
+    </Scene>
+  );
+}
+
+/** An open book, a cup and a sprig: the shop's own reading table. */
+export function SceneReading({ width = 220 }: { width?: number }) {
+  return (
+    <Scene width={width}>
+      <path d="M44 146h152" />
+      <path d="M58 136c20-14 42-14 62-2 20-12 42-12 62 2v8c-20-12-42-12-62 2-20-14-42-14-62-2z" fill="var(--pw-paper)" />
+      <path d="M120 134v12" />
+      <path d="M70 124c14-7 30-7 42 0M128 124c12-7 28-7 42 0" strokeOpacity="0.45" />
+      <path d="M150 84h30v18c0 10-6 16-15 16s-15-6-15-16z" fill="var(--pw-paper)" />
+      <path d="M180 90c8 0 8 12 0 12" />
+      <path d="M160 76c-3-5 3-8 0-13M170 76c-3-5 3-8 0-13" strokeOpacity="0.6" />
+      <path d="M62 118C68 96 80 80 98 70" />
+      <Blossom cx={98} cy={66} r={7} />
+      <Leaf x={70} y={104} length={14} angle={-50} />
+      <Leaf x={82} y={86} length={12} angle={-30} />
+    </Scene>
+  );
+}
+
 /* ── Icons ──────────────────────────────────────────────────────────────── */
+
+export function IconArrow({ size = 16 }: { size?: number }) {
+  return (
+    <svg className="pw-arrow" width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" {...line} strokeWidth={1.8}>
+      <path d="M4 12h15M13 6l6 6-6 6" />
+    </svg>
+  );
+}
 
 export function IconSearch({ size = 17 }: { size?: number }) {
   return (

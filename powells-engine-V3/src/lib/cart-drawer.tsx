@@ -25,13 +25,15 @@ import {
   useCart,
   useProducts,
   useRelatedProducts,
+  useThemeSettings,
   type Product,
 } from "@numueg/theme-sdk";
 import { useT } from "./i18n";
-import { IconClose } from "./ornaments";
+import { IconClose, SceneEmptyBag } from "./ornaments";
+import { BookJacket } from "./jacket";
 import { CartNudges } from "./promotions";
 import { fetchProductDetail } from "./product-detail";
-import { bookFormat, productAuthor, productImages } from "./shared";
+import { asNumber, asRecord, bookFormat, productAuthor, productImages } from "./shared";
 
 /** An open/closed flag that unrelated sections can flip without a shared parent. */
 export function createOpenStore() {
@@ -218,7 +220,7 @@ function CartSuggestions({ items, onClose }: { items: Array<{ product_id: string
               {cover ? (
                 <Image src={cover} alt={product.name} responsive={false} loading="lazy" />
               ) : (
-                <span className="pw-blank" />
+                <BookJacket title={product.name} size="mini" />
               )}
             </Link>
             <div>
@@ -260,9 +262,44 @@ export function CartDrawer() {
  *
  * Cart money is in MAJOR units (normalised by the SDK) — never divide here.
  */
+/**
+ * "You're 120 EGP away from free delivery." The threshold is the merchant's
+ * theme setting, in MAJOR units like the cart itself; with none set there is no
+ * meter, and a free-shipping promotion's own nudge speaks instead.
+ */
+function DeliveryMeter({ subtotal, threshold, currency }: { subtotal: number; threshold: number; currency?: string }) {
+  const t = useT();
+  const remaining = Math.max(0, threshold - subtotal);
+  const [before, after = ""] = t("cart.free_delivery_left", "You're {{amount}} away from free delivery.").split("{{amount}}");
+  return (
+    <div className="pw-meter" data-done={remaining === 0 || undefined}>
+      <p>
+        {remaining > 0 ? (
+          <>
+            {before}
+            <b>
+              <Money amount={remaining} currency={currency} />
+            </b>
+            {after}
+          </>
+        ) : (
+          t("cart.free_delivery_done", "Your order ships free.")
+        )}
+      </p>
+      <span className="track" aria-hidden="true">
+        <span className="fill" style={{ width: `${Math.min(100, (subtotal / threshold) * 100)}%` }} />
+      </span>
+    </div>
+  );
+}
+
 function CartDrawerPanel() {
   const t = useT();
   const { cart, updateQuantity, removeItem, loading } = useCart();
+  const settings = useThemeSettings();
+  const globals = asRecord(settings.global_settings);
+  const threshold = asNumber(globals.free_shipping_threshold, 0);
+  const ornaments = globals.show_ornaments !== false;
 
   const items = cart?.items ?? [];
   const currency = cart?.currency;
@@ -299,6 +336,7 @@ function CartDrawerPanel() {
       {items.length === 0 ? (
         <>
           <div className="pw-empty">
+            {ornaments && <SceneEmptyBag width={190} />}
             <p>{t("cart.empty", "Your cart is empty.")}</p>
             <Link className="pw-btn pw-btn-primary" to="/products" onClick={close}>
               {t("cart.empty_cta", "Start browsing")}
@@ -308,14 +346,15 @@ function CartDrawerPanel() {
         </>
       ) : (
         <>
-          <CartNudges />
+          {threshold > 0 && <DeliveryMeter subtotal={cart?.subtotal ?? 0} threshold={threshold} currency={currency} />}
+          <CartNudges skipFreeShipping={threshold > 0} />
           {items.map((item) => (
             <div className="pw-line" key={item.id}>
               <div className="pw-line-media">
                 {item.image_url ? (
                   <Image src={item.image_url} alt={item.name} responsive={false} loading="lazy" />
                 ) : (
-                  <span className="pw-blank" />
+                  <BookJacket title={item.name} size="mini" />
                 )}
               </div>
               <div>
