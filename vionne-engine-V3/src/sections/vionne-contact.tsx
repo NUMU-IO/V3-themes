@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Link, useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings, useShop, whatsappHref } from "@numueg/theme-sdk";
 import { ChevronRight, MessageCircle, Phone, Mail, Instagram, Clock } from "lucide-react";
 import { localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -87,12 +87,14 @@ const VionneContact = ({ instance, sectionId }: SectionRenderProps) => {
   };
 
   const methods: { icon: any; label: string; value: string; href: string }[] = [];
-  if (whatsappDigits) {
+  // whatsappHref turns a local 010… number into 2010…; the bare digits did not.
+  const whatsappLink = whatsappHref(contact.whatsapp);
+  if (whatsappDigits && whatsappLink) {
     methods.push({
       icon: MessageCircle,
       label: "WhatsApp",
       value: formatPhoneForDisplay(whatsappDigits),
-      href: `https://wa.me/${whatsappDigits}`,
+      href: whatsappLink,
     });
   }
   if (phoneDigits) {

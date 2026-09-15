@@ -8,6 +8,7 @@
  */
 
 import { asBool, asString } from "@numueg/theme-kit";
+import { whatsappHref } from "@numueg/theme-sdk";
 import { type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { IconWhatsApp } from "../lib/icons";
@@ -33,7 +34,7 @@ export default function GnContact({ instance }: SectionRenderProps) {
         <div className="gn-contact-details">
           {whatsapp && (
             <a
-              href={`https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`}
+              href={whatsappHref(whatsapp)}
               className="gn-btn gn-btn-outline gn-contact-wa"
               target="_blank"
               rel="noopener noreferrer"

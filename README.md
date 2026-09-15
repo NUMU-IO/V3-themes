@@ -14,16 +14,21 @@ Built on the V3 toolchain: [`@numueg/theme-sdk`](../numu-theme-sdk) · [`@numueg
 | Editorial | `editorial-engine-V3/` |
 | Elegant | `elegant-engine-V3/` |
 | Empire | `empire-engine-V3/` |
+| Genova | `genova-engine-V3/` |
 | Gilded Glamour Boutique | `gilded-glamour-boutique-engine-V3/` |
 | Kick Game | `kick-game-engine-V3/` |
 | Luxury Minimal *(new-store default)* | `luxury-minimal-engine-V3/` |
 | Modern | `modern-engine-V3/` |
 | Neo Brutalism | `neo-brutalism-engine-V3/` |
+| Powells | `powells-engine-V3/` |
 | Rabbitsocks | `rabbitsocks-engine-V3/` |
 | Skeuomorphic | `skeuomorphic-engine-V3/` |
 | Street | `street-engine-V3/` |
 | Tech Wave | `tech-wave-engine-V3/` |
+| Teen | `teen-engine-V3/` |
 | Vionne | `vionne-engine-V3/` |
+
+19 themes as of 2026-09-15.
 
 > Versions live in each theme's `theme.json` (the CLI reads versions from there, **not** `package.json`). Check `theme.json` for the current number before bumping.
 
@@ -45,9 +50,16 @@ Built on the V3 toolchain: [`@numueg/theme-sdk`](../numu-theme-sdk) · [`@numueg
 ```
 
 Shared conventions:
-- Every theme has `src/sections/_shared.ts` — `useDemo()` (marketplace-preview vs production), `MountPageData`, CSS prefix (`bz-`, `by-`, …), image-transform helpers.
+- **Helper layout:** 15 themes keep private helpers in `src/sections/_*.ts` (`_shared.ts`: `useDemo()`, `MountPageData`, CSS prefix `bz-`, `by-`, …). empire, genova, powells and teen use `src/lib/*` instead, which is what the CLI scaffold creates. Everything under `src/sections/` without a leading `_` must be a real section with a schema.
+- **Template selection comes from the SDK.** Import `resolveSections` / `selectTemplateSections` / `selectChromeSections` from `@numueg/theme-sdk`; never copy them into a theme. `numu-theme lint` fails on a local definition (`no-local-template-helpers`).
 - Demo imagery is `FALLBACK_*` literals gated by the demo context — never store demo URLs in customizations.
 - Image focal/zoom/rotation transforms are non-destructive (`ImageValue.transform`).
+
+## Share vs differentiate
+
+- **Commodity sections live in the SDK section library** (`lib-*` types: FAQ, testimonials, promo banner, collection tiles, …). A theme gets them by declaring `"supports": { "section_library": { "version": 1 } }` in `theme.json` and falling back to `librarySection(type)` in its registry. They inherit the theme's fonts and colours through the `--theme-*` tokens. Do not build a new theme-local copy of a section the library already has.
+- **Signature sections stay theme-owned** — the ones that make a theme recognisable (Vionne's UGC reels and before/after, Genova's fit guide). A theme that keeps its own version of a library section lists the library type in `supports.section_library.replaces`, so the editor doesn't show both.
+- Plan and history: `docs/Plans/theme-section-base/` in the workspace root.
 
 ## Working on a theme
 

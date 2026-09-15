@@ -19,6 +19,7 @@ import {
   useResolvedSettings,
   useShop,
   useThemeSettings,
+  whatsappHref,
 } from "@numueg/theme-sdk";
 import { Facebook, Mail, MessageCircle, Music2, Phone, Send, Twitter, Youtube } from "lucide-react";
 import { asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
@@ -177,7 +178,7 @@ const BoutiqueFooter = ({ instance, sectionId }: SectionRenderProps) => {
     .filter(({ url }) => Boolean(url));
 
   const socialHref = (name: string, url: string) =>
-    name.toLowerCase() === "whatsapp" ? `https://wa.me/${url.replace(/\D/g, "")}` : url;
+    name.toLowerCase() === "whatsapp" ? (whatsappHref(url) ?? url) : url;
 
   const copyright =
     (isAr

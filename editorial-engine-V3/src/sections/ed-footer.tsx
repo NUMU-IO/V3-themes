@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Link, collectionHref, useCollections, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation } from "@numueg/theme-sdk";
+import { Link, collectionHref, useCollections, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation, whatsappHref } from "@numueg/theme-sdk";
 import { Facebook, Instagram, Mail, Music2, Phone, Twitter, Youtube } from "lucide-react";
 import {
   asString,
@@ -270,11 +270,7 @@ export default function ManshetFooter({ instance, sectionId }: SectionRenderProp
                 )}
                 {whatsapp && (
                   <a
-                    href={
-                      whatsapp.startsWith("http")
-                        ? whatsapp
-                        : `https://wa.me/${whatsapp.replace(/\D/g, "")}`
-                    }
+                    href={whatsappHref(whatsapp)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="WhatsApp"

@@ -20,14 +20,17 @@ import {
   type SectionInstance,
   type Store,
   type ThemeSettingsV3,
+  isLibrarySection,
+  librarySection,
+  CmsPageBody,
+  resolveSections,
+  selectTemplateSections,
+  type MaybeOrderedTemplate,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 // Tailwind-in-bundle: compiles @tailwind directives + ported V2 tech-wave
 // styles into dist/theme.css (see vite.config.ts / tailwind.config.js).
 import "./theme.css";
-import {
-  resolveSections, selectTemplateSections, type MaybeOrderedTemplate,
-} from "./sections/_template-utils";
 
 // Eager section imports (no React.lazy): sections bundle into theme.js so the
 // whole page renders in one commit — no chunk-download flash, SSR-safe.
@@ -77,7 +80,9 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "tech-wave-order-confirmation-section": TechWaveOrderConfirmationSection,
 };
 
-const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
+// `lib-*` types come from the NUMU section library in the host's SDK
+// (docs/Plans/theme-section-base/PHASE-4-THEMES-ADOPT-LIBRARY.md).
+const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]) || isLibrarySection(t);
 
 const MANIFEST_PRESETS = (
   themeManifest as unknown as {
@@ -97,7 +102,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   instance: SectionInstance; sectionId: string; groupId?: string;
 }) {
   if (instance.disabled) return null;
-  const Component = SECTION_REGISTRY[instance.type];
+  const Component = SECTION_REGISTRY[instance.type] ?? librarySection(instance.type);
   if (!Component) {
     return (
       <Section id={sectionId} type={instance.type} groupId={groupId}>
@@ -190,6 +195,8 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
         <RenderSection key={id} sectionId={id} instance={instance} groupId="header" />
       ))}
       <main>
+        {/* CMS page title + body; keeps the merchant's text when a page template has sections. */}
+        <CmsPageBody />
         {body.map(({ id, instance }) => (
           <RenderSection key={id} sectionId={id} instance={instance} />
         ))}

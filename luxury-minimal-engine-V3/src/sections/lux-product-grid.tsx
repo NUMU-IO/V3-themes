@@ -55,8 +55,10 @@ export default function LuxProductGrid({ instance, sectionId }: SectionRenderPro
 
   // Collection FIRST — see useListingHeading. A static section title used to
   // mask every collection name because this section renders both listings.
+  // A static title override makes the heading inline-editable (used below).
+  const titleOverride = asString(s.title);
   const listing = useListingHeading({
-    title: asString(s.title),
+    title: titleOverride,
     defaultTitle: localized(locale, "All Products", "جميع المنتجات"),
   });
   const pageTitle = listing.title;

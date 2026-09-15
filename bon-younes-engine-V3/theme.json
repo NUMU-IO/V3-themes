@@ -3,6 +3,11 @@
   "name": "Bon Younes (V3)",
   "author": "NUMU",
   "version": "0.2.11",
+  "supports": {
+    "section_library": {
+      "version": 1
+    }
+  },
   "layout": "single-column",
   "description": "Mobile-first cafe & coffee storefront for Bon Younes — cream and espresso palette, looping drink strip hero, and a scroll-driven brand story.",
   "error_template": "templates/error.html",

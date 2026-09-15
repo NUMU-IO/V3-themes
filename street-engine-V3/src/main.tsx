@@ -24,6 +24,9 @@ import {
   useThemeSettings,
   type MaybeOrderedTemplate,
   type SectionInstance,
+  isLibrarySection,
+  librarySection,
+  CmsPageBody,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 import "./theme.css";
@@ -50,7 +53,9 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
 const HEADER_TYPES = new Set(["st-header", "header"]);
 const FOOTER_TYPES = new Set(["st-footer", "footer"]);
 
-const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
+// `lib-*` types come from the NUMU section library in the host's SDK
+// (docs/Plans/theme-section-base/PHASE-4-THEMES-ADOPT-LIBRARY.md).
+const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]) || isLibrarySection(t);
 
 const PRESETS = (
   themeManifest as unknown as {
@@ -80,7 +85,7 @@ function RenderSection({
   sectionId: string;
   groupId?: string;
 }) {
-  const Component = SECTION_REGISTRY[instance.type];
+  const Component = SECTION_REGISTRY[instance.type] ?? librarySection(instance.type);
   if (!Component) {
     return (
       <Section id={sectionId} type={instance.type} groupId={groupId}>
@@ -173,6 +178,8 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
       {/* Exactly one <main> landmark, and the slot the host fills with the page
           body on routes this theme has no template for. */}
       <main>
+        {/* CMS page title + body; keeps the merchant's text when a page template has sections. */}
+        <CmsPageBody />
         {body.map(({ id, instance }) => (
           <RenderSection key={id} sectionId={id} instance={instance} />
         ))}

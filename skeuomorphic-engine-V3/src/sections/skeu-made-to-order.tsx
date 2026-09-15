@@ -1,5 +1,5 @@
 "use client";
-import { useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { useLocale, useResolvedSettings, whatsappHref } from "@numueg/theme-sdk";
 import { Clock, MessageCircle, PenLine } from "lucide-react";
 import { asString, localized, useDemo, useInsideEditor, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -35,7 +35,7 @@ export default function SkeuMadeToOrder({ instance, sectionId }: SectionRenderPr
   // The card earns its place only when the merchant wrote SOMETHING real.
   if (!leadTime && !personalization && !whatsapp && !note) return null;
 
-  const waHref = whatsapp ? `https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}` : "";
+  const waHref = whatsappHref(whatsapp) ?? "";
 
   return (
     <section className="py-14 md:py-20 bg-[var(--vn-surface-dark)]">

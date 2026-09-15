@@ -16,6 +16,7 @@ import {
   useNavigation,
   useResolvedSettings,
   useShop,
+  whatsappHref,
 } from "@numueg/theme-sdk";
 import {
   Facebook,
@@ -167,7 +168,7 @@ const NbFooter = ({ instance, sectionId }: SectionRenderProps) => {
 
   const socialHref = (name: string, url: string) =>
     name.toLowerCase() === "whatsapp" && !/^https?:/i.test(url)
-      ? `https://wa.me/${url.replace(/\D/g, "")}`
+      ? (whatsappHref(url) ?? url)
       : url;
 
   return (

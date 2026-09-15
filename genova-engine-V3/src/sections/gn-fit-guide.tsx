@@ -11,7 +11,7 @@
  * because wrong measurements cause exactly the returns this is meant to prevent.
  */
 
-import { Image, Link } from "@numueg/theme-sdk";
+import { Image, Link, whatsappHref } from "@numueg/theme-sdk";
 import { asBool, asImageAlt, asImageUrl, asString } from "@numueg/theme-kit";
 import { cx, readBlockNodes, type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
@@ -156,7 +156,7 @@ export default function GnFitGuide({ instance }: SectionRenderProps) {
           ) : (
             whatsapp && (
               <a
-                href={`https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`}
+                href={whatsappHref(whatsapp)}
                 className="gn-btn gn-btn-primary"
                 target="_blank"
                 rel="noopener noreferrer"

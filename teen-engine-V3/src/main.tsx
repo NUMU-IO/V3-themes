@@ -19,6 +19,11 @@ import {
   useLocale,
   useThemeSettings,
   type SectionInstance,
+  isLibrarySection,
+  librarySection,
+  resolveSections,
+  selectTemplateSections,
+  type MaybeOrderedTemplate,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 // Tailwind-in-bundle: compiles the @tailwind directives + the tn-* component
@@ -29,11 +34,6 @@ import "./theme.css";
 // matching schemas/sections/<name>.json, so a helper parked there produces a
 // permanent warning for a file no merchant will ever add. src/lib/ is the
 // layout the CLI's own scaffold uses.
-import {
-  resolveSections,
-  selectTemplateSections,
-  type MaybeOrderedTemplate,
-} from "./lib/template-utils";
 import {
   DemoContext,
   HeroContext,
@@ -142,7 +142,9 @@ const TEMPLATE_BY_HANDLE: Record<string, string> = {
   المقاسات: "size-guide",
 };
 
-const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
+// `lib-*` types come from the NUMU section library in the host's SDK
+// (docs/Plans/theme-section-base/PHASE-4-THEMES-ADOPT-LIBRARY.md).
+const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]) || isLibrarySection(t);
 
 const BUILTIN_TEMPLATES =
   (themeManifest as unknown as { presets?: { templates?: Record<string, MaybeOrderedTemplate> } })
@@ -161,7 +163,7 @@ function RenderSection({
   groupId?: string;
 }) {
   if (instance.disabled) return null;
-  const Component = SECTION_REGISTRY[instance.type];
+  const Component = SECTION_REGISTRY[instance.type] ?? librarySection(instance.type);
   if (!Component) {
     // Only reachable in the editor (an unknown type is filtered out of the
     // storefront render). A visible marker beats a silent gap when a merchant

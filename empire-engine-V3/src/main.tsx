@@ -3,7 +3,13 @@ import {
   defineThemeEntry,
   Section,
   useDirection,
+  type SectionInstance,
   type ThemeSettingsV3,
+  isLibrarySection,
+  librarySection,
+  CmsPageBody,
+  selectTemplateSections,
+  type MaybeOrderedTemplate,
 } from "@numueg/theme-sdk";
 import manifest from "../theme.json";
 import { DemoContext } from "./lib/demo";
@@ -54,7 +60,9 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   about_section: AboutSection,
 };
 
-const isKnown = (type: string) => Boolean(SECTION_REGISTRY[type]);
+// `lib-*` types come from the NUMU section library in the host's SDK
+// (docs/Plans/theme-section-base/PHASE-4-THEMES-ADOPT-LIBRARY.md).
+const isKnown = (type: string) => Boolean(SECTION_REGISTRY[type]) || isLibrarySection(type);
 
 interface SectionLike {
   type: string;
@@ -91,35 +99,18 @@ function normaliseInstance(instance: SectionLike): SectionLike {
   return instance;
 }
 
-/** Normalise a template/group (array OR map+order) → ordered instance list. */
-function resolveSections(
-  group: GroupLike | undefined,
-): Array<{ id: string; instance: SectionLike }> {
-  if (!group || !group.sections) return [];
-  if (Array.isArray(group.sections)) {
-    return group.sections.map((instance, idx) => ({
-      id: `${instance.type}-${idx}`,
-      instance: normaliseInstance(instance),
-    }));
-  }
-  const map = group.sections as Record<string, SectionLike>;
-  const order = group.order ?? Object.keys(map);
-  const out: Array<{ id: string; instance: SectionLike }> = [];
-  for (const id of order) {
-    const instance = map[id];
-    if (instance) out.push({ id, instance: normaliseInstance(instance) });
-  }
-  return out;
-}
-
-/** Prefer the host's customisation; fall back to bundled presets (preview). */
+/** The SDK's template choice (host customisation, else the bundled preset —
+ *  the engine policy every theme shares), with blocks normalised for empire's
+ *  sections. Unknown preset types are skipped later by `renderList`. */
 function selectSections(
   host: GroupLike | undefined,
   builtin: GroupLike | undefined,
 ): Array<{ id: string; instance: SectionLike }> {
-  const hostList = resolveSections(host).filter((s) => isKnown(s.instance.type));
-  if (hostList.length > 0) return hostList;
-  return resolveSections(builtin).filter((s) => isKnown(s.instance.type));
+  return selectTemplateSections(
+    host as unknown as MaybeOrderedTemplate | undefined,
+    builtin as unknown as MaybeOrderedTemplate | undefined,
+    isKnown,
+  ).map(({ id, instance }) => ({ id, instance: normaliseInstance(instance as unknown as SectionLike) }));
 }
 
 /** Build a font-family stack from a merchant-picked family name, keeping the
@@ -163,7 +154,10 @@ function renderList(
   return list.map(({ id, instance }) => {
     if (instance.disabled) return null;
     const Component = SECTION_REGISTRY[instance.type];
-    if (!Component) return null;
+    // Library sections take the SDK's { instance, sectionId } props, not
+    // empire's flattened { id, settings, blocks } ones.
+    const Library = Component ? undefined : librarySection(instance.type);
+    if (!Component && !Library) return null;
     // <Section> emits the data-section-id the customizer's PreviewBridge reads
     // for click-to-select; passing the id down lets each component wire
     // <EditableText>/<EditableImage> for inline field editing.
@@ -174,14 +168,18 @@ function renderList(
         type={instance.type}
         groupId={groupId}
       >
-        <Component
-          id={id}
-          type={instance.type}
-          settings={instance.settings}
-          blocks={instance.blocks}
-          blockOrder={instance.block_order}
-          {...extra}
-        />
+        {Library ? (
+          <Library instance={instance as SectionInstance} sectionId={id} />
+        ) : (
+          <Component
+            id={id}
+            type={instance.type}
+            settings={instance.settings}
+            blocks={instance.blocks}
+            blockOrder={instance.block_order}
+            {...extra}
+          />
+        )}
       </Section>
     );
   });
@@ -244,7 +242,11 @@ export default function Theme({ themeSettings, currentTemplate }: ThemeProps) {
           body on routes this theme has no template for. An EMPTY <main> is the
           correct output there — it is the signal the host watches for before
           portalling its own content in, which a placeholder would suppress. */}
-      <main>{bodySections.length > 0 ? renderList(bodySections, pageType) : null}</main>
+      <main>
+        {/* CMS page title + body; keeps the merchant's text when a page template has sections. */}
+        <CmsPageBody />
+        {bodySections.length > 0 ? renderList(bodySections, pageType) : null}
+      </main>
       {renderList(footerSections, "fg", "footer")}
     </div>
   );

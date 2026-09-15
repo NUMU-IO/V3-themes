@@ -21,6 +21,8 @@ import {
   type SectionInstance,
   type Store,
   type ThemeSettingsV3,
+  isLibrarySection,
+  librarySection,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 import { DemoContext, PageDataContext, type MountPageData } from "./sections/_shared";
@@ -90,7 +92,9 @@ const BUILTIN_TEMPLATES = (
   }
 ).presets?.templates ?? {};
 
-const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
+// `lib-*` types come from the NUMU section library in the host's SDK
+// (docs/Plans/theme-section-base/PHASE-4-THEMES-ADOPT-LIBRARY.md).
+const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]) || isLibrarySection(t);
 
 // Chrome section types. Aliased to the generic names too, so chrome
 // delivered through section_groups resolves whichever form the customizer
@@ -108,7 +112,7 @@ function RenderSection({
   groupId?: string;
 }) {
   if (instance.disabled) return null;
-  const Component = SECTION_REGISTRY[instance.type];
+  const Component = SECTION_REGISTRY[instance.type] ?? librarySection(instance.type);
   if (!Component) {
     return (
       <Section id={sectionId} type={instance.type} groupId={groupId}>

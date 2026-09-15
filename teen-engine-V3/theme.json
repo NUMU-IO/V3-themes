@@ -4,6 +4,11 @@
   "name_ar": "تين",
   "author": "NUMU",
   "version": "1.0.1",
+  "supports": {
+    "section_library": {
+      "version": 1
+    }
+  },
   "layout": "single-column",
   "description": "Teen (V3) — a loud, card-led storefront for youth streetwear and lifestyle. A floating capsule header over a full-bleed campaign hero, hairline-outlined product cards with hover-swap imagery and grid quick-add, black bundle promos with a fluorescent-lime discount language, and a purchase-first mobile layout with a sticky add-to-cart bar.",
   "description_ar": "تين (V3) — متجر جريء ومبني على الكروت، متعمل لملابس الشباب والستريت وير. هيدر عائم فوق بانر كامل العرض، كروت منتجات بإطار رفيع وصورة بتتبدل مع الماوس وزرار إضافة سريع، عروض باندل على خلفية سودا بلون ليموني للخصم، وتصميم موبايل مركّز على الشراء بشريط إضافة للسلة ثابت تحت.",

@@ -13,6 +13,9 @@ import {
 } from "@numueg/theme-sdk";
 import { asBool, localized, productImage, type StSectionProps } from "./_shared";
 
+// Stable stand-in so the hook still runs (hooks can't be conditional) before the product loads.
+const NO_PRODUCT = { options: [], variants: [] };
+
 /**
  * st-product-detail — Street's PDP body.
  *
@@ -26,8 +29,11 @@ export default function StProductDetail({ instance, sectionId }: StSectionProps)
   const product = useProductOptional();
   const showDescription = asBool(s.show_description, true);
 
-  const { options, selected, select, variant, canAddToCart } =
-    useVariantSelection(product ?? undefined);
+  // The hook has no `options`/`selected`/`canAddToCart`; reading them made
+  // every product page throw on `options.map`. Derive them from what it returns.
+  const { selection: selected, select, variant } = useVariantSelection(product ?? NO_PRODUCT);
+  const options = product?.options ?? [];
+  const canAddToCart = options.length === 0 || variant !== null;
 
   const images = (() => {
     const raw = (product as { images?: Array<string | { url?: string }> } | null)
@@ -141,16 +147,18 @@ export default function StProductDetail({ instance, sectionId }: StSectionProps)
           ))}
 
           <div className="mt-8">
-            <AddToCartButton
-              product={product}
-              variantId={(variant as { id?: string } | null)?.id}
-              disabled={!canAddToCart}
-              className="st-btn w-full md:w-auto"
-            >
-              {canAddToCart
-                ? localized(locale, "Add to bag", "أضف للسلة")
-                : localized(locale, "Pick your options", "اختار المقاس")}
-            </AddToCartButton>
+            {canAddToCart ? (
+              <AddToCartButton
+                product={product}
+                variant={variant ?? undefined}
+                label={localized(locale, "Add to bag", "أضف للسلة")}
+                className="st-btn w-full md:w-auto"
+              />
+            ) : (
+              <button type="button" disabled className="st-btn w-full md:w-auto">
+                {localized(locale, "Pick your options", "اختار المقاس")}
+              </button>
+            )}
           </div>
 
           {showDescription &&

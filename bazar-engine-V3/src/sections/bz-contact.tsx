@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
+import { useLocale, useResolvedSettings, useShop, whatsappHref } from "@numueg/theme-sdk";
 import {
   Phone,
   MessageCircle,
@@ -153,7 +153,7 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
   };
 
   const whatsappContinueUrl = whatsapp
-    ? `https://wa.me/${whatsapp.replace(/^\+/, "")}?text=${encodeURIComponent(
+    ? `${whatsappHref(whatsapp) ?? "https://wa.me/"}?text=${encodeURIComponent(
         `Name: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\nMessage: ${form.message}`,
       )}`
     : null;
@@ -207,7 +207,7 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
 
           <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
             {whatsapp && (
-              <a href={`https://wa.me/${whatsapp.replace(/^\+/, "")}`} target="_blank" rel="noopener noreferrer"
+              <a href={whatsappHref(whatsapp)} target="_blank" rel="noopener noreferrer"
                 className="group bz-card-hover rounded-3xl bg-white/5 border border-white/10 p-4 sm:p-6 text-center hover:border-[var(--bz-amber)]/50 transition-colors">
                 <div className="w-14 h-14 rounded-full bg-[var(--bz-amber)] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                   <MessageCircle size={24} className="text-[var(--bz-dark)]" />
@@ -361,7 +361,7 @@ export default function BzContact({ instance, sectionId }: SectionRenderProps) {
                   <InlineEditable sectionId={sectionId} settingKey="hours_description" value={hoursDescription} multiline />
                 </p>
                 {whatsapp && (
-                  <a href={`https://wa.me/${whatsapp.replace(/^\+/, "")}`} target="_blank" rel="noopener noreferrer"
+                  <a href={whatsappHref(whatsapp)} target="_blank" rel="noopener noreferrer"
                     className="bz-btn bz-btn-amber mt-8 rounded-full gap-2">
                     <MessageCircle size={16} /> {localized(locale, "CHAT ON WHATSAPP", "تواصل على واتساب")}
                   </a>

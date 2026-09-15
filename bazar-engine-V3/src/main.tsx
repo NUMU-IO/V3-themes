@@ -30,6 +30,11 @@ import {
   type SectionInstance,
   type Store,
   type ThemeSettingsV3,
+  isLibrarySection,
+  librarySection,
+  resolveSections,
+  selectTemplateSections,
+  type MaybeOrderedTemplate,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 import { DemoContext, PageDataContext, type MountPageData } from "./sections/_shared";
@@ -119,11 +124,6 @@ function UnknownSection({ type }: { type: string }) {
   );
 }
 
-import {
-  resolveSections,
-  selectTemplateSections,
-  type MaybeOrderedTemplate,
-} from "./sections/_template-utils";
 
 const BUILTIN_TEMPLATES = (
   themeManifest as unknown as {
@@ -131,7 +131,9 @@ const BUILTIN_TEMPLATES = (
   }
 ).presets?.templates ?? {};
 
-const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
+// `lib-*` types come from the NUMU section library in the host's SDK
+// (docs/Plans/theme-section-base/PHASE-4-THEMES-ADOPT-LIBRARY.md).
+const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]) || isLibrarySection(t);
 
 function RenderSection({
   instance,
@@ -143,7 +145,7 @@ function RenderSection({
   groupId?: string;
 }) {
   if (instance.disabled) return null;
-  const Component = SECTION_REGISTRY[instance.type];
+  const Component = SECTION_REGISTRY[instance.type] ?? librarySection(instance.type);
   if (!Component) {
     return (
       <Section id={sectionId} type={instance.type} groupId={groupId}>

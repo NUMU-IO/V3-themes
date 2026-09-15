@@ -3,6 +3,11 @@
   "name": "Empire (V3)",
   "author": "NUMU",
   "version": "0.6.11",
+  "supports": {
+    "section_library": {
+      "version": 1
+    }
+  },
   "layout": "single-column",
   "description": "Premium editorial e-commerce — monochromatic palette, wide uppercase display type, Arabic-first (RTL), content-first design.",
   "error_template": "templates/error.html",

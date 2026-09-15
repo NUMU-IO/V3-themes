@@ -19,6 +19,11 @@ import {
   useLocale,
   useThemeSettings,
   type SectionInstance,
+  isLibrarySection,
+  librarySection,
+  resolveSections,
+  selectTemplateSections,
+  type MaybeOrderedTemplate,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 import "./theme.css";
@@ -26,11 +31,6 @@ import "./theme.css";
 // treats every file under src/sections/ as a renderable section and demands a
 // matching schemas/sections/<name>.json, so a helper parked there produces a
 // permanent warning for a file no merchant will ever add.
-import {
-  resolveSections,
-  selectTemplateSections,
-  type MaybeOrderedTemplate,
-} from "./lib/template-utils";
 import { DemoContext, PageDataContext, usePageData, type MountPageData } from "./lib/shared";
 import { CartDrawer } from "./lib/cart-drawer";
 
@@ -104,7 +104,9 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "pw-newsletter": PwNewsletter,
 };
 
-const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
+// `lib-*` types come from the NUMU section library in the host's SDK
+// (docs/Plans/theme-section-base/PHASE-4-THEMES-ADOPT-LIBRARY.md).
+const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]) || isLibrarySection(t);
 
 const BUILTIN_TEMPLATES: Record<string, MaybeOrderedTemplate> = {
   ...(
@@ -134,7 +136,7 @@ function RenderSection({
   groupId?: string;
 }) {
   if (instance.disabled) return null;
-  const Component = SECTION_REGISTRY[instance.type];
+  const Component = SECTION_REGISTRY[instance.type] ?? librarySection(instance.type);
   if (!Component) {
     // Only reachable in the editor (an unknown type is filtered out of the
     // storefront render). A visible marker beats a silent gap when a merchant

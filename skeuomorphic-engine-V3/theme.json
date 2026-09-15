@@ -3,6 +3,11 @@
   "name": "Warsha",
   "author": "NUMU",
   "version": "0.4.0",
+  "supports": {
+    "section_library": {
+      "version": 1
+    }
+  },
   "layout": "single-column",
   "description": "The workshop theme for handmade and artisan sellers: tactile kraft-and-leather surfaces, wax-seal guarantees, and built-in How-It's-Made, Made-to-Order and Materials & Care sections.",
   "error_template": "templates/error.html",

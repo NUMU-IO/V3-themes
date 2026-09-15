@@ -9,6 +9,7 @@ import {
   useResolvedSettings,
   useShop,
   useThemeSettings,
+  whatsappHref,
 } from "@numueg/theme-sdk";
 import { Check, Copy, Package, MessageCircle, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -126,7 +127,7 @@ export default function GildedOrderConfirmation({ instance, sectionId }: Section
   const whatsAppHref = rawWhatsApp
     ? rawWhatsApp.startsWith("http")
       ? rawWhatsApp
-      : `https://wa.me/${rawWhatsApp.replace(/\D/g, "")}`
+      : (whatsappHref(rawWhatsApp) ?? rawWhatsApp)
     : "";
 
   // ── Copy-to-clipboard. ──

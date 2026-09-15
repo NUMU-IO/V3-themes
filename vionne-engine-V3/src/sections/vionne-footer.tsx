@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Link, collectionHref, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation } from "@numueg/theme-sdk";
+import { Link, collectionHref, whatsappHref, useLocale, useNavigation, useResolvedSettings, useShop, useThemeSettings, useTranslation } from "@numueg/theme-sdk";
 import { Facebook, Instagram, Mail, Music2, Phone, Twitter, Youtube } from "lucide-react";
 import {
   asString,
@@ -284,11 +284,7 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
                 )}
                 {whatsapp && (
                   <a
-                    href={
-                      whatsapp.startsWith("http")
-                        ? whatsapp
-                        : `https://wa.me/${whatsapp.replace(/\D/g, "")}`
-                    }
+                    href={whatsappHref(whatsapp)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="WhatsApp"

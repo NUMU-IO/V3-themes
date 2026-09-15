@@ -10,14 +10,17 @@ import { createRoot, type Root } from "react-dom/client";
 import {
   NuMuProvider, Section, useThemeSettings, defineThemeEntry,
   type Cart, type Customer, type SectionInstance, type Store, type ThemeSettingsV3,
+  isLibrarySection,
+  librarySection,
+  CmsPageBody,
+  resolveSections,
+  selectTemplateSections,
+  type MaybeOrderedTemplate,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 // Tailwind-in-bundle: compiles @tailwind directives + ported V2 modern
 // styles into dist/theme.css (see vite.config.ts / tailwind.config.js).
 import "./theme.css";
-import {
-  resolveSections, selectTemplateSections, type MaybeOrderedTemplate,
-} from "./sections/_template-utils";
 
 // Sections are imported EAGERLY (not React.lazy): lazy sections can't be
 // server-rendered by renderToString (they suspend on a chunk fetch), and the
@@ -66,7 +69,9 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
 const HEADER_TYPES = new Set(["modern-header", "header"]);
 const FOOTER_TYPES = new Set(["modern-footer", "footer"]);
 
-const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
+// `lib-*` types come from the NUMU section library in the host's SDK
+// (docs/Plans/theme-section-base/PHASE-4-THEMES-ADOPT-LIBRARY.md).
+const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]) || isLibrarySection(t);
 
 const PRESETS = (
   themeManifest as unknown as {
@@ -83,7 +88,7 @@ function RenderSection({ instance, sectionId, groupId }: {
   instance: SectionInstance; sectionId: string; groupId?: string;
 }) {
   if (instance.disabled) return null;
-  const Component = SECTION_REGISTRY[instance.type];
+  const Component = SECTION_REGISTRY[instance.type] ?? librarySection(instance.type);
   if (!Component) {
     return (
       <Section id={sectionId} type={instance.type} groupId={groupId}>
@@ -156,6 +161,8 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
         <RenderSection key={id} sectionId={id} instance={instance} groupId="header" />
       ))}
       <main>
+        {/* CMS page title + body; keeps the merchant's text when a page template has sections. */}
+        <CmsPageBody />
         {body.map(({ id, instance }) => (
           <RenderSection key={id} sectionId={id} instance={instance} />
         ))}

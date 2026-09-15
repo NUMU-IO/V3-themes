@@ -3,6 +3,11 @@
   "name": "Manshet",
   "author": "NUMU",
   "version": "0.4.1",
+  "supports": {
+    "section_library": {
+      "version": 1
+    }
+  },
   "layout": "single-column",
   "description": "Manshet (مانشيت) — the magazine theme. Front-page headlines in heavy uppercase type, editorial lookbook spreads, pull-quote testimonials and a newspaper masthead header, on warm paper with a deep editorial green and gold foil rules. For image-led fashion and lifestyle stores that want to read like a publication.",
   "error_template": "templates/error.html",
