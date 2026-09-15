@@ -195,5 +195,8 @@
   "product.tab_quality": "Quality",
   "product.tab_delivery": "Delivery",
   "product.quality_default": "Every copy is checked by hand before it ships and graded honestly, so the condition you choose is the condition you receive.",
-  "featured.shop_now": "Shop now"
+  "featured.shop_now": "Shop now",
+  "featured.buy_now": "Buy now",
+  "featured.special_discount": "Special discount",
+  "featured.featured_book": "Featured book"
 }
