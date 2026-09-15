@@ -3,7 +3,7 @@
   "name": "Genova (V3)",
   "name_ar": "جينوفا",
   "author": "NUMU",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "layout": "single-column",
   "description": "Genova (V3) — an editorial, strictly monochrome storefront built for denim. Wide image plates, hairline structure, no shadows and no accent colour, so the product photography carries the whole page. Ships denim-specific fit guidance, customer styling and store-visit sections.",
   "description_ar": "جينوفا (V3) — متجر أبيض وأسود بطابع تحريري، متعمل مخصوص للچينز. صور كبيرة وخطوط رفيعة، من غير ظلال ولا ألوان مميزة، عشان صور المنتجات هي اللي تقود الصفحة. فيه أقسام جاهزة لدليل المقاسات، ولوكات العميلات، وزيارة الفرع.",
@@ -16,6 +16,143 @@
   },
   "presets": {
     "templates": {
+      "404": {
+        "name": "404 — Not found",
+        "name_ar": "٤٠٤ — الصفحة غير موجودة",
+        "sections": [
+          {
+            "type": "gn-header",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "New in",
+                  "link": "/products"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Jeans",
+                  "link": "/collections/jeans"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Tops",
+                  "link": "/collections/tops"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "Fit guide",
+                  "link": "/pages/fit-guide"
+                }
+              },
+              {
+                "type": "nav_item",
+                "settings": {
+                  "label": "About",
+                  "link": "/about"
+                }
+              }
+            ]
+          },
+          {
+            "type": "gn-not-found",
+            "settings": {}
+          },
+          {
+            "type": "gn-footer",
+            "settings": {},
+            "blocks": [
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Shop"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "All products",
+                      "link": "/products"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "New in",
+                      "link": "/collections/new-in"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Fit guide",
+                      "link": "/pages/fit-guide"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Help"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Contact",
+                      "link": "/contact"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "FAQ",
+                      "link": "/faq"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Shipping & returns",
+                      "link": "/policies/refund-policy"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "column",
+                "settings": {
+                  "title": "Legal"
+                },
+                "blocks": [
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Privacy policy",
+                      "link": "/policies/privacy-policy"
+                    }
+                  },
+                  {
+                    "type": "link",
+                    "settings": {
+                      "label": "Terms of service",
+                      "link": "/policies/terms-of-service"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
       "home": {
         "name": "Home",
         "name_ar": "الرئيسية",
@@ -2092,143 +2229,6 @@
           },
           {
             "type": "gn-order-confirmation",
-            "settings": {}
-          },
-          {
-            "type": "gn-footer",
-            "settings": {},
-            "blocks": [
-              {
-                "type": "column",
-                "settings": {
-                  "title": "Shop"
-                },
-                "blocks": [
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "All products",
-                      "link": "/products"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "New in",
-                      "link": "/collections/new-in"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Fit guide",
-                      "link": "/pages/fit-guide"
-                    }
-                  }
-                ]
-              },
-              {
-                "type": "column",
-                "settings": {
-                  "title": "Help"
-                },
-                "blocks": [
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Contact",
-                      "link": "/contact"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "FAQ",
-                      "link": "/faq"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Shipping & returns",
-                      "link": "/policies/refund-policy"
-                    }
-                  }
-                ]
-              },
-              {
-                "type": "column",
-                "settings": {
-                  "title": "Legal"
-                },
-                "blocks": [
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Privacy policy",
-                      "link": "/policies/privacy-policy"
-                    }
-                  },
-                  {
-                    "type": "link",
-                    "settings": {
-                      "label": "Terms of service",
-                      "link": "/policies/terms-of-service"
-                    }
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      "404": {
-        "name": "404 — Not found",
-        "name_ar": "٤٠٤ — الصفحة غير موجودة",
-        "sections": [
-          {
-            "type": "gn-header",
-            "settings": {},
-            "blocks": [
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "New in",
-                  "link": "/products"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "Jeans",
-                  "link": "/collections/jeans"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "Tops",
-                  "link": "/collections/tops"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "Fit guide",
-                  "link": "/pages/fit-guide"
-                }
-              },
-              {
-                "type": "nav_item",
-                "settings": {
-                  "label": "About",
-                  "link": "/about"
-                }
-              }
-            ]
-          },
-          {
-            "type": "gn-not-found",
             "settings": {}
           },
           {

@@ -2,7 +2,7 @@
   "id": "street-v3",
   "name": "Street (V3)",
   "author": "NUMU",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "supports": {
     "section_library": {
       "version": 1
@@ -38,6 +38,9 @@
       }
     },
     "templates": {
+      "404": {
+        "sections": []
+      },
       "home": {
         "sections": [
           {
@@ -108,9 +111,6 @@
         "sections": []
       },
       "cart": {
-        "sections": []
-      },
-      "404": {
         "sections": []
       }
     }

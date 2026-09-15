@@ -2,7 +2,7 @@
   "id": "rabbitsocks-v3",
   "name": "Mashkal",
   "author": "NUMU",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "supports": {
     "section_library": {
       "version": 1
@@ -14,6 +14,23 @@
   "loading_template": "templates/loading.html",
   "presets": {
     "templates": {
+      "404": {
+        "name": "Not found",
+        "sections": [
+          {
+            "type": "rs-header",
+            "settings": {}
+          },
+          {
+            "type": "rs-not-found",
+            "settings": {}
+          },
+          {
+            "type": "rs-footer",
+            "settings": {}
+          }
+        ]
+      },
       "home": {
         "name": "Home",
         "sections": [
@@ -184,23 +201,6 @@
         "sections": [
           {
             "type": "rs-header",
-            "settings": {}
-          },
-          {
-            "type": "rs-footer",
-            "settings": {}
-          }
-        ]
-      },
-      "404": {
-        "name": "Not found",
-        "sections": [
-          {
-            "type": "rs-header",
-            "settings": {}
-          },
-          {
-            "type": "rs-not-found",
             "settings": {}
           },
           {

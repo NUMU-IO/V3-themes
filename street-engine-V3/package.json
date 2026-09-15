@@ -1,6 +1,6 @@
 {
   "name": "street-v3",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Street (V3) (V3 port)",
   "type": "module",
