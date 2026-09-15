@@ -20,6 +20,7 @@ import {
   useResolvedSettings,
   useShop,
   useThemeSettings,
+  whatsappHref,
 } from "@numueg/theme-sdk";
 import {
   Facebook,
@@ -169,7 +170,7 @@ const ElegantFooter = ({ instance, sectionId }: SectionRenderProps) => {
     .filter(({ url }) => Boolean(url));
 
   const socialHref = (name: string, url: string) =>
-    name.toLowerCase() === "whatsapp" ? `https://wa.me/${url.replace(/\D/g, "")}` : url;
+    name.toLowerCase() === "whatsapp" ? (whatsappHref(url) ?? url) : url;
 
   return (
     <footer

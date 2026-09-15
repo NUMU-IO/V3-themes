@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Link, Money, useListingHeading, useLocale, useProducts, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { asNumber, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
  * Modern products-listing (PLP) section.

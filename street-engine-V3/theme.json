@@ -3,6 +3,11 @@
   "name": "Street (V3)",
   "author": "NUMU",
   "version": "0.2.0",
+  "supports": {
+    "section_library": {
+      "version": 1
+    }
+  },
   "layout": "single-column",
   "description": "Street (V3) — bold urban streetwear: yellow, navy and hot pink on cream, topographic grounds and 900-weight uppercase type.",
   "error_template": "templates/error.html",

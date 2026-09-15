@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Link, useShop, useLocale } from "@numueg/theme-sdk";
+import { Link, useShop, useLocale, whatsappHref } from "@numueg/theme-sdk";
 import { ChevronRight, MessageCircle, Phone, Mail, Instagram, Clock } from "lucide-react";
 import { localized, type SectionRenderProps } from "./_shared";
 
@@ -88,7 +88,7 @@ const TechWaveContact = ({ instance }: SectionRenderProps) => {
       icon: MessageCircle,
       label: "WhatsApp",
       value: formatPhoneForDisplay(whatsappDigits),
-      href: `https://wa.me/${whatsappDigits}`,
+      href: whatsappHref(whatsappDigits) ?? "",
     });
   }
   if (phoneDigits) {

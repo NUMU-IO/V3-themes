@@ -3,6 +3,11 @@
   "name": "Modern (V3)",
   "author": "NUMU",
   "version": "0.4.0",
+  "supports": {
+    "section_library": {
+      "version": 1
+    }
+  },
   "layout": "single-column",
   "description": "Modern (V3) — clean teal aesthetic, ported faithfully from the V2 in-tree theme.",
   "error_template": "templates/error.html",

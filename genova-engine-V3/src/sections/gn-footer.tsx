@@ -12,7 +12,7 @@
  * columns instead of silently falling back to the theme defaults.
  */
 
-import { Link, useShop } from "@numueg/theme-sdk";
+import { Link, useShop, whatsappHref } from "@numueg/theme-sdk";
 import { asBool, asString } from "@numueg/theme-kit";
 import {
   cx,
@@ -137,7 +137,7 @@ export default function GnFooter({ instance }: SectionRenderProps) {
             )}
             {whatsapp && (
               <a
-                href={`https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`}
+                href={whatsappHref(whatsapp)}
                 className="gn-footer-link gn-footer-wa"
                 target="_blank"
                 rel="noopener noreferrer"

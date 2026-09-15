@@ -9,6 +9,7 @@ import {
   useShop,
   defaultVariant,
   sanitizeHtml,
+  whatsappHref,
 } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
@@ -134,7 +135,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const enc = encodeURIComponent(shareUrl);
   const waNumber = ((shop?.social_links?.whatsapp as string) || "").replace(/\D/g, "");
   const waHref = waNumber
-    ? `https://wa.me/${waNumber}?text=${encodeURIComponent(`${product.name} — ${shareUrl}`)}`
+    ? `${whatsappHref(waNumber) ?? "https://wa.me/"}?text=${encodeURIComponent(`${product.name} — ${shareUrl}`)}`
     : `https://wa.me/?text=${encodeURIComponent(`${product.name} — ${shareUrl}`)}`;
 
   async function handleAdd() {

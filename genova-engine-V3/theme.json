@@ -9,6 +9,11 @@
   "description_ar": "جينوفا (V3) — متجر أبيض وأسود بطابع تحريري، متعمل مخصوص للچينز. صور كبيرة وخطوط رفيعة، من غير ظلال ولا ألوان مميزة، عشان صور المنتجات هي اللي تقود الصفحة. فيه أقسام جاهزة لدليل المقاسات، ولوكات العميلات، وزيارة الفرع.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
+  "supports": {
+    "section_library": {
+      "version": 1
+    }
+  },
   "presets": {
     "templates": {
       "home": {

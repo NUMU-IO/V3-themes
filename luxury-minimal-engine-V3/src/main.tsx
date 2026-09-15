@@ -22,16 +22,16 @@ import {
   type SectionInstance,
   type Store,
   type ThemeSettingsV3,
+  isLibrarySection,
+  librarySection,
+  resolveSections,
+  selectTemplateSections,
+  type MaybeOrderedTemplate,
 } from "@numueg/theme-sdk";
 import themeManifest from "../theme.json";
 // Tailwind-in-bundle: compiles @tailwind directives + the ported V2
 // luxury-minimal styles into dist/theme.css (see vite.config.ts).
 import "./theme.css";
-import {
-  resolveSections,
-  selectTemplateSections,
-  type MaybeOrderedTemplate,
-} from "./sections/_template-utils";
 import { DemoContext, PageDataContext, type MountPageData } from "./sections/_shared";
 
 // Sections are imported EAGERLY (not React.lazy): lazy sections can't be
@@ -84,7 +84,9 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "lux-order-confirmation": LuxOrderConfirmation,
 };
 
-const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
+// `lib-*` types come from the NUMU section library in the host's SDK
+// (docs/Plans/theme-section-base/PHASE-4-THEMES-ADOPT-LIBRARY.md).
+const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]) || isLibrarySection(t);
 
 function UnknownSection({ type }: { type: string }) {
   return (
@@ -118,7 +120,7 @@ function RenderSection({
   groupId?: string;
 }) {
   if (instance.disabled) return null;
-  const Component = SECTION_REGISTRY[instance.type];
+  const Component = SECTION_REGISTRY[instance.type] ?? librarySection(instance.type);
   if (!Component) {
     return (
       <Section id={sectionId} type={instance.type} groupId={groupId}>

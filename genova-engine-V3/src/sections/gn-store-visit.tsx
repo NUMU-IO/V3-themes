@@ -11,7 +11,7 @@
  */
 
 import { asBool, asImageAlt, asImageUrl, asString } from "@numueg/theme-kit";
-import { Image, useDirection, useShop } from "@numueg/theme-sdk";
+import { Image, useDirection, useShop, whatsappHref } from "@numueg/theme-sdk";
 import { type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { IconWhatsApp } from "../lib/icons";
@@ -87,7 +87,7 @@ export default function GnStoreVisit({ instance }: SectionRenderProps) {
             )}
             {whatsapp && (
               <a
-                href={`https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`}
+                href={whatsappHref(whatsapp)}
                 className="gn-btn gn-btn-primary"
                 target="_blank"
                 rel="noopener noreferrer"

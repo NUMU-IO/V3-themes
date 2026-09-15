@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Link, Money, useOrder, useShop } from "@numueg/theme-sdk";
+import { Link, Money, useOrder, useShop, whatsappHref } from "@numueg/theme-sdk";
 import { asBool, asString } from "@numueg/theme-kit";
 import { type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
@@ -87,7 +87,7 @@ export default function GnOrderConfirmation({ instance }: SectionRenderProps) {
         <div className="gn-confirm-actions">
           {asBool(s.show_whatsapp_cta, true) && whatsapp && (
             <a
-              href={`https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`}
+              href={whatsappHref(whatsapp)}
               className="gn-btn gn-btn-outline"
               target="_blank"
               rel="noopener noreferrer"

@@ -8,6 +8,7 @@ import {
   useResolvedSettings,
   useShop,
   useThemeSettings,
+  whatsappHref,
 } from "@numueg/theme-sdk";
 import {
   Facebook,
@@ -188,7 +189,7 @@ export default function ModernFooter({
 
   const socialHref = (name: string, url: string) =>
     name.toLowerCase() === "whatsapp"
-      ? `https://wa.me/${url.replace(/\D/g, "")}`
+      ? (whatsappHref(url) ?? url)
       : url;
 
   return (

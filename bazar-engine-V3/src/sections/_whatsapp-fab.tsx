@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale, useThemeSettings } from "@numueg/theme-sdk";
+import { useLocale, useThemeSettings, whatsappHref } from "@numueg/theme-sdk";
 import { asString } from "./_shared";
 
 /**
@@ -31,7 +31,7 @@ export default function BzWhatsAppFab() {
   // or a bare number — normalise a bare number to a wa.me deep link.
   const href = /^https?:\/\//i.test(raw)
     ? raw
-    : `https://wa.me/${raw.replace(/\D/g, "")}`;
+    : (whatsappHref(raw) ?? raw);
 
   const isAr = (locale || "").toLowerCase().startsWith("ar");
   const label = isAr ? "تواصل عبر واتساب" : "Chat on WhatsApp";

@@ -1,6 +1,6 @@
 "use client";
 
-import { Link, collectionHref, useCollections, useLocale, useResolvedSettings, useShop, useThemeSettings } from "@numueg/theme-sdk";
+import { Link, collectionHref, useCollections, useLocale, useResolvedSettings, useShop, useThemeSettings, whatsappHref } from "@numueg/theme-sdk";
 import type { ComponentType } from "react";
 import { Facebook, MessageCircle, Music2, Twitter, Youtube } from "lucide-react";
 import {
@@ -159,7 +159,7 @@ export default function GildedFooter({ instance, sectionId }: SectionRenderProps
     if (key === "whatsapp") {
       // Accept either a raw phone ("+20…") or an already-formed wa.me URL.
       if (url.startsWith("http")) return url;
-      return `https://wa.me/${url.replace(/\D/g, "")}`;
+      return whatsappHref(url) ?? url;
     }
     return url;
   };

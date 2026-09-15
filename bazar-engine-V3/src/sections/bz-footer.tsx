@@ -8,6 +8,7 @@ import {
   useResolvedSettings,
   useShop,
   useThemeSettings,
+  whatsappHref,
 } from "@numueg/theme-sdk";
 import { Facebook, MessageCircle, Music2, Send, Twitter, Youtube } from "lucide-react";
 import { asString, localized, readBlocks, type SectionRenderProps } from "./_shared";
@@ -176,7 +177,7 @@ export default function BzFooter({ instance, sectionId }: SectionRenderProps) {
 
   const formatSocialHref = (name: string, url: string) =>
     name.toLowerCase() === "whatsapp"
-      ? `https://wa.me/${url.replace(/\D/g, "")}`
+      ? (whatsappHref(url) ?? url)
       : url;
 
   const [email, setEmail] = useState("");

@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@numueg/theme-kit": "^0.1.0",
-    "@numueg/theme-sdk": "^0.13.0",
+    "@numueg/theme-sdk": "0.14.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

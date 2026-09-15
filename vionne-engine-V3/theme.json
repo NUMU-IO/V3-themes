@@ -7,6 +7,12 @@
   "description": "Vionne (V3) — refined grayscale storefront for contemporary fashion & accessories, ported faithfully from the V2 in-tree theme. Now with an editable Vionne header + footer included across every page.",
   "error_template": "templates/error.html",
   "loading_template": "templates/loading.html",
+  "supports": {
+    "section_library": {
+      "version": 1,
+      "replaces": ["lib-ugc-carousel", "lib-before-after"]
+    }
+  },
   "presets": {
     "templates": {
       "404": {

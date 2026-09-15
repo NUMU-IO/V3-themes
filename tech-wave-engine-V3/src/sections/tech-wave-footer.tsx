@@ -6,6 +6,7 @@ import {
   useResolvedSettings,
   useShop,
   useThemeSettings,
+  whatsappHref,
 } from "@numueg/theme-sdk";
 import {
   Facebook,
@@ -193,7 +194,7 @@ const TechWaveFooter = ({ instance, sectionId }: SectionRenderProps) => {
 
   const socialHref = (name: string, url: string) =>
     name === "whatsapp" && !/^https?:/i.test(url)
-      ? `https://wa.me/${url.replace(/\D/g, "")}`
+      ? (whatsappHref(url) ?? url)
       : url;
 
   const showPoweredBy = s.show_powered_by !== false;

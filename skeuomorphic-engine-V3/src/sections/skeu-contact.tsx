@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Link, useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
+import { Link, useLocale, useResolvedSettings, useShop, whatsappHref } from "@numueg/theme-sdk";
 import { ChevronRight, MessageCircle, Phone, Mail, Instagram, Clock } from "lucide-react";
 import { localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -92,7 +92,7 @@ const WarshaContact = ({ instance, sectionId }: SectionRenderProps) => {
       icon: MessageCircle,
       label: "WhatsApp",
       value: formatPhoneForDisplay(whatsappDigits),
-      href: `https://wa.me/${whatsappDigits}`,
+      href: whatsappHref(whatsappDigits) ?? "",
     });
   }
   if (phoneDigits) {
