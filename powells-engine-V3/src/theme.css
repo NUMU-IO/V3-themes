@@ -1,3 +1,9 @@
+/* The faces, loaded by the stylesheet itself. They used to be requested only
+   by the dev harness's index.html, so on a real store every heading and the
+   wordmark fell back to Georgia. Noto Serif Display is loaded with its width
+   axis for the condensed Powell's-style wordmark. */
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Naskh+Arabic:wght@400;600&family=Noto+Serif+Display:ital,wdth,wght@0,62.5..100,400..700;1,62.5..100,400..700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900&display=swap");
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Powell's (V3) — design tokens and component layer
    ───────────────────────────────────────────────────────────────────────────
@@ -291,25 +297,37 @@
 .pw-sub {
   display: block;
 }
+/* The Powell's lockup: tall, narrow, high-contrast caps. Noto Serif Display at
+   a condensed width carries it; the stack behind it keeps an Arabic store name
+   in an Arabic face, glyph by glyph. */
 .pw-wordmark {
-  font-family: var(--pw-font-heading);
-  font-weight: 900;
-  font-size: clamp(1.7rem, 2.4vw, 2.4rem);
+  font-family: "Noto Serif Display", var(--pw-font-heading);
+  font-weight: 700;
+  font-stretch: 62.5%;
+  font-size: clamp(2rem, 3.1vw, 3rem);
   /* Set in caps regardless of how the merchant typed the store name. */
   text-transform: uppercase;
-  letter-spacing: 0.015em;
-  line-height: 0.92;
+  letter-spacing: 0.01em;
+  line-height: 0.88;
   color: var(--pw-ink);
   white-space: nowrap;
 }
 .pw-sub {
-  margin-block-start: 6px;
-  font-family: var(--pw-font-heading);
-  font-size: 0.8rem;
-  letter-spacing: 0.19em;
+  margin-block-start: 7px;
+  font-family: "Noto Serif Display", var(--pw-font-heading);
+  font-weight: 500;
+  font-size: 0.92rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--pw-ink-soft);
+  color: var(--pw-ink);
   white-space: nowrap;
+}
+/* "CITY of BOOKS": the joining word sits small, lowercase and italic. */
+.pw-sub i {
+  font-style: italic;
+  font-size: 1.08em;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
 }
 
 .pw-search {
@@ -3081,24 +3099,65 @@
    standing below it. The cover is shown whole — the shared `.pw-promo img` rule
    stretches a merchant's banner photo across the card, which would crop a
    jacket, so it is reset here. */
+/* Like a product shot: the book large and leaning, standing in a warm wash made
+   from its own cover, with the copy in white across the top. */
 .pw-promo--book {
   justify-content: space-between;
+  border: none;
+}
+.pw-promo-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.pw-promo .pw-promo-backdrop img {
+  filter: blur(28px) saturate(1.15);
+  transform: scale(1.3);
+}
+.pw-promo-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--pw-accent-deep) 50%, transparent) 0%,
+    color-mix(in srgb, var(--pw-accent) 18%, transparent) 55%,
+    color-mix(in srgb, var(--pw-accent-deep) 38%, transparent) 100%
+  );
 }
 .pw-promo--book .pw-promo-copy {
-  padding-block-end: 12px;
+  z-index: 1;
+  padding-block-end: 10px;
+  color: #fff;
+}
+.pw-promo--book .pw-promo-eyebrow {
+  color: rgba(255, 255, 255, 0.86);
+}
+.pw-promo--book .pw-promo-title {
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  text-shadow: 0 2px 14px rgba(20, 10, 40, 0.3);
+}
+.pw-promo--book .pw-promo-btn {
+  background: #fff;
+  color: var(--pw-accent-deep);
+}
+.pw-promo--book:hover .pw-promo-btn {
+  background: var(--pw-accent);
+  color: var(--pw-accent-fg);
 }
 .pw-promo-by {
   margin-block-start: -6px;
   font-size: 0.94rem;
-  color: var(--pw-ink-soft);
+  color: rgba(255, 255, 255, 0.86);
 }
 .pw-promo-book {
   position: relative;
+  z-index: 1;
   display: block;
-  width: min(58%, 220px);
-  margin: 6px auto 34px;
+  width: min(66%, 260px);
+  margin: 4px auto 30px;
   aspect-ratio: 2 / 3;
-  transform: rotate(-3deg);
+  transform: rotate(-4deg);
   transition: transform 0.25s ease;
 }
 .pw-promo--book:hover .pw-promo-book {

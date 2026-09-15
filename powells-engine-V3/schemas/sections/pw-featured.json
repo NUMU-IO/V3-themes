@@ -78,6 +78,15 @@
     },
     {
       "type": "text",
+      "id": "promo_product",
+      "label": "Book to feature",
+      "label_ar": "الكتاب المميز",
+      "default": "",
+      "info": "The book's handle or exact title. Used when no banner image is uploaded. Leave empty to pick a book automatically.",
+      "info_ar": "معرّف الكتاب أو عنوانه بالظبط. بيستخدم لو مفيش صورة بانر. سيبه فاضي عشان يختار كتاب تلقائي."
+    },
+    {
+      "type": "text",
       "id": "promo_eyebrow",
       "label": "Small line above",
       "label_ar": "السطر الصغير فوق",

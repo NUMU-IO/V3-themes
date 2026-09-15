@@ -302,7 +302,13 @@ export default function PwHeader({ instance }: SectionRenderProps) {
                 )}
                 <span className="pw-logo-type">
                   <span className="pw-wordmark">{storeName}</span>
-                  {strapline && <span className="pw-sub">{strapline}</span>}
+                  {strapline && (
+                    <span className="pw-sub">
+                      {strapline
+                        .split(/(\s+of\s+)/i)
+                        .map((part, i) => (/^\s+of\s+$/i.test(part) ? <i key={i}> of </i> : part))}
+                    </span>
+                  )}
                 </span>
                 {ornaments && !logo && (
                   <span className="pw-logo-vine flipped" aria-hidden="true">
