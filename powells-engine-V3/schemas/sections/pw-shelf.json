@@ -66,9 +66,9 @@
       "id": "limit",
       "label": "How many",
       "label_ar": "العدد",
-      "default": 6,
+      "default": 12,
       "min": 3,
-      "max": 12,
+      "max": 24,
       "step": 1
     },
     {

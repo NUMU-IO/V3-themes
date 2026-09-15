@@ -34,7 +34,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -81,7 +81,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -157,7 +157,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -266,7 +266,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -342,7 +342,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -372,7 +372,7 @@
           {
             "type": "pw-collection",
             "settings": {
-              "heading": "Used Books",
+              "heading": "All Books",
               "rail_title": "Browse",
               "rail_note": "Good\nBooks\nBuild\nBetter\nDays",
               "results_note": "Discover\nnew (to you)\nfavorites",
@@ -449,7 +449,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -525,7 +525,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -555,7 +555,7 @@
           {
             "type": "pw-collection",
             "settings": {
-              "heading": "Used Books",
+              "heading": "All Books",
               "rail_title": "Browse",
               "rail_note": "Good\nBooks\nBuild\nBetter\nDays",
               "results_note": "Discover\nnew (to you)\nfavorites",
@@ -632,7 +632,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -708,7 +708,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -758,7 +758,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -834,7 +834,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -864,7 +864,7 @@
           {
             "type": "pw-product",
             "settings": {
-              "listing_label": "Used Books",
+              "listing_label": "All Books",
               "staff_pick_title": "A Powell's Staff Pick",
               "show_rating": true,
               "related_limit": 5
@@ -893,7 +893,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -969,7 +969,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -1021,7 +1021,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -1097,7 +1097,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -1147,7 +1147,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -1223,7 +1223,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -1270,7 +1270,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -1346,7 +1346,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -1389,7 +1389,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -1465,7 +1465,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -1512,7 +1512,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -1588,7 +1588,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -1637,7 +1637,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },
@@ -1713,7 +1713,7 @@
               {
                 "type": "nav_item",
                 "settings": {
-                  "label": "USED",
+                  "label": "ALL BOOKS",
                   "link": "/products"
                 }
               },
@@ -1762,7 +1762,7 @@
                   {
                     "type": "link",
                     "settings": {
-                      "label": "Used books",
+                      "label": "All books",
                       "link": "/products"
                     }
                   },

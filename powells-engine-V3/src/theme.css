@@ -402,6 +402,15 @@
 .pw-nav-inner::-webkit-scrollbar {
   display: none;
 }
+/* Centred with auto margins on the ends rather than `justify-content: center`:
+   the row scrolls sideways on a phone, and centring an overflowing flex row
+   pushes its first links off the left edge where no scroll can reach them. */
+.pw-nav-inner > :first-child {
+  margin-inline-start: auto;
+}
+.pw-nav-inner > :last-child {
+  margin-inline-end: auto;
+}
 .pw-nav-inner a {
   display: inline-flex;
   align-items: center;
@@ -2415,10 +2424,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--pw-accent);
-  border-radius: var(--pw-r-control);
-  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--pw-accent) 11%, var(--pw-paper));
   color: var(--pw-accent);
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
   font: inherit;
   font-size: 0.94rem;
   text-align: center;
@@ -2426,14 +2440,41 @@
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
+/* A soft tinted pill that fills on hover. The old outline button at full card
+   width read as a form control repeated down the grid, heavier than the covers
+   it sits under; the tint keeps it findable without competing with them.
+   The weight is set here, not in the base rule: that rule's `font: inherit`
+   shorthand resets font-weight, so a weight declared beside it never applies. */
+.pw-card .pw-card-add {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
 .pw-card-add:hover:not(:disabled) {
   background: var(--pw-accent);
   color: var(--pw-accent-fg);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--pw-accent) 32%, transparent);
+  transform: translateY(-1px);
+}
+.pw-card-add:active:not(:disabled) {
+  transform: none;
+  box-shadow: none;
+}
+.pw-card-add:focus-visible {
+  outline: 2px solid var(--pw-accent);
+  outline-offset: 2px;
 }
 .pw-card-add:disabled {
-  border-color: var(--pw-line);
+  background: var(--pw-line);
   color: var(--pw-muted);
   cursor: not-allowed;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-card-add {
+    transition: none;
+  }
+  .pw-card-add:hover:not(:disabled) {
+    transform: none;
+  }
 }
 
 /* ── Collection filters on narrow screens ─────────────────────────────── */

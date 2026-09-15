@@ -14,7 +14,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Link, useResolvedSettings, useSearch } from "@numueg/theme-sdk";
+import { Link, NAVIGATE_EVENT, useResolvedSettings, useSearch, type NavigateEventDetail } from "@numueg/theme-sdk";
 import { asBool, asString, type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
@@ -31,13 +31,28 @@ export default function PwSearch({ instance }: SectionRenderProps) {
     if (typeof window === "undefined") return;
     const read = () => setQuery(new URLSearchParams(window.location.search).get("q") ?? "");
     read();
-    // Soft navigation changes the URL without a reload, so a search made from
-    // the masthead while already on /search would otherwise keep the old term.
+    // A second search made from the masthead while already on /search is a
+    // soft navigation: the host pushes the new URL and keeps this section
+    // mounted, and `pushState` fires no `popstate` — so listening for that
+    // alone left the page showing the first term's results under the new URL.
+    // The SDK announces every soft navigation first; take the term from it.
+    const onNavigate = (e: Event) => {
+      const href = (e as CustomEvent<NavigateEventDetail>).detail?.href;
+      if (!href) return;
+      const next = new URL(href, window.location.origin);
+      if (next.pathname.endsWith("/search")) setQuery(next.searchParams.get("q") ?? "");
+    };
     window.addEventListener("popstate", read);
-    return () => window.removeEventListener("popstate", read);
+    window.addEventListener(NAVIGATE_EVENT, onNavigate);
+    return () => {
+      window.removeEventListener("popstate", read);
+      window.removeEventListener(NAVIGATE_EVENT, onNavigate);
+    };
   }, []);
 
-  const { results, loading } = useSearch(query);
+  // "full", not the hook's default "predictive": this is the results page,
+  // and predictive caps at five books per type — built for a dropdown.
+  const { results, loading } = useSearch(query, { mode: "full", limit: 48, types: ["products"], immediate: true });
   const products = results?.products ?? [];
 
   return (
