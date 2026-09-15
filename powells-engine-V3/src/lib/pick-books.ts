@@ -17,11 +17,16 @@ export function pickBooks(products: Product[], source: BookSource, collection: s
   let list = withMeta;
 
   if (source === "collection" && handle) {
+    // A genre tag counts as the collection too: a catalogue imported from a
+    // spreadsheet carries its categories as tags and has no platform category
+    // for a shelf to name.
     list = withMeta.filter((p) => {
       const category = (p.category ?? {}) as Record<string, unknown>;
+      const tags = Array.isArray(p.tags) ? p.tags.map((tag) => String(tag).toLowerCase()) : [];
       return (
         String(category.id ?? "").toLowerCase() === handle ||
-        String(category.name ?? "").toLowerCase() === handle
+        String(category.name ?? "").toLowerCase() === handle ||
+        tags.includes(handle)
       );
     });
     if (list.length === 0) list = withMeta;

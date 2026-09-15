@@ -30,7 +30,15 @@
  * read `page.data`; cart and wishlist state come from their own hooks.
  */
 
-import { useState, type CSSProperties, type FormEvent, type MouseEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type FormEvent,
+  type KeyboardEvent,
+  type MouseEvent,
+} from "react";
 import {
   Image,
   Link,
@@ -39,7 +47,9 @@ import {
   useCart,
   useNavigation,
   useResolvedSettings,
+  useSearch,
   useShop,
+  type Product,
 } from "@numueg/theme-sdk";
 import {
   asBool,
@@ -47,12 +57,14 @@ import {
   asNumber,
   asString,
   isInlineImage,
+  productAuthor,
+  productImages,
   readBlockNodes,
   useDemo,
   useOrnaments,
   type SectionRenderProps,
 } from "../lib/shared";
-import { useT } from "../lib/i18n";
+import { fill, useT } from "../lib/i18n";
 import { Drawer, setCartDrawer } from "../lib/cart-drawer";
 import { setWishlistDrawer, useShopWishlist } from "../lib/wishlist";
 import {
@@ -155,11 +167,66 @@ export default function PwHeader({ instance }: SectionRenderProps) {
   const cartTotal = cart?.total ?? cart?.subtotal ?? 0;
   const wishCount = wishlist.items.length;
 
+  /**
+   * Live results under the search field.
+   *
+   * Predictive mode, so the SDK debounces keystrokes and the endpoint caps the
+   * list — six books is a dropdown, not a results page, and the last row always
+   * offers the full page. Two characters before it opens: one letter matches
+   * half the shop and the list would flicker on every key.
+   */
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+  const searchRef = useRef<HTMLFormElement>(null);
+  const term = query.trim();
+  const wantsSuggest = suggestOpen && term.length >= 2;
+  const { results, loading: searching } = useSearch(wantsSuggest ? term : "", {
+    mode: "predictive",
+    types: ["products"],
+    limit: 6,
+  });
+  const hits: Product[] = wantsSuggest ? (results?.products ?? []) : [];
+  const listId = `pw-suggest-${instance.type}`;
+  const hrefOf = (product: Product) => `/products/${product.slug ?? product.id}`;
+
+  useEffect(() => {
+    if (!suggestOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (!searchRef.current?.contains(e.target as Node)) setSuggestOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [suggestOpen]);
+
+  const go = (href: string) => {
+    setSuggestOpen(false);
+    setActive(-1);
+    if (!requestNavigate(href) && typeof window !== "undefined") window.location.assign(href);
+  };
+
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
-    const q = query.trim();
-    if (!q) return;
-    requestNavigate(`/search?q=${encodeURIComponent(q)}`);
+    if (!term) return;
+    go(`/search?q=${encodeURIComponent(term)}`);
+  };
+
+  const onSearchKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") {
+      setSuggestOpen(false);
+      return;
+    }
+    if (hits.length === 0) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSuggestOpen(true);
+      setActive((i) => (i + 1) % hits.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActive((i) => (i <= 0 ? hits.length - 1 : i - 1));
+    } else if (e.key === "Enter" && active >= 0 && hits[active]) {
+      e.preventDefault();
+      go(hrefOf(hits[active]));
+    }
   };
 
   const openCart = (e: MouseEvent) => {
@@ -247,7 +314,7 @@ export default function PwHeader({ instance }: SectionRenderProps) {
           </Link>
 
           {showSearch && (
-            <form className="pw-search" role="search" onSubmit={onSearch}>
+            <form ref={searchRef} className="pw-search" role="search" onSubmit={onSearch}>
               <label className="pw-sr" htmlFor={`pw-q-${instance.type}`}>
                 {t("search.label", "Search for books")}
               </label>
@@ -257,13 +324,76 @@ export default function PwHeader({ instance }: SectionRenderProps) {
               <input
                 id={`pw-q-${instance.type}`}
                 type="search"
+                role="combobox"
+                autoComplete="off"
+                aria-autocomplete="list"
+                aria-expanded={wantsSuggest}
+                aria-controls={listId}
+                aria-activedescendant={active >= 0 && hits[active] ? `${listId}-${active}` : undefined}
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setActive(-1);
+                  setSuggestOpen(true);
+                }}
+                onFocus={() => setSuggestOpen(true)}
+                onKeyDown={onSearchKey}
                 placeholder={
                   asString(s.search_placeholder) ||
                   t("search.placeholder", "Search for books, authors, titles...")
                 }
               />
+
+              {wantsSuggest && (
+                <div className="pw-suggest" id={listId} role="listbox" aria-label={t("search.suggestions", "Suggestions")}>
+                  {hits.length === 0 ? (
+                    <p className="pw-suggest-empty">
+                      {searching
+                        ? t("search.searching", "Searching…")
+                        : t("search.no_results", "No books matched that search.")}
+                    </p>
+                  ) : (
+                    hits.map((product, i) => {
+                      const cover = productImages(product)[0];
+                      const author = productAuthor(product);
+                      const raw = product as unknown as Record<string, unknown>;
+                      return (
+                        <Link
+                          key={product.id}
+                          id={`${listId}-${i}`}
+                          role="option"
+                          aria-selected={i === active}
+                          className="pw-suggest-row"
+                          to={hrefOf(product)}
+                          onClick={() => setSuggestOpen(false)}
+                          onMouseEnter={() => setActive(i)}
+                        >
+                          {cover ? (
+                            <Image src={cover} alt="" responsive={false} loading="lazy" />
+                          ) : (
+                            <span className="pw-blank" />
+                          )}
+                          <span>
+                            <span className="pw-suggest-title">{product.name}</span>
+                            {author && (
+                              <span className="pw-suggest-by">{`${t("product.by", "by")} ${author}`}</span>
+                            )}
+                          </span>
+                          <span className="pw-suggest-price">
+                            <Money
+                              amount={Number(product.price ?? 0)}
+                              currency={asString(raw.price_currency) || product.currency}
+                            />
+                          </span>
+                        </Link>
+                      );
+                    })
+                  )}
+                  <button type="submit" className="pw-suggest-all">
+                    {fill(t("search.see_all", "See all results for “{{q}}”"), { q: term })}
+                  </button>
+                </div>
+              )}
             </form>
           )}
 

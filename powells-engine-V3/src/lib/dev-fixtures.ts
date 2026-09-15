@@ -335,6 +335,17 @@ export const DEV_CART = {
   ],
 };
 
+/** What the host's search route would answer: books whose title or author holds the term. */
+export function devSearch(query: string, limit: number) {
+  const q = query.trim().toLowerCase();
+  const products = q
+    ? DEV_PRODUCTS.filter((p) =>
+        `${p.name} ${p.brand ?? ""} ${Object.values(p.attributes).join(" ")}`.toLowerCase().includes(q),
+      ).slice(0, limit)
+    : [];
+  return { query, products, collections: [], pages: [], articles: [], total: products.length };
+}
+
 /**
  * What the host's detail route would answer for one book.
  *
