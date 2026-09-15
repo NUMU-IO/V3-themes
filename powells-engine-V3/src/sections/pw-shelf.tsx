@@ -11,12 +11,12 @@
  * belongs.
  */
 
-import { useMemo } from "react";
 import { Link, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import { asBool, asNumber, asString, useOrnaments, type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
-import { pickBooks, type BookSource } from "../lib/pick-books";
+import type { BookSource } from "../lib/pick-books";
+import { useShelfBooks } from "../lib/shelf-books";
 import { Twinkle } from "../lib/ornaments";
 
 export default function PwShelf({ instance }: SectionRenderProps) {
@@ -34,10 +34,7 @@ export default function PwShelf({ instance }: SectionRenderProps) {
   const limit = asNumber(s.limit, 5);
   const collection = asString(s.collection);
 
-  const picks = useMemo(
-    () => pickBooks(products, source, collection, limit),
-    [products, source, collection, limit],
-  );
+  const picks = useShelfBooks(products, source, collection, limit);
 
   if (picks.length === 0) return null;
 
