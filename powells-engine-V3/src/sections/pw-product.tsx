@@ -65,6 +65,7 @@ import { useBookOffer } from "../lib/promotions";
 import { entryAsProduct, recordRecentlyViewed, useRecentlyViewed } from "../lib/recently-viewed";
 import { WishlistButton } from "../lib/wishlist";
 import { GradingScale, gradeOf } from "../lib/condition";
+import { BookJacket } from "../lib/jacket";
 import { SeriesPanel, seriesLine, seriesOf } from "../lib/series";
 import { useShelfBooks } from "../lib/shelf-books";
 import {
@@ -350,7 +351,7 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
             {cover ? (
               <Image src={cover} alt={product.name} responsive={false} priority />
             ) : (
-              <span className="pw-blank">{product.name}</span>
+              <BookJacket title={product.name} author={author} />
             )}
           </div>
           {galleryCount > 1 && (

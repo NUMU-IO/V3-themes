@@ -34,6 +34,7 @@ import {
   productAuthor,
   productImages,
 } from "./shared";
+import { BookJacket } from "./jacket";
 import { QuickLook } from "./quick-look";
 import { WishlistButton } from "./wishlist";
 import { seriesLine, seriesOf } from "./series";
@@ -90,7 +91,7 @@ export function ProductCard({
           {cover ? (
             <Image src={cover} alt={product.name} loading="lazy" responsive={!isInlineImage(cover)} />
           ) : (
-            <span className="pw-blank">{product.name}</span>
+            <BookJacket title={product.name} author={author} />
           )}
           {second && (
             <span className="pw-card-alt" aria-hidden="true">

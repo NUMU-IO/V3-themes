@@ -30,6 +30,7 @@ import {
 } from "@numueg/theme-sdk";
 import { useT } from "./i18n";
 import { IconClose, SceneEmptyBag } from "./ornaments";
+import { BookJacket } from "./jacket";
 import { CartNudges } from "./promotions";
 import { fetchProductDetail } from "./product-detail";
 import { asNumber, asRecord, bookFormat, productAuthor, productImages } from "./shared";
@@ -219,7 +220,7 @@ function CartSuggestions({ items, onClose }: { items: Array<{ product_id: string
               {cover ? (
                 <Image src={cover} alt={product.name} responsive={false} loading="lazy" />
               ) : (
-                <span className="pw-blank" />
+                <BookJacket title={product.name} size="mini" />
               )}
             </Link>
             <div>
@@ -353,7 +354,7 @@ function CartDrawerPanel() {
                 {item.image_url ? (
                   <Image src={item.image_url} alt={item.name} responsive={false} loading="lazy" />
                 ) : (
-                  <span className="pw-blank" />
+                  <BookJacket title={item.name} size="mini" />
                 )}
               </div>
               <div>

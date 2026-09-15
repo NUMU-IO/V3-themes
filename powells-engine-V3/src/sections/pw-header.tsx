@@ -75,6 +75,7 @@ import {
 import { fill, useT } from "../lib/i18n";
 import { Drawer, setCartDrawer } from "../lib/cart-drawer";
 import { setWishlistDrawer, useShopWishlist } from "../lib/wishlist";
+import { BookJacket } from "../lib/jacket";
 import { useProductDetail } from "../lib/product-detail";
 import { slugOf } from "../lib/shelf-books";
 import {
@@ -389,7 +390,11 @@ export default function PwHeader({ instance }: SectionRenderProps) {
       const raw = row.product as unknown as Record<string, unknown>;
       return (
         <Link key={`book-${row.product.id}`} className="pw-suggest-row" {...common}>
-          {cover ? <Image src={cover} alt="" responsive={false} loading="lazy" /> : <span className="pw-blank" />}
+          {cover ? (
+            <Image src={cover} alt="" responsive={false} loading="lazy" />
+          ) : (
+            <BookJacket title={row.product.name} size="mini" />
+          )}
           <span>
             <span className="pw-suggest-title">{row.product.name}</span>
             {author && <span className="pw-suggest-by">{author}</span>}

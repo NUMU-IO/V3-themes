@@ -9,6 +9,7 @@
 
 import { Image, Link, useResolvedSettings } from "@numueg/theme-sdk";
 import { asString, productAuthor, readBlockNodes, useOrnaments, type SectionRenderProps } from "../lib/shared";
+import { BookJacket } from "../lib/jacket";
 import { useProductDetail } from "../lib/product-detail";
 import { BuySeriesButton, seriesOf, volumeNumber } from "../lib/series";
 import { slugOf } from "../lib/shelf-books";
@@ -47,7 +48,7 @@ function SeriesRow({ handle }: { handle: string }) {
                 {book.cover_image_url ? (
                   <Image src={book.cover_image_url} alt={book.name} responsive={false} loading="lazy" />
                 ) : (
-                  <span className="pw-blank">{book.name}</span>
+                  <BookJacket title={book.name} author={author} />
                 )}
               </span>
               <span className="title">{book.name}</span>

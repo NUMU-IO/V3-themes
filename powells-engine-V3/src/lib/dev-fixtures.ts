@@ -64,6 +64,8 @@ interface DevBook {
   ratio?: number;
   /** [label, condition, cents, stock] */
   editions: Array<[string, string, number, number]>;
+  /** No cover anywhere, so the fallback jacket renders in the harness. */
+  noCover?: boolean;
   /**
    * Shaped like a book that arrived through a bulk import rather than through
    * the bookshop's own hand: no metafields, the author in `attributes` because
@@ -162,6 +164,7 @@ const BOOKS: DevBook[] = [
     price: 9.95,
     compare_at_price: 17.99,
     product_type: "Used Trade Paperback",
+    noCover: true,
     bg: "#f0e4d6",
     fg: "#4a2a30",
     editions: [["Trade Paperback", "Very good", 995, 2]],
@@ -297,8 +300,8 @@ function toProduct(book: DevBook) {
     category: { id: book.category.toLowerCase().replace(/\s+/g, "-"), name: book.category },
     tags: book.tags,
     created_at: `2026-0${(Number(book.id.slice(1)) % 9) + 1}-12T00:00:00Z`,
-    images: [image],
-    image_url: image,
+    images: book.noCover ? [] : [image],
+    image_url: book.noCover ? undefined : image,
     variants: book.editions.map(([label, condition, cents, stock], i) => ({
       id: `${book.id}-v${i + 1}`,
       product_id: book.id,
