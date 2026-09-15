@@ -36,7 +36,7 @@ interface Tile {
 
 function GenreCard({ tile }: { tile: Tile }) {
   const t = useT();
-  const books = useShelfBooks([], "collection", tile.collection, 3);
+  const books = useShelfBooks([], "collection", tile.collection, 3, { withCovers: true });
   const covers = books.map((book) => productImages(book)[0]).filter((src): src is string => Boolean(src));
 
   return (

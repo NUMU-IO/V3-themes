@@ -20,7 +20,7 @@
  */
 
 import { useCachedResource, useCollections, useShop, type Product } from "@numueg/theme-sdk";
-import { asArray, asRecord } from "./shared";
+import { asArray, asRecord, productImages } from "./shared";
 import { normalizeListingProduct } from "./more-products";
 import { pickBooks, type BookSource } from "./pick-books";
 import { fetchProductDetail } from "./product-detail";
@@ -56,10 +56,16 @@ export function useShelfBooks(
   source: BookSource,
   collection: string,
   limit: number,
-  options: { maxPrice?: number; books?: string } = {},
+  options: { maxPrice?: number; books?: string; withCovers?: boolean } = {},
 ): Product[] {
   const shop = useShop();
   const wanted = collection.trim();
+  // An editorial panel is a picture first: a book with no jacket leaves a
+  // blank frame in it, so those panels ask for a few more and keep the ones
+  // that have a cover.
+  const pull = options.withCovers ? Math.min(48, limit * 6) : limit;
+  const covered = (list: Product[]) =>
+    (options.withCovers ? list.filter((product) => productImages(product).length > 0) : list).slice(0, limit);
   const byCollection = source === "collection" && wanted.length > 0;
   const { collections } = useCollections({ fetchIfMissing: byCollection });
   const picked = useBooksByHandle(source === "books" ? bookList(options.books ?? "") : []);
@@ -72,10 +78,10 @@ export function useShelfBooks(
   const storeId = String(shop?.id ?? "");
 
   const { data } = useCachedResource<Product[]>(
-    categoryId && storeId ? `pw-shelf:${storeId}:${categoryId}:${limit}` : null,
+    categoryId && storeId ? `pw-shelf:${storeId}:${categoryId}:${pull}` : null,
     async (signal) => {
       const res = await fetch(
-        `/api/products?store_id=${encodeURIComponent(storeId)}&category_id=${encodeURIComponent(categoryId)}&limit=${limit}`,
+        `/api/products?store_id=${encodeURIComponent(storeId)}&category_id=${encodeURIComponent(categoryId)}&limit=${pull}`,
         { signal },
       );
       if (!res.ok) return [];
@@ -85,7 +91,7 @@ export function useShelfBooks(
     },
   );
 
-  if (source === "books") return picked.slice(0, limit);
-  if (category && data) return data.slice(0, limit);
-  return pickBooks(pool, source, collection, limit, options.maxPrice ?? 0);
+  if (source === "books") return covered(picked);
+  if (category && data) return covered(data);
+  return covered(pickBooks(pool, source, collection, pull, options.maxPrice ?? 0));
 }

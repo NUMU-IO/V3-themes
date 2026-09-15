@@ -4835,3 +4835,72 @@ button:hover:not(:disabled) .pw-arrow:dir(rtl) {
     padding: 20px;
   }
 }
+
+/* ── Sizing on wide screens ───────────────────────────────────────────────
+   The hero wall, the campaign books and the genre covers were sized for a
+   laptop; on a wide monitor the wall stayed a small block at the far edge and
+   the campaign cards grew into posters. */
+
+@media (min-width: 981px) {
+  .pw-hero.has-wall .pw-hero-inner {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: clamp(32px, 5vw, 96px);
+  }
+  .pw-hero.has-wall .pw-hero-title {
+    max-width: 13ch;
+    font-size: clamp(2.6rem, 4.8vw, 5rem);
+  }
+  .pw-hero-wall {
+    max-width: min(100%, 720px);
+    justify-self: center;
+    gap: clamp(14px, 1.6vw, 26px);
+  }
+}
+
+.pw-campaign-books {
+  grid-template-columns: repeat(3, minmax(0, 190px));
+}
+.pw-campaign-books[data-count="4"] {
+  grid-template-columns: repeat(4, minmax(0, 170px));
+}
+.pw-fan {
+  width: min(86%, 560px);
+}
+.pw-fan[data-count="1"] .pw-fan-book {
+  inset-inline-start: 25%;
+  width: 50%;
+}
+
+.pw-genre-covers {
+  height: 240px;
+}
+.pw-genre-book {
+  inset-inline-start: calc(50% - 70px);
+  width: 140px;
+  height: 210px;
+}
+.pw-genre-book:nth-child(1) {
+  transform: translateX(-62%) rotate(-9deg);
+}
+.pw-genre-book:nth-child(3) {
+  transform: translateX(62%) rotate(9deg);
+}
+.pw-genre-covers[data-count="1"] .pw-genre-book:nth-child(1) {
+  transform: rotate(-4deg);
+}
+.pw-genre-covers[data-count="2"] .pw-genre-book:nth-child(1) {
+  transform: translateX(-34%) rotate(-7deg);
+}
+.pw-genre-covers[data-count="2"] .pw-genre-book:nth-child(2) {
+  transform: translateX(34%) rotate(6deg);
+}
+@media (max-width: 560px) {
+  .pw-genre-covers {
+    height: 150px;
+  }
+  .pw-genre-book {
+    inset-inline-start: calc(50% - 44px);
+    width: 88px;
+    height: 132px;
+  }
+}
