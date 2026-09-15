@@ -24,7 +24,7 @@
  */
 
 import { useState } from "react";
-import { Image, Link, Money, type Product } from "@numueg/theme-sdk";
+import { Image, Link, Money, useLocale, type Product } from "@numueg/theme-sdk";
 import {
   bookCondition,
   bookFormats,
@@ -34,6 +34,7 @@ import {
   productAuthor,
   productImages,
 } from "./shared";
+import { BookJacket } from "./jacket";
 import { QuickLook } from "./quick-look";
 import { WishlistButton } from "./wishlist";
 import { seriesLine, seriesOf } from "./series";
@@ -53,12 +54,13 @@ export function ProductCard({
   variant = "shelf",
 }: ProductCardProps) {
   const t = useT();
+  const locale = useLocale();
   const [lookOpen, setLookOpen] = useState(false);
 
   const href = `/products/${product.slug ?? product.id}`;
   const [cover, second] = productImages(product);
   const author = productAuthor(product);
-  const label = bookLabel(product);
+  const label = bookLabel(product, locale);
   const condition = bookCondition(product);
   const formats = bookFormats(product);
   const left = copiesLeft(product);
@@ -90,7 +92,7 @@ export function ProductCard({
           {cover ? (
             <Image src={cover} alt={product.name} loading="lazy" responsive={!isInlineImage(cover)} />
           ) : (
-            <span className="pw-blank">{product.name}</span>
+            <BookJacket title={product.name} author={author} />
           )}
           {second && (
             <span className="pw-card-alt" aria-hidden="true">

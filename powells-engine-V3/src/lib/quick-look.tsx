@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Image, Link, useCart, type Product } from "@numueg/theme-sdk";
 import { Drawer, setCartDrawer } from "./cart-drawer";
 import { useProductDetail } from "./product-detail";
+import { BookJacket } from "./jacket";
 import { useBookOffer } from "./promotions";
 import { asString, productAuthor, productImages } from "./shared";
 import { buyLabel, EditionList, OptionChips, PriceLine, QtyStepper, useVariantPicker } from "./variants";
@@ -88,7 +89,7 @@ function QuickLookBody({ product, href, onClose }: { product: Product; href: str
           {cover ? (
             <Image src={cover} alt={product.name} responsive={false} />
           ) : (
-            <span className="pw-blank">{product.name}</span>
+            <BookJacket title={product.name} author={author} />
           )}
         </div>
         {images.length > 1 && (

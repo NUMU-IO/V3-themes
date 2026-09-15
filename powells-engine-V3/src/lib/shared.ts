@@ -238,11 +238,18 @@ export interface BookLabel {
  * `attributes.label` and the listing also lifts it to a top-level `label`.
  * Nothing is inferred: a book with no label shows no badge.
  */
-export function bookLabel(product: Product | null | undefined): BookLabel | null {
+export function bookLabel(product: Product | null | undefined, locale = "en"): BookLabel | null {
   if (!product) return null;
   const p = product as unknown as Record<string, unknown>;
   const raw = asRecord(p.label ?? attributesOf(product).label);
-  const text = asString(raw.text) || asString(raw.name) || asString(raw.label);
+  // The platform stores `{ key, text_en, text_ar }`; `text` is the older shape.
+  const text =
+    asString(raw.text) ||
+    asString(locale === "ar" ? raw.text_ar : raw.text_en) ||
+    asString(raw.text_en) ||
+    asString(raw.text_ar) ||
+    asString(raw.name) ||
+    asString(raw.label);
   if (!text) return null;
   return { key: (asString(raw.key) || text).toLowerCase(), text };
 }
