@@ -237,5 +237,20 @@
         "info_ar": "بعملة متجرك. السلة بتوري الزبون فاضله قد إيه. صفر بيخفي المؤشر."
       }
     ]
+  },
+  {
+    "name": "Floating buttons",
+    "name_ar": "الأزرار العائمة",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_instagram_float",
+        "label": "Show the Instagram button",
+        "label_ar": "إظهار زر إنستجرام",
+        "default": false,
+        "info": "A round Instagram button in the corner, above the WhatsApp button, linking to the Instagram account in your store's Social Links. Hidden until you turn it on.",
+        "info_ar": "زر إنستجرام دائري في الركن فوق زر واتساب، بيفتح حساب إنستجرام اللي في روابط التواصل بتاعة متجرك. مخفي لحد ما تفعّله."
+      }
+    ]
   }
 ]
