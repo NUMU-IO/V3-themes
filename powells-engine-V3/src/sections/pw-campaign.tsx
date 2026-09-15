@@ -53,6 +53,7 @@ export default function PwCampaign({ instance }: SectionRenderProps) {
   const books = useShelfBooks(products, source, asString(s.collection), asNumber(s.limit, 3), {
     books: asString(s.books),
     maxPrice: asNumber(s.max_price, 0),
+    withCovers: true,
   });
 
   const eyebrow = asString(s.eyebrow);
