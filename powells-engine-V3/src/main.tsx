@@ -390,7 +390,7 @@ if (import.meta.env.DEV && typeof window !== "undefined" && typeof document !== 
 
     // Fixtures are imported lazily and only under DEV, so the module never
     // reaches either shipped bundle.
-    void import("./lib/dev-fixtures").then(({ DEV_CART, devDetail, devPage }) => {
+    void import("./lib/dev-fixtures").then(({ DEV_CART, devDetail, devPage, devSearch }) => {
       // The harness has no host API. Answering the one route the theme calls
       // keeps quick look and quick-add exercisable here instead of failing in
       // a way a real store never would.
@@ -399,6 +399,15 @@ if (import.meta.env.DEV && typeof window !== "undefined" && typeof document !== 
       if (browser) browser.fetch = (input, init) => {
         const url =
           typeof input === "string" ? input : input instanceof Request ? input.url : String(input);
+        if (url.includes("/api/storefront/search")) {
+          const params = new URL(url, "http://dev.local").searchParams;
+          return Promise.resolve(
+            new Response(
+              JSON.stringify({ data: devSearch(params.get("q") ?? "", Number(params.get("limit")) || 6) }),
+              { headers: { "Content-Type": "application/json" } },
+            ),
+          );
+        }
         const match = /\/api\/storefront\/products\/([^/?#]+)/.exec(url);
         const detail = match ? devDetail(decodeURIComponent(match[1])) : null;
         return detail

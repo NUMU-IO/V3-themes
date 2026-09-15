@@ -25,8 +25,10 @@ export default function PwShelf({ instance }: SectionRenderProps) {
   const ornaments = useOrnaments();
 
   // Home ships `page.data.products`, but this section is also usable on routes
-  // that ship none — hence fetchIfMissing.
-  const { products } = useProducts({ limit: 48, fetchIfMissing: true });
+  // that ship none — hence fetchIfMissing. The limit is the size of the pool a
+  // shelf CHOOSES from, not how many it shows: home ships 300 books, and a
+  // genre shelf picking from only the first 48 found three or four of its own.
+  const { products } = useProducts({ limit: 300, fetchIfMissing: true });
 
   const source = (asString(s.source) || "newest") as BookSource;
   const limit = asNumber(s.limit, 5);
