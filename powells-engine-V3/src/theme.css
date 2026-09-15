@@ -685,40 +685,62 @@
   }
 }
 
+/* A column that fills its grid cell or rail slot, so every card in a row is
+   the row's height and the price + button can sit on the bottom edge. */
 .pw-card {
   position: relative;
   min-width: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
+/* One book-shaped frame for every cover. Sized by the jacket instead, a wide
+   photo (a bookmark, a boxed set) came out short and narrow beside the books,
+   and every row was ragged. */
 .pw-card-cover {
   position: relative;
-  height: 290px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--pw-paper-deep, var(--pw-rail));
+  box-shadow: 0 8px 20px -10px rgba(61, 41, 99, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.pw-card:hover .pw-card-cover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 28px -12px rgba(61, 41, 99, 0.5);
 }
 .pw-card-cover a {
+  position: absolute;
+  inset: 0;
   display: block;
-  height: 100%;
 }
 .pw-card-cover img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
   height: 100%;
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-  /* Books are photographed on white; a drop shadow is what separates the jacket
-     from a lavender page and gives the grid its shelf feel. */
-  box-shadow: 2px 3px 9px rgba(61, 41, 99, 0.22);
+  object-fit: cover;
 }
 .pw-card-cover .pw-blank {
-  width: 190px;
-  height: 100%;
-  background: var(--pw-rail);
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
+  padding: 14px;
+  background: var(--pw-rail);
   color: var(--pw-muted);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   text-align: center;
-  padding: 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-card-cover,
+  .pw-card:hover .pw-card-cover {
+    transition: none;
+    transform: none;
+  }
 }
 .pw-fav {
   position: absolute;
@@ -742,12 +764,29 @@
 }
 
 .pw-card h3 {
-  font-size: 1.06rem;
+  font-size: 1.02rem;
   font-weight: 500;
-  line-height: 1.22;
-  margin: 15px 0 0;
+  line-height: 1.25;
+  margin: 14px 0 0;
   color: var(--pw-ink);
-  text-wrap: balance;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+/* Author and format each hold to one line, so a long "by A and B" cannot push
+   one card taller than the rest of its row. */
+.pw-card .pw-byline,
+.pw-card .pw-format {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+/* Price and button share the card's bottom edge across a row. */
+.pw-card .pw-price {
+  margin-block-start: auto;
+  padding-block-start: 10px;
 }
 .pw-card h3 a {
   color: inherit;
@@ -792,11 +831,21 @@
 
 /* ── Product page ─────────────────────────────────────────────────────── */
 
+/* Centred, with the details column capped: on a wide screen it used to run to
+   the far edge, stretching the Add to Cart button across ~1,300px beside a
+   small cover and a field of empty page. */
 .pw-pdp {
   display: grid;
-  grid-template-columns: 430px minmax(0, 1fr);
-  gap: 64px;
+  grid-template-columns: minmax(280px, 460px) minmax(0, 640px);
+  justify-content: center;
+  gap: clamp(32px, 5vw, 76px);
   align-items: start;
+}
+@media (min-width: 981px) {
+  .pw-pdp-media {
+    position: sticky;
+    top: 24px;
+  }
 }
 @media (max-width: 980px) {
   .pw-pdp {
@@ -1728,7 +1777,8 @@
 }
 .pw-rail-item {
   flex: 0 0 auto;
-  width: 208px;
+  width: 196px;
+  display: flex;
   scroll-snap-align: start;
 }
 
@@ -2470,6 +2520,7 @@
 
 .pw-buyrow .pw-btn-primary {
   flex: 1 1 170px;
+  max-width: 380px;
 }
 
 .pw-trust {
@@ -2521,7 +2572,6 @@
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
 }
 /* A soft tinted pill that fills on hover. The old outline button at full card
    width read as a form control repeated down the grid, heavier than the covers
@@ -2618,9 +2668,6 @@
   }
   .pw-section-head h2 {
     white-space: normal;
-  }
-  .pw-card-cover {
-    height: 220px;
   }
   .pw-card-cover .pw-blank {
     width: 100%;
@@ -2771,38 +2818,6 @@
 .pw-drawer.popup.wide {
   width: min(880px, 100%);
 }
-.pw-card-look {
-  position: absolute;
-  bottom: 8px;
-  inset-inline-end: 6px;
-  z-index: 3;
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border: none;
-  border-radius: 50%;
-  background: var(--pw-surface);
-  color: var(--pw-ink);
-  cursor: pointer;
-  box-shadow: 0 1px 4px rgba(61, 41, 99, 0.18);
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-.pw-card:hover .pw-card-look,
-.pw-card-look:focus-visible {
-  opacity: 1;
-}
-/* No hover on touch screens: a control you cannot discover is not a feature. */
-@media (hover: none) {
-  .pw-card-look {
-    opacity: 1;
-  }
-}
-.pw-card-look:hover {
-  color: var(--pw-accent);
-}
-
 /* Two columns inside the popup: the cover holds its own column and the
    details — title, price, chips, buy row — read down the other, so nothing is
    pushed below the fold on a laptop. One column once that no longer fits. */
@@ -2933,10 +2948,14 @@
   box-shadow: 0 1px 3px rgba(61, 41, 99, 0.08);
 }
 .pw-card--tile .pw-card-cover {
-  height: auto;
   aspect-ratio: 3 / 4;
-  align-items: stretch;
+  border-radius: 0;
+  box-shadow: none;
   background: var(--pw-paper-deep);
+}
+.pw-card--tile:hover .pw-card-cover {
+  transform: none;
+  box-shadow: none;
 }
 .pw-card--tile .pw-card-cover a {
   width: 100%;
@@ -2959,7 +2978,8 @@
   margin-inline: 16px;
 }
 .pw-card--tile .pw-price {
-  margin: 10px 16px 16px;
+  margin: auto 16px 16px;
+  padding-block-start: 10px;
 }
 .pw-card--tile .pw-price b {
   font-size: 1.06rem;
@@ -2988,13 +3008,21 @@
 }
 /* auto-fit, not auto-fill: three tiles stretch across the row instead of
    leaving an empty fourth track beside the banner. */
+/* Tiles are capped at a book-card width. Stretched to share a wide column, three
+   of them grew to ~380px and each cover filled the screen on its own. */
 .pw-tiles-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 230px));
+  justify-content: start;
+  gap: 22px;
 }
 .pw-promo:not(.has-image) {
   justify-content: center;
+  background:
+    radial-gradient(120% 80% at 100% 0%, color-mix(in srgb, var(--pw-accent) 22%, transparent) 0%, transparent 60%),
+    radial-gradient(90% 70% at 0% 100%, color-mix(in srgb, var(--pw-accent) 14%, transparent) 0%, transparent 65%),
+    var(--pw-rail);
+  border: 1px solid var(--pw-rail-edge);
 }
 .pw-promo {
   position: relative;
@@ -3073,7 +3101,10 @@
 /* ── Book page layout ─────────────────────────────────────────────────── */
 
 .pw-pdp-stage img {
-  border-radius: 12px;
+  max-height: 640px;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 22px 44px -22px rgba(61, 41, 99, 0.55);
 }
 .pw-pdp-price b {
   color: var(--pw-accent);

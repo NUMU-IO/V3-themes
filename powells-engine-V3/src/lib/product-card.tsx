@@ -7,25 +7,23 @@
  * them at once.
  *
  * Two looks over one component:
- *   - `shelf` (default): the cover stands free with a drop shadow, contained,
- *     never cropped — jackets are not a fixed ratio, and the row reads as a
- *     shelf.
+ *   - `shelf` (default): the cover in a fixed book-shaped frame.
  *   - `tile`: the cover fills the top of a white rounded card, for the
  *     books-plus-banner row.
  *
- * Quick-add never guesses an edition. Listing payloads report `variants: []`
- * whether or not a book has editions, so a card that cannot name its variant
- * resolves the detail payload on click. A book with editions to choose opens
- * quick look instead of adding "some copy". The engine's `{ ok }` decides
- * whether the add happened.
+ * Every cover sits in the same 2:3 frame, and the price and button are pinned
+ * to the bottom of the card, so a row of books lines up whatever the jacket's
+ * proportions and whether or not a book has an author line.
+ *
+ * The card never adds to the cart by itself. Its button opens quick look,
+ * where the shopper sees the book, picks an edition and presses Add there — a
+ * button on a grid of forty books is too easy to hit on the way to the cover,
+ * and an item landing in the cart unasked reads as a bug.
  */
 
 import { useState } from "react";
-import { Image, Link, Money, useCart, type Product } from "@numueg/theme-sdk";
-import { IconEye } from "./ornaments";
+import { Image, Link, Money, type Product } from "@numueg/theme-sdk";
 import { bookFormat, isInlineImage, productAuthor, productImages } from "./shared";
-import { setCartDrawer } from "./cart-drawer";
-import { fetchProductDetail } from "./product-detail";
 import { QuickLook } from "./quick-look";
 import { WishlistButton } from "./wishlist";
 import { fill, useT } from "./i18n";
@@ -48,8 +46,6 @@ export function ProductCard({
   variant = "shelf",
 }: ProductCardProps) {
   const t = useT();
-  const { addItem } = useCart();
-  const [addState, setAddState] = useState<"idle" | "adding" | "failed" | "soldout">("idle");
   const [lookOpen, setLookOpen] = useState(false);
 
   const href = `/products/${product.slug ?? product.id}`;
@@ -68,33 +64,7 @@ export function ProductCard({
 
   // The related route spells stock `is_in_stock`; the listing spells it `in_stock`.
   const listedStock = product.in_stock ?? (product as unknown as { is_in_stock?: boolean }).is_in_stock;
-  const available = listedStock !== false && addState !== "soldout";
-
-  const onQuickAdd = async () => {
-    setAddState("adding");
-    const resolved =
-      (product.variants?.length ?? 0) > 0
-        ? product
-        : ((await fetchProductDetail(String(product.id))) ?? product);
-    if (hasChoices(resolved)) {
-      setAddState("idle");
-      setLookOpen(true);
-      return;
-    }
-    if (resolved.in_stock === false) {
-      setAddState("soldout");
-      return;
-    }
-    const firstVariant = resolved.variants?.[0];
-    const result = await addItem(
-      String(product.id),
-      firstVariant ? String(firstVariant.id) : undefined,
-      1,
-      firstVariant?.option_values,
-    );
-    setAddState(result?.ok ? "idle" : "failed");
-    if (result?.ok) setCartDrawer(true);
-  };
+  const available = listedStock !== false;
 
   return (
     <article className={variant === "tile" ? "pw-card pw-card--tile" : "pw-card"}>
@@ -107,17 +77,6 @@ export function ProductCard({
           )}
         </Link>
         {showWishlist && <WishlistButton productId={String(product.id)} />}
-        {showQuickAdd && (
-          <button
-            type="button"
-            className="pw-card-look"
-            aria-haspopup="dialog"
-            aria-label={fill(t("preview.open", "Quick look: {{name}}"), { name: product.name })}
-            onClick={() => setLookOpen(true)}
-          >
-            <IconEye />
-          </button>
-        )}
       </div>
 
       <h3>
@@ -140,29 +99,22 @@ export function ProductCard({
         )}
       </p>
 
-      {showQuickAdd &&
-        (addState === "failed" ? (
-          <Link className="pw-card-add" to={href}>
-            {t("product.see_details", "See details")}
-          </Link>
-        ) : hasChoices(product) ? (
-          <button type="button" className="pw-card-add" aria-haspopup="dialog" onClick={() => setLookOpen(true)}>
-            {t("product.choose_options", "Choose edition")}
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="pw-card-add"
-            disabled={!available || addState === "adding"}
-            onClick={onQuickAdd}
-          >
-            {!available
-              ? t("product.out_of_stock", "Currently unavailable")
-              : addState === "adding"
-                ? t("product.adding", "Adding...")
-                : t("product.add_to_cart", "Add to Cart")}
-          </button>
-        ))}
+      {showQuickAdd && (
+        <button
+          type="button"
+          className="pw-card-add"
+          aria-haspopup="dialog"
+          aria-label={fill(t("preview.open", "Quick look: {{name}}"), { name: product.name })}
+          disabled={!available}
+          onClick={() => setLookOpen(true)}
+        >
+          {!available
+            ? t("product.out_of_stock", "Currently unavailable")
+            : hasChoices(product)
+              ? t("product.choose_options", "Choose edition")
+              : t("product.add_to_cart", "Add to Cart")}
+        </button>
+      )}
 
       {lookOpen && <QuickLook product={product} onClose={() => setLookOpen(false)} />}
     </article>
