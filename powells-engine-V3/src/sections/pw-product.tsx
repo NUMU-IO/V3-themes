@@ -167,6 +167,7 @@ function Fold({ title, open = false, children }: { title: string; open?: boolean
 
 function BookPage({ product, s }: { product: Product; s: Record<string, unknown> }) {
   const t = useT();
+  const locale = useLocale();
   const ornaments = useOrnaments();
   const metafields = useMetafields("product");
   const { addItem, loading: cartBusy } = useCart();
@@ -213,7 +214,7 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
   const formatAxis = picker.options.find((option) => isFormatAxis(option.name));
   const chosenFormat = formatAxis ? asString(picker.selection[formatAxis.name]) : "";
   const condition = (chosen ? conditionOf(chosen) : "") || bookCondition(product);
-  const label = bookLabel(product);
+  const label = bookLabel(product, locale);
   const labelWord = label ? label.text.charAt(0).toUpperCase() + label.text.slice(1).toLowerCase() : "";
   const formatLine = [chosenFormat || (bookFormats(product).length === 1 ? bookFormats(product)[0] : ""), condition || labelWord]
     .filter(Boolean)
