@@ -18,7 +18,7 @@ import { Link, NAVIGATE_EVENT, useResolvedSettings, useSearch, type NavigateEven
 import { asBool, asString, type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
-import { Twinkle } from "../lib/ornaments";
+import { SceneSearch, Twinkle } from "../lib/ornaments";
 import { useOrnaments } from "../lib/shared";
 
 export default function PwSearch({ instance }: SectionRenderProps) {
@@ -73,6 +73,7 @@ export default function PwSearch({ instance }: SectionRenderProps) {
 
       {products.length === 0 ? (
         <div className="pw-empty">
+          {ornaments && !loading && query && <SceneSearch width={240} />}
           <p>{loading ? "…" : t("search.no_results", "No books matched that search.")}</p>
           {!loading && <p className="pw-hand">{t("search.try", "Try an author, a title, or an ISBN.")}</p>}
           <Link className="pw-btn pw-btn-ghost" to="/products">

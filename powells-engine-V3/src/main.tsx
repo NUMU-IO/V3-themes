@@ -64,7 +64,12 @@ import PwBlog from "./sections/pw-blog";
 import PwReviews from "./sections/pw-reviews";
 import PwNotFound from "./sections/pw-not-found";
 import PwFeatured from "./sections/pw-featured";
+import PwCampaign from "./sections/pw-campaign";
+import PwSeriesFeature from "./sections/pw-series-feature";
+import PwGrading from "./sections/pw-grading";
+import PwNewsletter from "./sections/pw-newsletter";
 import { WishlistDrawer } from "./lib/wishlist";
+import { SceneReading } from "./lib/ornaments";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
@@ -93,6 +98,10 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "pw-blog": PwBlog,
   "pw-reviews": PwReviews,
   "pw-not-found": PwNotFound,
+  "pw-campaign": PwCampaign,
+  "pw-series-feature": PwSeriesFeature,
+  "pw-grading": PwGrading,
+  "pw-newsletter": PwNewsletter,
 };
 
 const isKnownType = (t: string) => Boolean(SECTION_REGISTRY[t]);
@@ -177,6 +186,11 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
   const cmsBlock =
     cmsTitle || cmsBody ? (
       <div className="pw-container" style={{ maxWidth: "72ch", padding: "56px 0" }}>
+        {pageCtx?.handle === "about" && globals.show_ornaments !== false && (
+          <div className="pw-page-art">
+            <SceneReading width={300} />
+          </div>
+        )}
         {cmsTitle && (
           <h1
             style={{
@@ -353,7 +367,7 @@ const v3Handle = {
   mount_returns: "MountResult" as const,
   // ⚠ Version lives in THREE places and they must match: theme.json,
   // package.json, and this literal.
-  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.2.0" },
+  manifest: { id: "powells-v3", name: "Powell's (V3)", version: "1.3.0" },
   mount,
 };
 export default v3Handle;
@@ -431,7 +445,7 @@ if (import.meta.env.DEV && typeof window !== "undefined" && typeof document !== 
         themeSettings: {
           schema_version: 3,
           theme_id: "powells-v3",
-          global_settings: {},
+          global_settings: { free_shipping_threshold: Number(params.get("ship") ?? 0) },
           templates: {},
           section_groups: {},
         },

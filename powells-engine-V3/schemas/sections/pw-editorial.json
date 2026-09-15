@@ -60,6 +60,35 @@
       "default": ""
     },
     {
+      "type": "select",
+      "id": "illustration",
+      "label": "Without an image, show the drawing",
+      "label_ar": "من غير صورة، اعرض رسمة",
+      "default": "reading",
+      "options": [
+        {
+          "value": "reading",
+          "label": "Reading table",
+          "label_ar": "ترابيزة قراءة"
+        },
+        {
+          "value": "grading",
+          "label": "Grading a used book",
+          "label_ar": "تقييم كتاب مستعمل"
+        },
+        {
+          "value": "gift",
+          "label": "Gift card",
+          "label_ar": "كارت هدية"
+        },
+        {
+          "value": "letter",
+          "label": "Letter",
+          "label_ar": "جواب"
+        }
+      ]
+    },
+    {
       "type": "checkbox",
       "id": "image_first",
       "label": "Image on the starting side",

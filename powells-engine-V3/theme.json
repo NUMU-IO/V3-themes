@@ -3,7 +3,7 @@
   "name": "Powell's (V3)",
   "name_ar": "باول",
   "author": "NUMU",
-  "version": "1.2.9",
+  "version": "1.3.0",
   "layout": "sidebar-left",
   "description": "Powell's (V3) — a lavender bookshop storefront built for used and rare stock. A filter rail faceted from your own product options, a book page that sells COPIES rather than titles (each variant priced with its own condition and shelf), staff-pick notes signed by a bookseller, and hand-drawn marginalia you can switch off.",
   "description_ar": "باول (V3) — متجر كتب بلون بنفسجي متعمل للكتب المستعملة والنادرة. شريط فلاتر بيتبني من اختيارات منتجاتك، وصفحة كتاب بتبيع نسخة مش عنوان (كل متغير بسعره وحالته والفرع اللي فيه)، وملاحظات مكتوبة بإمضاء البائع، ورسومات يدوية تقدر تقفلها.",
@@ -28,8 +28,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -69,7 +181,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -151,8 +264,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -187,10 +412,9 @@
           {
             "type": "pw-hero",
             "settings": {
-              "eyebrow": "EST. 1971",
               "heading": "A million books, and one of them is yours.",
               "body": "New, used and rare on the same shelf. Come in for one book, leave with four.",
-              "cta_text": "Browse used books",
+              "cta_text": "Browse all books",
               "cta_link": "/products",
               "secondary_text": "Staff picks",
               "secondary_link": "/collections/staff-picks",
@@ -203,11 +427,20 @@
               "heading": "Newly released",
               "source": "newest",
               "limit": 3,
-              "show_promo": true,
-              "promo_eyebrow": "OUR PICK THIS MONTH",
-              "promo_title": "The book everyone is asking about",
-              "promo_button": "Shop now",
-              "promo_link": "/products"
+              "show_promo": true
+            }
+          },
+          {
+            "type": "pw-campaign",
+            "settings": {
+              "eyebrow": "AFTER MIDNIGHT",
+              "heading": "Dark Romance After Midnight",
+              "body": "Morally grey heroes, dangerous bargains and the kind of ending you read with the lights off.",
+              "source": "newest",
+              "limit": 3,
+              "tone": "night",
+              "cta_text": "Shop the shelf",
+              "cta_link": "/products"
             }
           },
           {
@@ -216,16 +449,37 @@
               "heading": "Just off the truck",
               "note": "new (to you)",
               "source": "newest",
-              "limit": 6,
-              "view_all_text": "See all used books",
+              "limit": 12,
+              "view_all_text": "See all",
               "view_all_link": "/products"
             }
           },
           {
             "type": "pw-shelf-links",
             "settings": {
-              "heading": "Browse by shelf",
-              "limit": 6
+              "heading": "Shop by genre",
+              "layout": "cards",
+              "limit": 4
+            }
+          },
+          {
+            "type": "pw-series-feature",
+            "settings": {
+              "heading": "Complete the series"
+            }
+          },
+          {
+            "type": "pw-campaign",
+            "settings": {
+              "eyebrow": "STAFF PICK",
+              "heading": "Start here",
+              "body": "Three books our booksellers hand to anyone who asks where to begin.",
+              "source": "newest",
+              "limit": 3,
+              "tone": "lavender",
+              "visual_right": true,
+              "cta_text": "See every staff pick",
+              "cta_link": "/collections/staff-picks"
             }
           },
           {
@@ -233,28 +487,70 @@
             "settings": {
               "eyebrow": "THIS MONTH",
               "heading": "What we're pressing into people's hands",
-              "body": "<p>Every book on this page passed through a bookseller's hands before it reached the shelf. We read them, we price them, and we tell you honestly what shape they're in.</p><p>Used stock is graded by a person, not a machine — so a cracked spine is described as a cracked spine, and the price reflects it.</p>",
+              "body": "<p>Every book on this page passed through a bookseller's hands before it reached the shelf. We read them, we price them, and we tell you honestly what shape they're in.</p>",
               "signature": "Renee, Blue Room",
               "cta_text": "About the shop",
               "cta_link": "/pages/about",
-              "image_first": true
+              "image_first": true,
+              "illustration": "reading"
+            }
+          },
+          {
+            "type": "pw-grading",
+            "settings": {
+              "eyebrow": "HOW WE GRADE",
+              "heading": "Every used book is graded by a person",
+              "body": "We open every copy, check every page, and tell you exactly what shape it is in."
+            }
+          },
+          {
+            "type": "pw-campaign",
+            "settings": {
+              "eyebrow": "RARE & LIMITED",
+              "heading": "Collector's shelf",
+              "body": "Special editions, sprayed edges and the copies worth keeping on the good shelf.",
+              "source": "sale",
+              "limit": 4,
+              "tone": "paper",
+              "visual": "gift",
+              "cta_text": "Browse limited editions",
+              "cta_link": "/collections/limited-editions"
             }
           },
           {
             "type": "pw-shelf",
             "settings": {
-              "heading": "Under $10",
-              "source": "cheapest",
-              "limit": 6,
+              "heading": "Under 200",
+              "source": "under",
+              "max_price": 200,
+              "limit": 12,
               "view_all_text": "See all",
               "view_all_link": "/products"
+            }
+          },
+          {
+            "type": "pw-shelf",
+            "settings": {
+              "heading": "Recently viewed",
+              "source": "recent",
+              "limit": 8
+            }
+          },
+          {
+            "type": "pw-newsletter",
+            "settings": {
+              "eyebrow": "THE BOOK CLUB",
+              "heading": "One letter a month, about books worth your evenings",
+              "body": "New arrivals, staff picks and the occasional reading list — never more than once a month.",
+              "button": "Subscribe"
             }
           },
           {
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -336,8 +632,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -430,7 +838,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -512,8 +921,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -606,7 +1127,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -688,8 +1210,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -732,7 +1366,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -814,8 +1449,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -867,7 +1614,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -949,8 +1697,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -995,7 +1855,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -1077,8 +1938,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -1121,7 +2094,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -1203,8 +2177,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -1244,7 +2330,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -1326,8 +2413,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -1363,7 +2562,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -1445,8 +2645,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -1486,7 +2798,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -1568,8 +2881,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -1611,7 +3036,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {
@@ -1693,8 +3119,120 @@
                 "settings": {
                   "label": "BROWSE",
                   "link": "/collections",
-                  "show_caret": true
-                }
+                  "promo_eyebrow": "OUR PICK",
+                  "promo_title": "The book everyone is asking about",
+                  "promo_link": "/products"
+                },
+                "blocks": [
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "BOOKS"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "New releases",
+                          "link": "/products"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Used books",
+                          "link": "/collections/used"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Rare books",
+                          "link": "/collections/rare"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Limited editions",
+                          "link": "/collections/limited-editions"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "GENRES"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Fantasy",
+                          "link": "/collections/fantasy"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Romance",
+                          "link": "/collections/romance"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Thriller",
+                          "link": "/collections/thriller"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Mystery",
+                          "link": "/collections/mystery"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Classics",
+                          "link": "/collections/classics"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "mega_column",
+                    "settings": {
+                      "title": "DISCOVER"
+                    },
+                    "blocks": [
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Staff picks",
+                          "link": "/collections/staff-picks"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Series",
+                          "link": "/search?q=series"
+                        }
+                      },
+                      {
+                        "type": "mega_link",
+                        "settings": {
+                          "label": "Best sellers",
+                          "link": "/collections/best-sellers"
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "type": "nav_item",
@@ -1736,7 +3274,8 @@
             "type": "pw-footer",
             "settings": {
               "about": "An independent bookshop. New, used and rare, on the same shelf.",
-              "hand_note": "Good\nBooks\nBuild\nBetter\nDays"
+              "hand_note": "Good\nBooks\nBuild\nBetter\nDays",
+              "statement": "Good books build better days."
             },
             "blocks": [
               {

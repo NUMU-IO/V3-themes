@@ -5,7 +5,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "A scrolling row of books under a heading — new arrivals, staff picks, under $10. Add this section more than once with different sources; that is how the home page is built.",
+      "content": "A scrolling row of books under a heading — new arrivals, under a price, books you choose, or what this shopper looked at recently. Add this section more than once with different sources; that is how the home page is built.",
       "content_ar": "صف كتب بيتمرر تحت عنوان — وصل حديثًا، اختيارات الفريق، أقل من ١٠. ضيف القسم ده أكتر من مرة بمصادر مختلفة؛ كده بتتبني الصفحة الرئيسية."
     },
     {
@@ -48,6 +48,21 @@
           "value": "collection",
           "label": "From one collection",
           "label_ar": "من تصنيف واحد"
+        },
+        {
+          "value": "under",
+          "label": "Under a price",
+          "label_ar": "أقل من سعر"
+        },
+        {
+          "value": "books",
+          "label": "Books I choose",
+          "label_ar": "كتب أختارها"
+        },
+        {
+          "value": "recent",
+          "label": "Recently viewed by the shopper",
+          "label_ar": "اللي الزبون شافه مؤخرًا"
         }
       ]
     },
@@ -60,6 +75,27 @@
       "info": "The collection's name or handle.",
       "info_ar": "اسم التصنيف أو معرّفه.",
       "visible_if": "{{ section.settings.source == 'collection' }}"
+    },
+    {
+      "type": "textarea",
+      "id": "books",
+      "label": "Books",
+      "label_ar": "الكتب",
+      "default": "",
+      "info": "Book handles or exact titles, one per line, in the order to show them.",
+      "info_ar": "معرّفات الكتب أو عناوينها بالظبط، كل كتاب في سطر، بالترتيب اللي عايزه.",
+      "visible_if": "{{ section.settings.source == 'books' }}"
+    },
+    {
+      "type": "range",
+      "id": "max_price",
+      "label": "Under this price",
+      "label_ar": "أقل من السعر ده",
+      "default": 200,
+      "min": 50,
+      "max": 3000,
+      "step": 10,
+      "visible_if": "{{ section.settings.source == 'under' }}"
     },
     {
       "type": "range",

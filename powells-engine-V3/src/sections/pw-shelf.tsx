@@ -1,14 +1,17 @@
 /**
  * pw-shelf — a row of books under a heading.
  *
- * The home page's workhorse: "New arrivals", "Staff picks", "Under $10". One
- * section, used several times with different sources, rather than one section
- * per row — the layout is identical and only the query differs.
+ * The home page's workhorse: "Just off the truck", "Under 200 EGP", "Recently
+ * viewed". One section, used several times with different sources, rather than
+ * one section per row — the layout is identical and only the query differs.
  *
  * Rendered as a horizontal RAIL that scrolls, not a wrapping grid: a shelf is
  * a line of books, and a rail keeps the home page's vertical rhythm no matter
  * how many titles a merchant points it at. The listing page is where a grid
  * belongs.
+ *
+ * "Recently viewed" lives in the shopper's own browser, so that shelf is empty
+ * on the server and fills in after load — and stays hidden for a first visit.
  */
 
 import { Link, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
@@ -17,7 +20,8 @@ import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
 import type { BookSource } from "../lib/pick-books";
 import { useShelfBooks } from "../lib/shelf-books";
-import { Twinkle } from "../lib/ornaments";
+import { entryAsProduct, useRecentlyViewed } from "../lib/recently-viewed";
+import { IconArrow, Twinkle } from "../lib/ornaments";
 
 export default function PwShelf({ instance }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
@@ -34,7 +38,12 @@ export default function PwShelf({ instance }: SectionRenderProps) {
   const limit = asNumber(s.limit, 5);
   const collection = asString(s.collection);
 
-  const picks = useShelfBooks(products, source, collection, limit);
+  const shelf = useShelfBooks(products, source, collection, limit, {
+    books: asString(s.books),
+    maxPrice: asNumber(s.max_price, 0),
+  });
+  const recent = useRecentlyViewed("");
+  const picks = source === "recent" ? recent.slice(0, limit).map(entryAsProduct) : shelf;
 
   if (picks.length === 0) return null;
 
@@ -54,9 +63,10 @@ export default function PwShelf({ instance }: SectionRenderProps) {
         {heading && <h2>{heading}</h2>}
         <span className="pw-rule" />
         {note && ornaments && <span className="pw-hand">{note}</span>}
-        {viewAllText && (
-          <Link className="pw-linkbtn" to={viewAllLink}>
+        {viewAllText && source !== "recent" && (
+          <Link className="pw-viewall" to={viewAllLink}>
             {viewAllText}
+            <IconArrow size={14} />
           </Link>
         )}
       </div>

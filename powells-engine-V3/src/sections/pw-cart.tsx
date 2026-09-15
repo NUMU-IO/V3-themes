@@ -22,11 +22,12 @@
  */
 
 import { useState, type FormEvent } from "react";
-import { Image, Link, Money, useCart, useResolvedSettings } from "@numueg/theme-sdk";
+import { Image, Link, Money, useCart, useResolvedSettings, useThemeSettings } from "@numueg/theme-sdk";
 import { formatMoney } from "@numueg/theme-kit";
 import {
   asBool,
   asNumber,
+  asRecord,
   asString,
   useInsideEditor,
   useOrnaments,
@@ -34,6 +35,7 @@ import {
 } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { CartNudges } from "../lib/promotions";
+import { SceneEmptyBag } from "../lib/ornaments";
 
 /** A stand-in cart so the customizer can style the filled state. */
 const SAMPLE_ITEMS = [
@@ -85,7 +87,8 @@ export default function PwCart({ instance }: SectionRenderProps) {
   const discount = (cart?.discount_amount ?? 0) + (cart?.automatic_discount ?? 0);
   const total = sampling ? subtotal : (cart?.total ?? subtotal);
 
-  const threshold = asNumber(s.free_shipping_threshold, 0);
+  const globals = asRecord(useThemeSettings().global_settings);
+  const threshold = asNumber(s.free_shipping_threshold, 0) || asNumber(globals.free_shipping_threshold, 0);
   const remaining = Math.max(0, threshold - subtotal);
   const showMeter = asBool(s.show_progress_bar, true) && threshold > 0 && !isEmpty;
 
@@ -122,6 +125,7 @@ export default function PwCart({ instance }: SectionRenderProps) {
 
       {isEmpty ? (
         <div className="pw-empty">
+          {ornaments && <SceneEmptyBag width={240} />}
           <p>{asString(s.empty_heading) || t("cart.empty", "Your cart is empty.")}</p>
           <Link className="pw-btn pw-btn-primary" to={asString(s.empty_cta_link) || "/products"}>
             {asString(s.empty_cta_text) || t("cart.empty_cta", "Start browsing")}

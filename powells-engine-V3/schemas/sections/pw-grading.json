@@ -1,0 +1,33 @@
+{
+  "type": "pw-grading",
+  "name": "How we grade",
+  "name_ar": "إزاي بنقيّم",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "The four grades a used copy can have — Like New, Very Good, Good, Loved — each with a drawing of the wear it allows.",
+      "content_ar": "الدرجات الأربعة للنسخة المستعملة — زي الجديد، جيد جدًا، جيد، مستعمل بحب — كل واحدة برسمة توضح الاستهلاك المسموح."
+    },
+    { "type": "text", "id": "eyebrow", "label": "Small line above", "label_ar": "السطر الصغير فوق", "default": "HOW WE GRADE" },
+    { "type": "text", "id": "heading", "label": "Heading", "label_ar": "العنوان", "default": "Every used book is graded by a person" },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Text",
+      "label_ar": "النص",
+      "default": "We open every copy, check every page, and tell you exactly what shape it is in."
+    },
+    { "type": "text", "id": "cta_text", "label": "Link", "label_ar": "اللينك", "default": "" },
+    { "type": "url", "id": "cta_link", "label": "Link goes to", "label_ar": "الرابط", "default": "/products" }
+  ],
+  "presets": [
+    {
+      "name": "How we grade",
+      "name_ar": "إزاي بنقيّم",
+      "settings": {
+        "eyebrow": "HOW WE GRADE",
+        "heading": "Every used book is graded by a person"
+      }
+    }
+  ]
+}

@@ -16,6 +16,25 @@
       "default": "Browse by shelf"
     },
     {
+      "type": "select",
+      "id": "layout",
+      "label": "Look",
+      "label_ar": "الشكل",
+      "default": "tiles",
+      "options": [
+        {
+          "value": "tiles",
+          "label": "Tiles",
+          "label_ar": "مربعات"
+        },
+        {
+          "value": "cards",
+          "label": "Large genre cards with covers",
+          "label_ar": "كروت كبيرة بالأغلفة"
+        }
+      ]
+    },
+    {
       "type": "range",
       "id": "limit",
       "label": "How many tiles",
@@ -45,6 +64,15 @@
           "label": "Link",
           "label_ar": "الرابط",
           "default": "/collections"
+        },
+        {
+          "type": "text",
+          "id": "collection",
+          "label": "Collection for the covers",
+          "label_ar": "التصنيف اللي تيجي منه الأغلفة",
+          "default": "",
+          "info": "Leave empty to use the title.",
+          "info_ar": "سيبه فاضي عشان يستخدم العنوان."
         },
         {
           "type": "image_picker",
