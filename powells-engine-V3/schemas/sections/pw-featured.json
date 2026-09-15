@@ -110,8 +110,8 @@
       "label": "Banner image",
       "label_ar": "صورة البانر",
       "default": "",
-      "info": "A tall image works best, such as a book photographed on a table.",
-      "info_ar": "الأفضل صورة طولية، زي كتاب متصور على ترابيزة."
+      "info": "Upload an image to run your own banner with the title, line and button above. Leave it empty and the card shows a real book from your shop, with its cover, its name and a Buy now button.",
+      "info_ar": "ارفع صورة عشان يظهر البانر بتاعك بالعنوان والسطر والزر اللي فوق. سيبها فاضية والكارت هيعرض كتاب حقيقي من متجرك بغلافه واسمه وزر اشتري دلوقتي."
     }
   ],
   "presets": [

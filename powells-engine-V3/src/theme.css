@@ -1702,17 +1702,19 @@
   grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
   padding-block: 60px 64px;
 }
+/* Two complete rows of three. The wall used to be capped in height and faded
+   out, which cut the second row through the middle of its covers and read as
+   a page that had not finished loading. It is sized by width instead, so all
+   six covers show whole. */
 .pw-hero-wall {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 18px;
   align-items: start;
-  /* The wall is a backdrop, so it may never set the hero's height: it is
-     capped and the overflow is cropped by the same fade that ends it. */
-  max-height: clamp(300px, 30vw, 430px);
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+  width: 100%;
+  max-width: 520px;
+  justify-self: end;
+  padding-block-end: 18px;
 }
 /* Per-column tilt and drop. Written as nth-child rules, not arithmetic on an
    index: CSS `%` is the unit, not a modulo, so `calc(var(--i) % 3)` is invalid
@@ -1737,16 +1739,6 @@
   object-fit: cover;
   border-radius: 2px;
   box-shadow: 5px 8px 20px rgba(35, 22, 58, 0.28);
-}
-/* Past six covers the rest are depth, not content — they only appear where
-   there is room for a third row without crowding the type. */
-.pw-hero-spine:nth-child(n + 7) {
-  display: none;
-}
-@media (min-width: 1240px) {
-  .pw-hero-spine:nth-child(n + 7) {
-    display: block;
-  }
 }
 /* With no photograph the note sits with the copy rather than floating in the
    space where the photograph would have been. */
@@ -2943,9 +2935,22 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  border: 1px solid var(--pw-line);
   border-radius: 14px;
   background: var(--pw-surface);
   box-shadow: 0 1px 3px rgba(61, 41, 99, 0.08);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.pw-card--tile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px -14px rgba(61, 41, 99, 0.35);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-card--tile,
+  .pw-card--tile:hover {
+    transition: none;
+    transform: none;
+  }
 }
 .pw-card--tile .pw-card-cover {
   aspect-ratio: 3 / 4;
@@ -2990,9 +2995,11 @@
   margin: 0 16px 16px;
 }
 
+/* The books get a column sized for three book cards and the promo takes the
+   rest, so the cards run up to the promo card with no dead strip between. */
 .pw-featured-grid.has-promo {
   display: grid;
-  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
   gap: 32px;
   align-items: stretch;
 }
@@ -3006,14 +3013,12 @@
   font-size: clamp(1.5rem, 2.4vw, 2.1rem);
   color: var(--pw-accent-deep);
 }
-/* auto-fit, not auto-fill: three tiles stretch across the row instead of
-   leaving an empty fourth track beside the banner. */
-/* Tiles are capped at a book-card width. Stretched to share a wide column, three
-   of them grew to ~380px and each cover filled the screen on its own. */
+/* auto-fit, not auto-fill: the cards share their column evenly instead of
+   leaving an empty track. The column itself is what keeps them book-card
+   sized; capping each card instead left a wide gap before the promo card. */
 .pw-tiles-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 230px));
-  justify-content: start;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 22px;
 }
 .pw-promo:not(.has-image) {
@@ -3070,6 +3075,50 @@
 }
 .pw-promo:hover .pw-promo-btn {
   background: var(--pw-accent-deep);
+}
+
+/* The promo card built from a real book: copy at the top, the book's own cover
+   standing below it. The cover is shown whole — the shared `.pw-promo img` rule
+   stretches a merchant's banner photo across the card, which would crop a
+   jacket, so it is reset here. */
+.pw-promo--book {
+  justify-content: space-between;
+}
+.pw-promo--book .pw-promo-copy {
+  padding-block-end: 12px;
+}
+.pw-promo-by {
+  margin-block-start: -6px;
+  font-size: 0.94rem;
+  color: var(--pw-ink-soft);
+}
+.pw-promo-book {
+  position: relative;
+  display: block;
+  width: min(58%, 220px);
+  margin: 6px auto 34px;
+  aspect-ratio: 2 / 3;
+  transform: rotate(-3deg);
+  transition: transform 0.25s ease;
+}
+.pw-promo--book:hover .pw-promo-book {
+  transform: rotate(0deg) translateY(-4px);
+}
+.pw-promo .pw-promo-book img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 26px 40px -18px rgba(35, 22, 58, 0.6);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-promo-book,
+  .pw-promo--book:hover .pw-promo-book {
+    transition: none;
+    transform: none;
+  }
 }
 
 @media (max-width: 980px) {

@@ -195,5 +195,8 @@
   "product.tab_quality": "الجودة",
   "product.tab_delivery": "التوصيل",
   "product.quality_default": "كل نسخة بتتراجع بإيدينا قبل الشحن وبتتقيّم بصراحة، فالحالة اللي بتختارها هي اللي بتوصلك.",
-  "featured.shop_now": "تسوق دلوقتي"
+  "featured.shop_now": "تسوق دلوقتي",
+  "featured.buy_now": "اشتري دلوقتي",
+  "featured.special_discount": "خصم خاص",
+  "featured.featured_book": "كتاب مميز"
 }

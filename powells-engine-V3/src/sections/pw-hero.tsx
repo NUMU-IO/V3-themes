@@ -56,7 +56,7 @@ export default function PwHero({ instance }: SectionRenderProps) {
     ? pickBooks(products, wallSource, asString(s.cover_collection), 12)
         .map((product) => ({ id: String(product.id), name: product.name, src: productImages(product)[0] }))
         .filter((book) => Boolean(book.src))
-        .slice(0, 9)
+        .slice(0, 6)
     : [];
   const hasWall = wall.length >= 6;
 
