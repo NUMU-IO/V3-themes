@@ -26,10 +26,12 @@
  * CENTS. See lib/variants.tsx, which owns every variant figure on this page.
  */
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   Image,
   Link,
+  Money,
+  requestNavigate,
   RichText,
   useCart,
   useLocale,
@@ -75,6 +77,7 @@ import {
   useVariantPicker,
 } from "../lib/variants";
 import {
+  IconCart,
   IconCheck,
   IconFacebook,
   IconReturn,
@@ -229,6 +232,29 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
       window.setTimeout(() => setAdded(false), 2500);
     }
   };
+
+  const onBuyNow = async () => {
+    if (!inStock || unavailableCombo) return;
+    const result = await addItem(
+      String(product.id),
+      chosen ? String(chosen.id) : undefined,
+      shownQty,
+      picker.optionValues,
+    );
+    if (result?.ok && !requestNavigate("/checkout")) window.location.assign("/checkout");
+  };
+
+  // The phone's bottom bar shows while the panel's own buttons are off screen,
+  // so Buy now is always one tap away without two sets of buttons in view.
+  const buyRowRef = useRef<HTMLDivElement>(null);
+  const [barVisible, setBarVisible] = useState(false);
+  useEffect(() => {
+    const el = buyRowRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => setBarVisible(!entry.isIntersecting));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const share = (network: Network) => {
     const w = typeof window !== "undefined" ? window : null;
@@ -393,7 +419,7 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
               </p>
             )}
 
-            <div className="pw-buyrow">
+            <div className="pw-buyrow" ref={buyRowRef}>
               <QtyStepper value={shownQty} max={picker.maxQty} onChange={setQty} />
               <button
                 type="button"
@@ -405,6 +431,15 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
               </button>
               {asBool(s.show_wishlist, true) && <WishlistButton productId={String(product.id)} />}
             </div>
+
+            <button
+              type="button"
+              className="pw-btn pw-btn-buynow"
+              disabled={!inStock || unavailableCombo || cartBusy}
+              onClick={onBuyNow}
+            >
+              {t("product.buy_now", "Buy now")}
+            </button>
 
             <p className="pw-secure">
               <IconShield size={16} />
@@ -526,6 +561,37 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
           </div>
         </section>
       )}
+
+      <div className="pw-buybar" data-visible={barVisible || undefined} inert={!barVisible}>
+        {cover && (
+          <span className="pw-buybar-cover">
+            <Image src={cover} alt="" responsive={false} loading="lazy" />
+          </span>
+        )}
+        <span className="pw-buybar-info">
+          <span className="pw-buybar-title">{product.name}</span>
+          <b>
+            <Money amount={picker.price} currency={picker.currency} />
+          </b>
+        </span>
+        <button
+          type="button"
+          className="pw-iconbtn pw-buybar-add"
+          aria-label={t("product.add_to_cart", "Add to Cart")}
+          disabled={!inStock || unavailableCombo || cartBusy}
+          onClick={onAdd}
+        >
+          <IconCart size={18} />
+        </button>
+        <button
+          type="button"
+          className="pw-btn pw-btn-buynow"
+          disabled={!inStock || unavailableCombo || cartBusy}
+          onClick={onBuyNow}
+        >
+          {t("product.buy_now", "Buy now")}
+        </button>
+      </div>
     </div>
   );
 }
