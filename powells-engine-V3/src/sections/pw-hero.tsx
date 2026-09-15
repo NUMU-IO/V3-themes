@@ -12,6 +12,7 @@
  * type-and-colour band rather than a grey placeholder box.
  */
 
+import { useEffect, useRef } from "react";
 import { Image, Link, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
 import {
   asBool,
@@ -60,6 +61,28 @@ export default function PwHero({ instance }: SectionRenderProps) {
     : [];
   const hasWall = wall.length >= 6;
 
+  // A very slight parallax on the picture side: it drifts up a few pixels as
+  // the page scrolls. Off for reduced motion and for the merchant's switch.
+  const driftRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = driftRef.current;
+    if (!el || typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || el.closest('[data-pw-motion="off"]')) return;
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        el.style.setProperty("--pw-drift", `${(Math.min(window.scrollY, 800) * -0.06).toFixed(1)}px`);
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [hasWall, image]);
+
   return (
     <section className={`pw-hero${image ? " has-image" : hasWall ? " has-wall" : ""}`}>
       <div className="pw-hero-inner">
@@ -97,7 +120,7 @@ export default function PwHero({ instance }: SectionRenderProps) {
         </div>
 
         {hasWall && (
-          <div className="pw-hero-wall" aria-hidden="true">
+          <div className="pw-hero-wall pw-drift" ref={driftRef} aria-hidden="true">
             {wall.map((book, i) => (
               <span key={book.id} className="pw-hero-spine">
                 <Image src={book.src} alt="" responsive={!isInlineImage(book.src)} priority={i < 3} />
@@ -107,7 +130,7 @@ export default function PwHero({ instance }: SectionRenderProps) {
         )}
 
         {image && (
-          <div className="pw-hero-media">
+          <div className="pw-hero-media pw-drift" ref={driftRef}>
             {/* `priority` — this is the LCP element on the home page. */}
             <Image
               src={image}

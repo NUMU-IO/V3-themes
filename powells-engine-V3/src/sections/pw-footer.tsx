@@ -50,6 +50,11 @@ export default function PwFooter({ instance }: SectionRenderProps) {
 
   return (
     <footer className="pw-footer">
+      {asString(s.statement) && (
+        <div className="pw-footer-statement">
+          <p>{asString(s.statement)}</p>
+        </div>
+      )}
       <div className="pw-footer-inner">
         <div className="pw-footer-brand">
           <h3 className="pw-footer-name">{storeName}</h3>

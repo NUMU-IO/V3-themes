@@ -9,7 +9,7 @@
 import { Link, useResolvedSettings } from "@numueg/theme-sdk";
 import { asString, useOrnaments, type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
-import { BookStack } from "../lib/ornaments";
+import { SceneLost } from "../lib/ornaments";
 
 export default function PwNotFound({ instance }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
@@ -19,11 +19,7 @@ export default function PwNotFound({ instance }: SectionRenderProps) {
   return (
     <div className="pw-container" style={{ paddingBlock: "80px 100px" }}>
       <div className="pw-empty">
-        {ornaments && (
-          <span style={{ color: "var(--pw-ink-soft)" }}>
-            <BookStack size={110} />
-          </span>
-        )}
+        {ornaments && <SceneLost width={260} />}
         <h1
           style={{
             fontFamily: "var(--pw-font-heading)",

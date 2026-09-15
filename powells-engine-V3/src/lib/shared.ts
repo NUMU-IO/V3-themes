@@ -225,3 +225,51 @@ export function bookFormat(product: Product | null | undefined): string {
   const value = asString((product as unknown as Record<string, unknown>).product_type);
   return PLATFORM_TYPES.has(value.toLowerCase().replace(/[\s-]+/g, "_")) ? "" : value;
 }
+
+const attributesOf = (product: Product) => asRecord((product as unknown as Record<string, unknown>).attributes);
+
+export interface BookLabel {
+  key: string;
+  text: string;
+}
+
+/**
+ * The merchant's badge — NEW, USED, RARE, LIMITED. The platform keeps it at
+ * `attributes.label` and the listing also lifts it to a top-level `label`.
+ * Nothing is inferred: a book with no label shows no badge.
+ */
+export function bookLabel(product: Product | null | undefined): BookLabel | null {
+  if (!product) return null;
+  const p = product as unknown as Record<string, unknown>;
+  const raw = asRecord(p.label ?? attributesOf(product).label);
+  const text = asString(raw.text) || asString(raw.name) || asString(raw.label);
+  if (!text) return null;
+  return { key: (asString(raw.key) || text).toLowerCase(), text };
+}
+
+/** A used copy's grade, when the bookseller recorded one. */
+export function bookCondition(product: Product | null | undefined): string {
+  return product ? asString(attributesOf(product).condition) : "";
+}
+
+const FORMAT_AXIS = /^(type|format|binding|edition)$/i;
+
+/** "Paperback", "Hardcover"… from the catalogue, the option axis, or the product type. */
+export function bookFormats(product: Product | null | undefined): string[] {
+  if (!product) return [];
+  const stored = asArray(attributesOf(product).formats).map((x) => asString(x)).filter(Boolean);
+  if (stored.length > 0) return stored;
+  const axis = (product.options ?? []).find((option) => FORMAT_AXIS.test(option.name));
+  if (axis?.values?.length) return axis.values;
+  const single = bookFormat(product);
+  return single ? [single] : [];
+}
+
+export const isFormatAxis = (name: string): boolean => FORMAT_AXIS.test(name.trim());
+
+/** Copies left when that is genuinely few, otherwise 0 — never a made-up scarcity line. */
+export function copiesLeft(product: Product | null | undefined, few = 3): number {
+  if (!product) return 0;
+  const quantity = Number((product as unknown as Record<string, unknown>).quantity);
+  return Number.isFinite(quantity) && quantity > 0 && quantity <= few ? quantity : 0;
+}

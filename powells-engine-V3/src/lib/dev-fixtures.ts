@@ -228,8 +228,48 @@ const BOOKS: DevBook[] = [
   },
 ];
 
+/** Three fixtures read as one series, so the card line and the reading order render. */
+const SERIES_IDS = ["b9", "b2", "b8"];
+
+function seriesFor(id: string) {
+  const index = SERIES_IDS.indexOf(id);
+  if (index < 0) return [];
+  const products = SERIES_IDS.map((bookId, i) => {
+    const book = BOOKS.find((b) => b.id === bookId) as DevBook;
+    return {
+      product_id: bookId,
+      name: book.name,
+      slug: book.slug,
+      cover_image_url: cover(book.name, book.bg, book.fg, book.ratio),
+      volume_label: String(i + 1),
+      position: i + 1,
+    };
+  });
+  return [
+    {
+      id: "s1",
+      name: "The Fixture Court Series",
+      slug: "fixture-court",
+      volume_label: String(index + 1),
+      position: index + 1,
+      count: products.length,
+      previous: products[index - 1] ?? null,
+      next: products[index + 1] ?? null,
+      products,
+    },
+  ];
+}
+
+const LABELS: Record<string, { key: string; text: string; condition?: string; quantity?: number }> = {
+  b1: { key: "used", text: "USED", condition: "Very Good" },
+  b3: { key: "rare", text: "RARE" },
+  b7: { key: "limited", text: "LIMITED", quantity: 2 },
+  b9: { key: "new", text: "NEW" },
+};
+
 function toProduct(book: DevBook) {
   const image = cover(book.name, book.bg, book.fg, book.ratio);
+  const label = LABELS[book.id];
   return {
     id: book.id,
     slug: book.slug,
@@ -237,7 +277,14 @@ function toProduct(book: DevBook) {
     // `brand` is where a bookseller puts the author — same field the Meta feed
     // and Product JSON-LD read. See productAuthor() in lib/shared.
     brand: book.imported ? null : book.author,
-    attributes: book.imported ? { author: book.author } : {},
+    attributes: {
+      ...(book.imported ? { author: book.author } : {}),
+      formats: [...new Set(book.editions.map((e) => e[0]))],
+      ...(label ? { label: { key: label.key, text: label.text } } : {}),
+      ...(label?.condition ? { condition: label.condition } : {}),
+    },
+    quantity: label?.quantity ?? 40,
+    series: seriesFor(book.id),
     description:
       "<p>A fixture synopsis, standing in for the merchant's own copy so the " +
       "typography below the fold is real. Two paragraphs, because one never " +

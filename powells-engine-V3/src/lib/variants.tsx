@@ -20,7 +20,7 @@
 import { useMemo, useState } from "react";
 import { centsToMajor } from "@numueg/theme-kit";
 import { Money, useVariantSelection, type Product, type ProductVariant } from "@numueg/theme-sdk";
-import { asNumber, asRecord, asString } from "./shared";
+import { asNumber, asRecord, asString, isFormatAxis } from "./shared";
 import { useT, type TFunction } from "./i18n";
 
 /** The condition line: a `condition` option axis, when the bookseller keeps one. */
@@ -186,6 +186,19 @@ export function PriceLine({ picker }: { picker: VariantPicker }) {
   );
 }
 
+/**
+ * The cheapest edition carrying this value alongside the other axes as picked —
+ * or, when that combination does not exist, any edition carrying it. That is
+ * the price a click on the chip would land on.
+ */
+function priceForValue(picker: VariantPicker, axis: string, value: string): number {
+  const withValue = picker.variants.filter((v) => v.option_values?.[axis] === value);
+  const others = Object.entries(picker.selection).filter(([name]) => name !== axis);
+  const exact = withValue.filter((v) => others.every(([name, picked]) => v.option_values?.[name] === picked));
+  const list = exact.length > 0 ? exact : withValue;
+  return list.length > 0 ? Math.min(...list.map((v) => variantMajor(picker.product, v.price))) : 0;
+}
+
 export function OptionChips({ picker }: { picker: VariantPicker }) {
   const t = useT();
   if (!picker.hasAxes) return null;
@@ -194,14 +207,16 @@ export function OptionChips({ picker }: { picker: VariantPicker }) {
       {picker.options.map((option) => {
         const picked = picker.selection[option.name];
         const available = picker.availability[option.name];
+        const prices = option.values.map((value) => priceForValue(picker, option.name, value));
+        const priced = new Set(prices.filter((p) => p > 0)).size > 1;
         return (
           <fieldset className="pw-option" key={option.name}>
             <legend>
-              {option.name}
+              {isFormatAxis(option.name) ? t("product.edition", "Edition") : option.name}
               {picked && <span>: {picked}</span>}
             </legend>
-            <div className="pw-chips">
-              {option.values.map((value) => {
+            <div className={priced ? "pw-chips priced" : "pw-chips"}>
+              {option.values.map((value, i) => {
                 const soldOut = available ? !available.has(value) : false;
                 return (
                   <button
@@ -213,7 +228,12 @@ export function OptionChips({ picker }: { picker: VariantPicker }) {
                     data-sold-out={soldOut || undefined}
                     onClick={() => picker.pickValue(option.name, value)}
                   >
-                    {value}
+                    <span className="v">{value}</span>
+                    {priced && prices[i] > 0 && (
+                      <span className="p">
+                        <Money amount={prices[i]} currency={picker.currency} />
+                      </span>
+                    )}
                   </button>
                 );
               })}

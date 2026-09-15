@@ -1,0 +1,39 @@
+{
+  "type": "pw-series-feature",
+  "name": "Complete the series",
+  "name_ar": "كمّل السلسلة",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Whole series in reading order, with a Buy complete series button. Add one block per series and name any book in it; the rest of the series comes from your catalog.",
+      "content_ar": "سلاسل كاملة بترتيب القراءة، مع زر اشتري السلسلة كلها. ضيف بلوك لكل سلسلة واكتب اسم أي كتاب فيها؛ باقي السلسلة بييجي من الكتالوج."
+    },
+    { "type": "text", "id": "heading", "label": "Heading", "label_ar": "العنوان", "default": "Complete the series" },
+    { "type": "textarea", "id": "body", "label": "Text", "label_ar": "النص", "default": "" }
+  ],
+  "blocks": [
+    {
+      "type": "series",
+      "name": "Series",
+      "name_ar": "سلسلة",
+      "settings": [
+        {
+          "type": "text",
+          "id": "book",
+          "label": "Any book in the series",
+          "label_ar": "أي كتاب في السلسلة",
+          "default": "",
+          "info": "The book's handle or exact title.",
+          "info_ar": "معرّف الكتاب أو عنوانه بالظبط."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Complete the series",
+      "name_ar": "كمّل السلسلة",
+      "settings": { "heading": "Complete the series" }
+    }
+  ]
+}

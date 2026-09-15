@@ -1,0 +1,105 @@
+{
+  "type": "pw-campaign",
+  "name": "Editorial campaign",
+  "name_ar": "حملة تحريرية",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "One large visual beside a short piece of copy and a few hand-picked books — use it between shelves so the home page reads as a bookseller's choices, not a list. Upload your own photograph, or leave it empty to fan the chosen books' covers.",
+      "content_ar": "صورة كبيرة جنب نص قصير وكام كتاب مختارين — استخدمه بين الرفوف عشان الصفحة الرئيسية تبان اختيارات بائع كتب مش قايمة. ارفع صورتك، أو سيبها فاضية عشان تتعرض أغلفة الكتب المختارة."
+    },
+    { "type": "text", "id": "eyebrow", "label": "Small line above", "label_ar": "السطر الصغير فوق", "default": "" },
+    { "type": "text", "id": "heading", "label": "Heading", "label_ar": "العنوان", "default": "Dark Romance After Midnight" },
+    { "type": "textarea", "id": "body", "label": "Text", "label_ar": "النص", "default": "" },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Which books",
+      "label_ar": "أي كتب",
+      "default": "collection",
+      "options": [
+        { "value": "collection", "label": "From one collection", "label_ar": "من تصنيف واحد" },
+        { "value": "books", "label": "Books I choose", "label_ar": "كتب أختارها" },
+        { "value": "newest", "label": "Newest first", "label_ar": "الأحدث" },
+        { "value": "sale", "label": "Reduced", "label_ar": "المخفّض" },
+        { "value": "under", "label": "Under a price", "label_ar": "أقل من سعر" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "collection",
+      "label": "Collection",
+      "label_ar": "التصنيف",
+      "default": "",
+      "info": "The collection's name or handle.",
+      "info_ar": "اسم التصنيف أو معرّفه.",
+      "visible_if": "{{ section.settings.source == 'collection' }}"
+    },
+    {
+      "type": "textarea",
+      "id": "books",
+      "label": "Books",
+      "label_ar": "الكتب",
+      "default": "",
+      "info": "Book handles or exact titles, one per line, in the order to show them.",
+      "info_ar": "معرّفات الكتب أو عناوينها بالظبط، كل كتاب في سطر، بالترتيب اللي عايزه.",
+      "visible_if": "{{ section.settings.source == 'books' }}"
+    },
+    {
+      "type": "range",
+      "id": "max_price",
+      "label": "Under this price",
+      "label_ar": "أقل من السعر ده",
+      "default": 200,
+      "min": 50,
+      "max": 3000,
+      "step": 10,
+      "visible_if": "{{ section.settings.source == 'under' }}"
+    },
+    { "type": "range", "id": "limit", "label": "How many books", "label_ar": "عدد الكتب", "default": 3, "min": 1, "max": 4, "step": 1 },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Colour",
+      "label_ar": "اللون",
+      "default": "night",
+      "options": [
+        { "value": "night", "label": "Midnight", "label_ar": "ليلي" },
+        { "value": "lavender", "label": "Lavender", "label_ar": "بنفسجي فاتح" },
+        { "value": "paper", "label": "Paper", "label_ar": "ورقي" }
+      ]
+    },
+    { "type": "image_picker", "id": "image", "label": "Photograph", "label_ar": "الصورة", "default": "" },
+    {
+      "type": "select",
+      "id": "visual",
+      "label": "Without a photograph, show",
+      "label_ar": "من غير صورة، اعرض",
+      "default": "covers",
+      "options": [
+        { "value": "covers", "label": "The books' covers", "label_ar": "أغلفة الكتب" },
+        { "value": "reading", "label": "Drawing: reading table", "label_ar": "رسمة: ترابيزة قراءة" },
+        { "value": "gift", "label": "Drawing: gift card", "label_ar": "رسمة: كارت هدية" },
+        { "value": "grading", "label": "Drawing: grading a used book", "label_ar": "رسمة: تقييم كتاب مستعمل" }
+      ]
+    },
+    { "type": "checkbox", "id": "visual_right", "label": "Visual on the other side", "label_ar": "الصورة في الناحية التانية", "default": false },
+    { "type": "text", "id": "cta_text", "label": "Button", "label_ar": "الزر", "default": "" },
+    { "type": "url", "id": "cta_link", "label": "Button link", "label_ar": "رابط الزر", "default": "/products" }
+  ],
+  "presets": [
+    {
+      "name": "Editorial campaign",
+      "name_ar": "حملة تحريرية",
+      "settings": {
+        "eyebrow": "AFTER MIDNIGHT",
+        "heading": "Dark Romance After Midnight",
+        "source": "newest",
+        "limit": 3,
+        "tone": "night",
+        "cta_text": "Shop the shelf",
+        "cta_link": "/products"
+      }
+    }
+  ]
+}

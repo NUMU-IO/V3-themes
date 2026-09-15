@@ -21,7 +21,7 @@ import {
   useOrnaments,
   type SectionRenderProps,
 } from "../lib/shared";
-import { BookStack } from "../lib/ornaments";
+import { SceneGift, SceneGrading, SceneLetter, SceneReading } from "../lib/ornaments";
 
 export default function PwEditorial({ instance }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
@@ -53,7 +53,15 @@ export default function PwEditorial({ instance }: SectionRenderProps) {
         ) : (
           ornaments && (
             <span className="pw-editorial-plate" aria-hidden="true">
-              <BookStack size={150} />
+              {asString(s.illustration) === "grading" ? (
+                <SceneGrading width={340} />
+              ) : asString(s.illustration) === "gift" ? (
+                <SceneGift width={340} />
+              ) : asString(s.illustration) === "letter" ? (
+                <SceneLetter width={340} />
+              ) : (
+                <SceneReading width={340} />
+              )}
             </span>
           )
         )}

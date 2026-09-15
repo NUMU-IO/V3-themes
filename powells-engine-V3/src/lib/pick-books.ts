@@ -13,9 +13,15 @@
 
 import type { Product } from "@numueg/theme-sdk";
 
-export type BookSource = "newest" | "sale" | "cheapest" | "collection";
+export type BookSource = "newest" | "sale" | "cheapest" | "collection" | "under" | "books" | "recent";
 
-export function pickBooks(products: Product[], source: BookSource, collection: string, limit: number): Product[] {
+export function pickBooks(
+  products: Product[],
+  source: BookSource,
+  collection: string,
+  limit: number,
+  maxPrice = 0,
+): Product[] {
   const withMeta = products as Array<Product & Record<string, unknown>>;
   const handle = collection.toLowerCase();
   let list = withMeta;
@@ -41,6 +47,11 @@ export function pickBooks(products: Product[], source: BookSource, collection: s
       return copy.filter((p) => Number(p.compare_at_price ?? 0) > Number(p.price ?? 0)).slice(0, limit);
     case "cheapest":
       return copy.sort((a, b) => Number(a.price ?? 0) - Number(b.price ?? 0)).slice(0, limit);
+    case "under":
+      return copy
+        .filter((p) => maxPrice > 0 && Number(p.price ?? 0) > 0 && Number(p.price) < maxPrice)
+        .sort((a, b) => String(b.created_at ?? "").localeCompare(String(a.created_at ?? "")))
+        .slice(0, limit);
     case "newest":
       return copy
         .sort((a, b) => String(b.created_at ?? "").localeCompare(String(a.created_at ?? "")))

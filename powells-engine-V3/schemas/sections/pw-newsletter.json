@@ -1,0 +1,30 @@
+{
+  "type": "pw-newsletter",
+  "name": "Book club / newsletter",
+  "name_ar": "نادي الكتاب / النشرة",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "An email signup for your newsletter or book club. Addresses go to your store's subscribers.",
+      "content_ar": "تسجيل بالإيميل للنشرة أو نادي الكتاب. الإيميلات بتروح لمشتركين متجرك."
+    },
+    { "type": "text", "id": "eyebrow", "label": "Small line above", "label_ar": "السطر الصغير فوق", "default": "THE BOOK CLUB" },
+    { "type": "text", "id": "heading", "label": "Heading", "label_ar": "العنوان", "default": "One letter a month, about books worth your evenings" },
+    { "type": "textarea", "id": "body", "label": "Text", "label_ar": "النص", "default": "" },
+    { "type": "text", "id": "placeholder", "label": "Field placeholder", "label_ar": "نص الخانة", "default": "" },
+    { "type": "text", "id": "button", "label": "Button", "label_ar": "الزر", "default": "Subscribe" },
+    { "type": "text", "id": "success", "label": "Thank-you message", "label_ar": "رسالة الشكر", "default": "" },
+    { "type": "text", "id": "note", "label": "Small print", "label_ar": "ملاحظة صغيرة", "default": "" }
+  ],
+  "presets": [
+    {
+      "name": "Book club / newsletter",
+      "name_ar": "نادي الكتاب / النشرة",
+      "settings": {
+        "eyebrow": "THE BOOK CLUB",
+        "heading": "One letter a month, about books worth your evenings",
+        "button": "Subscribe"
+      }
+    }
+  ]
+}
