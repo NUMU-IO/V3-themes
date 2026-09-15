@@ -195,6 +195,30 @@
       "step": 1
     },
     {
+      "type": "checkbox",
+      "id": "show_also_like",
+      "label": "Show \"You may also like\"",
+      "label_ar": "إظهار \"ممكن يعجبك كمان\"",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "also_like_title",
+      "label": "\"You may also like\" heading",
+      "label_ar": "عنوان \"ممكن يعجبك كمان\"",
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "also_like_limit",
+      "label": "How many books",
+      "label_ar": "عدد الكتب",
+      "default": 10,
+      "min": 4,
+      "max": 18,
+      "step": 1
+    },
+    {
       "type": "header",
       "content": "Staff pick",
       "content_ar": "اختيار الفريق"

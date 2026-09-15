@@ -41,6 +41,9 @@ function GenreCard({ tile }: { tile: Tile }) {
 
   return (
     <Link className="pw-genre" to={tile.href}>
+      <span className="pw-genre-watermark" aria-hidden="true">
+        {tile.title}
+      </span>
       <span className="pw-genre-head">
         <span className="pw-genre-name">{tile.title}</span>
         {tile.count > 0 && (
@@ -50,10 +53,6 @@ function GenreCard({ tile }: { tile: Tile }) {
       {tile.image ? (
         <span className="pw-genre-photo">
           <Image src={tile.image} alt="" loading="lazy" responsive={!isInlineImage(tile.image)} />
-        </span>
-      ) : covers.length === 0 ? (
-        <span className="pw-genre-initial" aria-hidden="true">
-          {tile.title.slice(0, 1)}
         </span>
       ) : (
         <span className="pw-genre-covers" data-count={covers.length} aria-hidden="true">

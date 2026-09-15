@@ -4904,3 +4904,161 @@ button:hover:not(:disabled) .pw-arrow:dir(rtl) {
     height: 132px;
   }
 }
+
+/* ── Depth: campaign fan and genre cards ──────────────────────────────────
+   The fan sat small in a large empty field. It is larger now, stands inside
+   two faint rings with a soft floor shadow under it, and every jacket carries
+   a spine highlight so it reads as a book rather than a flat picture. Genre
+   cards set their name large and faint behind the covers. */
+
+.pw-campaign-visual::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  inset-inline: 0;
+  width: min(460px, 80%);
+  aspect-ratio: 1;
+  margin-inline: auto;
+  translate: 0 -50%;
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 40px color-mix(in srgb, currentColor 4%, transparent),
+    0 0 0 96px color-mix(in srgb, currentColor 2.5%, transparent);
+  pointer-events: none;
+}
+.pw-campaign-visual[data-kind="photo"]::before {
+  display: none;
+}
+.pw-fan {
+  z-index: 1;
+  width: min(92%, 620px);
+}
+.pw-fan::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  inset-inline: 12%;
+  height: 12%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(10, 4, 24, 0.5), transparent);
+}
+.pw-campaign[data-tone="paper"] .pw-fan::after,
+.pw-campaign[data-tone="lavender"] .pw-fan::after {
+  background: radial-gradient(closest-side, rgba(35, 22, 58, 0.24), transparent);
+}
+.pw-fan-book::after,
+.pw-genre-book::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(0, 0, 0, 0.18) 3%,
+    rgba(255, 255, 255, 0) 9%,
+    rgba(255, 255, 255, 0) 90%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+  pointer-events: none;
+}
+.pw-fan-book:nth-child(1) {
+  transform: translateX(-58%) rotate(-11deg);
+}
+.pw-fan-book:nth-child(3) {
+  transform: translateX(58%) rotate(11deg);
+}
+.pw-campaign:hover .pw-fan-book:nth-child(1) {
+  transform: translateX(-64%) rotate(-13deg);
+}
+.pw-campaign:hover .pw-fan-book:nth-child(2) {
+  transform: translateY(-11%);
+}
+.pw-campaign:hover .pw-fan-book:nth-child(3) {
+  transform: translateX(64%) rotate(13deg);
+}
+
+.pw-genre {
+  min-height: 430px;
+}
+.pw-genre-watermark {
+  position: absolute;
+  z-index: -1;
+  top: 84px;
+  inset-inline-start: 14px;
+  font-family: var(--pw-font-heading);
+  font-style: italic;
+  font-size: clamp(4.5rem, 7.5vw, 8.5rem);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  opacity: 0.1;
+  pointer-events: none;
+  transition: transform 0.6s var(--pw-ease);
+}
+.pw-genre:nth-child(4n + 3) .pw-genre-watermark {
+  opacity: 0.16;
+}
+.pw-genre:hover .pw-genre-watermark {
+  transform: translateX(10px);
+}
+.pw-genre:hover .pw-genre-watermark:dir(rtl) {
+  transform: translateX(-10px);
+}
+.pw-genre-covers {
+  height: 290px;
+}
+.pw-genre-book {
+  inset-inline-start: calc(50% - 85px);
+  width: 170px;
+  height: 255px;
+}
+@media (max-width: 1100px) {
+  .pw-genre-watermark {
+    font-size: clamp(4rem, 12vw, 7rem);
+  }
+}
+/* The book page's field wraps the cover instead of filling the whole column:
+   on a wide screen it was a large lavender box with a small book in it. */
+.pw-pdp-media {
+  align-items: center;
+}
+.pw-pdp-stage {
+  width: fit-content;
+  max-width: 100%;
+  min-height: 0;
+  margin-inline: auto;
+  padding: clamp(22px, 2.6vw, 40px);
+}
+.pw-pdp-stage img {
+  max-width: 440px;
+  max-height: 620px;
+}
+
+@media (max-width: 720px) {
+  .pw-pdp-stage {
+    padding: 22px;
+  }
+  .pw-pdp-stage img {
+    max-width: 100%;
+    max-height: 440px;
+  }
+}
+
+@media (max-width: 560px) {
+  .pw-genre {
+    min-height: 290px;
+  }
+  .pw-genre-watermark {
+    top: 62px;
+    font-size: 3.6rem;
+  }
+  .pw-genre-covers {
+    height: 160px;
+  }
+  .pw-genre-book {
+    inset-inline-start: calc(50% - 50px);
+    width: 100px;
+    height: 150px;
+  }
+}

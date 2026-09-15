@@ -35,6 +35,7 @@ import {
   useLocale,
   useMetafields,
   useProductOptional,
+  useProducts,
   useRelatedProducts,
   useResolvedSettings,
   type Product,
@@ -63,6 +64,7 @@ import { entryAsProduct, recordRecentlyViewed, useRecentlyViewed } from "../lib/
 import { WishlistButton } from "../lib/wishlist";
 import { GradingScale, gradeOf } from "../lib/condition";
 import { SeriesPanel, seriesLine, seriesOf } from "../lib/series";
+import { useShelfBooks } from "../lib/shelf-books";
 import {
   buyLabel,
   conditionOf,
@@ -296,6 +298,19 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
   const recentShown = asBool(s.show_recent, true) ? recent.slice(0, asNumber(s.recent_limit, 6)) : [];
   const galleryCount = asArray(images).length;
 
+  // "You may also like": the book's own shelf first, topped up with new
+  // arrivals, covers only, and nothing already shown above it on this page.
+  const { products: pool } = useProducts({ limit: 60, fetchIfMissing: true });
+  const categoryId = asString(raw.category_id);
+  const sameShelf = useShelfBooks(pool, "collection", categoryId, 18, { withCovers: true });
+  const newest = useShelfBooks(pool, "newest", "", 18, { withCovers: true });
+  const shown = new Set([String(product.id), ...related.map((item) => String(item.id)), ...recentShown.map((entry) => entry.id)]);
+  const alsoLike = asBool(s.show_also_like, true)
+    ? [...(categoryId ? sameShelf : []), ...newest]
+        .filter((item, i, list) => !shown.has(String(item.id)) && list.findIndex((x) => x.id === item.id) === i)
+        .slice(0, asNumber(s.also_like_limit, 10))
+    : [];
+
   return (
     <div className="pw-container pw-pdp-page">
       <nav className="pw-crumbs" aria-label="Breadcrumb">
@@ -493,6 +508,19 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
             {recentShown.map((entry) => (
               <div className="pw-rail-item" key={entry.id}>
                 <ProductCard product={entryAsProduct(entry)} showWishlist={false} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {alsoLike.length > 0 && (
+        <section className="pw-related">
+          <h2>{asString(s.also_like_title) || t("cart.also_like", "You may also like")}</h2>
+          <div className="pw-rail-scroll">
+            {alsoLike.map((item) => (
+              <div className="pw-rail-item" key={item.id}>
+                <ProductCard product={item} />
               </div>
             ))}
           </div>
