@@ -68,6 +68,7 @@ import PwCampaign from "./sections/pw-campaign";
 import PwSeriesFeature from "./sections/pw-series-feature";
 import PwGrading from "./sections/pw-grading";
 import PwNewsletter from "./sections/pw-newsletter";
+import PwUgc from "./sections/pw-ugc";
 import { WishlistDrawer } from "./lib/wishlist";
 import { SceneReading } from "./lib/ornaments";
 
@@ -102,6 +103,7 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "pw-series-feature": PwSeriesFeature,
   "pw-grading": PwGrading,
   "pw-newsletter": PwNewsletter,
+  "pw-ugc": PwUgc,
 };
 
 // `lib-*` types come from the NUMU section library in the host's SDK

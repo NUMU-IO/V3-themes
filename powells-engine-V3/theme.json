@@ -3,7 +3,7 @@
   "name": "Powell's (V3)",
   "name_ar": "باول",
   "author": "NUMU",
-  "version": "1.3.8",
+  "version": "1.4.0",
   "supports": {
     "section_library": {
       "version": 1
@@ -540,6 +540,28 @@
               "source": "recent",
               "limit": 8
             }
+          },
+          {
+            "type": "pw-ugc",
+            "settings": {
+              "heading": "On camera",
+              "shop_text": "Shop this book",
+              "autoplay": false
+            },
+            "blocks": [
+              {
+                "type": "reel",
+                "settings": {}
+              },
+              {
+                "type": "reel",
+                "settings": {}
+              },
+              {
+                "type": "reel",
+                "settings": {}
+              }
+            ]
           },
           {
             "type": "pw-newsletter",
