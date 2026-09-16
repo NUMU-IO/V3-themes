@@ -1,0 +1,27 @@
+{
+  "type": "pw-request",
+  "name": "Book request",
+  "name_ar": "طلب كتاب",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A band with a button that opens the request form: shoppers send their name, email, phone, the ISBN-13 and edition they want, and photos. Requests arrive in your hub under Customers → Product requests, and you get an email. Any link to #request-book in a menu or the footer opens the same form.",
+      "content_ar": "شريط بزرار بيفتح فورم الطلب: الزبون بيبعت اسمه وإيميله وتليفونه والـ ISBN-13 والطبعة اللي عايزها وصور. الطلبات بتوصل في الهب تحت العملاء ← طلبات المنتجات، وبيوصلك إيميل. أي لينك لـ #request-book في القائمة أو الفوتر بيفتح نفس الفورم."
+    },
+    { "type": "text", "id": "eyebrow", "label": "Small line above", "label_ar": "السطر الصغير فوق", "default": "CAN'T FIND IT?" },
+    { "type": "text", "id": "heading", "label": "Heading", "label_ar": "العنوان", "default": "Looking for a specific book?" },
+    { "type": "textarea", "id": "body", "label": "Text", "label_ar": "النص", "default": "" },
+    { "type": "text", "id": "button", "label": "Button", "label_ar": "الزر", "default": "Request a book" }
+  ],
+  "presets": [
+    {
+      "name": "Book request",
+      "name_ar": "طلب كتاب",
+      "settings": {
+        "eyebrow": "CAN'T FIND IT?",
+        "heading": "Looking for a specific book?",
+        "button": "Request a book"
+      }
+    }
+  ]
+}

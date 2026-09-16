@@ -542,6 +542,14 @@
             }
           },
           {
+            "type": "pw-request",
+            "settings": {
+              "eyebrow": "CAN'T FIND IT?",
+              "heading": "Looking for a specific book?",
+              "button": "Request a book"
+            }
+          },
+          {
             "type": "pw-ugc",
             "settings": {
               "heading": "On camera",

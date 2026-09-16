@@ -68,8 +68,10 @@ import PwCampaign from "./sections/pw-campaign";
 import PwSeriesFeature from "./sections/pw-series-feature";
 import PwGrading from "./sections/pw-grading";
 import PwNewsletter from "./sections/pw-newsletter";
+import PwRequest from "./sections/pw-request";
 import PwUgc from "./sections/pw-ugc";
 import { WishlistDrawer } from "./lib/wishlist";
+import { RequestFormDialog } from "./lib/request-form";
 import { SceneReading } from "./lib/ornaments";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -103,6 +105,7 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "pw-series-feature": PwSeriesFeature,
   "pw-grading": PwGrading,
   "pw-newsletter": PwNewsletter,
+  "pw-request": PwRequest,
   "pw-ugc": PwUgc,
 };
 
@@ -291,6 +294,7 @@ function ThemeApp({ currentTemplate }: { currentTemplate: string }) {
       ))}
       <CartDrawer />
       <WishlistDrawer />
+      <RequestFormDialog />
     </div>
   );
 }
