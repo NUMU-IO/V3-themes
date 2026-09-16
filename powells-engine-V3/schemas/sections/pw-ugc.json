@@ -1,0 +1,122 @@
+{
+  "type": "pw-ugc",
+  "name": "Customer videos",
+  "name_ar": "فيديوهات العملاء",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A row of portrait videos: unboxings, shelf tours, a reader talking about a book. Add a video block for each clip, upload the file (or paste a YouTube, Vimeo, Instagram, TikTok or Facebook link) and tag the book it is about. Clips load only when a shopper plays them.",
+      "content_ar": "صف فيديوهات طولية: فتح الطرود، جولات في المكتبة، قارئ بيتكلم عن كتاب. ضيف بلوك لكل فيديو، ارفع الملف (أو الصق لينك من يوتيوب أو فيميو أو إنستجرام أو تيك توك أو فيسبوك) واختار الكتاب اللي الفيديو بيتكلم عنه. الفيديو مش بيتحمّل غير لما الزبون يشغّله."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "label_ar": "العنوان",
+      "default": "On camera"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Handwritten note",
+      "label_ar": "الملاحظة المكتوبة بخط اليد",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "shop_text",
+      "label": "Link text under each video",
+      "label_ar": "نص اللينك تحت كل فيديو",
+      "default": "Shop this book"
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "\"See all\" text",
+      "label_ar": "نص \"شوف الكل\"",
+      "default": ""
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "\"See all\" link",
+      "label_ar": "لينك \"شوف الكل\"",
+      "default": "/products"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Play the video on screen automatically (muted)",
+      "label_ar": "شغّل الفيديو اللي على الشاشة أوتوماتيك (من غير صوت)",
+      "info": "Only the clip in view plays, and it stays off for shoppers on data saver or reduced motion. Leave this off to keep every clip tap-to-play.",
+      "info_ar": "بيشغّل الفيديو اللي قدام الزبون بس، وبيفضل مقفول لو الزبون مفعّل توفير البيانات أو تقليل الحركة. سيبه مقفول عشان الزبون يشغّل بنفسه.",
+      "default": false
+    }
+  ],
+  "max_blocks": 12,
+  "blocks": [
+    {
+      "type": "reel",
+      "name": "Video",
+      "name_ar": "فيديو",
+      "settings": [
+        {
+          "type": "video_picker",
+          "id": "video",
+          "label": "Video",
+          "label_ar": "الفيديو",
+          "info": "Upload an MP4 or WebM file, or paste a link from YouTube, Vimeo, Instagram, TikTok or Facebook.",
+          "info_ar": "ارفع ملف MP4 أو WebM، أو الصق لينك من يوتيوب أو فيميو أو إنستجرام أو تيك توك أو فيسبوك.",
+          "default": ""
+        },
+        {
+          "type": "image_picker",
+          "id": "poster",
+          "label": "Cover image",
+          "label_ar": "صورة الغلاف",
+          "info": "Shown before the video plays. Without one the tagged book's cover is used.",
+          "info_ar": "بتظهر قبل ما الفيديو يشتغل. لو مفيش، بيتحط غلاف الكتاب المربوط.",
+          "aspect_ratio": "9/16",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "label_ar": "التعليق",
+          "default": ""
+        },
+        {
+          "type": "product",
+          "id": "book",
+          "label": "Book in the video",
+          "label_ar": "الكتاب اللي في الفيديو",
+          "default": ""
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link instead of the book page",
+          "label_ar": "لينك بدل صفحة الكتاب",
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer videos",
+      "name_ar": "فيديوهات العملاء",
+      "settings": {
+        "heading": "On camera",
+        "shop_text": "Shop this book",
+        "autoplay": false
+      },
+      "blocks": [
+        { "type": "reel", "settings": {} },
+        { "type": "reel", "settings": {} },
+        { "type": "reel", "settings": {} }
+      ]
+    }
+  ]
+}

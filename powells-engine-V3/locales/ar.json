@@ -262,5 +262,7 @@
   "request.done_close": "كمّل تصفح",
   "request.band_body": "مش لاقي الطبعة اللي عايزها؟ ابعتلنا الـ ISBN-13 وهنلاقيها ونقولك السعر.",
   "request.button": "اطلب كتاب",
-  "request.search_cta": "اطلب الكتاب ده"
+  "request.search_cta": "اطلب الكتاب ده",
+  "ugc.shop": "اشتري الكتاب",
+  "ugc.play": "شغّل الفيديو"
 }

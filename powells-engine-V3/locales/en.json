@@ -262,5 +262,7 @@
   "request.done_close": "Keep browsing",
   "request.band_body": "Can't find the edition you want? Send us the ISBN-13 and we'll find it and quote you a price.",
   "request.button": "Request a book",
-  "request.search_cta": "Request this book"
+  "request.search_cta": "Request this book",
+  "ugc.shop": "Shop this book",
+  "ugc.play": "Play video"
 }
