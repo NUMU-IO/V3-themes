@@ -239,5 +239,7 @@
   "grade.good_note": "Visible signs of reading",
   "grade.loved": "Loved",
   "grade.loved_note": "Heavily used, still complete",
-  "product.buy_now": "Buy now"
+  "product.buy_now": "Buy now",
+  "ugc.shop": "Shop this book",
+  "ugc.play": "Play video"
 }

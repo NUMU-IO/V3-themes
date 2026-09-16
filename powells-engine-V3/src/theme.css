@@ -5413,3 +5413,145 @@ button:hover:not(:disabled) .pw-arrow:dir(rtl) {
     height: 150px;
   }
 }
+
+/* ── Customer videos ──────────────────────────────────────────────────────
+   Portrait clips in a scrolling rail, sized so three sit beside each other on
+   a laptop and one and a bit on a phone — a shopper should always see that the
+   row continues. The stage is a fixed 9:16 box: the poster, the <video> and a
+   third-party embed all fill the same frame, so swapping one for another on
+   play never moves the page. */
+
+.pw-reels {
+  display: flex;
+  gap: 26px;
+  overflow-x: auto;
+  padding-block-end: 12px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+.pw-reel {
+  flex: 0 0 auto;
+  width: 246px;
+  scroll-snap-align: start;
+}
+.pw-reel-stage {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: var(--pw-r-panel);
+  background: var(--pw-rail);
+  box-shadow: 0 18px 30px -22px rgba(35, 22, 58, 0.55);
+}
+.pw-reel-still,
+.pw-reel-play,
+.pw-reel-video,
+.pw-reel-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.pw-reel-frame {
+  border: 0;
+}
+.pw-reel-still img,
+.pw-reel-play img,
+.pw-reel-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pw-reel-play {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.pw-reel-play img {
+  position: absolute;
+  inset: 0;
+}
+.pw-reel-btn {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: rgba(35, 22, 58, 0.55);
+  backdrop-filter: blur(2px);
+  transition: transform 250ms ease, background 250ms ease;
+}
+.pw-reel-btn svg {
+  /* The glyph's own weight sits left of centre inside the circle. */
+  margin-inline-start: 3px;
+}
+.pw-reel-play:hover .pw-reel-btn,
+.pw-reel-play:focus-visible .pw-reel-btn {
+  transform: scale(1.06);
+  background: var(--pw-accent);
+}
+.pw-reel-caption {
+  margin: 12px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--pw-ink-soft);
+}
+.pw-reel-book {
+  margin-block-start: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+.pw-reel-cover {
+  position: relative;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 58px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--pw-rail);
+  box-shadow: 0 6px 12px -8px rgba(35, 22, 58, 0.7);
+}
+.pw-reel-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pw-reel-book-text {
+  min-width: 0;
+}
+.pw-reel-title {
+  font-family: var(--pw-font-heading);
+  font-size: 0.98rem;
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.pw-reel-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-block-start: 3px;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pw-accent);
+}
+@media (max-width: 560px) {
+  .pw-reels {
+    gap: 16px;
+  }
+  .pw-reel {
+    width: 208px;
+  }
+}
