@@ -5744,8 +5744,8 @@ button:hover:not(:disabled) .pw-arrow:dir(rtl) {
    label reads bottom-to-top against the inline-end edge, roughly two thirds
    down the viewport — clear of the header on the way in and clear of a
    product card's own hover affordances. Under the cart drawer, over the page.
-   On a phone the vertical tab would be a thumb-height wall, so it becomes a
-   short pill sitting above the floating buttons instead. */
+   On a phone it stays an edge tab — slimmer, and higher up, clear of the
+   floating WhatsApp/Instagram buttons in the bottom corner. */
 
 .pw-request-tab {
   position: fixed;
@@ -5806,23 +5806,16 @@ button:hover:not(:disabled) .pw-arrow:dir(rtl) {
 }
 
 @media (max-width: 780px) {
+  /* Still the edge tab on a phone, just slimmer and higher. The bottom-right
+     corner belongs to the storefront's WhatsApp and Instagram floats — a pill
+     parked there slid under them and read as "REQUEST A". Mid-upper height
+     keeps it clear of that stack and of the thumb's resting place. */
   .pw-request-tab {
-    top: auto;
-    bottom: 96px;
-    right: 12px;
-    writing-mode: horizontal-tb;
-    padding: 8px 14px;
-    font-size: 0.74rem;
-    border-inline-end: 1px solid var(--pw-line);
-    border-radius: 999px;
-  }
-  .pw-request-tab:dir(rtl) {
-    right: auto;
-    left: 12px;
-  }
-  .pw-request-tab svg,
-  .pw-request-tab:dir(rtl) svg {
-    rotate: none;
+    top: 34%;
+    gap: 5px;
+    padding: 10px 5px;
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
   }
 }
 
