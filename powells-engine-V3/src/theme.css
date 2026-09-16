@@ -5754,6 +5754,14 @@ button:hover:not(:disabled) .pw-arrow:dir(rtl) {
      Chrome, which put the tab on the LEFT in an LTR page. */
   right: 0;
   top: 62%;
+  /* The storefront host sizes everything under its #main wrapper with
+     `#main > div > * > * { width: 100% }` — an ID selector, so a class cannot
+     outrank it, and the tab is mounted inside that wrapper. Without this the
+     fixed tab stretched across the whole viewport as a white bar. !important
+     is the honest fix: that rule is page layout and was never meant for a
+     floating control. */
+  width: auto !important;
+  max-width: max-content;
   z-index: 40;
   display: inline-flex;
   align-items: center;
