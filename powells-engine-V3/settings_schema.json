@@ -250,6 +250,15 @@
         "default": false,
         "info": "A round Instagram button in the corner, above the WhatsApp button, linking to the Instagram account in your store's Social Links. Hidden until you turn it on.",
         "info_ar": "زر إنستجرام دائري في الركن فوق زر واتساب، بيفتح حساب إنستجرام اللي في روابط التواصل بتاعة متجرك. مخفي لحد ما تفعّله."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_request_tab",
+        "label": "Show the “request a book” tab",
+        "label_ar": "إظهار تبويب «اطلب كتاب»",
+        "default": true,
+        "info": "A slim tab on the side of every page that opens the book-request form. Turn it off if you would rather only offer the form in the section and menus.",
+        "info_ar": "تبويب رفيع على جنب كل صفحة بيفتح فورم طلب الكتاب. اقفله لو عايز الفورم في القسم والقوائم بس."
       }
     ]
   }

@@ -17,7 +17,30 @@ import { useEffect, useRef, useState, type ChangeEvent, type DragEvent, type For
 import { useLocale } from "@numueg/theme-sdk";
 import { createOpenStore, Drawer } from "./cart-drawer";
 import { fill, useT } from "./i18n";
-import { IconArrow, IconClose, SceneLetter } from "./ornaments";
+import { IconArrow, IconClose, IconSearch, SceneLetter } from "./ornaments";
+
+/**
+ * A small tab pinned to the side of the page, so the shopper can ask for a
+ * book from wherever they are rather than only from the band on the home
+ * page. Deliberately narrow — the label reads vertically and it sits mid-
+ * height against the edge, so it never covers a product card. On phones it
+ * drops to a short horizontal pill above the thumb line for the same reason.
+ */
+export function RequestSideTab() {
+  const t = useT();
+  const label = t("request.button", "Request a book");
+  return (
+    <button
+      type="button"
+      className="pw-request-tab"
+      onClick={openRequestForm}
+      aria-label={label}
+    >
+      <IconSearch size={14} />
+      <span>{label}</span>
+    </button>
+  );
+}
 
 const requestStore = createOpenStore();
 export const openRequestForm = (): void => requestStore.set(true);

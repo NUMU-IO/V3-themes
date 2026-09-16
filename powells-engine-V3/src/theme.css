@@ -5738,3 +5738,88 @@ button:hover:not(:disabled) .pw-arrow:dir(rtl) {
     width: 208px;
   }
 }
+
+/* ── Request tab ──────────────────────────────────────────────────────────
+   A way to ask for a book from any page, without taking space from one. The
+   label reads bottom-to-top against the inline-end edge, roughly two thirds
+   down the viewport — clear of the header on the way in and clear of a
+   product card's own hover affordances. Under the cart drawer, over the page.
+   On a phone the vertical tab would be a thumb-height wall, so it becomes a
+   short pill sitting above the floating buttons instead. */
+
+.pw-request-tab {
+  position: fixed;
+  /* Physical, deliberately: a fixed element with a vertical
+     writing-mode resolves its logical insets against its own axis in
+     Chrome, which put the tab on the LEFT in an LTR page. */
+  right: 0;
+  top: 62%;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 9px;
+  border: 1px solid var(--pw-line);
+  border-inline-end: 0;
+  border-start-start-radius: var(--pw-r-control);
+  border-end-start-radius: var(--pw-r-control);
+  background: var(--pw-surface);
+  color: var(--pw-ink);
+  font-family: var(--pw-font-body);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  writing-mode: vertical-rl;
+  box-shadow: -6px 0 18px -14px rgba(35, 22, 58, 0.8);
+  transition: background 250ms ease, color 250ms ease, transform 250ms ease;
+}
+.pw-request-tab:dir(rtl) {
+  right: auto;
+  left: 0;
+}
+.pw-request-tab:hover,
+.pw-request-tab:focus-visible {
+  background: var(--pw-accent);
+  color: var(--pw-accent-fg);
+  /* Toward the page, whichever side "in" is. */
+  transform: translateX(-2px);
+}
+.pw-request-tab:dir(rtl):hover,
+.pw-request-tab:dir(rtl):focus-visible {
+  transform: translateX(2px);
+}
+.pw-request-tab svg {
+  /* The glyph keeps its own orientation inside the rotated label. */
+  rotate: 90deg;
+}
+.pw-request-tab:dir(rtl) svg {
+  rotate: -90deg;
+}
+
+@media (max-width: 780px) {
+  .pw-request-tab {
+    top: auto;
+    bottom: 96px;
+    right: 12px;
+    writing-mode: horizontal-tb;
+    padding: 8px 14px;
+    font-size: 0.74rem;
+    border-inline-end: 1px solid var(--pw-line);
+    border-radius: 999px;
+  }
+  .pw-request-tab:dir(rtl) {
+    right: auto;
+    left: 12px;
+  }
+  .pw-request-tab svg,
+  .pw-request-tab:dir(rtl) svg {
+    rotate: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pw-request-tab {
+    transition: none;
+  }
+}
