@@ -10,6 +10,9 @@ import {
   defaultVariant,
   sanitizeHtml,
   whatsappHref,
+  VariantPicker,
+  useInstalledApp,
+  useLocale,
 } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
@@ -65,6 +68,9 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
   }
 
   const opts = product.options ?? [];
+  const locale = useLocale();
+  // First-render install state off the store payload, never a fetch.
+  const swatchSettings = useInstalledApp("variant-swatches");
   const variants = product.variants ?? [];
   const hasOptions = opts.length > 0;
   const hasVariantList = !hasOptions && variants.length > 1;
@@ -259,6 +265,15 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
           <div className="empire-pdp__divider" />
 
           {/* Option-axis picker */}
+          {/* The SDK owns the single renderer; this theme's markup is its
+              CHILDREN and renders only when there is no swatch decoration. */}
+          <VariantPicker
+            product={product}
+            selection={variantSel.selection}
+            onSelect={variantSel.select}
+            locale={locale}
+            settings={swatchSettings}
+          >
           {opts.map((opt) => (
             <div key={opt.name} className="empire-pdp__optgroup">
               <div className="empire-pdp__opt-head">
@@ -289,6 +304,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
               </div>
             </div>
           ))}
+          </VariantPicker>
 
           {/* Flat variant picker */}
           {hasVariantList ? (
@@ -447,6 +463,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             <div className="empire-pdp__fbt">
               <FrequentlyBought
                 id="fbt-pdp"
+                type="frequently_bought"
                 settings={{ enabled: true, embedded: true, max_items: 3, title: t("Frequently bought together", "يُشترى عادةً معاً") }}
               />
             </div>

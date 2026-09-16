@@ -15,6 +15,8 @@ import {
   useProducts,
   type Product,
   type ProductVariant,
+  VariantPicker,
+  useInstalledApp,
 } from "@numueg/theme-sdk";
 import { Check, Minus, Plus, ShoppingBag, Tag, Truck, RotateCcw, ShieldCheck, ArrowRight, X } from "lucide-react";
 import { motion } from "framer-motion";
@@ -97,6 +99,12 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
   const vs = useVariantSelection(
     product ?? { options: [], variants: [] },
   );
+  // Store-wide swatch presentation, read at FIRST RENDER off the store payload
+  // rather than fetched — a fetch would resolve after hydration and swap the
+  // row, which is the layout shift this whole design exists to avoid.
+  // `undefined` when the app is not installed, which the picker treats as
+  // "use sensible defaults", not as "render nothing".
+  const swatchSettings = useInstalledApp("variant-swatches");
 
   const related = useRelatedProducts(showRelated && product ? product.id : null, {
     limit: relatedCount,
@@ -407,7 +415,20 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
               </div>
             )}
 
-            {/* Variant option axes (Size / Color / ...) */}
+            {/* Variant option axes (Size / Color / ...).
+                The SDK owns the single renderer; this theme's own markup below
+                is its CHILDREN and renders only when there is nothing better to
+                draw. Deferring structurally rather than with a runtime check is
+                what makes a DOUBLED swatch row impossible: exactly one
+                component decides what occupies this space, so uninstalling the
+                app is a no-op rather than a gap. */}
+            <VariantPicker
+              product={product}
+              selection={vs.selection}
+              onSelect={vs.select}
+              locale={locale}
+              settings={swatchSettings}
+            >
             {options.map((opt) => {
               const selected = vs.selection[opt.name];
               const avail = vs.availability[opt.name];
@@ -484,6 +505,7 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                 </div>
               );
             })}
+            </VariantPicker>
 
             {/* A5 — BOGO-aware quantity hint. Quantity-sensitive ("Add 1 more
                 to get 1 free" → "You qualify") so the stepper itself sells

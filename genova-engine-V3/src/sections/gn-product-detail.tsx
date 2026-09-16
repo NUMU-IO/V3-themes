@@ -25,6 +25,8 @@ import {
   useProductSizeChart,
   useRelatedProducts,
   useVariantSelection,
+  useInstalledApp,
+  VariantPicker,
 } from "@numueg/theme-sdk";
 import { asBool, asString } from "@numueg/theme-kit";
 import {
@@ -82,6 +84,10 @@ export default function GnProductDetail({ instance }: SectionRenderProps) {
     };
   }, [product]);
   const vs = useVariantSelection(productForVariants);
+  // Read at FIRST RENDER off the store payload, never fetched — a fetch would
+  // resolve after hydration and swap the row. `undefined` = app not installed,
+  // which the picker treats as "use defaults", not as "render nothing".
+  const swatchSettings = useInstalledApp("variant-swatches");
   const sizeChart = useProductSizeChart();
   const metafields = useMetafields("product");
   const quickAdd = useQuickAdd();
@@ -254,6 +260,19 @@ export default function GnProductDetail({ instance }: SectionRenderProps) {
             </a>
           )}
 
+          {/* The SDK owns the single renderer; everything below is its
+              CHILDREN and renders only when the product carries no swatch
+              decoration. Both axis blocks are wrapped together — handing the
+              picker only the colour axis would let it paint one row while the
+              theme painted the other, which is the mixed-render this design
+              exists to prevent. */}
+          <VariantPicker
+            product={productForVariants}
+            selection={vs.selection}
+            onSelect={vs.select}
+            locale={locale}
+            settings={swatchSettings}
+          >
           {colorAxis && asBool(s.show_color_swatches, true) && (
             <fieldset className="gn-axis">
               <legend className="gn-label gn-axis-legend">
@@ -323,6 +342,7 @@ export default function GnProductDetail({ instance }: SectionRenderProps) {
               </fieldset>
             );
           })}
+          </VariantPicker>
 
           {lowStock && (
             <p className="gn-pdp-lowstock gn-label">
