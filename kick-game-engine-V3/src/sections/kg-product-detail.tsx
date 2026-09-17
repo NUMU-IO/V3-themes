@@ -10,6 +10,8 @@ import {
   useLocale,
   type Product,
   type ProductVariant,
+  VariantPicker,
+  useInstalledApp,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -51,6 +53,11 @@ export default function KGProductDetail({ instance }: SectionRenderProps) {
   const vs = useVariantSelection(
     product ?? { options: [], variants: [] },
   );
+  // Store-wide swatch presentation, read at FIRST RENDER off the store payload
+  // rather than fetched: a fetch resolves after hydration and would swap the
+  // row. `undefined` = app not installed, which the picker reads as
+  // "use defaults", never as "render nothing".
+  const swatchSettings = useInstalledApp("variant-swatches");
 
   const related = useRelatedProducts(showRelated && product ? product.id : null, {
     limit: relatedCount,
@@ -244,6 +251,17 @@ export default function KGProductDetail({ instance }: SectionRenderProps) {
             )}
 
             {/* Variant option axes (Size / Color / ...) */}
+            {/* The SDK owns the single renderer; this theme's own markup below is
+                its CHILDREN and renders only when the product carries no swatch
+                decoration. Deferring structurally rather than with a runtime
+                check is what makes a DOUBLED row impossible. */}
+            <VariantPicker
+              product={product}
+              selection={vs.selection}
+              onSelect={vs.select}
+              locale={locale}
+              settings={swatchSettings}
+            >
             {options.map((opt) => {
               const selected = vs.selection[opt.name];
               const avail = vs.availability[opt.name];
@@ -297,6 +315,7 @@ export default function KGProductDetail({ instance }: SectionRenderProps) {
                 </div>
               );
             })}
+            </VariantPicker>
 
             {/* Quantity + Add to cart */}
             <div className="flex items-center gap-3 mb-4">

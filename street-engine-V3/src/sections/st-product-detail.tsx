@@ -10,6 +10,8 @@ import {
   useProductOptional,
   useResolvedSettings,
   useVariantSelection,
+  VariantPicker,
+  useInstalledApp,
 } from "@numueg/theme-sdk";
 import { asBool, localized, productImage, type StSectionProps } from "./_shared";
 
@@ -33,6 +35,8 @@ export default function StProductDetail({ instance, sectionId }: StSectionProps)
   // every product page throw on `options.map`. Derive them from what it returns.
   const { selection: selected, select, variant } = useVariantSelection(product ?? NO_PRODUCT);
   const options = product?.options ?? [];
+  // First-render install state off the store payload, never a fetch.
+  const swatchSettings = useInstalledApp("variant-swatches");
   const canAddToCart = options.length === 0 || variant !== null;
 
   const images = (() => {
@@ -122,6 +126,15 @@ export default function StProductDetail({ instance, sectionId }: StSectionProps)
             )}
           </p>
 
+          {/* The SDK owns the single renderer; this theme's markup is its
+              CHILDREN and renders only when there is no swatch decoration. */}
+          <VariantPicker
+            product={product ?? NO_PRODUCT}
+            selection={selected}
+            onSelect={select}
+            locale={locale}
+            settings={swatchSettings}
+          >
           {options.map((opt) => (
             <div key={opt.name} className="mt-6">
               <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[var(--st-dark)]/70">
@@ -145,6 +158,7 @@ export default function StProductDetail({ instance, sectionId }: StSectionProps)
               </div>
             </div>
           ))}
+          </VariantPicker>
 
           <div className="mt-8">
             {canAddToCart ? (

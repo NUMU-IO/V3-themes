@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useListingHeading, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
+import { VariantPicker, useInstalledApp, Link, Money, useListingHeading, useLocale, useProducts, useResolvedSettings, useTranslation, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { asNumber, asString, localized, merchantLabelText, productImage, type SectionRenderProps } from "./_shared";
@@ -323,6 +323,7 @@ export default function WarshaProductsPage({ instance, sectionId }: SectionRende
 /** Inline Warsha product card — mirrors WarshaProductCard's markup/classes. */
 function ProductCard({ product, list }: { product: Product; list?: boolean }) {
   const locale = useLocale();
+  const swatchSettings = useInstalledApp("variant-swatches");
   const { t } = useTranslation();
   // ENG-1: listing price MUST match the PDP's default-variant precedence
   // (variants[0].price ?? price) so the grid never shows base-vs-variant
@@ -410,6 +411,19 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
         <div className="mt-1">
           <PricePair price={price} compareAt={compareAt} currency={product.currency} size="sm" />
         </div>
+        {/* Colour swatches on the collection grid. Display-only on
+            purpose: a card carries no resolved `variant_id`, so adding to
+            cart from here would open a second cart line from the product
+            page's. The card already links to the product — the shopper taps
+            through to choose. Honours the app's `show_on_cards` and
+            `card_max_visible`, which did nothing on this theme until now. */}
+        <VariantPicker
+          product={product}
+          selection={{}}
+          locale={locale}
+          surface="card"
+          settings={swatchSettings}
+        />
       </div>
     </Link>
   );

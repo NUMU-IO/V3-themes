@@ -84,6 +84,7 @@ import {
   selectChromeSections,
   selectTemplateSections,
   type MaybeOrderedTemplate,
+  type MenuItemData,
 } from "@numueg/theme-sdk";
 
 const BUILTIN_TEMPLATES = (
@@ -233,7 +234,7 @@ export interface MountContext {
   translations?: Record<string, string>;
   /** Phase 2.4 — store navigation menus keyed by handle (`main-menu`,
    *  `footer`, …), resolved server-side by the host. */
-  navigation?: Record<string, unknown[]>;
+  navigation?: Record<string, MenuItemData[]>;
   [extra: string]: unknown;
 }
 

@@ -24,7 +24,7 @@
  */
 
 import { useState } from "react";
-import { Image, Link, Money, useLocale, type Product } from "@numueg/theme-sdk";
+import { VariantPicker, useInstalledApp, Image, Link, Money, useLocale, type Product } from "@numueg/theme-sdk";
 import {
   bookCondition,
   bookFormats,
@@ -55,6 +55,7 @@ export function ProductCard({
 }: ProductCardProps) {
   const t = useT();
   const locale = useLocale();
+  const swatchSettings = useInstalledApp("variant-swatches");
   const [lookOpen, setLookOpen] = useState(false);
 
   const href = `/products/${product.slug ?? product.id}`;
@@ -131,6 +132,19 @@ export function ProductCard({
           </s>
         )}
       </p>
+      {/* Colour swatches on the collection grid. Display-only on
+          purpose: a card carries no resolved `variant_id`, so adding to
+          cart from here would open a second cart line from the product
+          page's. The card already links to the product — the shopper taps
+          through to choose. Honours the app's `show_on_cards` and
+          `card_max_visible`, which did nothing on this theme until now. */}
+      <VariantPicker
+        product={product}
+        selection={{}}
+        locale={locale}
+        surface="card"
+        settings={swatchSettings}
+      />
 
       {showQuickAdd && (
         <button

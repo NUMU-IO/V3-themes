@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import {
+  VariantPicker,
+  useInstalledApp,
   Link,
   Money,
   useListingHeading,
@@ -32,6 +34,7 @@ import {
 export default function StProductGrid({ instance, sectionId }: StSectionProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const swatchSettings = useInstalledApp("variant-swatches");
   const { products, loading } = useProducts();
 
   const cols = Math.max(2, Math.min(4, asNumber(s.columns_desktop, 3)));
@@ -187,6 +190,19 @@ export default function StProductGrid({ instance, sectionId }: StSectionProps) {
                       <p className="mt-2 text-sm font-black text-[var(--st-dark)]">
                         <Money amount={(p as { price?: number }).price ?? 0} />
                       </p>
+                      {/* Colour swatches on the collection grid. Display-only on
+                          purpose: a card carries no resolved `variant_id`, so adding to
+                          cart from here would open a second cart line from the product
+                          page's. The card already links to the product — the shopper taps
+                          through to choose. Honours the app's `show_on_cards` and
+                          `card_max_visible`, which did nothing on this theme until now. */}
+                      <VariantPicker
+                        product={p}
+                        selection={{}}
+                        locale={locale}
+                        surface="card"
+                        settings={swatchSettings}
+                      />
                     </div>
                   </Link>
                 </li>

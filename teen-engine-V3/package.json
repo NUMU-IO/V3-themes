@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 5174",
     "typecheck": "tsc --noEmit",
     "lint": "node ../../numu-theme-cli/dist/index.js lint",

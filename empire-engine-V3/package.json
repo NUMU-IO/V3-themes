@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview --port 5173"
   },
   "dependencies": {
-    "@numueg/theme-sdk": "0.14.0"
+    "@numueg/theme-sdk": "^0.15.0"
   },
   "devDependencies": {
     "@numueg/theme-plugin": "^0.6.0",

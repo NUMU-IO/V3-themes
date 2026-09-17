@@ -11,6 +11,8 @@ import {
   useProductOptional,
   useResolvedSettings,
   useVariantSelection,
+  useInstalledApp,
+  VariantPicker,
 } from "@numueg/theme-sdk";
 import {
   ArrowLeft,
@@ -121,6 +123,9 @@ export default function BzProductDetail({
     availability,
     isComplete,
   } = useVariantSelection(product);
+  // First-render install state off the store payload — never a fetch, which
+  // would resolve after hydration and swap the row.
+  const swatchSettings = useInstalledApp("variant-swatches");
 
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -297,6 +302,16 @@ export default function BzProductDetail({
             {/* Variant axes */}
             {product.options && product.options.length > 0 && (
               <div className="mt-8 space-y-6">
+                {/* The SDK owns the single renderer; this theme's markup is its
+                    CHILDREN and renders only when the product carries no swatch
+                    decoration, so a doubled row cannot happen. */}
+                <VariantPicker
+                  product={product}
+                  selection={selection}
+                  onSelect={select}
+                  locale={locale}
+                  settings={swatchSettings}
+                >
                 {product.options.map((opt) => {
                   const chosen = selection[opt.name];
                   const avail = availability[opt.name];
@@ -338,6 +353,7 @@ export default function BzProductDetail({
                     </div>
                   );
                 })}
+                </VariantPicker>
               </div>
             )}
 

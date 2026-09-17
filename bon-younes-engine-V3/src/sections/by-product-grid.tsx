@@ -1,6 +1,6 @@
 "use client";
 
-import { Link, useListingHeading, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
+import { VariantPicker, useInstalledApp, Link, useListingHeading, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
 import { asString, asNumber, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
@@ -151,6 +151,7 @@ type ProductExtras = Product & {
 
 function ProductCard({ product }: { product: Product }) {
   const locale = useLocale();
+  const swatchSettings = useInstalledApp("variant-swatches");
   const price = typeof product.price === "number" ? product.price : 0;
   const compareAt =
     typeof product.compare_at_price === "number"
@@ -211,6 +212,19 @@ function ProductCard({ product }: { product: Product }) {
           )}
           <span style={{ color: "var(--by-caramel, #b07a4a)" }}>{price} EGP</span>
         </span>
+        {/* Colour swatches on the collection grid. Display-only on
+            purpose: a card carries no resolved `variant_id`, so adding to
+            cart from here would open a second cart line from the product
+            page's. The card already links to the product — the shopper taps
+            through to choose. Honours the app's `show_on_cards` and
+            `card_max_visible`, which did nothing on this theme until now. */}
+        <VariantPicker
+          product={product}
+          selection={{}}
+          locale={locale}
+          surface="card"
+          settings={swatchSettings}
+        />
       </div>
     </Link>
   );

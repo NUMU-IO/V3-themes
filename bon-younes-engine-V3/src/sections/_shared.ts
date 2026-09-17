@@ -109,10 +109,7 @@ export function placeholderize<T extends Record<string, unknown>>(items: T[]): T
  * demo addons/panels never appear on a live store. (`placeholderize` stays
  * for per-image neutral fallbacks on REAL items — see PLACEHOLDER_IMG.)
  */
-export function demoOrPlaceholder<T extends Record<string, unknown>>(
-  demo: boolean,
-  items: T[],
-): T[] {
+export function demoOrPlaceholder<T>(demo: boolean, items: T[]): T[] {
   return demo ? items : [];
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { VariantPicker, useInstalledApp } from "@numueg/theme-sdk";
 import { useMemo, useState } from "react";
 import {
   Link,
@@ -159,6 +160,8 @@ export default function ByProductDetail({
     {},
   );
   const [chosenAddons, setChosenAddons] = useState<Set<string>>(new Set());
+  // First-render install state off the store payload, never a fetch.
+  const swatchSettings = useInstalledApp("variant-swatches");
 
   const images = product.images?.length ? product.images : [PLACEHOLDER_IMG];
 
@@ -300,6 +303,32 @@ export default function ByProductDetail({
 
             {product.options && product.options.length > 0 && (
               <div className="by-pdp-options">
+                {/* The SDK owns the single renderer; these chips are its
+                    CHILDREN and render only when the product carries no swatch
+                    decoration. This theme keeps its selection in local state
+                    rather than `useVariantSelection`, which the picker does not
+                    care about — it needs a selection map and a setter, and this
+                    is already both. Moving this theme onto the SDK hook is a
+                    separate change about availability and variant resolution. */}
+                <VariantPicker
+                  // This theme builds its own product shape and carries no
+                  // variant rows, so availability is UNKNOWN rather than
+                  // sold-out — the picker treats an axis no variant describes
+                  // as fully buyable, which is the correct answer here.
+                  product={{
+                    options: (product.options ?? []).map((o, i) => ({
+                      position: i,
+                      ...o,
+                    })),
+                    variants: [],
+                  }}
+                  selection={selectedOptions}
+                  onSelect={(axis, value) =>
+                    setSelectedOptions((prev) => ({ ...prev, [axis]: value }))
+                  }
+                  locale={locale}
+                  settings={swatchSettings}
+                >
                 {product.options.map((opt) => (
                   <div key={opt.name}>
                     <div className="by-pdp-option-label">{opt.name}</div>
@@ -324,6 +353,7 @@ export default function ByProductDetail({
                     </div>
                   </div>
                 ))}
+                </VariantPicker>
               </div>
             )}
 

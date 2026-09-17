@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Link, Money, useListingHeading, useLocale, useProducts, type Product } from "@numueg/theme-sdk";
+import { VariantPicker, useInstalledApp, Link, Money, useListingHeading, useLocale, useProducts, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
@@ -283,6 +283,7 @@ type ProductExtras = Product & {
 /** Inline Tech Wave product card — neon glass card with sale badge. */
 function ProductCard({ product, list }: { product: Product; list?: boolean }) {
   const locale = useLocale();
+  const swatchSettings = useInstalledApp("variant-swatches");
   const p = product as ProductExtras;
   const price = product.variants?.[0]?.price ?? product.price ?? 0;
   const compareAt = product.compare_at_price;
@@ -369,6 +370,19 @@ function ProductCard({ product, list }: { product: Product; list?: boolean }) {
             </span>
           )}
         </div>
+        {/* Colour swatches on the collection grid. Display-only on
+            purpose: a card carries no resolved `variant_id`, so adding to
+            cart from here would open a second cart line from the product
+            page's. The card already links to the product — the shopper taps
+            through to choose. Honours the app's `show_on_cards` and
+            `card_max_visible`, which did nothing on this theme until now. */}
+        <VariantPicker
+          product={product}
+          selection={{}}
+          locale={locale}
+          surface="card"
+          settings={swatchSettings}
+        />
       </div>
     </Link>
   );

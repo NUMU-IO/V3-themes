@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AddToCartButton, Link, Money, useCollectionOptional, useCurrentTemplate, useListingHeading, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
+import { VariantPicker, useInstalledApp, AddToCartButton, Link, Money, useCollectionOptional, useCurrentTemplate, useListingHeading, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
 import { Search, Grid3X3, LayoutList, ShoppingCart, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -325,6 +325,7 @@ function LuxProductCard({
   const hasDiscount = typeof compareAt === "number" && compareAt > price;
   const primary = asImageUrl(product.images?.[0]);
   const href = `/product/${product.slug || product.id}`;
+  const swatchSettings = useInstalledApp("variant-swatches");
   const label = (product as ProductExtras).label;
   const merchantLabel =
     label && label.key
@@ -404,6 +405,19 @@ function LuxProductCard({
             soldOutLabel={<ShoppingCart size={13} />}
           />
         </div>
+        {/* Colour swatches on the collection grid. Display-only on
+            purpose: a card carries no resolved `variant_id`, so adding to
+            cart from here would open a second cart line from the product
+            page's. The card already links to the product — the shopper taps
+            through to choose. Honours the app's `show_on_cards` and
+            `card_max_visible`, which did nothing on this theme until now. */}
+        <VariantPicker
+          product={product}
+          selection={{}}
+          locale={locale}
+          surface="card"
+          settings={swatchSettings}
+        />
       </div>
     </div>
   );

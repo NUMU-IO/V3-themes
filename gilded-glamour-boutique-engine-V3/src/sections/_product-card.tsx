@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Link, Money, useCart, useLocale, type Product } from "@numueg/theme-sdk";
+import { VariantPicker, useInstalledApp, Link, Money, useCart, useLocale, type Product } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { Star, Plus, Check } from "lucide-react";
 import { asImageUrl, localized, productHref } from "./_shared";
@@ -42,6 +42,7 @@ export function GildedProductCard({
 }) {
   const { addItem } = useCart();
   const locale = useLocale();
+  const swatchSettings = useInstalledApp("variant-swatches");
   const [added, setAdded] = useState(false);
 
   const p = product as ProductExtras;
@@ -199,6 +200,19 @@ export function GildedProductCard({
           )}
         </div>
       )}
+      {/* Colour swatches on the collection grid. Display-only on
+          purpose: a card carries no resolved `variant_id`, so adding to
+          cart from here would open a second cart line from the product
+          page's. The card already links to the product — the shopper taps
+          through to choose. Honours the app's `show_on_cards` and
+          `card_max_visible`, which did nothing on this theme until now. */}
+      <VariantPicker
+        product={product}
+        selection={{}}
+        locale={locale}
+        surface="card"
+        settings={swatchSettings}
+      />
     </motion.div>
   );
 }

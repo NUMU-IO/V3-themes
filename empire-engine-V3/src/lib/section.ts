@@ -2,11 +2,12 @@ import type { SectionProps } from "@numueg/theme-sdk";
 
 /**
  * `main.tsx` passes each section component its instance `id` and `type` in
- * addition to the SDK's `SectionProps` (settings/blocks/blockOrder). The SDK
- * type doesn't declare those, so we widen it here — the `id` is what
- * `<EditableText sectionId=…>` / `<EditableImage>` need for inline editing.
+ * addition to the SDK's settings/blocks/blockOrder.
+ *
+ * This used to widen `SectionProps` with its own `id` and an OPTIONAL `type`,
+ * because the SDK declared neither. The SDK now declares both, and `type` as
+ * REQUIRED — so the local re-declaration narrowed the base type and became a
+ * compile error the moment the build started typechecking. The alias is kept
+ * so the ~30 sections importing `EmpSectionProps` need no change.
  */
-export interface EmpSectionProps extends SectionProps {
-  id: string;
-  type?: string;
-}
+export type EmpSectionProps = SectionProps;

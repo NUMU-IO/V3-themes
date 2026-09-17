@@ -19,7 +19,15 @@
 
 import { useMemo, useState } from "react";
 import { centsToMajor } from "@numueg/theme-kit";
-import { Money, useVariantSelection, type Product, type ProductVariant } from "@numueg/theme-sdk";
+import {
+  Money,
+  useVariantSelection,
+  useInstalledApp,
+  useLocale,
+  VariantPicker as SdkVariantPicker,
+  type Product,
+  type ProductVariant,
+} from "@numueg/theme-sdk";
 import { asNumber, asRecord, asString, isFormatAxis } from "./shared";
 import { useT, type TFunction } from "./i18n";
 
@@ -201,9 +209,24 @@ function priceForValue(picker: VariantPicker, axis: string, value: string): numb
 
 export function OptionChips({ picker }: { picker: VariantPicker }) {
   const t = useT();
+  const locale = useLocale();
+  // First-render install state off the store payload, never a fetch.
+  const swatchSettings = useInstalledApp("variant-swatches");
   if (!picker.hasAxes) return null;
   return (
     <div className="pw-options">
+      {/* The SDK owns the single renderer; these chips are its CHILDREN and
+          render only when the product carries no swatch decoration. A book
+          catalogue usually has none, so this theme normally keeps its own
+          per-edition pricing chips — which is exactly the point of deferring
+          structurally rather than replacing outright. */}
+      <SdkVariantPicker
+        product={picker.product}
+        selection={picker.selection}
+        onSelect={picker.pickValue}
+        locale={locale}
+        settings={swatchSettings}
+      >
       {picker.options.map((option) => {
         const picked = picker.selection[option.name];
         const available = picker.availability[option.name];
@@ -241,6 +264,7 @@ export function OptionChips({ picker }: { picker: VariantPicker }) {
           </fieldset>
         );
       })}
+      </SdkVariantPicker>
     </div>
   );
 }

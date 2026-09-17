@@ -15,6 +15,8 @@ import {
   useProducts,
   type Product,
   type ProductVariant,
+  VariantPicker,
+  useInstalledApp,
 } from "@numueg/theme-sdk";
 import { Check, Minus, Plus, ShoppingBag, Tag, Truck, RotateCcw, ShieldCheck, ArrowRight, X } from "lucide-react";
 import { motion } from "framer-motion";
@@ -95,6 +97,11 @@ export default function ManshetProductDetail({ instance, sectionId }: SectionRen
   const vs = useVariantSelection(
     product ?? { options: [], variants: [] },
   );
+  // Store-wide swatch presentation, read at FIRST RENDER off the store payload
+  // rather than fetched: a fetch resolves after hydration and would swap the
+  // row. `undefined` = app not installed, which the picker reads as
+  // "use defaults", never as "render nothing".
+  const swatchSettings = useInstalledApp("variant-swatches");
 
   const related = useRelatedProducts(showRelated && product ? product.id : null, {
     limit: relatedCount,
@@ -366,6 +373,17 @@ export default function ManshetProductDetail({ instance, sectionId }: SectionRen
             )}
 
             {/* Variant option axes (Size / Color / ...) */}
+            {/* The SDK owns the single renderer; this theme's own markup below is
+                its CHILDREN and renders only when the product carries no swatch
+                decoration. Deferring structurally rather than with a runtime
+                check is what makes a DOUBLED row impossible. */}
+            <VariantPicker
+              product={product}
+              selection={vs.selection}
+              onSelect={vs.select}
+              locale={locale}
+              settings={swatchSettings}
+            >
             {options.map((opt) => {
               const selected = vs.selection[opt.name];
               const avail = vs.availability[opt.name];
@@ -422,6 +440,7 @@ export default function ManshetProductDetail({ instance, sectionId }: SectionRen
                 </div>
               );
             })}
+            </VariantPicker>
 
             {/* A5 — BOGO-aware quantity hint. Quantity-sensitive ("Add 1 more
                 to get 1 free" → "You qualify") so the stepper itself sells

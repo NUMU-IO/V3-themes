@@ -15,7 +15,13 @@
  * soon" suppresses quick add entirely rather than offering an add that fails.
  */
 
-import { Image, Link, type Product } from "@numueg/theme-sdk";
+import {
+  Image,
+  Link,
+  VariantPicker,
+  useInstalledApp,
+  type Product,
+} from "@numueg/theme-sdk";
 import { cx, productImages, productName } from "./shared";
 import { useT } from "./i18n";
 import { Price, Tag, discountPercent, isDiscounted } from "./price";
@@ -33,10 +39,18 @@ export interface ProductCardProps {
 }
 
 /** Colour axis, if the product has one — shown under the title as a subtitle. */
-function colorLabel(product: Product): string {
+function colorLabel(product: Product, locale?: string): string {
   const axis = (product.options ?? []).find((o) => /colou?r|لون/i.test(o.name));
   if (!axis) return "";
-  return axis.values.length === 1 ? axis.values[0] : `${axis.values.length} colours`;
+  const n = axis.values.length;
+  const arabic = (locale || "").toLowerCase().startsWith("ar");
+  if (n === 1) return (arabic ? axis.values_ar?.[0] : undefined) || axis.values[0];
+  if (!arabic) return n === 1 ? axis.values[0] : `${n} colours`;
+  // Arabic counts its own way: two is a dual word with no numeral, three to ten
+  // take the plural noun, eleven and up go back to the singular. `${n} colours`
+  // was shipping untranslated English onto an Arabic-first storefront.
+  if (n === 2) return "لونين";
+  return n <= 10 ? `${n} ألوان` : `${n} لون`;
 }
 
 function lowStockCount(product: Product): number {
@@ -70,6 +84,9 @@ export function ProductCard({
   // `isDiscounted` parses numeric STRINGS. The old `typeof === "number"` guard
   // never matched — the API sends '30.00' — so no card in this theme has ever
   // shown a sale badge, a compare-at price or a saving.
+  // First-render install state off the store payload — a fetch here would be
+  // one request per card.
+  const swatchSettings = useInstalledApp("variant-swatches");
   const onSale = isDiscounted(product.price, product.compare_at_price);
   const saving = discountPercent(product.price, product.compare_at_price);
 
@@ -77,7 +94,7 @@ export function ProductCard({
   const lowStock =
     showLowStock && !soldOut && !comingSoon && remaining > 0 && remaining <= lowStockThreshold;
 
-  const color = showColorLabel ? colorLabel(product) : "";
+  const color = showColorLabel ? colorLabel(product, locale) : "";
 
   // Quick add used to be withheld on listings entirely: the LIST endpoint
   // returns `options: []` and `variants: []` for every product, so the card
@@ -172,6 +189,21 @@ export function ProductCard({
           amount={product.price}
           compareAt={product.compare_at_price}
           currency={product.currency}
+        />
+        {/* Colour swatches on the card.
+            DISPLAY-ONLY and deliberately so: a card has no resolved
+            `variant_id`, and adding to cart without one opens a second cart
+            line from the PDP's. The whole card already links to the product,
+            so a shopper taps through to choose.
+            `surface="card"` also honours the app's `show_on_cards` /
+            `card_max_visible`, which were settings a merchant could save and
+            watch do nothing until a theme actually rendered this row. */}
+        <VariantPicker
+          product={product}
+          selection={{}}
+          locale={locale}
+          surface="card"
+          settings={swatchSettings}
         />
         {lowStock && (
           // Coloured as of 2026-08-14 (supersedes §2.1a) — scarcity is the one

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Image, Link, Money, useListingHeading, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
+import { VariantPicker, useInstalledApp, Image, Link, Money, useListingHeading, useLocale, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
 import { Search, ShoppingBag, SlidersHorizontal } from "lucide-react";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -37,6 +37,7 @@ export function BzProductCard({
 }) {
   const locale = useLocale();
   const slugOrId = product.slug || product.id;
+  const swatchSettings = useInstalledApp("variant-swatches");
   const image = firstImage(product);
   const price = typeof product.price === "number" ? product.price : 0;
   const compareAt =
@@ -110,6 +111,19 @@ export function BzProductCard({
             </span>
           )}
         </div>
+        {/* Colour swatches on the collection grid. Display-only on
+            purpose: a card carries no resolved `variant_id`, so adding to
+            cart from here would open a second cart line from the product
+            page's. The card already links to the product — the shopper taps
+            through to choose. Honours the app's `show_on_cards` and
+            `card_max_visible`, which did nothing on this theme until now. */}
+        <VariantPicker
+          product={product}
+          selection={{}}
+          locale={locale}
+          surface="card"
+          settings={swatchSettings}
+        />
       </div>
     </Link>
   );
