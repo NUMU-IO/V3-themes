@@ -4863,6 +4863,26 @@ button:hover:not(:disabled) .pw-arrow:dir(rtl) {
 .pw-campaign-books[data-count="4"] {
   grid-template-columns: repeat(4, minmax(0, 170px));
 }
+/* On a phone three or four columns leave each book ~70px, narrower than one
+   price ("EGP 200.00" never wraps), so prices ran into each other. The books
+   become a swipe strip of readable cards instead, like the shelf rail. */
+@media (max-width: 560px) {
+  .pw-campaign-books[data-count] {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 132px;
+    overflow-x: auto;
+    padding-block-end: 12px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .pw-campaign-books > * {
+    scroll-snap-align: start;
+  }
+  .pw-campaign-books .pw-price b {
+    font-size: 1.08rem;
+  }
+}
 .pw-fan {
   width: min(86%, 560px);
 }
