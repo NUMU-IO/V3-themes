@@ -1,8 +1,9 @@
 /**
  * pw-featured — a row of book cards beside one promo card.
  *
- * "Newly released", "Reduced", "From one collection": a heading, a handful of
- * books as white cards, and a promo card that sells one thing.
+ * "Newly released", "Reduced", "From one collection", "Books I choose": a
+ * heading, a handful of books as white cards, and a promo card that sells one
+ * thing.
  *
  * The promo card is the merchant's own banner when they upload an image for it.
  * Without one it is built from a real book: the book named in "Book to feature",
@@ -17,10 +18,12 @@
 import { useEffect, useState } from "react";
 import { Image, Link, useProducts, useResolvedSettings, type Product } from "@numueg/theme-sdk";
 import {
+  asArray,
   asBool,
   asImageAlt,
   asImageUrl,
   asNumber,
+  asRecord,
   asString,
   isInlineImage,
   productAuthor,
@@ -49,9 +52,13 @@ export default function PwFeatured({ instance }: SectionRenderProps) {
   const { products } = useProducts({ limit: 300, fetchIfMissing: true });
 
   const source = (asString(s.source) || "newest") as BookSource;
-  const limit = asNumber(s.limit, 3);
+  // The editor's picker stores ids; some writers store `{ id }` objects.
+  const books = asArray(s.books)
+    .map((v) => (typeof v === "string" ? v : asString(asRecord(v).id)))
+    .filter(Boolean);
+  const limit = source === "books" ? books.length : asNumber(s.limit, 3);
   const collection = asString(s.collection);
-  const picks = useShelfBooks(products, source, collection, limit);
+  const picks = useShelfBooks(products, source, collection, limit, { books });
 
   const heading = asString(s.heading);
   const promoTitle = asString(s.promo_title);
