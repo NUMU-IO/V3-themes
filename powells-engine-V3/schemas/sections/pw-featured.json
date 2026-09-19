@@ -41,6 +41,11 @@
           "value": "collection",
           "label": "From one collection",
           "label_ar": "من تصنيف واحد"
+        },
+        {
+          "value": "books",
+          "label": "Books I choose",
+          "label_ar": "كتب أختارها"
         }
       ]
     },
@@ -55,6 +60,17 @@
       "visible_if": "{{ section.settings.source == 'collection' }}"
     },
     {
+      "type": "product_list",
+      "id": "books",
+      "label": "Books",
+      "label_ar": "الكتب",
+      "default": [],
+      "max_items": 8,
+      "info": "Shown in the order you pick them, up to 8.",
+      "info_ar": "بتظهر بنفس ترتيب اختيارك، لحد 8 كتب.",
+      "visible_if": "{{ section.settings.source == 'books' }}"
+    },
+    {
       "type": "range",
       "id": "limit",
       "label": "How many books",
@@ -62,7 +78,8 @@
       "default": 3,
       "min": 2,
       "max": 8,
-      "step": 1
+      "step": 1,
+      "visible_if": "{{ section.settings.source != 'books' }}"
     },
     {
       "type": "header",

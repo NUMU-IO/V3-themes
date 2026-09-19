@@ -11,7 +11,8 @@
  *
  * A hand-picked list ("books") is resolved title by title through the detail
  * route, in the order the merchant wrote it — that is the whole point of a
- * curated shelf.
+ * curated shelf. It arrives as typed text or as the product ids the editor's
+ * picker stores; the detail route takes either.
  *
  * Everything else — newest, reduced, cheapest, under a price, or a name that
  * matches no platform category (a genre kept only as a tag) — is chosen from
@@ -56,7 +57,7 @@ export function useShelfBooks(
   source: BookSource,
   collection: string,
   limit: number,
-  options: { maxPrice?: number; books?: string; withCovers?: boolean } = {},
+  options: { maxPrice?: number; books?: string | string[]; withCovers?: boolean } = {},
 ): Product[] {
   const shop = useShop();
   const wanted = collection.trim();
@@ -68,7 +69,8 @@ export function useShelfBooks(
     (options.withCovers ? list.filter((product) => productImages(product).length > 0) : list).slice(0, limit);
   const byCollection = source === "collection" && wanted.length > 0;
   const { collections } = useCollections({ fetchIfMissing: byCollection });
-  const picked = useBooksByHandle(source === "books" ? bookList(options.books ?? "") : []);
+  const books = options.books ?? "";
+  const picked = useBooksByHandle(source !== "books" ? [] : Array.isArray(books) ? books : bookList(books));
 
   const lowered = wanted.toLowerCase();
   const category = byCollection
