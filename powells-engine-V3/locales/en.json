@@ -95,6 +95,8 @@
   "notfound.body": "The page you were looking for is not here. It may have been moved, or the link may have a typo.",
   "notfound.cta": "Back to browsing",
   "footer.rights": "All rights reserved.",
+  "footer.powered_by": "Powered by",
+  "footer.cod": "Cash on delivery",
   "account.sign_in": "Sign in",
   "account.create": "Create an account",
   "account.recover": "Reset your password",

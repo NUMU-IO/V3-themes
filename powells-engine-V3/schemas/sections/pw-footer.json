@@ -37,6 +37,15 @@
       "label": "Hand-written note",
       "label_ar": "ملاحظة مكتوبة",
       "default": "Good\nBooks\nBuild\nBetter\nDays"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_marks",
+      "label": "Show payment methods",
+      "label_ar": "إظهار طرق الدفع",
+      "default": true,
+      "info": "Logos of the payment methods your checkout accepts, taken from your payment settings.",
+      "info_ar": "لوجوهات طرق الدفع اللي الـcheckout بيقبلها، من إعدادات الدفع بتاعتك."
     }
   ],
   "blocks": [

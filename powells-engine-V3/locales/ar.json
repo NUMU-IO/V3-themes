@@ -95,6 +95,8 @@
   "notfound.body": "الصفحة اللي بتدور عليها مش هنا. يمكن اتنقلت، أو في غلطة في اللينك.",
   "notfound.cta": "ارجع للتصفح",
   "footer.rights": "كل الحقوق محفوظة.",
+  "footer.powered_by": "مدعوم من",
+  "footer.cod": "الدفع عند الاستلام",
   "account.sign_in": "تسجيل الدخول",
   "account.create": "إنشاء حساب",
   "account.recover": "استعادة كلمة السر",

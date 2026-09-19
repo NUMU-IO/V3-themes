@@ -1574,8 +1574,61 @@
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
+  align-items: center;
   color: var(--pw-muted);
   font-size: 0.85rem;
+}
+.pw-footer-powered {
+  white-space: nowrap;
+}
+.pw-footer-powered::before {
+  content: "·";
+  margin-inline: 8px;
+}
+.pw-footer .pw-footer-powered a {
+  font-size: inherit;
+  font-weight: 600;
+  color: var(--pw-accent);
+}
+.pw-pay-marks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+/* Every mark sits in the same 42×26 frame, so a row of mixed logos and word
+   marks reads as one set. */
+.pw-pay-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 42px;
+  overflow: hidden;
+  border: 1px solid var(--pw-rail-edge);
+  border-radius: 5px;
+  background: #ffffff;
+}
+.pw-pay-mark svg {
+  display: block;
+}
+.pw-pay-logo {
+  padding-inline: 6px;
+}
+.pw-pay-logo img {
+  display: block;
+  height: 16px;
+  width: auto;
+  max-width: 76px;
+  object-fit: contain;
+}
+.pw-pay-cod {
+  padding-inline: 9px;
+  background: var(--pw-surface);
+  color: var(--pw-ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* ── Narrow screens ───────────────────────────────────────────────────── */

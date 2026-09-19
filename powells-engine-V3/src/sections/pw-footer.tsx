@@ -1,7 +1,8 @@
 /**
  * pw-footer — the shop's name and a line about itself, link columns, and the
- * copyright row. Compact on purpose: it closes the page, it does not compete
- * with it.
+ * bottom row: copyright, "Powered by NUMU" and the payment methods the
+ * checkout accepts. Compact on purpose: it closes the page, it does not
+ * compete with it.
  *
  * Columns are nested blocks (`column → link`), which is why this reads them
  * with `readBlockNodes` rather than theme-kit's flat `readBlocks`: the latter
@@ -14,9 +15,10 @@
 
 import { useEffect, useState } from "react";
 import { Link, useResolvedSettings, useShop } from "@numueg/theme-sdk";
-import { asString, readBlockNodes, useOrnaments, type SectionRenderProps } from "../lib/shared";
+import { asBool, asString, readBlockNodes, useOrnaments, type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { BookStack } from "../lib/ornaments";
+import { PaymentMarks } from "../lib/payment-marks";
 
 export default function PwFooter({ instance }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
@@ -86,7 +88,14 @@ export default function PwFooter({ instance }: SectionRenderProps) {
       <div className="pw-footer-bottom">
         <span>
           © {year ?? ""} {storeName}. {t("footer.rights", "All rights reserved.")}
+          <span className="pw-footer-powered">
+            {t("footer.powered_by", "Powered by")}{" "}
+            <a href="https://numueg.app" target="_blank" rel="noopener">
+              NUMU
+            </a>
+          </span>
         </span>
+        {asBool(s.show_payment_marks, true) && <PaymentMarks />}
       </div>
     </footer>
   );
