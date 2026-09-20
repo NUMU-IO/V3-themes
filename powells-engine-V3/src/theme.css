@@ -2811,6 +2811,10 @@
   padding-inline: 28px;
   white-space: nowrap;
 }
+.pw-announce-track .pw-announce-group li {
+  min-width: 25vw;
+  text-align: center;
+}
 .pw-announce-track li::before,
 .pw-announce-group.static li + li::before {
   content: "·";
@@ -2860,6 +2864,9 @@
   .pw-announce-track > [aria-hidden="true"] {
     display: none;
   }
+  .pw-announce-track li[aria-hidden="true"] {
+    display: none;
+  }
 }
 [data-powells-v3-app][data-pw-motion="off"] .pw-announce-track {
   width: auto;
@@ -2867,6 +2874,9 @@
   justify-content: center;
 }
 [data-powells-v3-app][data-pw-motion="off"] .pw-announce-track > [aria-hidden="true"] {
+  display: none;
+}
+[data-powells-v3-app][data-pw-motion="off"] .pw-announce-track li[aria-hidden="true"] {
   display: none;
 }
 
