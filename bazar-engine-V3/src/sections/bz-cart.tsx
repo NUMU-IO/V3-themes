@@ -11,6 +11,7 @@ import {
 import { ArrowRight, Minus, Plus, ShoppingBag, X } from "lucide-react";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
+import { CouponBox } from "./_coupon-box";
 
 /**
  * bz-cart — the cart template body, ported from V2 BzCartPage. One
@@ -122,9 +123,23 @@ export default function BzCart({ instance, sectionId }: SectionRenderProps) {
   const freeShipEarned = freeThreshold > 0 && subtotal >= freeThreshold;
   const remainingForFree =
     freeThreshold > 0 ? Math.max(freeThreshold - subtotal, 0) : 0;
-  // Shipping is added in the platform checkout (needs an address); the cart
-  // total reflects the items subtotal so we never show a fabricated figure.
-  const grandTotal = subtotal;
+  // Offers-v2. The engine prices the cart server-side, so this summary reads
+  // ITS numbers instead of re-deriving them: `grandTotal = subtotal` showed
+  // the undiscounted price to a shopper whose cart had already qualified for
+  // an offer, and checkout then charged something else.
+  const appliedPromotions = cart?.applied_promotions ?? [];
+  const cartDiscount = cart?.discount_amount ?? 0;
+  // The named rows below cover the automatic offers; whatever is left of the
+  // total discount is the pinned code's own share.
+  const codeDiscount = Math.max(
+    0,
+    cartDiscount - appliedPromotions.reduce((sum, p) => sum + (p.amount || 0), 0),
+  );
+  // Shipping is added in the platform checkout (needs an address).
+  const grandTotal =
+    typeof cart?.total === "number" && cart.total > 0
+      ? cart.total
+      : Math.max(0, subtotal - cartDiscount);
 
   return (
     <section
@@ -242,6 +257,30 @@ export default function BzCart({ instance, sectionId }: SectionRenderProps) {
                     {localized(locale, " more for free shipping", " كمان للحصول على شحن مجاني")}
                   </p>
                 )}
+                {appliedPromotions.map((promo) => (
+                  <div
+                    key={promo.id}
+                    className="flex justify-between text-[var(--bz-amber)]"
+                  >
+                    <span>
+                      {(locale?.startsWith("ar") && promo.title_ar) || promo.title}
+                    </span>
+                    <span className="font-bold">
+                      −<Money amount={promo.amount} currency={currency} />
+                    </span>
+                  </div>
+                ))}
+                {codeDiscount > 0 && (
+                  <div className="flex justify-between text-[var(--bz-amber)]">
+                    <span>
+                      {cart?.discount_code ||
+                        localized(locale, "Discount", "خصم")}
+                    </span>
+                    <span className="font-bold">
+                      −<Money amount={codeDiscount} currency={currency} />
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between pt-3 border-t border-[var(--bz-dark)]/10">
                   <span className="bz-heading text-base text-[var(--bz-dark)]">
                     {totalLabel}
@@ -251,6 +290,7 @@ export default function BzCart({ instance, sectionId }: SectionRenderProps) {
                   </span>
                 </div>
               </div>
+              <CouponBox />
               <Link
                 to="/checkout"
                 className="bz-btn bz-btn-filled w-full rounded-full mt-6 py-3.5 text-center text-xs flex items-center justify-center gap-2"

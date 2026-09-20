@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Lock, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { asNumber, asString, localized, productHref, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
+import { CouponBox } from "./_coupon-box";
 
 /**
  * gilded-cart — faithful V3 port of the V2 GildedCartPage
@@ -167,7 +168,22 @@ export default function GildedCart({ instance, sectionId }: SectionRenderProps) 
   const freeShipEarned = freeThreshold > 0 && subtotal >= freeThreshold;
   // Shipping is added in the platform checkout (needs an address); the cart
   // total reflects the items subtotal so we never show a fabricated figure.
-  const grandTotal = subtotal;
+  // Offers-v2: the engine prices the cart server-side, so this summary reads
+  // ITS numbers instead of re-deriving them. `grandTotal = subtotal` showed an
+  // undiscounted price to a shopper whose cart had already qualified for an
+  // offer, and checkout then charged something else.
+  const appliedPromotions = cart?.applied_promotions ?? [];
+  const cartDiscount = cart?.discount_amount ?? 0;
+  // The named rows below cover the automatic offers; whatever is left of the
+  // total discount is the pinned code's own share.
+  const codeDiscount = Math.max(
+    0,
+    cartDiscount - appliedPromotions.reduce((sum, p) => sum + (p.amount || 0), 0),
+  );
+  const grandTotal =
+    typeof cart?.total === "number" && cart.total > 0
+      ? cart.total
+      : Math.max(0, subtotal - cartDiscount);
 
   return (
     <section className="min-h-screen bg-background" data-gilded-section={sectionId}>
@@ -338,6 +354,18 @@ export default function GildedCart({ instance, sectionId }: SectionRenderProps) 
                     </span>
                   )}
                 </div>
+                {appliedPromotions.map((promo) => (
+                  <div key={promo.id} className="flex justify-between opacity-80">
+                    <span>{(locale?.startsWith("ar") && promo.title_ar) || promo.title}</span>
+                    <span>−<Money amount={promo.amount} currency={currency} /></span>
+                  </div>
+                ))}
+                {codeDiscount > 0 && (
+                  <div className="flex justify-between opacity-80">
+                    <span>{cart?.discount_code || localized(locale, "Discount", "خصم")}</span>
+                    <span>−<Money amount={codeDiscount} currency={currency} /></span>
+                  </div>
+                )}
                 <div className="flex justify-between font-bold text-base pt-4 border-t border-border">
                   <span className="tracking-[0.1em] uppercase">
                     <InlineEditable
@@ -351,6 +379,7 @@ export default function GildedCart({ instance, sectionId }: SectionRenderProps) 
                   </span>
                 </div>
               </div>
+              <CouponBox />
               <Link
                 to="/checkout"
                 className="gld-btn mt-6 w-full py-3.5 text-xs tracking-[0.2em] flex items-center justify-center gap-2"

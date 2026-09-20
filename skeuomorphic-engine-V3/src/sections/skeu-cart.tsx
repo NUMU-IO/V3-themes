@@ -16,6 +16,7 @@ import {
 import { ArrowRight, Check, Minus, Plus, ShoppingBag, Tag, Truck, X } from "lucide-react";
 import { asNumber, asString, localized, productCurrency, productImage, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
+import { CouponBox } from "./_coupon-box";
 import { bestCartNudge, useActivePromotions } from "./_promotions";
 
 /**
@@ -186,7 +187,22 @@ export default function WarshaCart({ instance, sectionId }: SectionRenderProps) 
     : cart?.subtotal ?? 0;
   const freeShipEarned = freeThreshold > 0 && subtotal >= freeThreshold;
   const remainingForFree = freeThreshold > 0 ? Math.max(freeThreshold - subtotal, 0) : 0;
-  const grandTotal = subtotal;
+  // Offers-v2: the engine prices the cart server-side, so this summary reads
+  // ITS numbers instead of re-deriving them. `grandTotal = subtotal` showed an
+  // undiscounted price to a shopper whose cart had already qualified for an
+  // offer, and checkout then charged something else.
+  const appliedPromotions = cart?.applied_promotions ?? [];
+  const cartDiscount = cart?.discount_amount ?? 0;
+  // The named rows below cover the automatic offers; whatever is left of the
+  // total discount is the pinned code's own share.
+  const codeDiscount = Math.max(
+    0,
+    cartDiscount - appliedPromotions.reduce((sum, p) => sum + (p.amount || 0), 0),
+  );
+  const grandTotal =
+    typeof cart?.total === "number" && cart.total > 0
+      ? cart.total
+      : Math.max(0, subtotal - cartDiscount);
   // A3 — best offer nudge from the store's auto-discount promotions. Skips
   // free-shipping-kind rules when the theme's own bar (A1) already tells that
   // story, so the customer never reads the same promise twice.
@@ -389,6 +405,18 @@ export default function WarshaCart({ instance, sectionId }: SectionRenderProps) 
                 {/* The "add X more" nudge moved to the progress bar at the top
                     of the cart (A1) — keeping it here too would say the same
                     thing twice on one screen. */}
+                {appliedPromotions.map((promo) => (
+                  <div key={promo.id} className="flex justify-between text-[var(--vn-accent)]">
+                    <span>{(locale?.startsWith("ar") && promo.title_ar) || promo.title}</span>
+                    <span>−<Money amount={promo.amount} currency={currency} /></span>
+                  </div>
+                ))}
+                {codeDiscount > 0 && (
+                  <div className="flex justify-between text-[var(--vn-accent)]">
+                    <span>{cart?.discount_code || localized(locale, "Discount", "خصم")}</span>
+                    <span>−<Money amount={codeDiscount} currency={currency} /></span>
+                  </div>
+                )}
                 <div className="flex justify-between items-baseline pt-4 mt-1 border-t border-[var(--vn-border)]">
                   <span className="vn-heading text-base text-[var(--vn-ink)]">{totalLabel}</span>
                   <span className="vn-heading text-xl text-[var(--vn-ink)]">
@@ -397,6 +425,7 @@ export default function WarshaCart({ instance, sectionId }: SectionRenderProps) 
                 </div>
               </div>
 
+              <CouponBox />
               <Link
                 to="/checkout"
                 className="vn-btn vn-btn-filled w-full mt-6 flex items-center justify-center gap-2"

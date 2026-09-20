@@ -10,6 +10,7 @@ import {
 } from "@numueg/theme-sdk";
 import { asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
+import { CouponBox } from "./_coupon-box";
 
 /**
  * by-cart — the cart template's body. Handles both the empty state
@@ -156,6 +157,21 @@ export default function ByCart({ instance, sectionId }: SectionRenderProps) {
 
   const subtotal = cart?.subtotal ?? 0;
   const currency = cart?.currency ?? "EGP";
+  // Offers-v2: the engine prices the cart server-side. This summary showed
+  // the subtotal alone, so a shopper whose cart had already qualified for an
+  // offer saw no sign of it here and a different number at checkout.
+  const appliedPromotions = cart?.applied_promotions ?? [];
+  const cartDiscount = cart?.discount_amount ?? 0;
+  // The named rows below cover the automatic offers; whatever is left of the
+  // total discount is the pinned code's own share.
+  const codeDiscount = Math.max(
+    0,
+    cartDiscount - appliedPromotions.reduce((sum, p) => sum + (p.amount || 0), 0),
+  );
+  const grandTotal =
+    typeof cart?.total === "number" && cart.total > 0
+      ? cart.total
+      : Math.max(0, subtotal - cartDiscount);
 
   return (
     <section
@@ -265,6 +281,59 @@ export default function ByCart({ instance, sectionId }: SectionRenderProps) {
             {subtotal} {currency}
           </span>
         </div>
+        {(appliedPromotions.length > 0 || codeDiscount > 0) && (
+          <div
+            style={{
+              marginTop: "0.5rem",
+              padding: "0.75rem 1.25rem",
+              background: "white",
+              borderRadius: 12,
+              fontSize: "0.9rem",
+            }}
+          >
+            {appliedPromotions.map((promo) => (
+              <div
+                key={promo.id}
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
+                <span>
+                  {(locale?.startsWith("ar") && promo.title_ar) || promo.title}
+                </span>
+                <span>
+                  {"−"}
+                  {promo.amount} {currency}
+                </span>
+              </div>
+            ))}
+            {codeDiscount > 0 && (
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>
+                  {cart?.discount_code || localized(locale, "Discount", "خصم")}
+                </span>
+                <span>
+                  {"−"}
+                  {codeDiscount} {currency}
+                </span>
+              </div>
+            )}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "0.5rem",
+                paddingTop: "0.5rem",
+                borderTop: "1px solid rgba(0,0,0,0.1)",
+                fontWeight: 600,
+              }}
+            >
+              <span>{t("cart.total", "Total")}</span>
+              <span>
+                {grandTotal} {currency}
+              </span>
+            </div>
+          </div>
+        )}
+        <CouponBox />
         <Link
           to="/checkout"
           style={{
