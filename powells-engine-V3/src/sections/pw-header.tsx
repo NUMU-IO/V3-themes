@@ -181,6 +181,12 @@ export default function PwHeader({ instance }: SectionRenderProps) {
         : [];
   const scroll = asBool(s.announcement_scroll, true);
   const loopSeconds = asNumber(s.announcement_speed, 35);
+  const tickerMessages = messages.length
+    ? Array.from({ length: Math.max(4, messages.length) }, (_, i) => ({
+        ...messages[i % messages.length],
+        hidden: i >= messages.length,
+      }))
+    : [];
 
   const blockLinks: NavLink[] = readBlockNodes(instance, "nav_item").map((b) => {
     const columns = readBlockNodes(b, "mega_column")
@@ -432,14 +438,14 @@ export default function PwHeader({ instance }: SectionRenderProps) {
           {scroll ? (
             <div className="pw-announce-track">
               <ul className="pw-announce-group" aria-label={t("announce.label", "Announcements")}>
-                {messages.map((m, i) => (
-                  <li key={i}>
+                {tickerMessages.map((m, i) => (
+                  <li key={i} aria-hidden={m.hidden || undefined}>
                     <MessageText {...m} />
                   </li>
                 ))}
               </ul>
               <ul className="pw-announce-group" aria-hidden="true">
-                {messages.map((m, i) => (
+                {tickerMessages.map((m, i) => (
                   <li key={i}>
                     <MessageText {...m} hidden />
                   </li>
