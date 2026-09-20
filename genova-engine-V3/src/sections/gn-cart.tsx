@@ -184,33 +184,23 @@ export default function GnCart({ instance }: SectionRenderProps) {
               onSubmit={async (e) => {
                 e.preventDefault();
                 if (!code.trim() || showSample) return;
-                const before = cart?.discount_amount ?? 0;
-                const res = (await applyDiscount(code.trim())) as
-                  | { success?: boolean; discount_amount?: number; code_discount_cents?: number }
-                  | undefined;
-
-                // H6: treating "not an explicit failure" as success told
-                // shoppers a code had applied when it had not — including for
-                // a code the backend rejected with a 400. Measured: a bogus
-                // code rendered "Code applied", and a real code applied from
-                // this page reported success, discounted nothing, and did not
-                // survive into checkout.
-                //
-                // Only claim success when the money actually moved. Anything
-                // else says so plainly and points at checkout, which is where
-                // the same code demonstrably does work.
-                const explicitFailure = res?.success === false;
-                const moved =
-                  (res?.code_discount_cents ?? 0) > 0 ||
-                  (res?.discount_amount ?? 0) > before;
-
+                // H6, second pass. The previous fix tested fields the SDK
+                // has never returned (`success`, `code_discount_cents`), so
+                // "the money moved" was never true and a perfectly valid
+                // code always reported failure. `ok` is the write's own
+                // verdict — the backend validates the code against the
+                // promotion engine before pinning it — and `message` is its
+                // reason, which is what the shopper actually needs.
+                const res = await applyDiscount(code.trim());
+                if (res?.ok) setCode("");
                 setCodeNote(
-                  explicitFailure || !moved
-                    ? t(
-                        "cart.coupon_not_applied",
-                        "We couldn’t apply that here — try it at checkout.",
-                      )
-                    : t("cart.coupon_ok", "Code applied"),
+                  res?.ok
+                    ? t("cart.coupon_ok", "Code applied")
+                    : res?.message ||
+                        t(
+                          "cart.coupon_not_applied",
+                          "We couldn’t apply that code to this cart.",
+                        ),
                 );
               }}
             >

@@ -16,6 +16,7 @@ import {
 import { ArrowRight, Check, Copy, Minus, Plus, ShoppingBag, Tag, Truck, X } from "lucide-react";
 import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps, useStoreProducts, productHref } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
+import { CouponBox } from "./_coupon-box";
 import { cartNudges, promoPagePath, useActivePromotions, visibleCodeOffers, type VisibleCodeOffer } from "./_promotions";
 import { QuickAddBar } from "./_quick-add";
 import { QuickPreviewButton } from "./_quick-preview";
@@ -526,6 +527,7 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
                 </div>
               </div>
 
+              <CouponBox />
               <Link
                 to="/checkout"
                 className="vn-btn vn-btn-filled w-full mt-6 flex items-center justify-center gap-2"
