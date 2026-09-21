@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { VariantPicker, useInstalledApp, Link, Money, useListingHeading, useLocale, useProducts, type Product } from "@numueg/theme-sdk";
-import { Search, Grid3X3, LayoutList, ArrowLeft, X } from "lucide-react";
+import { Search, Grid3X3, LayoutList, ArrowRight, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
@@ -92,7 +92,7 @@ export default function BoutiqueProductsPage({ instance }: SectionRenderProps) {
           <Link to="/" className="hover:text-foreground transition-colors">
             {localized(locale, "Home", "الرئيسية")}
           </Link>
-          <ArrowLeft size={10} className="rtl:rotate-180" />
+          <ArrowRight size={10} className="rtl:rotate-180" />
           <span className="text-foreground">{category ?? (listing.isCollection ? listing.title : localized(locale, "Shop", "المتجر"))}</span>
         </div>
 

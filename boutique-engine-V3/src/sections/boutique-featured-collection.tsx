@@ -1,6 +1,6 @@
 "use client";
 import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
@@ -117,7 +117,7 @@ const BoutiqueFeaturedCollection = ({ instance }: SectionRenderProps) => {
                 to={viewAllLink}
                 className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors border-b border-primary/30 hover:border-primary/60 pb-0.5"
               >
-                {viewAllText} <ArrowLeft size={14} />
+                {viewAllText} <ArrowRight size={14} className="rtl:rotate-180" />
               </Link>
             </div>
           </>
