@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Link, useLocale } from "@numueg/theme-sdk";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const ElegantPromoBanner = ({ instance }: SectionRenderProps) => {
@@ -71,7 +71,7 @@ const ElegantPromoBanner = ({ instance }: SectionRenderProps) => {
                 }}
               >
                 {ctaText}
-                <ArrowLeft size={15} />
+                <ArrowRight size={15} className="rtl:rotate-180" />
               </Link>
             </div>
 
