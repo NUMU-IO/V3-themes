@@ -253,7 +253,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
               isTall ? "p-8 md:p-14 md:min-h-[22rem]" : "p-6 md:p-10"
             }`}
           >
-            <div className="flex-1 text-center md:text-right">{copy}</div>
+            <div className="flex-1 text-center md:text-start">{copy}</div>
             <div
               className={`relative rounded-2xl overflow-hidden shadow-lg shrink-0 ${
                 isTall
