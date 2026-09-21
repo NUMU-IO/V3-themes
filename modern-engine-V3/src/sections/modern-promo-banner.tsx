@@ -60,7 +60,7 @@ const ModernPromoBanner = ({ instance }: SectionRenderProps) => {
 
           <div className="flex flex-col md:flex-row items-center gap-8 p-8 md:p-12">
             {/* Text content */}
-            <div className="flex-1 text-center md:text-right">
+            <div className="flex-1 text-center md:text-start">
               {badge && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] text-xs font-bold mb-4">
                   <Sparkles size={12} />
@@ -70,7 +70,7 @@ const ModernPromoBanner = ({ instance }: SectionRenderProps) => {
               <h3 className="text-2xl md:text-3xl font-black text-[hsl(var(--foreground))] mb-3 leading-tight">
                 {headline}
               </h3>
-              <p className="text-[hsl(var(--muted-foreground))] text-sm mb-6 max-w-md md:mr-0 mx-auto">
+              <p className="text-[hsl(var(--muted-foreground))] text-sm mb-6 max-w-md md:ms-0 mx-auto">
                 {subtitle}
               </p>
               <Link

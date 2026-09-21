@@ -68,7 +68,7 @@ const ModernTestimonials = ({ instance }: SectionRenderProps) => {
               {/* Decorative quote icon */}
               <Quote
                 size={28}
-                className="absolute top-4 left-4 text-[hsl(var(--primary)/0.1)]"
+                className="absolute top-4 end-4 text-[hsl(var(--primary)/0.1)]"
               />
 
               {/* Stars */}

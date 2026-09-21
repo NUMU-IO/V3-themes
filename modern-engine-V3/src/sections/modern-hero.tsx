@@ -91,7 +91,7 @@ const ModernHero = ({ instance }: SectionRenderProps) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="text-center md:text-right"
+            className="text-center md:text-start"
           >
             {badge && (
               <motion.span
@@ -174,8 +174,8 @@ const ModernHero = ({ instance }: SectionRenderProps) => {
       </div>
 
       {/* Decorative blurs */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-32 -start-32 w-96 h-96 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -end-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
     </section>
   );
 };
