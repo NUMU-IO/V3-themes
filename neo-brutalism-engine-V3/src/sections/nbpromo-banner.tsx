@@ -1,6 +1,6 @@
 "use client";
 import { Link, useLocale } from "@numueg/theme-sdk";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const NBPromoBanner = ({ instance }: SectionRenderProps) => {
@@ -36,7 +36,7 @@ const NBPromoBanner = ({ instance }: SectionRenderProps) => {
                 to={ctaLink}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-lg nb-btn-accent text-sm"
               >
-                {ctaText} <ArrowLeft size={16} />
+                {ctaText} <ArrowRight size={16} className="rtl:rotate-180" />
               </Link>
             </div>
             {imageUrl && (

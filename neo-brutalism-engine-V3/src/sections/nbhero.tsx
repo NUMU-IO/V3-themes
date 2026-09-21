@@ -1,7 +1,7 @@
 "use client";
 import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 const NBHero = ({ instance }: SectionRenderProps) => {
@@ -61,7 +61,7 @@ const NBHero = ({ instance }: SectionRenderProps) => {
                 to={ctaLink}
                 className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg nb-btn text-sm"
               >
-                {ctaText} <ArrowLeft size={18} />
+                {ctaText} <ArrowRight size={18} className="rtl:rotate-180" />
               </Link>
               {secondaryText && (
                 <Link

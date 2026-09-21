@@ -1,6 +1,6 @@
 "use client";
 import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { asNumber, asString, asArray, localized, type SectionRenderProps } from "./_shared";
 
@@ -72,7 +72,7 @@ const NBFeaturedCollection = ({ instance }: SectionRenderProps) => {
             to={viewAllLink}
             className="text-sm font-black flex items-center gap-1 nb-chip px-4 py-2 rounded-lg"
           >
-            {viewAllText} <ArrowLeft size={14} />
+            {viewAllText} <ArrowRight size={14} className="rtl:rotate-180" />
           </Link>
         </div>
 
