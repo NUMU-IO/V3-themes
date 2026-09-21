@@ -109,7 +109,7 @@ export default function GnFitGuide({ instance }: SectionRenderProps) {
                 {fit.link && (
                   <Link to={fit.link} className="gn-fitcard-cta">
                     {t("fit.shop_this", "Shop this fit")}
-                    <IconArrowRight size={14} />
+                    <IconArrowRight size={14} className="gn-flip-rtl" />
                   </Link>
                 )}
               </div>

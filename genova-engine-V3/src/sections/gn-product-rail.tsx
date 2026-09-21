@@ -70,7 +70,7 @@ export default function GnProductRail({ instance }: SectionRenderProps) {
           {viewAll && (
             <Link to={viewAll} className="gn-textlink">
               {t("general.view_all", "View all")}
-              <IconChevronRight size={14} />
+              <IconChevronRight size={14} className="gn-flip-rtl" />
             </Link>
           )}
           {asBool(s.show_arrows, true) && items.length > perView && (
