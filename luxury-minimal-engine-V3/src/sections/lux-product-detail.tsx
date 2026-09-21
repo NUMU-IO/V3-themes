@@ -158,11 +158,11 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
           <Link to="/" className="hover:text-foreground transition-colors">
             <InlineEditable sectionId={sectionId} settingKey="breadcrumb_home" value={breadcrumbHome} />
           </Link>
-          <ArrowRight size={10} aria-hidden="true" />
+          <ArrowRight size={10} className="rtl:rotate-180" aria-hidden="true" />
           <Link to="/products" className="hover:text-foreground transition-colors">
             <InlineEditable sectionId={sectionId} settingKey="breadcrumb_shop" value={breadcrumbShop} />
           </Link>
-          <ArrowRight size={10} aria-hidden="true" />
+          <ArrowRight size={10} className="rtl:rotate-180" aria-hidden="true" />
           <span className="text-foreground line-clamp-1">
             {product.name}
           </span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import {
   applyImageTransform,
   asImageTransform,
@@ -20,7 +20,7 @@ import { InlineEditable } from "./_inline-editable";
  * on desktop, with a ShoppingBag fallback over a muted box) and centered/
  * right-aligned content on the RIGHT — a 10px/0.3em eyebrow badge, a light
  * tracking-tight headline, a muted subtitle, and a solid-black CTA with a
- * trailing ArrowLeft. All V2 className strings kept VERBATIM. Engine-wired:
+ * trailing ArrowRight. All V2 className strings kept VERBATIM. Engine-wired:
  * useResolvedSettings (so global tokens + dynamic sources resolve) and
  * InlineEditable on every editable text node.
  */
@@ -90,7 +90,7 @@ export default function LuxPromoBanner({ instance, sectionId }: SectionRenderPro
                   className="inline-flex items-center gap-2 px-8 py-3 bg-foreground text-background text-xs uppercase tracking-[0.2em] font-medium hover:opacity-80 transition-opacity"
                 >
                   <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
-                  <ArrowLeft size={12} aria-hidden="true" className="rtl:-scale-x-100" />
+                  <ArrowRight size={12} aria-hidden="true" className="rtl:-scale-x-100" />
                 </Link>
               </div>
             </div>
