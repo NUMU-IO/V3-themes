@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Link, useLocale } from "@numueg/theme-sdk";
-import { ArrowLeft, ShoppingBag, Sparkles } from "lucide-react";
+import { ArrowRight, ShoppingBag, Sparkles } from "lucide-react";
 import {
   applyImageTransform,
   asImageTransform,
@@ -78,7 +78,7 @@ const ModernPromoBanner = ({ instance }: SectionRenderProps) => {
                 className="inline-flex items-center gap-2 px-7 py-3 rounded-2xl store-gradient text-white font-bold text-sm hover:opacity-90 transition-all duration-200 shadow-lg shadow-[hsl(var(--primary)/0.25)]"
               >
                 {ctaText}
-                <ArrowLeft size={16} />
+                <ArrowRight size={16} className="rtl:rotate-180" />
               </Link>
             </div>
 

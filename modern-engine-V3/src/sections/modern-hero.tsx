@@ -1,7 +1,7 @@
 "use client";
 import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import {
   asImageTransform,
   localized,
@@ -133,7 +133,7 @@ const ModernHero = ({ instance }: SectionRenderProps) => {
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl store-gradient text-white font-bold text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 {ctaText}
-                <ArrowLeft size={18} />
+                <ArrowRight size={18} className="rtl:rotate-180" />
               </Link>
               {secondaryText && (
                 <Link
