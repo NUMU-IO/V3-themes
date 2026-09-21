@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Link, useCart, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { multibuyHeadline, multibuyOffers, promoPagePath, useActivePromotions } from "./_promotions";
@@ -182,7 +182,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
         className={`vn-btn ${isWide ? "vn-btn-outline-light" : "vn-btn-filled shadow-md"}`}
       >
         <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
-        <ArrowLeft size={16} className="rtl:rotate-180" />
+        <ArrowRight size={16} className="rtl:rotate-180" />
       </Link>
     </>
   );
