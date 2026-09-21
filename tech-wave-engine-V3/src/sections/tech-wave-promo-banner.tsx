@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Link, useLocale } from "@numueg/theme-sdk";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
@@ -54,7 +54,7 @@ const TechWavePromoBanner = ({ instance }: SectionRenderProps) => {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl tw-neon-btn text-sm relative z-[1]"
               >
                 {ctaText}
-                <ArrowLeft size={16} />
+                <ArrowRight size={16} className="rtl:rotate-180" />
               </Link>
             </div>
             <div className="relative w-48 h-48 md:w-56 md:h-56 tw-img-frame rounded-xl overflow-hidden shrink-0">
