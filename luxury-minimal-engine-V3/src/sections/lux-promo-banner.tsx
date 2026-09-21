@@ -67,7 +67,7 @@ export default function LuxPromoBanner({ instance, sectionId }: SectionRenderPro
               )}
             </div>
             {/* Content */}
-            <div className="flex-1 flex flex-col justify-center p-8 md:p-12 text-center md:text-right">
+            <div className="flex-1 flex flex-col justify-center p-8 md:p-12 text-center md:text-end">
               {badge && (
                 <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-4 block">
                   <InlineEditable sectionId={sectionId} settingKey="badge_text" value={badge} />

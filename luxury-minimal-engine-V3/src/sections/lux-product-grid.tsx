@@ -364,7 +364,7 @@ function LuxProductCard({
         )}
 
         {/* Desktop quick-add — slide-up hover bar (V2 `py-3 lux-btn`). */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 translate-y-full group-hover:translate-y-0 transition-all duration-300 hidden md:block">
+        <div className="absolute bottom-0 inset-x-0 p-4 opacity-0 group-hover:opacity-100 translate-y-full group-hover:translate-y-0 transition-all duration-300 hidden md:block">
           <AddToCartButton
             product={product}
             className="w-full py-3 lux-btn"

@@ -118,7 +118,7 @@ export default function LuxOrderConfirmation({ instance, sectionId }: SectionRen
       </h1>
 
       {/* Order detail card */}
-      <div className="border border-border p-6 mb-8 text-right">
+      <div className="border border-border p-6 mb-8 text-start">
         {/* Order number */}
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs text-muted-foreground">
