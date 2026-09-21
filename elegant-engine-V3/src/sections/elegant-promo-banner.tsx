@@ -27,14 +27,14 @@ const ElegantPromoBanner = ({ instance }: SectionRenderProps) => {
         >
           {/* Decorative corner accents */}
           <div
-            className="absolute top-0 left-0 w-24 h-24 opacity-10 pointer-events-none"
+            className="absolute top-0 start-0 w-24 h-24 opacity-10 pointer-events-none rtl:-scale-x-100"
             style={{
               background:
                 "radial-gradient(circle at top left, hsl(30 50% 30%), transparent 70%)",
             }}
           />
           <div
-            className="absolute bottom-0 right-0 w-24 h-24 opacity-10 pointer-events-none"
+            className="absolute bottom-0 end-0 w-24 h-24 opacity-10 pointer-events-none rtl:-scale-x-100"
             style={{
               background:
                 "radial-gradient(circle at bottom right, hsl(30 50% 30%), transparent 70%)",
@@ -43,7 +43,7 @@ const ElegantPromoBanner = ({ instance }: SectionRenderProps) => {
 
           <div className="flex flex-col md:flex-row items-center gap-8 p-8 md:p-12">
             {/* Text content */}
-            <div className="flex-1 text-center md:text-right">
+            <div className="flex-1 text-center md:text-start">
               {badge && (
                 <span
                   className="inline-block px-4 py-1 rounded-sm text-xs font-semibold tracking-wide uppercase mb-4 border"
@@ -59,7 +59,7 @@ const ElegantPromoBanner = ({ instance }: SectionRenderProps) => {
               <h3 className="text-2xl md:text-3xl font-bold mb-3 text-foreground leading-tight">
                 {headline}
               </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-md md:mr-0 mx-auto">
+              <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-md md:ms-0 mx-auto">
                 {subtitle}
               </p>
               <Link

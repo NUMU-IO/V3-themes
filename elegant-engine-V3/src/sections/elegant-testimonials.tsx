@@ -67,7 +67,7 @@ const ElegantTestimonials = ({ instance }: SectionRenderProps) => {
               {/* Decorative quote icon */}
               <Quote
                 size={28}
-                className="absolute top-4 left-4 opacity-[0.08]"
+                className="absolute top-4 end-4 opacity-[0.08]"
                 style={{ color: "hsl(30 50% 30%)" }}
               />
 
