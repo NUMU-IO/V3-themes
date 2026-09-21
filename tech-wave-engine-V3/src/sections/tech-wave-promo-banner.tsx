@@ -37,7 +37,7 @@ const TechWavePromoBanner = ({ instance }: SectionRenderProps) => {
           style={{ boxShadow: "0 0 20px hsl(195 100% 50% / 0.08)" }}
         >
           <div className="flex flex-col md:flex-row items-center gap-6 p-6 md:p-10">
-            <div className="flex-1 text-center md:text-right">
+            <div className="flex-1 text-center md:text-start">
               {badge && (
                 <span className="tw-badge-accent px-3 py-1 rounded-lg text-xs font-bold mb-3 inline-block">
                   {badge}
