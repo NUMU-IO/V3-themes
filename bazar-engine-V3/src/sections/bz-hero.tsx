@@ -182,7 +182,7 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
             {content}
           </div>
           {showWave && (
-            <svg viewBox="0 0 1440 80" className="absolute bottom-0 left-0 w-full pointer-events-none" preserveAspectRatio="none" aria-hidden="true">
+            <svg viewBox="0 0 1440 80" className="absolute bottom-0 start-0 w-full pointer-events-none" preserveAspectRatio="none" aria-hidden="true">
               <path d="M0,80 C300,20 600,60 900,30 C1100,10 1300,50 1440,25 L1440,80 Z" fill="var(--bz-navy)" />
             </svg>
           )}
