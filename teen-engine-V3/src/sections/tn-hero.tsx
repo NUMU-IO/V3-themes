@@ -107,7 +107,7 @@ export default function TnHero({ instance }: SectionRenderProps) {
           {ctaText ? (
             <Link to={ctaLink} className="tn-btn tn-btn-dark tn-hero-cta">
               {ctaText}
-              <IconArrowUpRight size={16} />
+              <IconArrowUpRight size={16} className="tn-flip-rtl" />
             </Link>
           ) : null}
         </div>
