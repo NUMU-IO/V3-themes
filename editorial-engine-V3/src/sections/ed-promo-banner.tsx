@@ -43,7 +43,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
       <div className="container mx-auto px-4">
         <div className="relative rounded-2xl overflow-hidden bg-primary/5 border border-primary/20">
           <div className="flex flex-col md:flex-row items-center gap-6 p-6 md:p-10">
-            <div className="flex-1 text-center md:text-right">
+            <div className="flex-1 text-center md:text-start">
               {badge && (
                 <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-3">
                   <InlineEditable sectionId={sectionId} settingKey="badge_text" value={badge} />

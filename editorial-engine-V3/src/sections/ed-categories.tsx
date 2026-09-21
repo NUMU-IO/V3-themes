@@ -59,7 +59,7 @@ export default function EdCategories({ instance, sectionId }: SectionRenderProps
                     <div className="w-full h-full bg-[hsl(var(--ed-green))]" />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <div className="absolute bottom-0 inset-x-0 p-5">
                     <span className="text-white font-black text-xl uppercase">
                       {cat.name}
                     </span>
