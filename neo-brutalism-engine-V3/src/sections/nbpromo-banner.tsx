@@ -20,7 +20,7 @@ const NBPromoBanner = ({ instance }: SectionRenderProps) => {
       <div className="container mx-auto px-4">
         <div className="nb-card rounded-xl overflow-hidden relative">
           <div className="flex flex-col md:flex-row items-center gap-6 p-6 md:p-10">
-            <div className="flex-1 text-center md:text-right">
+            <div className="flex-1 text-center md:text-start">
               {badge && (
                 <span className="nb-badge-pink px-3 py-1 rounded text-xs inline-block mb-3">
                   {badge}
@@ -52,7 +52,7 @@ const NBPromoBanner = ({ instance }: SectionRenderProps) => {
           </div>
           {/* Diagonal banner */}
           {diagonalText && (
-            <div className="absolute -bottom-2 -left-4 -right-4 nb-diagonal-banner py-2 text-center text-sm">
+            <div className="absolute -bottom-2 -inset-x-4 nb-diagonal-banner py-2 text-center text-sm">
               {diagonalText}
             </div>
           )}

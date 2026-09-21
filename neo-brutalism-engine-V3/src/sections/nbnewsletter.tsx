@@ -36,6 +36,9 @@ const NBNewsletter = ({ instance }: SectionRenderProps) => {
             </div>
           ) : (
             <div className="flex gap-0">
+              {/* No logical start radius here: dir="ltr" pins the input's own start
+                  to its left edge in every locale, so the page-direction flip is
+                  spelled out with rtl variants instead. */}
               <input
                 type="email"
                 value={email}
@@ -45,12 +48,12 @@ const NBNewsletter = ({ instance }: SectionRenderProps) => {
                 }}
                 placeholder={placeholder}
                 dir="ltr"
-                className="flex-1 h-12 px-4 rounded-r-lg text-sm nb-input"
+                className="flex-1 h-12 px-4 rounded-l-lg rtl:rounded-l-none rtl:rounded-r-lg text-sm nb-input"
               />
               <button
                 type="button"
                 onClick={() => handleSubmit()}
-                className="px-6 h-12 rounded-l-lg nb-btn text-sm -mr-[3px]"
+                className="px-6 h-12 rounded-e-lg nb-btn text-sm -ms-[3px]"
               >
                 {buttonText}
               </button>

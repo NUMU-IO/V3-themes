@@ -146,7 +146,7 @@ export function NBProductCard({ product }: { product: Product }) {
             <div className="absolute inset-0 vn-shimmer" />
           )}
           {/* Badges */}
-          <div className="absolute top-2 right-2 flex flex-col gap-1">
+          <div className="absolute top-2 start-2 flex flex-col gap-1">
             {hasDiscount && (
               <span className="nb-badge-pink px-2 py-0.5 text-[10px] rounded">
                 {localized(locale, `${discountPercent}% off`, `خصم ${discountPercent}%`)}
