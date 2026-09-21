@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
@@ -57,7 +57,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
               </p>
               <Link to={ctaLink} className="vn-btn vn-btn-filled shadow-md">
                 <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
-                <ArrowLeft size={16} className="rtl:rotate-180" />
+                <ArrowRight size={16} className="rtl:rotate-180" />
               </Link>
             </div>
             <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl overflow-hidden shadow-lg shrink-0">
