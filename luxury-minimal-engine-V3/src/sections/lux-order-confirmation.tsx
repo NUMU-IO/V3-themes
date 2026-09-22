@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Link, useLocale, useOrders, useResolvedSettings } from "@numueg/theme-sdk";
-import { ArrowLeft, Check, Copy, Package, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, Copy, Package, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   asBool,
@@ -23,7 +23,7 @@ import { InlineEditable } from "./_inline-editable";
  * (opacity 0→1, duration 0.8), a 10px/0.3em eyebrow ("Thank you for your
  * order"), an uppercase `lux-heading` title, a hairline-bordered order card
  * (mono order # + copy button, lux-separator, date + status rows), and a solid
- * `lux-btn` continue-shopping CTA with a trailing ArrowLeft. All V2 className
+ * `lux-btn` continue-shopping CTA with a trailing ArrowRight. All V2 className
  * strings kept verbatim. Engine-wired: useResolvedSettings + InlineEditable on
  * every static text node.
  *
@@ -118,7 +118,7 @@ export default function LuxOrderConfirmation({ instance, sectionId }: SectionRen
       </h1>
 
       {/* Order detail card */}
-      <div className="border border-border p-6 mb-8 text-right">
+      <div className="border border-border p-6 mb-8 text-start">
         {/* Order number */}
         <div className="flex items-center justify-between mb-3">
           <p className="text-xs text-muted-foreground">
@@ -220,7 +220,7 @@ export default function LuxOrderConfirmation({ instance, sectionId }: SectionRen
         )}
         <Link to={ctaLink} className="inline-flex items-center gap-2 lux-btn justify-center">
           <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
-          <ArrowLeft size={12} aria-hidden="true" className="rtl:-scale-x-100" />
+          <ArrowRight size={12} aria-hidden="true" className="rtl:-scale-x-100" />
         </Link>
       </div>
     </div>

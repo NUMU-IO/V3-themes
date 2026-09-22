@@ -1,7 +1,7 @@
 "use client";
 import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { ArrowLeft, Truck, ShieldCheck, CreditCard } from "lucide-react";
+import { ArrowRight, Truck, ShieldCheck, CreditCard } from "lucide-react";
 import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
@@ -73,7 +73,7 @@ const TechWaveHero = ({ instance }: SectionRenderProps) => {
                   className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl tw-neon-btn text-sm relative z-[1]"
                 >
                   {ctaText}
-                  <ArrowLeft size={18} />
+                  <ArrowRight size={18} className="rtl:rotate-180" />
                 </Link>
                 {secondaryText && (
                   <Link

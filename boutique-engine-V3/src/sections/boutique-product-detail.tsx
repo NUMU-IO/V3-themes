@@ -13,7 +13,7 @@ import {
   VariantPicker,
   useInstalledApp,
 } from "@numueg/theme-sdk";
-import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowLeft } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { asNumber, localized, type SectionRenderProps } from "./_shared";
 
@@ -119,11 +119,11 @@ export default function BoutiqueProductDetail({ instance }: SectionRenderProps) 
           <Link to="/" className="hover:text-foreground transition-colors">
             {localized(locale, "Home", "الرئيسية")}
           </Link>
-          <ArrowLeft size={10} className="rtl:rotate-180" />
+          <ArrowRight size={10} className="rtl:rotate-180" />
           <Link to="/products" className="hover:text-foreground transition-colors">
             {localized(locale, "Shop", "المتجر")}
           </Link>
-          <ArrowLeft size={10} className="rtl:rotate-180" />
+          <ArrowRight size={10} className="rtl:rotate-180" />
           <span className="text-foreground line-clamp-1 normal-case tracking-normal">
             {product.name}
           </span>

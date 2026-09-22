@@ -168,6 +168,12 @@
   font-family: var(--gn-font-arabic);
 }
 
+/* A forward arrow (View all, Shop this fit, Subscribe) points the way the page
+   reads, so it mirrors in RTL. Only the glyph flips; placement is logical. */
+[dir="rtl"] .gn-flip-rtl {
+  transform: scaleX(-1);
+}
+
 [data-genova-v3-app] h1,
 [data-genova-v3-app] h2,
 [data-genova-v3-app] h3,

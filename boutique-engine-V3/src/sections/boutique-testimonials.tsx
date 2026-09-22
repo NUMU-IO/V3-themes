@@ -68,7 +68,7 @@ const BoutiqueTestimonials = ({ instance }: SectionRenderProps) => {
               className="bg-card rounded-[var(--radius)] border border-border p-6 relative group hover:shadow-md transition-shadow duration-300"
             >
               {/* Decorative quote icon */}
-              <div className="absolute top-4 left-4">
+              <div className="absolute top-4 end-4">
                 <Quote
                   size={28}
                   className="opacity-[0.08]"

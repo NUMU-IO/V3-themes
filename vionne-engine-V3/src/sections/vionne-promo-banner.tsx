@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Link, useCart, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { multibuyHeadline, multibuyOffers, promoPagePath, useActivePromotions } from "./_promotions";
@@ -182,7 +182,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
         className={`vn-btn ${isWide ? "vn-btn-outline-light" : "vn-btn-filled shadow-md"}`}
       >
         <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
-        <ArrowLeft size={16} className="rtl:rotate-180" />
+        <ArrowRight size={16} className="rtl:rotate-180" />
       </Link>
     </>
   );
@@ -253,7 +253,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
               isTall ? "p-8 md:p-14 md:min-h-[22rem]" : "p-6 md:p-10"
             }`}
           >
-            <div className="flex-1 text-center md:text-right">{copy}</div>
+            <div className="flex-1 text-center md:text-start">{copy}</div>
             <div
               className={`relative rounded-2xl overflow-hidden shadow-lg shrink-0 ${
                 isTall

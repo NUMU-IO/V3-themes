@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
@@ -43,7 +43,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
       <div className="container mx-auto px-4">
         <div className="relative rounded-2xl overflow-hidden bg-primary/5 border border-primary/20">
           <div className="flex flex-col md:flex-row items-center gap-6 p-6 md:p-10">
-            <div className="flex-1 text-center md:text-right">
+            <div className="flex-1 text-center md:text-start">
               {badge && (
                 <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-3">
                   <InlineEditable sectionId={sectionId} settingKey="badge_text" value={badge} />
@@ -57,7 +57,7 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
               </p>
               <Link to={ctaLink} className="vn-btn vn-btn-filled shadow-md">
                 <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
-                <ArrowLeft size={16} className="rtl:rotate-180" />
+                <ArrowRight size={16} className="rtl:rotate-180" />
               </Link>
             </div>
             <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl overflow-hidden shadow-lg shrink-0">

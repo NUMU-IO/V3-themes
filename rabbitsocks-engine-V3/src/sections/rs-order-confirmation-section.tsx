@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Link, Money, useLocale, useOrders, useResolvedSettings } from "@numueg/theme-sdk";
-import { Check, Copy, Package, ArrowLeft, MessageCircle } from "lucide-react";
+import { Check, Copy, Package, ArrowRight, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -255,7 +255,7 @@ export default function MashkalOrderConfirmationSection({ instance, sectionId }:
                 "py-3 sm:py-3.5 text-xs sm:text-sm rtl:[&>svg]:rotate-180"
               }
             >
-              <InlineEditable sectionId={sectionId} settingKey="continue_shopping_text" value={continueText} /> <ArrowLeft size={14} />
+              <InlineEditable sectionId={sectionId} settingKey="continue_shopping_text" value={continueText} /> <ArrowRight size={14} />
             </Link>
           </div>
         </motion.div>

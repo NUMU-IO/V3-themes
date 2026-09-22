@@ -1,6 +1,6 @@
 "use client";
 import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /**
@@ -69,7 +69,7 @@ const TechWaveFeaturedCollection = ({ instance }: SectionRenderProps) => {
             to={viewAllLink}
             className="text-sm font-bold flex items-center gap-1 tw-chip px-4 py-2 rounded-lg text-[hsl(var(--primary))]"
           >
-            {viewAllText} <ArrowLeft size={14} />
+            {viewAllText} <ArrowRight size={14} className="rtl:rotate-180" />
           </Link>
         </div>
 

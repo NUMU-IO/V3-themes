@@ -8,7 +8,7 @@ import {
   useOrders,
   useResolvedSettings,
 } from "@numueg/theme-sdk";
-import { Check, Copy, Package, ArrowLeft, MessageCircle } from "lucide-react";
+import { Check, Copy, Package, ArrowRight, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { asBool, asString, localized, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -246,7 +246,7 @@ export default function BzOrderConfirmation({
               className="bz-btn bz-btn-filled flex-1 rounded-full inline-flex items-center justify-center gap-2 py-3 sm:py-3.5 text-xs rtl:[&>svg]:rotate-180"
             >
               <InlineEditable sectionId={sectionId} settingKey="continue_shopping_text" value={continueText} />{" "}
-              <ArrowLeft size={14} />
+              <ArrowRight size={14} />
             </Link>
           </div>
         </motion.div>

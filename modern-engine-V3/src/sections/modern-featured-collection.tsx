@@ -1,6 +1,6 @@
 "use client";
 import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { localized, type SectionRenderProps } from "./_shared";
 
 /**
@@ -77,7 +77,7 @@ const ModernFeaturedCollection = ({ instance }: SectionRenderProps) => {
             className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-bold hover:bg-primary/20 transition-colors shrink-0"
           >
             {viewAllText}
-            <ArrowLeft size={14} />
+            <ArrowRight size={14} className="rtl:rotate-180" />
           </Link>
         </div>
 

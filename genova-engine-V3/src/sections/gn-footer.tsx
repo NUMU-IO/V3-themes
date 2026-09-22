@@ -185,7 +185,7 @@ export default function GnFooter({ instance }: SectionRenderProps) {
                 className="gn-news-submit"
                 aria-label={t("footer.subscribe", "Subscribe")}
               >
-                <IconArrowRight size={18} />
+                <IconArrowRight size={18} className="gn-flip-rtl" />
               </button>
             </form>
           </div>

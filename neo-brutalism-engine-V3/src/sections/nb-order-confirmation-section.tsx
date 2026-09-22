@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Link, Money, useOrders, useLocale } from "@numueg/theme-sdk";
-import { Check, Copy, Package, ArrowLeft, MessageCircle } from "lucide-react";
+import { Check, Copy, Package, ArrowRight, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { asString, localized, type SectionRenderProps } from "./_shared";
 
@@ -237,7 +237,7 @@ export default function NBOrderConfirmationSection({ instance }: SectionRenderPr
                 "py-3 sm:py-3.5 text-xs sm:text-sm rtl:[&>svg]:rotate-180"
               }
             >
-              {continueText} <ArrowLeft size={14} />
+              {continueText} <ArrowRight size={14} />
             </Link>
           </div>
         </motion.div>

@@ -11,7 +11,7 @@ import {
   type CustomerAddress,
 } from "@numueg/theme-sdk";
 import {
-  ArrowLeft,
+  ArrowRight,
   LogOut,
   User,
   Loader2,
@@ -240,7 +240,7 @@ export default function BoutiqueProfile({ instance }: SectionRenderProps) {
           <Link to="/" className="hover:text-foreground transition-colors">
             Home
           </Link>
-          <ArrowLeft size={10} className="rtl:rotate-180" />
+          <ArrowRight size={10} className="rtl:rotate-180" />
           <span className="text-foreground">{title}</span>
         </div>
 

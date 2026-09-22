@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Link, useLocale } from "@numueg/theme-sdk";
-import { ArrowLeft, ShoppingBag, Sparkles } from "lucide-react";
+import { ArrowRight, ShoppingBag, Sparkles } from "lucide-react";
 import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
 
 const BoutiquePromoBanner = ({ instance }: SectionRenderProps) => {
@@ -40,7 +40,7 @@ const BoutiquePromoBanner = ({ instance }: SectionRenderProps) => {
 
           <div className="relative flex flex-col md:flex-row items-center gap-8 p-8 md:p-12">
             {/* Text content */}
-            <div className="flex-1 text-center md:text-right">
+            <div className="flex-1 text-center md:text-start">
               {badge && (
                 <span
                   className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold mb-4"
@@ -56,7 +56,7 @@ const BoutiquePromoBanner = ({ instance }: SectionRenderProps) => {
               <h3 className="text-2xl md:text-3xl font-black text-foreground mb-3 leading-tight">
                 {headline}
               </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-md md:mr-0 mx-auto">
+              <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-md md:ms-0 mx-auto">
                 {subtitle}
               </p>
               <Link
@@ -69,7 +69,7 @@ const BoutiquePromoBanner = ({ instance }: SectionRenderProps) => {
                 }}
               >
                 {ctaText}
-                <ArrowLeft size={16} />
+                <ArrowRight size={16} className="rtl:rotate-180" />
               </Link>
             </div>
 

@@ -167,7 +167,7 @@ export default function TnFooter({ instance }: SectionRenderProps) {
                 />
                 <button type="submit" className="tn-btn tn-btn-dark">
                   {asString(s.newsletter_cta, t("footer.newsletter_cta", "Subscribe"))}
-                  <IconArrowUpRight size={16} />
+                  <IconArrowUpRight size={16} className="tn-flip-rtl" />
                 </button>
               </form>
             </div>

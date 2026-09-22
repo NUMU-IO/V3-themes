@@ -1,6 +1,6 @@
 "use client";
 import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { asNumber, asString, asArray, localized, type SectionRenderProps } from "./_shared";
 
@@ -72,7 +72,7 @@ const NBFeaturedCollection = ({ instance }: SectionRenderProps) => {
             to={viewAllLink}
             className="text-sm font-black flex items-center gap-1 nb-chip px-4 py-2 rounded-lg"
           >
-            {viewAllText} <ArrowLeft size={14} />
+            {viewAllText} <ArrowRight size={14} className="rtl:rotate-180" />
           </Link>
         </div>
 
@@ -146,7 +146,7 @@ export function NBProductCard({ product }: { product: Product }) {
             <div className="absolute inset-0 vn-shimmer" />
           )}
           {/* Badges */}
-          <div className="absolute top-2 right-2 flex flex-col gap-1">
+          <div className="absolute top-2 start-2 flex flex-col gap-1">
             {hasDiscount && (
               <span className="nb-badge-pink px-2 py-0.5 text-[10px] rounded">
                 {localized(locale, `${discountPercent}% off`, `خصم ${discountPercent}%`)}

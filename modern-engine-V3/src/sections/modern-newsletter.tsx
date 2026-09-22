@@ -47,8 +47,8 @@ const ModernNewsletter = ({ instance }: SectionRenderProps) => {
           }}
         >
           {/* Decorative circle */}
-          <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-12 -left-12 w-36 h-36 rounded-full bg-primary/8 blur-2xl pointer-events-none" />
+          <div className="absolute -top-16 -end-16 w-48 h-48 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-12 -start-12 w-36 h-36 rounded-full bg-primary/8 blur-2xl pointer-events-none" />
 
           <div className="relative">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/15 mb-5">

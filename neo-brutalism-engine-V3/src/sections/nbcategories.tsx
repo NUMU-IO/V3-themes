@@ -69,7 +69,7 @@ const NBCategories = ({ instance }: SectionRenderProps) => {
                     <div className="w-full h-full bg-secondary" />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                  <div className="absolute bottom-0 right-0 left-0 p-3">
+                  <div className="absolute bottom-0 inset-x-0 p-3">
                     <span className="text-white font-black text-sm">
                       {cat.name}
                     </span>

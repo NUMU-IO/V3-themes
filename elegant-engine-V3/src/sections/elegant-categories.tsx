@@ -88,7 +88,7 @@ const ElegantCategories = ({ instance }: SectionRenderProps) => {
                   <div className="absolute inset-0 bg-gradient-to-t from-[hsl(30_30%_10%/0.65)] via-[hsl(30_30%_10%/0.15)] to-transparent transition-opacity duration-500 group-hover:from-[hsl(30_30%_10%/0.75)]" />
 
                   {/* Category label */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+                  <div className="absolute bottom-0 inset-x-0 p-4 md:p-5">
                     <span
                       className="text-white font-semibold text-base md:text-lg block"
                       style={{ fontFamily: "var(--font-heading, serif)" }}

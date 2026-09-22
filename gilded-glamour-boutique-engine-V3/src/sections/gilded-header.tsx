@@ -154,7 +154,7 @@ export default function GildedHeader({ instance, sectionId }: SectionRenderProps
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="sticky top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-b"
+        className="sticky top-0 inset-x-0 z-50 bg-card/95 backdrop-blur-sm border-b"
         data-gilded-section={sectionId}
       >
         {/* Announcement bar */}

@@ -62,7 +62,7 @@ export default function GnGenovaGirls({ instance }: SectionRenderProps) {
           {asString(s.cta_link) && asString(s.cta_text) && (
             <Link to={asString(s.cta_link)} className="gn-textlink">
               {asString(s.cta_text)}
-              <IconChevronRight size={14} />
+              <IconChevronRight size={14} className="gn-flip-rtl" />
             </Link>
           )}
           {layout === "carousel" && looks.length > perView && (

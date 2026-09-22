@@ -9,7 +9,7 @@ import {
   type Product,
 } from "@numueg/theme-sdk";
 import type { CSSProperties } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import {
   asArray,
   asNumber,
@@ -28,7 +28,7 @@ import { InlineEditable } from "./_inline-editable";
  *   - header row: `flex items-center justify-between mb-8` with a 10px/0.3em
  *     uppercase title eyebrow on the left, an optional muted subtitle hidden on
  *     mobile, and a "View All" link underlined with `border-b border-foreground`
- *     and a trailing `ArrowLeft size={10}`.
+ *     and a trailing `ArrowRight size={10}` (mirrored in RTL).
  *   - product grid: `--cols-mobile` (2) / `--cols-desktop` (columns) responsive
  *     grid, `gap-4`. Each card is the inlined V2 LuxProductCard look: a
  *     `aspect-[3/4] bg-[hsl(var(--lux-gray))]` portrait frame, an `object-cover`
@@ -124,7 +124,7 @@ export default function LuxFeaturedCollection({ instance, sectionId }: SectionRe
               className="text-[10px] uppercase tracking-[0.2em] text-foreground flex items-center gap-1 hover:opacity-50 transition-opacity border-b border-foreground pb-0.5"
             >
               <InlineEditable sectionId={sectionId} settingKey="view_all_text" value={viewAllText} />{" "}
-              <ArrowLeft size={10} aria-hidden="true" className="rtl:-scale-x-100" />
+              <ArrowRight size={10} aria-hidden="true" className="rtl:-scale-x-100" />
             </Link>
           )}
         </div>

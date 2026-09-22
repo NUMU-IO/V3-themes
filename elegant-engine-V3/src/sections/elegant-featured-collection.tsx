@@ -1,6 +1,6 @@
 "use client";
 import { Link, Money, useProducts, useLocale, type Product } from "@numueg/theme-sdk";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
 
 /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
@@ -72,7 +72,7 @@ const ElegantFeaturedCollection = ({ instance }: SectionRenderProps) => {
             to={viewAllLink}
             className="text-xs font-semibold tracking-wide text-primary flex items-center gap-1 hover:opacity-70 transition-opacity"
           >
-            {viewAllText} <ArrowLeft size={13} />
+            {viewAllText} <ArrowRight size={13} className="rtl:rotate-180" />
           </Link>
         </div>
 

@@ -1,7 +1,7 @@
 "use client";
 import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import {
   asImageTransform,
   localized,
@@ -91,7 +91,7 @@ const ModernHero = ({ instance }: SectionRenderProps) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="text-center md:text-right"
+            className="text-center md:text-start"
           >
             {badge && (
               <motion.span
@@ -133,7 +133,7 @@ const ModernHero = ({ instance }: SectionRenderProps) => {
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl store-gradient text-white font-bold text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 {ctaText}
-                <ArrowLeft size={18} />
+                <ArrowRight size={18} className="rtl:rotate-180" />
               </Link>
               {secondaryText && (
                 <Link
@@ -174,8 +174,8 @@ const ModernHero = ({ instance }: SectionRenderProps) => {
       </div>
 
       {/* Decorative blurs */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-32 -start-32 w-96 h-96 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -end-32 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
     </section>
   );
 };

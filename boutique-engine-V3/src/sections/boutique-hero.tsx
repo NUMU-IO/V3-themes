@@ -1,7 +1,7 @@
 "use client";
 import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 const BoutiqueHero = ({ instance }: SectionRenderProps) => {
@@ -63,7 +63,7 @@ const BoutiqueHero = ({ instance }: SectionRenderProps) => {
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm text-primary-foreground transition-all duration-300 hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)] hover:scale-[1.03]"
               style={{ background: "hsl(var(--primary))" }}
             >
-              {ctaText} <ArrowLeft size={16} />
+              {ctaText} <ArrowRight size={16} className="rtl:rotate-180" />
             </Link>
           </motion.div>
 

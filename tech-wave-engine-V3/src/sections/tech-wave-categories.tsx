@@ -70,7 +70,7 @@ const TechWaveCategories = ({ instance }: SectionRenderProps) => {
                     <div className="absolute inset-0 vn-shimmer" />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,40%,5%/0.85)] via-[hsl(220,40%,5%/0.3)] to-transparent" />
-                  <div className="absolute bottom-0 right-0 left-0 p-2.5">
+                  <div className="absolute bottom-0 inset-x-0 p-2.5">
                     <span className="text-white font-bold text-sm">
                       {cat.name}
                     </span>

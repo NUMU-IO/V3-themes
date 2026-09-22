@@ -2,7 +2,7 @@
 
 import { HeroMedia, Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import {
   asImageAlt,
   asImageTransform,
@@ -21,7 +21,7 @@ import { InlineEditable } from "./_inline-editable";
  * `object-contain` over a light-gray frame — matches V2 verbatim), refined
  * content on the RIGHT — a
  * 10px/0.3em eyebrow badge, an uppercase wide-tracked `lux-heading`, a muted
- * subtitle, and a solid-black `lux-btn` CTA with a trailing ArrowLeft. All V2
+ * subtitle, and a solid-black `lux-btn` CTA with a trailing ArrowRight. All V2
  * className strings kept verbatim. Engine-wired: useResolvedSettings (so global
  * tokens + dynamic sources resolve) and InlineEditable on every text field.
  */
@@ -84,7 +84,7 @@ export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="py-16 md:py-20 md:pl-12 md:pr-16"
+            className="py-16 md:py-20 md:ps-12 md:pe-16"
           >
             {badgeText && (
               <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground mb-6">
@@ -105,7 +105,7 @@ export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
             {ctaText && (
               <Link to={ctaLink} className="inline-flex items-center gap-2 lux-btn">
                 <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
-                <ArrowLeft size={14} aria-hidden="true" className="rtl:-scale-x-100" />
+                <ArrowRight size={14} aria-hidden="true" className="rtl:-scale-x-100" />
               </Link>
             )}
           </motion.div>
