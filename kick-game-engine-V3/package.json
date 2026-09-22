@@ -1,6 +1,6 @@
 {
   "name": "kick-game-v3",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "private": true,
   "description": "Kick game (V3) (V3 port)",
   "type": "module",
