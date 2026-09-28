@@ -266,5 +266,9 @@
   "request.button": "Request a book",
   "request.search_cta": "Request this book",
   "ugc.shop": "Shop this book",
-  "ugc.play": "Play video"
+  "ugc.play": "Play video",
+  "checkout.gift": "Is this a gift?",
+  "checkout.gift_yes": "Add a card with a message",
+  "checkout.gift_message": "Your message",
+  "checkout.gift_note_prefix": "Gift message"
 }

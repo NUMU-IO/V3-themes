@@ -30,6 +30,25 @@
       "default": "You'll finish payment on your bank's secure page."
     },
     {
+      "type": "checkbox",
+      "id": "gift_options",
+      "label": "Let shoppers add a gift message",
+      "label_ar": "السماح للزبون بإضافة رسالة هدية",
+      "default": true,
+      "info": "The message arrives in the order's customer notes.",
+      "info_ar": "الرسالة بتوصلك في ملاحظات العميل على الطلب."
+    },
+    {
+      "type": "text",
+      "id": "gift_wrap_product",
+      "label": "Gift wrap product",
+      "label_ar": "منتج تغليف الهدية",
+      "default": "",
+      "info": "The handle or exact name of a product you sell as gift wrap. Leave empty to hide the option.",
+      "info_ar": "معرّف أو اسم المنتج اللي بتبيعه كتغليف هدية بالظبط. سيبه فاضي عشان يختفي الاختيار.",
+      "visible_if": "{{ section.settings.gift_options }}"
+    },
+    {
       "type": "text",
       "id": "reassurance",
       "label": "Line under the button",

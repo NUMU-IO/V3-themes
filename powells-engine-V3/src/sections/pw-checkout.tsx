@@ -38,6 +38,7 @@ import {
 } from "@numueg/theme-sdk";
 import { asBool, asString, type SectionRenderProps } from "../lib/shared";
 import { useCheckoutConfig } from "../lib/store-data";
+import { bookList, useBooksByHandle } from "../lib/shelf-books";
 import { useT } from "../lib/i18n";
 
 type StepKey = "contact" | "shipping" | "payment";
@@ -45,7 +46,7 @@ type StepKey = "contact" | "shipping" | "payment";
 export default function PwCheckout({ instance }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const t = useT();
-  const { cart } = useCart();
+  const { cart, addItem, removeItem, loading: cartBusy } = useCart();
   const checkout = useCheckout();
   // The merchant's real options. A store with Fawry or InstaPay switched on
   // used to see neither, because this step named its two by hand.
@@ -60,6 +61,26 @@ export default function PwCheckout({ instance }: SectionRenderProps) {
   const [address, setAddress] = useState(checkout.state.shipping_address ?? {});
 
   const items = cart?.items ?? [];
+
+  // The gift message rides on the order's customer notes, the one free-text
+  // field the platform keeps on an order and shows the merchant.
+  const [isGift, setIsGift] = useState(Boolean(checkout.state.customer_notes));
+  const [giftMessage, setGiftMessage] = useState((checkout.state.customer_notes ?? "").replace(/^[^:]*:\s*/, ""));
+  const saveGift = (on: boolean, message: string) => {
+    setIsGift(on);
+    setGiftMessage(message);
+    checkout.setNotes(on && message.trim() ? `${t("checkout.gift_note_prefix", "Gift message")}: ${message.trim()}` : "");
+  };
+
+  // Gift wrap is a product the merchant sells, so its price, stock and tax
+  // are the platform's own and it shows up as a line in the summary.
+  const [wrap] = useBooksByHandle(bookList(asString(s.gift_wrap_product)).slice(0, 1));
+  const wrapLine = wrap ? items.find((item) => item.product_id === String(wrap.id)) : undefined;
+  const toggleWrap = () => {
+    if (!wrap) return;
+    if (wrapLine) void removeItem(wrapLine.id);
+    else void addItem(String(wrap.id), wrap.variants?.[0] ? String(wrap.variants[0].id) : undefined, 1);
+  };
   const currency = cart?.currency;
   const isEmpty = items.length === 0;
 
@@ -327,6 +348,36 @@ export default function PwCheckout({ instance }: SectionRenderProps) {
                   </button>
                 ))}
               </div>
+            </section>
+          )}
+
+          {step === "payment" && asBool(s.gift_options, true) && (
+            <section className="pw-block pw-gift-box">
+              <h2>{t("checkout.gift", "Is this a gift?")}</h2>
+              <label className="pw-check">
+                <input type="checkbox" checked={isGift} onChange={(e) => saveGift(e.target.checked, giftMessage)} />
+                <span>{t("checkout.gift_yes", "Add a card with a message")}</span>
+              </label>
+              {isGift && (
+                <label className="pw-field">
+                  <span>{t("checkout.gift_message", "Your message")}</span>
+                  <textarea
+                    rows={3}
+                    maxLength={300}
+                    value={giftMessage}
+                    onChange={(e) => saveGift(true, e.target.value)}
+                  />
+                </label>
+              )}
+              {wrap && (
+                <label className="pw-check">
+                  <input type="checkbox" checked={Boolean(wrapLine)} disabled={cartBusy} onChange={toggleWrap} />
+                  <span>{wrap.name}</span>
+                  <span className="n">
+                    <Money amount={wrap.price ?? 0} currency={wrap.currency || currency} />
+                  </span>
+                </label>
+              )}
             </section>
           )}
 
