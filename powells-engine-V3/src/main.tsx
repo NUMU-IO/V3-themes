@@ -65,6 +65,7 @@ import PwReviews from "./sections/pw-reviews";
 import PwNotFound from "./sections/pw-not-found";
 import PwFeatured from "./sections/pw-featured";
 import PwCampaign from "./sections/pw-campaign";
+import PwGifts from "./sections/pw-gifts";
 import PwSeriesFeature from "./sections/pw-series-feature";
 import PwGrading from "./sections/pw-grading";
 import PwNewsletter from "./sections/pw-newsletter";
@@ -102,6 +103,7 @@ const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   "pw-reviews": PwReviews,
   "pw-not-found": PwNotFound,
   "pw-campaign": PwCampaign,
+  "pw-gifts": PwGifts,
   "pw-series-feature": PwSeriesFeature,
   "pw-grading": PwGrading,
   "pw-newsletter": PwNewsletter,

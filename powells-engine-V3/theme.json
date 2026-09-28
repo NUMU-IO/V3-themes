@@ -542,6 +542,44 @@
             }
           },
           {
+            "type": "pw-gifts",
+            "settings": {
+              "eyebrow": "GIFTS",
+              "heading": "Give a book they'll keep",
+              "body": "Picked by the people who shelve them, wrapped by hand if you like.",
+              "source": "collection",
+              "collection": "gifts",
+              "limit": 3,
+              "tone": "lavender",
+              "cta_text": "Shop gifts",
+              "cta_link": "/collections/gifts"
+            },
+            "blocks": [
+              {
+                "type": "way",
+                "settings": {
+                  "label": "For young readers",
+                  "link": "/collections/children"
+                }
+              },
+              {
+                "type": "way",
+                "settings": {
+                  "label": "Collector's editions",
+                  "link": "/collections/limited-editions"
+                }
+              },
+              {
+                "type": "way",
+                "settings": {
+                  "label": "Gift cards",
+                  "note": "They choose the book",
+                  "link": "/collections/gifts"
+                }
+              }
+            ]
+          },
+          {
             "type": "pw-request",
             "settings": {
               "eyebrow": "CAN'T FIND IT?",

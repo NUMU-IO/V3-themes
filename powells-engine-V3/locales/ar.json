@@ -266,5 +266,9 @@
   "request.button": "اطلب كتاب",
   "request.search_cta": "اطلب الكتاب ده",
   "ugc.shop": "اشتري الكتاب",
-  "ugc.play": "شغّل الفيديو"
+  "ugc.play": "شغّل الفيديو",
+  "checkout.gift": "الطلب ده هدية؟",
+  "checkout.gift_yes": "أضف كارت برسالة",
+  "checkout.gift_message": "رسالتك",
+  "checkout.gift_note_prefix": "رسالة الهدية"
 }
