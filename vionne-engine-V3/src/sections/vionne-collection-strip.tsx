@@ -1,6 +1,6 @@
 "use client";
 import { Link, useResolvedSettings } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asString, responsiveImg, CARD_TRACK_IMG, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, responsiveImg, CARD_TRACK_IMG, type ImageTransform, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 interface Item {
@@ -18,7 +18,9 @@ export default function CollectionStrip({ instance, sectionId }: SectionRenderPr
 
   const items: Item[] = [];
   for (let i = 1; i <= 4; i++) {
-    const image = asString(s[`item_${i}_image`]);
+    // image_picker stores a plain URL (legacy) or `{ url, alt, transform }` once
+    // the merchant uploads through the media picker; asString drops the object.
+    const image = asImageUrl(s[`item_${i}_image`]);
     const imageTransform = asImageTransform(s[`item_${i}_image`]);
     const label = asString(s[`item_${i}_label`]);
     const link = asString(s[`item_${i}_link`]);
