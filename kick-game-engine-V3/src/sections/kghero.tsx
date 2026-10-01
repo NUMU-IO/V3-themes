@@ -1,14 +1,16 @@
 "use client";
 import { useState } from "react";
-import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useShop } from "@numueg/theme-sdk";
 import { ShoppingBag } from "lucide-react";
-import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 const KGHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
-  const headline = asString(s.headline) || localized(locale, "NEW DROPS", "وصل جديد");
-  const subtitle = asString(s.subtitle) || localized(locale, "ELEVATE YOUR GAME", "ارفع مستواك");
+  const shop = useShop();
+  const sample = useSampleContent();
+  const headline = asString(s.headline) || (sample ? localized(locale, "NEW DROPS", "وصل جديد") : shop?.name ?? "");
+  const subtitle = asString(s.subtitle) || (sample ? localized(locale, "ELEVATE YOUR GAME", "ارفع مستواك") : "");
   const ctaText = asString(s.cta_text) || localized(locale, "SHOP NOW", "اتسوّق دلوقتي");
   const ctaLink = asString(s.cta_link) || "/products";
   const heroImage = asImageUrl(s.hero_image_url) || undefined;

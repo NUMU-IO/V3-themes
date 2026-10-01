@@ -50,6 +50,7 @@ import TechWaveAbout from "./sections/tech-wave-about";
 import TechWaveContact from "./sections/tech-wave-contact";
 import TechWaveOrderConfirmationSection from "./sections/tech-wave-order-confirmation-section";
 
+import { DemoContext } from "./sections/_shared";
 interface MountResult {
   cleanup: () => void;
   applyDraft: (next: ThemeSettingsV3) => void;
@@ -232,8 +233,10 @@ function pickTemplate(ctx: MountContext): string {
 }
 
 // defineThemeEntry yields both mount (client) and createApp (server SSR).
-const entry = defineThemeEntry(({ currentTemplate }) => (
-  <ThemeApp currentTemplate={currentTemplate} />
+const entry = defineThemeEntry(({ currentTemplate, demo }) => (
+  <DemoContext.Provider value={Boolean(demo)}>
+    <ThemeApp currentTemplate={currentTemplate} />
+  </DemoContext.Provider>
 ));
 
 export const mount = entry.mount;

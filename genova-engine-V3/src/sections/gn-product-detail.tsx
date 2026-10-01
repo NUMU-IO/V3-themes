@@ -35,6 +35,7 @@ import {
   productName,
   useFocusTrap,
   type SectionRenderProps,
+  useSampleContent,
 } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { Price } from "../lib/price";
@@ -62,6 +63,7 @@ const FIT_KEYS = ["rise", "leg", "stretch", "inseam", "fabric", "model_height"] 
 export default function GnProductDetail({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
   const t = useT();
+  const sample = useSampleContent();
   const locale = useLocale();
   // `useProductOptional`, NOT `useProduct`: the latter THROWS outside a
   // ProductProvider, and a merchant can drag this section onto any template
@@ -416,7 +418,7 @@ export default function GnProductDetail({ instance }: SectionRenderProps) {
               The single highest-intent line on the page shipped invisible.
               Fall back to the locale string, exactly as every other copy slot
               in this theme does. `show_return_note` still turns it off. */}
-          {s.show_return_note !== false && (
+          {s.show_return_note !== false && (asString(s.return_note) || sample) && (
             <p className="gn-pdp-assure">
               <IconShield size={16} />
               {asString(s.return_note) ||

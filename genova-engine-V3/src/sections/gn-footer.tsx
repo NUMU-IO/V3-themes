@@ -19,6 +19,7 @@ import {
   readBlockNodes,
   useInheritedChrome,
   type SectionRenderProps,
+  useSampleContent,
 } from "../lib/shared";
 import { PaymentMarks } from "../lib/payment-marks";
 import {
@@ -54,6 +55,7 @@ export default function GnFooter({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
   const shop = useShop();
   const t = useT();
+  const sample = useSampleContent();
 
   const withColumns = useInheritedChrome(instance, "gn-footer", "column");
   const columns = readBlockNodes(withColumns, "column")
@@ -80,12 +82,12 @@ export default function GnFooter({ instance }: SectionRenderProps) {
     .map((key) => ({
       key,
       Icon: TRUST_ICONS[key],
-      title: asString(s[`trust_${key}_title`]) || t(`footer.trust_${key}_title`, TRUST_FALLBACK[key].title),
-      text: asString(s[`trust_${key}_text`]) || t(`footer.trust_${key}_text`, TRUST_FALLBACK[key].text),
+      title: asString(s[`trust_${key}_title`]) || (sample ? t(`footer.trust_${key}_title`, TRUST_FALLBACK[key].title) : ""),
+      text: asString(s[`trust_${key}_text`]) || (sample ? t(`footer.trust_${key}_text`, TRUST_FALLBACK[key].text) : ""),
     }))
     .filter((item) => item.title || item.text);
 
-  const aboutText = asString(s.about_text) || t("footer.about_text", ABOUT_FALLBACK);
+  const aboutText = asString(s.about_text) || (sample ? t("footer.about_text", ABOUT_FALLBACK) : "");
   const newsletterSubtitle =
     asString(s.newsletter_subtitle) || t("footer.newsletter_subtitle", NEWSLETTER_FALLBACK);
 

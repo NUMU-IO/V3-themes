@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useLocale } from "@numueg/theme-sdk";
 import { ArrowRight, ShoppingBag } from "lucide-react";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 /**
  * Tech Wave promo banner — faithful port of the V2 in-tree
@@ -18,9 +18,10 @@ import { applyImageTransform, asImageTransform, asString, localized, type Sectio
 const TechWavePromoBanner = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
+  const sample = useSampleContent();
   const badge = asString(s.badge_text);
-  const headline = asString(s.headline) || localized(locale, "Special offer", "عرض خاص");
-  const subtitle = asString(s.subtitle) || localized(locale, "Shop our latest collection", "تسوق أحدث تشكيلاتنا");
+  const headline = asString(s.headline) || (sample ? localized(locale, "Special offer", "عرض خاص") : "");
+  const subtitle = asString(s.subtitle) || (sample ? localized(locale, "Shop our latest collection", "تسوق أحدث تشكيلاتنا") : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
   const imageUrl = asString(s.image_url);
@@ -28,6 +29,8 @@ const TechWavePromoBanner = ({ instance }: SectionRenderProps) => {
 
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(!imageUrl);
+
+  if (!headline) return null;
 
   return (
     <section className="py-6">

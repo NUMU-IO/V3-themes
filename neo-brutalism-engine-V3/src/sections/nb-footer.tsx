@@ -28,7 +28,7 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
-import { asString, localized, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 interface FooterLink {
   label: string;
@@ -108,17 +108,18 @@ const NbFooter = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const shop = useShop();
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const brandName =
     asString(s.brand_name) || shop?.name || localized(locale, "STORE", "المتجر");
 
   const tagline =
     asString(s.tagline) ||
-    localized(
+    (sample ? localized(
       locale,
       "Bold stuff, honest prices. Made loud in Egypt.",
       "حاجات جريئة وأسعار على قد الإيد. متصنّعة في مصر بصوت عالي.",
-    );
+    ) : "");
 
   const contactEmail = asString(s.contact_email);
   const contactPhone = asString(s.contact_phone);

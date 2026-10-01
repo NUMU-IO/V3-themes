@@ -32,7 +32,7 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
-import { asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageUrl, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 interface FooterLink {
   label: string;
@@ -96,6 +96,7 @@ const ElegantFooter = ({ instance, sectionId }: SectionRenderProps) => {
   const shop = useShop();
   const themeSettings = useThemeSettings();
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const globals = (themeSettings.global_settings ?? {}) as Record<string, unknown>;
 
@@ -104,11 +105,11 @@ const ElegantFooter = ({ instance, sectionId }: SectionRenderProps) => {
   const logoUrl = asImageUrl(s.logo_url) || "";
   const tagline =
     asString(s.tagline) ||
-    localized(
+    (sample ? localized(
       locale,
       "A carefully curated edit — timeless pieces, honest craft, delivered across Egypt.",
       "تشكيلة مختارة بعناية — قطع خالدة وصنعة أمينة، بتوصلك في كل مصر.",
-    );
+    ) : "");
 
   const contactEmail = asString(s.contact_email);
   const contactPhone = asString(s.contact_phone);

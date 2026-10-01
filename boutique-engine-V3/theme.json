@@ -26,8 +26,8 @@
               "show_cart": true,
               "sticky": true,
               "show_announcement": true,
-              "announcement_text": "Free shipping on orders over 1000 EGP",
-              "announcement_text_ar": "شحن مجاني للطلبات فوق ١٠٠٠ جنيه"
+              "announcement_text": "",
+              "announcement_text_ar": ""
             }
           }
         ]

@@ -20,7 +20,6 @@
           {
             "type": "header",
             "settings": {
-              "announcement_text": "شحن مجاني للطلبات فوق ٥٠٠ ج.م",
               "menu_handle": "main-menu",
               "show_search": true,
               "show_account": true,
@@ -36,7 +35,7 @@
             "type": "footer",
             "settings": {
               "description": "متجر مستقل يقدّم تشكيلة مختارة بعناية. تصميم نظيف، جودة تدوم.",
-              "ticker_text": "100% مستقل"
+              "ticker_text": ""
             }
           }
         ]
@@ -77,7 +76,6 @@
           {
             "type": "marquee",
             "settings": {
-              "text": "100% مستقل",
               "repeat": 10
             }
           },
@@ -99,9 +97,6 @@
           {
             "type": "promo_banner",
             "settings": {
-              "badge_text": "عرض محدود",
-              "headline": "خصم ٢٥٪ على كل الإكسسوارات",
-              "subtitle": "العرض ساري لنهاية الشهر. متفوتش الفرصة!",
               "cta_text": "تسوق الآن",
               "cta_link": "/products"
             }
@@ -111,35 +106,7 @@
             "settings": {
               "title": "رأي عملائنا"
             },
-            "blocks": [
-              {
-                "type": "review",
-                "settings": {
-                  "text": "جودة المنتجات فوق الممتازة والتوصيل سريع جداً.",
-                  "author": "ليلى م.",
-                  "city": "القاهرة",
-                  "rating": 5
-                }
-              },
-              {
-                "type": "review",
-                "settings": {
-                  "text": "تصميم أنيق وخامات تدوم. تجربة شراء مريحة.",
-                  "author": "عمر أ.",
-                  "city": "الرياض",
-                  "rating": 5
-                }
-              },
-              {
-                "type": "review",
-                "settings": {
-                  "text": "أفضل متجر تعاملت معه. أنصح به بشدة.",
-                  "author": "نادية ح.",
-                  "city": "دبي",
-                  "rating": 4
-                }
-              }
-            ]
+            "blocks": []
           },
           {
             "type": "newsletter",

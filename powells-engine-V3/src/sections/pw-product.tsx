@@ -56,6 +56,7 @@ import {
   productImages,
   useOrnaments,
   type SectionRenderProps,
+  useSampleContent,
 } from "../lib/shared";
 import { useProductReviews } from "../lib/store-data";
 import { fill, useT } from "../lib/i18n";
@@ -285,33 +286,34 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
   const staffPickBy = asString(metaMap["books.staff_pick_by"]) || asString(s.staff_pick_by);
 
   const showTrust = asBool(s.show_trust, true);
+  const sample = useSampleContent();
   const shippingRow = {
     icon: <IconTruck />,
-    title: asString(s.trust_shipping_title) || t("product.trust_shipping", "Fast shipping"),
-    text: asString(s.trust_shipping_text) || t("product.trust_shipping_text", "2–5 days"),
+    title: asString(s.trust_shipping_title) || (sample ? t("product.trust_shipping", "Fast shipping") : ""),
+    text: asString(s.trust_shipping_text) || (sample ? t("product.trust_shipping_text", "2–5 days") : ""),
   };
   const returnsRow = {
     icon: <IconReturn />,
-    title: asString(s.trust_returns_title) || t("product.trust_returns", "Easy returns"),
-    text: asString(s.trust_returns_text) || t("product.trust_returns_text", "14 days"),
+    title: asString(s.trust_returns_title) || (sample ? t("product.trust_returns", "Easy returns") : ""),
+    text: asString(s.trust_returns_text) || (sample ? t("product.trust_returns_text", "14 days") : ""),
   };
   const packedRow = {
     icon: <IconShield />,
-    title: asString(s.trust_quality_title) || t("product.trust_packed", "Packed with care"),
-    text: asString(s.trust_quality_text) || t("product.trust_packed_text", "Every copy checked"),
+    title: asString(s.trust_quality_title) || (sample ? t("product.trust_packed", "Packed with care") : ""),
+    text: asString(s.trust_quality_text) || (sample ? t("product.trust_packed_text", "Every copy checked") : ""),
   };
   const deliveryRows = fulfillmentType === "digital" ? [returnsRow] : [shippingRow, returnsRow];
   const qualityText =
     asString(s.quality_text) ||
-    t(
+    (sample ? t(
       "product.quality_default",
       "Every copy is checked by hand before it ships and graded honestly, so the condition you choose is the condition you receive.",
-    );
+    ) : "");
   const deliveryText = asString(s.delivery_text);
 
   const trustList = (rows: Array<{ icon: ReactNode; title: string; text: string }>) => (
     <ul className="pw-trust">
-      {rows.map((row) => (
+      {rows.filter((row) => row.title).map((row) => (
         <li key={row.title}>
           {row.icon}
           <span>

@@ -2,14 +2,15 @@
 import { useState } from "react";
 import { Link, useLocale } from "@numueg/theme-sdk";
 import { ShoppingBag } from "lucide-react";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 const KGPromoBanner = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
+  const sample = useSampleContent();
   const badge = asString(s.badge_text);
-  const headline = asString(s.headline) || localized(locale, "25% OFF ACCESSORIES", "خصم ٢٥٪ على الإكسسوارات");
-  const subtitle = asString(s.subtitle) || localized(locale, "Limited time. Don't sleep.", "لفترة محدودة. متفوّتش الفرصة.");
+  const headline = asString(s.headline) || (sample ? localized(locale, "25% OFF ACCESSORIES", "خصم ٢٥٪ على الإكسسوارات") : "");
+  const subtitle = asString(s.subtitle) || (sample ? localized(locale, "Limited time. Don't sleep.", "لفترة محدودة. متفوّتش الفرصة.") : "");
   const ctaText = asString(s.cta_text) || localized(locale, "SHOP NOW", "اتسوّق دلوقتي");
   const ctaLink = asString(s.cta_link) || "/products?category=accessories";
   const imageUrl = asString(s.image_url);
@@ -17,6 +18,8 @@ const KGPromoBanner = ({ instance }: SectionRenderProps) => {
 
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
+
+  if (!headline) return null;
 
   return (
     <section

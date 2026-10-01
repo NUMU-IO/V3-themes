@@ -2,15 +2,16 @@
 import { useEffect, useState } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight, ShoppingBag } from "lucide-react";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 export default function PromoBanner({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
+  const sample = useSampleContent();
   const s = useResolvedSettings(instance);
   const badge = asString(s.badge_text);
-  const headline = asString(s.headline) || localized(locale, "Special Offer", "عرض خاص");
-  const subtitle = asString(s.subtitle) || localized(locale, "Shop our latest collection", "اكتشفي أحدث تشكيلة");
+  const headline = asString(s.headline) || (sample ? localized(locale, "Special Offer", "عرض خاص") : "");
+  const subtitle = asString(s.subtitle) || (sample ? localized(locale, "Shop our latest collection", "اكتشفي أحدث تشكيلة") : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوّق دلوقتي");
   const ctaLink = asString(s.cta_link) || "/products";
   // image_picker stores either a plain URL (legacy) or an `{ url, transform }`
@@ -37,6 +38,8 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
       setImageLoading(false);
     }
   }, [imageUrl]);
+
+  if (!headline) return null;
 
   return (
     <section className="py-6">

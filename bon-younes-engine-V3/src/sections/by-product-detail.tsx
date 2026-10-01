@@ -13,7 +13,7 @@ import {
   useThemeSettings,
 } from "@numueg/theme-sdk";
 import { Coffee, Heart, Leaf, Minus, Plus, ShieldCheck, ShoppingBag, Sparkles, Star, Truck } from "lucide-react";
-import { applyImageTransform, asArray, asImageTransform, asImageUrl, asNumber, asRecord, asString, demoOrPlaceholder, localized, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asArray, asImageTransform, asImageUrl, asNumber, asRecord, asString, demoOrPlaceholder, localized, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type ImageTransform, type SectionRenderProps, useSampleContent } from "./_shared";
 
 interface Addon {
   id: string;
@@ -74,6 +74,7 @@ export default function ByProductDetail({
   const { products } = useProducts();
   const demo = useDemo();
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const ctxOptions = productCtx?.options;
   const product = productCtx
@@ -123,20 +124,20 @@ export default function ByProductDetail({
   const trust = [
     {
       Icon: Leaf,
-      label: asString(s.trust_1_text) || localized(locale, "Freshly roasted", "محمّص طازة"),
-      sub: asString(s.trust_1_sub) || localized(locale, "Mansoura · weekly", "المنصورة · كل أسبوع"),
+      label: asString(s.trust_1_text) || (sample ? localized(locale, "Freshly roasted", "محمّص طازة") : ""),
+      sub: asString(s.trust_1_sub) || (sample ? localized(locale, "Mansoura · weekly", "المنصورة · كل أسبوع") : ""),
     },
     {
       Icon: Truck,
-      label: asString(s.trust_2_text) || localized(locale, "Fast delivery", "توصيل سريع"),
-      sub: asString(s.trust_2_sub) || localized(locale, "Across Egypt", "لكل مصر"),
+      label: asString(s.trust_2_text) || (sample ? localized(locale, "Fast delivery", "توصيل سريع") : ""),
+      sub: asString(s.trust_2_sub) || (sample ? localized(locale, "Across Egypt", "لكل مصر") : ""),
     },
     {
       Icon: ShieldCheck,
-      label: asString(s.trust_3_text) || localized(locale, "Secure checkout", "دفع آمن"),
-      sub: asString(s.trust_3_sub) || localized(locale, "100% protected", "محمي ١٠٠٪"),
+      label: asString(s.trust_3_text) || (sample ? localized(locale, "Secure checkout", "دفع آمن") : ""),
+      sub: asString(s.trust_3_sub) || (sample ? localized(locale, "100% protected", "محمي ١٠٠٪") : ""),
     },
-  ];
+  ].filter((item) => item.label);
 
   const blkCtx = useBlockResolveContext();
   const configuredAddons: Addon[] = resolveBlocks(instance, "addon", blkCtx)
