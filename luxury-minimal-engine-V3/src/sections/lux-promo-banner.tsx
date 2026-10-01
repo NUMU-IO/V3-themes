@@ -8,6 +8,7 @@ import {
   asImageUrl,
   asString,
   localized,
+  useSampleContent,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -27,24 +28,33 @@ import { InlineEditable } from "./_inline-editable";
 export default function LuxPromoBanner({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  // The sample offer is invented: a live store shows only an offer the
+  // merchant actually wrote, and nothing until they do.
+  const sample = useSampleContent();
 
-  const badge = asString(s.badge_text) || localized(locale, "Limited Offer", "عرض محدود");
+  const badge =
+    asString(s.badge_text) || (sample ? localized(locale, "Limited Offer", "عرض محدود") : "");
   const headline =
     asString(s.headline) ||
-    localized(locale, "25% Off All Accessories", "خصم ٢٥٪ على كل الإكسسوارات");
+    (sample ? localized(locale, "25% Off All Accessories", "خصم ٢٥٪ على كل الإكسسوارات") : "");
   const subtitle =
     asString(s.subtitle) ||
-    localized(
-      locale,
-      "Offer ends this month. Don't miss out!",
-      "العرض ساري لنهاية الشهر. متفوتش الفرصة!",
-    );
+    (sample
+      ? localized(
+          locale,
+          "Offer ends this month. Don't miss out!",
+          "العرض ساري لنهاية الشهر. متفوتش الفرصة!",
+        )
+      : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوق الآن");
-  // V2 default targets the accessories category, matching the promo copy.
-  const ctaLink = asString(s.cta_link) || "/products?category=accessories";
+  // V2 default targets the accessories category, matching the sample copy.
+  const ctaLink =
+    asString(s.cta_link) || (sample ? "/products?category=accessories" : "/products");
   const imageUrl = asImageUrl(s.image_url);
   // Non-destructive focal/zoom/rotation. Undefined → image renders unchanged.
   const imageTransform = asImageTransform(s.image_url);
+
+  if (!headline) return null;
 
   return (
     <section className="py-12" data-lux-section={sectionId}>
@@ -76,14 +86,16 @@ export default function LuxPromoBanner({ instance, sectionId }: SectionRenderPro
               <h3 className="text-2xl md:text-3xl font-light tracking-tight mb-3">
                 <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
               </h3>
-              <p className="text-sm text-muted-foreground mb-6 max-w-md md:me-0 md:ms-auto">
-                <InlineEditable
-                  sectionId={sectionId}
-                  settingKey="subtitle"
-                  value={subtitle}
-                  multiline
-                />
-              </p>
+              {subtitle && (
+                <p className="text-sm text-muted-foreground mb-6 max-w-md md:me-0 md:ms-auto">
+                  <InlineEditable
+                    sectionId={sectionId}
+                    settingKey="subtitle"
+                    value={subtitle}
+                    multiline
+                  />
+                </p>
+              )}
               <div>
                 <Link
                   to={ctaLink}

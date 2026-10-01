@@ -1,6 +1,6 @@
 "use client";
 
-import { HeroMedia, Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import {
@@ -9,6 +9,7 @@ import {
   asImageUrl,
   asString,
   localized,
+  useSampleContent,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -28,21 +29,30 @@ import { InlineEditable } from "./_inline-editable";
 export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const shop = useShop();
+  // The sample copy describes a fashion boutique; a live store that hasn't
+  // written its own hero gets its name instead, and no empty image frame.
+  const sample = useSampleContent();
 
   const badgeText = asString(s.badge_text);
   const headline =
     asString(s.headline) ||
-    localized(locale, "Discover the Art of Refined Elegance", "اكتشف فن الأناقة الراقية");
+    (sample
+      ? localized(locale, "Discover the Art of Refined Elegance", "اكتشف فن الأناقة الراقية")
+      : shop?.name || "");
   const subtitle =
     asString(s.subtitle) ||
-    localized(
-      locale,
-      "A curated edit of clothing and accessories — contemporary design, exceptional quality.",
-      "تشكيلة مميزة من الملابس والإكسسوارات بتصميم عصري وجودة عالية.",
-    );
+    (sample
+      ? localized(
+          locale,
+          "A curated edit of clothing and accessories — contemporary design, exceptional quality.",
+          "تشكيلة مميزة من الملابس والإكسسوارات بتصميم عصري وجودة عالية.",
+        )
+      : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
   const heroImageUrl = asImageUrl(s.hero_image_url);
+  const showImage = !!heroImageUrl || sample;
   // Non-destructive focal/zoom/rotation. Undefined → image renders unchanged.
   const heroImageTransform = asImageTransform(s.hero_image_url);
   const heroAlt = asImageAlt(s.hero_image_url);
@@ -54,30 +64,36 @@ export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
   return (
     <section className="relative" data-lux-section={sectionId}>
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 min-h-[70vh] items-center">
+        <div
+          className={`grid grid-cols-1 gap-0 items-center ${
+            showImage ? "md:grid-cols-2 min-h-[70vh]" : "text-center"
+          }`}
+        >
           {/* Left: Image (object-contain over a light-gray frame — V2 parity) */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-            className="aspect-[4/5] md:aspect-auto md:h-full"
-          >
-            <div className="h-full bg-[hsl(var(--lux-gray))]">
-              {heroImageUrl && (
-                <HeroMedia
-                  src={heroImageUrl}
-                  alt={heroAlt}
-                  transform={heroImageTransform}
-                  mobileSrc={heroImageMobile}
-                  mobileTransform={heroImageMobileTransform}
-                  mobileAspect="4/5"
-                  fit="contain"
-                  priority
-                  className="w-full h-full"
-                />
-              )}
-            </div>
-          </motion.div>
+          {showImage && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+              className="aspect-[4/5] md:aspect-auto md:h-full"
+            >
+              <div className="h-full bg-[hsl(var(--lux-gray))]">
+                {heroImageUrl && (
+                  <HeroMedia
+                    src={heroImageUrl}
+                    alt={heroAlt}
+                    transform={heroImageTransform}
+                    mobileSrc={heroImageMobile}
+                    mobileTransform={heroImageMobileTransform}
+                    mobileAspect="4/5"
+                    fit="contain"
+                    priority
+                    className="w-full h-full"
+                  />
+                )}
+              </div>
+            </motion.div>
+          )}
 
           {/* Right: Content */}
           <motion.div
@@ -94,14 +110,16 @@ export default function LuxHero({ instance, sectionId }: SectionRenderProps) {
             <h1 className="lux-heading text-3xl md:text-4xl text-foreground mb-6 leading-relaxed">
               <InlineEditable sectionId={sectionId} settingKey="headline" value={headline} />
             </h1>
-            <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-sm">
-              <InlineEditable
-                sectionId={sectionId}
-                settingKey="subtitle"
-                value={subtitle}
-                multiline
-              />
-            </p>
+            {subtitle && (
+              <p className="text-muted-foreground text-sm leading-relaxed mb-8 max-w-sm">
+                <InlineEditable
+                  sectionId={sectionId}
+                  settingKey="subtitle"
+                  value={subtitle}
+                  multiline
+                />
+              </p>
+            )}
             {ctaText && (
               <Link to={ctaLink} className="inline-flex items-center gap-2 lux-btn">
                 <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />

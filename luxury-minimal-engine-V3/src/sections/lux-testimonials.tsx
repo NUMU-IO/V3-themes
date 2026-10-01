@@ -7,6 +7,7 @@ import {
   asString,
   localized,
   readBlocks,
+  useSampleContent,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -21,8 +22,9 @@ import { InlineEditable } from "./_inline-editable";
  * optional city. All V2 className strings kept verbatim. Engine-wired:
  * useResolvedSettings (so global tokens + dynamic sources resolve), a `review`
  * block list read via readBlocks (so the merchant can add/remove/reorder
- * reviews), and InlineEditable on every text field. Falls back to three V2
- * default reviews when no blocks are configured.
+ * reviews), and InlineEditable on every text field. The three V2 sample
+ * reviews show only in the preview/editor; a live store with no reviews of
+ * its own renders nothing.
  */
 
 interface TestimonialReview {
@@ -36,6 +38,7 @@ interface TestimonialReview {
 export default function LuxTestimonials({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const title =
     asString(s.title) || localized(locale, "What Our Clients Say", "رأي عملاءنا");
@@ -47,7 +50,7 @@ export default function LuxTestimonials({ instance, sectionId }: SectionRenderPr
     name: asString(r.name),
     city: asString(r.city),
     rating: asNumber(r.rating, 5),
-  }));
+  })).filter((r) => sample || r.text);
 
   // V2 default reviews when the merchant has configured none.
   const defaultReviews: TestimonialReview[] = [
@@ -84,7 +87,7 @@ export default function LuxTestimonials({ instance, sectionId }: SectionRenderPr
   ];
 
   const usingBlocks = blockReviews.length > 0;
-  const reviews = usingBlocks ? blockReviews : defaultReviews;
+  const reviews = usingBlocks ? blockReviews : sample ? defaultReviews : [];
 
   if (reviews.length === 0) return null;
 
