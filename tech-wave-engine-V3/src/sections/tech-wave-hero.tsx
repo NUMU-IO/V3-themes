@@ -1,8 +1,8 @@
 "use client";
-import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useShop } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowRight, Truck, ShieldCheck, CreditCard } from "lucide-react";
-import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 /**
  * Tech Wave hero — faithful port of the V2 in-tree
@@ -13,15 +13,17 @@ import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type Sec
 const TechWaveHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
-  const badge = asString(s.badge_text) || localized(locale, "\u{1F389} Up to 25% off", "\u{1F389} خصومات تصل لـ ٢٥٪");
-  const headline = asString(s.headline) || localized(locale, "Discover the best products at the best prices", "اكتشف أحلى المنتجات بأفضل الأسعار");
+  const shop = useShop();
+  const sample = useSampleContent();
+  const badge = asString(s.badge_text) || (sample ? localized(locale, "\u{1F389} Up to 25% off", "\u{1F389} خصومات تصل لـ ٢٥٪") : "");
+  const headline = asString(s.headline) || (sample ? localized(locale, "Discover the best products at the best prices", "اكتشف أحلى المنتجات بأفضل الأسعار") : shop?.name ?? "");
   const subtitle =
     asString(s.subtitle) ||
-    localized(
+    (sample ? localized(
       locale,
       "A curated lineup of clothing and accessories delivered across Egypt. Great quality at prices that work for you.",
       "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.",
-    );
+    ) : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
   const secondaryText = asString(s.secondary_text) || localized(locale, "New arrivals", "الملابس الجديدة");

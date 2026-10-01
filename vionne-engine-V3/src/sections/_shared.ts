@@ -788,3 +788,27 @@ export function productCurrency(p: unknown): string | undefined {
   const v = obj?.currency ?? obj?.price_currency;
   return typeof v === "string" ? v : undefined;
 }
+
+/**
+ * Whether invented sample copy (reviews, offers, guarantees, category
+ * taglines) may render: only in the marketplace preview or the editor canvas,
+ * where it shows the merchant what to fill in. On a live store it would be
+ * published in the merchant's name, so sections render nothing (or the
+ * merchant's own text) instead. False on the server and first paint.
+ */
+export function useSampleContent(): boolean {
+  const demo = useDemo();
+  const [inEditor, setInEditor] = useState(false);
+  useEffect(() => {
+    try {
+      if (new URLSearchParams(window.location.search).get("editor")) {
+        setInEditor(true);
+        return;
+      }
+    } catch {
+      /* defensive */
+    }
+    setInEditor(window.parent !== window);
+  }, []);
+  return demo || inEditor;
+}

@@ -1,5 +1,5 @@
 "use client";
-import { Link, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useProducts, useResolvedSettings, useShop } from "@numueg/theme-sdk";
 import {
   asImageAlt,
   asImageUrl,
@@ -9,6 +9,7 @@ import {
   useDemo,
   useInsideEditor,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { Develop, Emboss, Rise, Stamp, useMotionOn } from "./_motion";
@@ -23,6 +24,8 @@ import { Develop, Emboss, Rise, Stamp, useMotionOn } from "./_motion";
 export default function SkeuHero({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const shop = useShop();
+  const sample = useSampleContent();
   const { products } = useProducts();
   const demo = useDemo();
   const inEditor = useInsideEditor();
@@ -30,17 +33,17 @@ export default function SkeuHero({ instance, sectionId }: SectionRenderProps) {
 
   const headline =
     asString(s.headline) ||
-    localized(locale, "Made by hand,\nmade to last", "شغل إيد،\nمعمول يعيش");
+    (sample ? localized(locale, "Made by hand,\nmade to last", "شغل إيد،\nمعمول يعيش") : shop?.name ?? "");
   const subtitle =
     asString(s.subtitle) ||
-    localized(
+    (sample ? localized(
       locale,
       "Every piece leaves this workshop checked, stitched and signed. No two are exactly alike — that's the point.",
       "كل قطعة بتخرج من الورشة متفحوصة ومخيّطة وموقّعة. مفيش قطعتين زي بعض، ودي الفكرة.",
-    );
+    ) : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Browse the workshop", "اتفرج على الشغل");
   const ctaLink = asString(s.cta_link) || "/products";
-  const sealText = asString(s.seal_text) || localized(locale, "HAND\nMADE", "شغل\nإيد");
+  const sealText = asString(s.seal_text) || (sample ? localized(locale, "HAND\nMADE", "شغل\nإيد") : "");
 
   const showPlaceholders = demo || inEditor;
   const image =

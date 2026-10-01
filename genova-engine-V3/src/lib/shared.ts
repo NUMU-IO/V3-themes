@@ -504,3 +504,14 @@ export function useMotionOn(): boolean {
 
   return enabled && systemOk;
 }
+
+/**
+ * Whether invented sample copy (reviews, offers, guarantees, category
+ * taglines) may render: only in the marketplace preview or the editor canvas.
+ * On a live store it would be published in the merchant's name.
+ */
+export function useSampleContent(): boolean {
+  const demo = useDemo();
+  const inEditor = useInsideEditor();
+  return demo || inEditor;
+}

@@ -9,6 +9,7 @@ import {
   useInheritedChrome,
   useStoreCollections,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { PaymentMark, useEnabledPaymentMarks } from "./_payment-marks";
@@ -44,6 +45,7 @@ interface FooterColumn {
 export default function VionneFooter({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const sample = useSampleContent();
   const shop = useShop();
   // Route-independent — see useStoreCollections. Plain useCollections() made
   // the Shop column collapse to a lone "All products" on every non-catalog route.
@@ -61,14 +63,14 @@ export default function VionneFooter({ instance, sectionId }: SectionRenderProps
   const aboutText =
     asString(s.footer_about_text) ||
     asString(globals.footer_tagline) ||
-    t(
+    (sample ? t(
       "footer.brand_blurb",
       localized(
         locale,
         "Refined, considered, made to be lived in.",
         "قطع أنيقة وراقية — مصمَّمة تتلبس كل يوم.",
       ),
-    );
+    ) : "");
 
   const shopTitle =
     asString(s.shop_title) || t("footer.shop_title", localized(locale, "Shop", "تسوّقي"));

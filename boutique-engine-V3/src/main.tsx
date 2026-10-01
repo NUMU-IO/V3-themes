@@ -51,6 +51,7 @@ import BoutiqueOrderConfirmationSection from "./sections/boutique-order-confirma
 import BoutiqueHeader from "./sections/boutique-header";
 import BoutiqueFooter from "./sections/boutique-footer";
 
+import { DemoContext } from "./sections/_shared";
 interface MountResult {
   cleanup: () => void;
   applyDraft: (next: ThemeSettingsV3) => void;
@@ -232,8 +233,10 @@ function pickTemplate(ctx: MountContext): string {
 // defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
 // (host-side renderToString for SSR) from a single render function, so the
 // server markup and the client hydration tree are identical by construction.
-const entry = defineThemeEntry(({ currentTemplate }) => (
-  <ThemeApp currentTemplate={currentTemplate} />
+const entry = defineThemeEntry(({ currentTemplate, demo }) => (
+  <DemoContext.Provider value={Boolean(demo)}>
+    <ThemeApp currentTemplate={currentTemplate} />
+  </DemoContext.Provider>
 ));
 
 export const mount = entry.mount;

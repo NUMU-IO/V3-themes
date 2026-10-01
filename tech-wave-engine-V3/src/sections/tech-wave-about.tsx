@@ -1,6 +1,6 @@
 "use client";
 import { Link, useResolvedSettings, useLocale } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 /**
  * Tech Wave about section.
@@ -14,8 +14,9 @@ import { applyImageTransform, asImageTransform, asImageUrl, asString, localized,
 const TechWaveAbout = ({ instance }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const sample = useSampleContent();
   const eyebrow = asString(s.eyebrow) || localized(locale, "ABOUT US", "من نحن");
-  const headline = asString(s.headline) || localized(locale, "Built different", "مختلفين عن الباقي");
+  const headline = asString(s.headline) || (sample ? localized(locale, "Built different", "مختلفين عن الباقي") : "");
   const quote = asString(s.quote);
   const description = asString(s.description);
   const image = asImageUrl(s.image);

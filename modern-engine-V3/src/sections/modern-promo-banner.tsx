@@ -7,6 +7,7 @@ import {
   asImageTransform,
   localized,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 
 /**
@@ -38,9 +39,10 @@ function imgUrl(v: unknown): string {
 const ModernPromoBanner = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
+  const sample = useSampleContent();
   const badge = s.badge_text ?? "";
-  const headline = s.headline ?? localized(locale, "Special Offer", "عرض خاص");
-  const subtitle = s.subtitle ?? localized(locale, "Shop our latest collection", "تسوق أحدث تشكيلاتنا");
+  const headline = s.headline ?? (sample ? localized(locale, "Special Offer", "عرض خاص") : "");
+  const subtitle = s.subtitle ?? (sample ? localized(locale, "Shop our latest collection", "تسوق أحدث تشكيلاتنا") : "");
   const ctaText = s.cta_text ?? localized(locale, "Shop Now", "تسوق الآن");
   const ctaLink = s.cta_link ?? "/products";
   const imageUrl = imgUrl(s.image_url);
@@ -50,6 +52,8 @@ const ModernPromoBanner = ({ instance }: SectionRenderProps) => {
 
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(!imageUrl);
+
+  if (!headline) return null;
 
   return (
     <section className="py-8">

@@ -230,7 +230,7 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
             </h1>
 
             {/* Rating (static) */}
-            {showRating && (
+            {showRating && sample && (
               <div className="flex items-center gap-1 mb-4 text-muted-foreground">
                 <span className="text-sm">★★★★★</span>
                 <span className="text-xs">{localized(locale, "(reviews)", "(التقييمات)")}</span>

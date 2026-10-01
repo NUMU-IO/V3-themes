@@ -19,8 +19,8 @@
           {
             "type": "st-header",
             "settings": {
-              "marquee_text": "FREE SHIPPING OVER 1000 EGP",
-              "marquee_text_ar": "شحن مجاني فوق ١٠٠٠ جنيه"
+              "marquee_text": "",
+              "marquee_text_ar": ""
             }
           }
         ]
@@ -50,8 +50,8 @@
               "eyebrow_ar": "دروب جديد",
               "headline": "Built for the street",
               "headline_ar": "مصنوع للشارع",
-              "body": "Limited runs, honest prices, delivered across Egypt.",
-              "body_ar": "كميات محدودة وأسعار عادلة، بتوصل لكل مصر.",
+              "body": "",
+              "body_ar": "",
               "cta_label": "Shop now",
               "cta_label_ar": "تسوق دلوقتي",
               "cta_href": "/products",

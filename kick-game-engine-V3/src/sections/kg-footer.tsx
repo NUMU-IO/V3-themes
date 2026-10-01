@@ -25,6 +25,7 @@ import {
   asString,
   localized,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 
 interface FootLink {
@@ -72,6 +73,7 @@ const helpLinks = (locale: string | undefined): FootLink[] => [
 const KGFooter = ({ instance, sectionId }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
+  const sample = useSampleContent();
   const isAr = (locale || "").toLowerCase().startsWith("ar");
   const shop = useShop();
   const themeSettings = useThemeSettings();
@@ -93,11 +95,11 @@ const KGFooter = ({ instance, sectionId }: SectionRenderProps) => {
   const tagline =
     (isAr ? asString(s.tagline_ar) : "") ||
     asString(s.tagline) ||
-    localized(
+    (sample ? localized(
       locale,
       "Curated streetwear, dropped weekly. Authentic pairs only.",
       "ستريت وير مختار بعناية، دروبات كل أسبوع. أوريجينال بس.",
-    );
+    ) : "");
 
   const column1Title =
     (isAr ? asString(s.column_1_title_ar) : "") ||

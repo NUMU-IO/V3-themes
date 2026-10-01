@@ -12,6 +12,7 @@ import {
   readBlocks,
   useDemo,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
@@ -43,24 +44,25 @@ const BzAboutSection = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const demo = useDemo();
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const eyebrow = asString(s.eyebrow) || localized(locale, "ABOUT US", "من نحن");
   const headline = asString(s.headline) || localized(locale, "OUR STORY", "قصتنا");
   const quote =
     asString(s.quote) ||
-    localized(locale, "THE THINGS WE KEEP CLOSE SAY EVERYTHING ABOUT WHO WE ARE.", "الأشياء اللي بنحبها بتحكي كل حاجة عننا.");
+    (sample ? localized(locale, "THE THINGS WE KEEP CLOSE SAY EVERYTHING ABOUT WHO WE ARE.", "الأشياء اللي بنحبها بتحكي كل حاجة عننا.") : "");
   const whoLabel = asString(s.who_label) || localized(locale, "WHO WE ARE", "مين إحنا");
-  const whoHeadline = asString(s.who_headline) || localized(locale, "WELCOME TO BAZAR", "أهلًا بيك في بازار");
+  const whoHeadline = asString(s.who_headline) || (sample ? localized(locale, "WELCOME TO BAZAR", "أهلًا بيك في بازار") : "");
   const description =
     asString(s.description) ||
-    localized(
+    (sample ? localized(
       locale,
       "WE STARTED WITH A SIMPLE BELIEF — THAT EVERYDAY OBJECTS DESERVE THE SAME CARE AND INTENTION AS THE EXTRAORDINARY ONES. BAZAR WAS BORN FROM A DESIRE TO BRIDGE THE GAP BETWEEN FUNCTION AND BEAUTY, BETWEEN CRAFT AND COMMERCE.",
       "بدأنا بفكرة بسيطة — إن الحاجات اللي بنستخدمها كل يوم تستاهل نفس الاهتمام والإتقان زي الحاجات الاستثنائية. بازار اتولد من رغبة إننا نوصّل بين الوظيفة والجمال، بين الحِرفة والتجارة.",
-    );
+    ) : "");
   const marqueeText =
     asString(s.marquee_text) ||
-    localized(locale, "QUALITY • AUTHENTICITY • COMMUNITY • CRAFT • BOLD VISION •", "جودة • أصالة • مجتمع • حِرفة • رؤية جريئة •");
+    (sample ? localized(locale, "QUALITY • AUTHENTICITY • COMMUNITY • CRAFT • BOLD VISION •", "جودة • أصالة • مجتمع • حِرفة • رؤية جريئة •") : "");
   const valuesLabel = asString(s.values_label) || localized(locale, "WHAT DRIVES US", "اللي بيحركنا");
   const valuesHeadline = asString(s.values_headline) || localized(locale, "OUR VALUES", "قيمنا");
   const ctaLabel = asString(s.cta_label) || localized(locale, "NEXT STEPS", "الخطوة الجاية");

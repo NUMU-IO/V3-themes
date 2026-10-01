@@ -1,18 +1,21 @@
 "use client";
 import { useLocale } from "@numueg/theme-sdk";
-import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 const NBMarquee = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
-  const text = asString(s.text) || localized(
+  const sample = useSampleContent();
+  const text = asString(s.text) || (sample ? localized(
     locale,
     "✦ Exclusive deals ✦ Fast shipping ✦ Authentic products ✦ Guaranteed quality ✦ Cash on delivery ✦",
     "✦ خصومات حصرية ✦ شحن سريع ✦ منتجات أصلية ✦ جودة مضمونة ✦ الدفع عند الاستلام ✦",
-  );
+  ) : "");
   const repeatCount = asNumber(s.repeat_count, 2);
 
   const repeatedText = Array.from({ length: Math.max(1, repeatCount) }, () => text).join(" ");
+
+  if (!text) return null;
 
   return (
     <div className="nb-marquee py-3 -rotate-1 scale-[1.02] my-2">

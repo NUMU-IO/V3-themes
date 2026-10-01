@@ -1,11 +1,12 @@
 "use client";
-import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useShop } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import {
   asImageTransform,
   localized,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 
 /**
@@ -43,11 +44,13 @@ function imgAlt(v: unknown): string {
 const ModernHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
-  const badge = s.badge_text ?? localized(locale, "New arrivals", "وصل حديثاً");
-  const headline = s.headline ?? localized(locale, "Discover the best products at the best prices", "اكتشف أحلى المنتجات بأفضل الأسعار");
+  const shop = useShop();
+  const sample = useSampleContent();
+  const badge = s.badge_text ?? (sample ? localized(locale, "New arrivals", "وصل حديثاً") : "");
+  const headline = s.headline ?? (sample ? localized(locale, "Discover the best products at the best prices", "اكتشف أحلى المنتجات بأفضل الأسعار") : shop?.name ?? "");
   const subtitle =
     s.subtitle ??
-    localized(locale, "A curated selection of clothing and accessories, delivered across Egypt. High quality at fair prices.", "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.");
+    (sample ? localized(locale, "A curated selection of clothing and accessories, delivered across Egypt. High quality at fair prices.", "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.") : "");
   const ctaText = s.cta_text ?? localized(locale, "Shop now", "تسوق الآن");
   const ctaLink = s.cta_link ?? "/products";
   const secondaryText = s.secondary_text ?? localized(locale, "Browse categories", "تصفح الفئات");

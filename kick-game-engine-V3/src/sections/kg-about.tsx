@@ -1,6 +1,6 @@
 "use client";
 import { Link, useLocale } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 /**
  * Kick Game about page. Ported from the proven vionne V3 about section
@@ -10,8 +10,9 @@ import { applyImageTransform, asImageTransform, asString, localized, type Sectio
 const KGAbout = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
-  const eyebrow = asString(s.eyebrow) || localized(locale, "ABOUT KICK GAME", "عن كيك جيم");
-  const headline = asString(s.headline) || localized(locale, "Sneakers as art", "السنيكرز فن");
+  const sample = useSampleContent();
+  const eyebrow = asString(s.eyebrow) || (sample ? localized(locale, "ABOUT KICK GAME", "عن كيك جيم") : "");
+  const headline = asString(s.headline) || (sample ? localized(locale, "Sneakers as art", "السنيكرز فن") : "");
   const quote = asString(s.quote);
   const description = asString(s.description);
   const image = asString(s.image);

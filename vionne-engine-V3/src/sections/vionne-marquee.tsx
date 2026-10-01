@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { localized, type SectionRenderProps } from "./_shared";
+import { localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 /**
  * Vionne Scrolling Banner section.
@@ -56,6 +56,7 @@ const COLOR_PRESETS: Record<
 
 const VionneMarquee = ({ instance }: SectionRenderProps) => {
   const locale = useLocale();
+  const sample = useSampleContent();
   // useResolvedSettings (not raw instance.settings) so editor edits + dynamic
   // sources reflect live. Marquee items scroll in a duplicated track, so they
   // stay panel-edited (item_1..6) rather than canvas inline-edit.
@@ -74,7 +75,9 @@ const VionneMarquee = ({ instance }: SectionRenderProps) => {
   const items =
     rawItems.length > 0
       ? rawItems
-      : [
+      : !sample
+        ? []
+        : [
           localized(locale, "NEW SEASON", "تشكيلة الموسم الجديد"),
           localized(locale, "FREE SHIPPING", "شحن مجاني"),
           localized(locale, "WORLDWIDE DELIVERY", "توصيل لكل العالم"),
@@ -176,6 +179,8 @@ const VionneMarquee = ({ instance }: SectionRenderProps) => {
       </span>
     </div>
   );
+
+  if (items.length === 0) return null;
 
   return (
     <section

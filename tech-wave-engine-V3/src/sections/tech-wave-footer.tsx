@@ -18,7 +18,7 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
-import { asString, localized, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 /**
  * Tech Wave footer — the theme's own chrome (replaces the host's generic
@@ -96,6 +96,7 @@ const TechWaveFooter = ({ instance, sectionId }: SectionRenderProps) => {
   const shop = useShop();
   const themeSettings = useThemeSettings();
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const brandName =
     asString(s.brand_name) ||
@@ -105,11 +106,11 @@ const TechWaveFooter = ({ instance, sectionId }: SectionRenderProps) => {
 
   const tagline =
     asString(s.tagline) ||
-    localized(
+    (sample ? localized(
       locale,
       "Tech that keeps up with you — curated gear, fast shipping across Egypt.",
       "تكنولوجيا على قد طموحك — تشكيلة مختارة وشحن سريع لكل مصر.",
-    );
+    ) : "");
 
   const defaultColumns: FooterColumn[] = [
     {

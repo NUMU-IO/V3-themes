@@ -1,7 +1,7 @@
 "use client";
-import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useShop } from "@numueg/theme-sdk";
 import { ArrowLeft } from "lucide-react";
-import { asImageAlt, asImageTransform, asImageUrl, asString, localized, useInsideEditor, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, useInsideEditor, type SectionRenderProps, useSampleContent } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { Plate, Rise, RuleDraw, Typeset, useMotionOn } from "./_motion";
 
@@ -18,14 +18,16 @@ import { Plate, Rise, RuleDraw, Typeset, useMotionOn } from "./_motion";
 export default function EdHero({ instance, sectionId }: SectionRenderProps) {
   const s = instance.settings ?? {};
   const locale = useLocale();
+  const shop = useShop();
+  const sample = useSampleContent();
   const on = useMotionOn();
   const inEditor = useInsideEditor();
   const headline =
     asString(s.headline) ||
-    localized(locale, "Discover the latest\nfashion trends", "اكتشف أحدث\nصيحات الموضة");
+    (sample ? localized(locale, "Discover the latest\nfashion trends", "اكتشف أحدث\nصيحات الموضة") : shop?.name ?? "");
   const subtitle =
     asString(s.subtitle) ||
-    localized(locale, "A curated collection of the finest global brands", "تشكيلة منتقاة من أرقى الماركات العالمية");
+    (sample ? localized(locale, "A curated collection of the finest global brands", "تشكيلة منتقاة من أرقى الماركات العالمية") : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop the Collection", "تسوّق التشكيلة");
   const ctaLink = asString(s.cta_link) || "/products";
   const heroImage = asImageUrl(s.hero_image_url) || undefined;

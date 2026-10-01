@@ -15,7 +15,7 @@ import {
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 /** Merchant-assigned label (attributes.label, denormalized bilingual text). */
 type ProductExtras = Product & {
@@ -45,6 +45,7 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
   const showRelated = s.show_related_products ?? true;
   const relatedCount = asNumber(s.related_products_count, 4);
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const product = useProductOptional();
 
@@ -211,7 +212,7 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
             </h1>
 
             {/* Rating (static — review data not exposed on the SDK product) */}
-            {showRating && (
+            {showRating && sample && (
               <div className="flex items-center gap-1 mb-4 text-[var(--eg-muted)]">
                 <span className="text-sm text-[hsl(var(--warning))]">★★★★★</span>
                 <span className="text-xs">{localized(locale, "(reviews)", "(التقييمات)")}</span>
@@ -382,7 +383,7 @@ export default function ElegantProductDetail({ instance }: SectionRenderProps) {
             </div>
 
             {/* Trust guarantees */}
-            {showGuarantees && (
+            {showGuarantees && sample && (
               <div className="mt-8 pt-6 border-t border-[var(--eg-border)] flex flex-wrap items-center justify-between gap-4">
                 {[
                   { icon: Truck, label: localized(locale, "Fast Shipping", "شحن سريع"), desc: localized(locale, "3-5 days", "3-5 أيام") },

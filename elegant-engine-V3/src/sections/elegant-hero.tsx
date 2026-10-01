@@ -1,23 +1,25 @@
 "use client";
-import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useShop } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 const ElegantHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
+  const shop = useShop();
+  const sample = useSampleContent();
 
   const headline =
     asString(s.headline) ||
-    localized(locale, "Discover Timeless Elegance", "اكتشف روائع التصميم الأنيق");
+    (sample ? localized(locale, "Discover Timeless Elegance", "اكتشف روائع التصميم الأنيق") : shop?.name ?? "");
   const subtitle =
     asString(s.subtitle) ||
-    localized(
+    (sample ? localized(
       locale,
       "A luxurious edit, hand-picked to suit your refined taste — exceptional quality and unrivalled elegance.",
       "تشكيلة فاخرة مختارة بعناية لتناسب ذوقك الرفيع. جودة استثنائية وأناقة لا تُضاهى.",
-    );
+    ) : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوق الآن");
   const ctaLink = asString(s.cta_link) || "/products";
   const heroImage = asImageUrl(s.hero_image_url) || undefined;
