@@ -61,21 +61,23 @@ export default function LuxPromoBanner({ instance, sectionId }: SectionRenderPro
       <div className="container mx-auto px-4">
         <div className="border border-foreground/10 overflow-hidden">
           <div className="flex flex-col md:flex-row items-stretch">
-            {/* Image */}
-            <div className="w-full md:w-2/5 aspect-[4/3] md:aspect-auto bg-[hsl(var(--muted))]">
-              {imageUrl ? (
-                <img
-                  src={imageUrl}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  style={applyImageTransform(imageTransform, "cover")}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-foreground/5">
-                  <ShoppingBag className="h-16 w-16 text-foreground/20" aria-hidden="true" />
-                </div>
-              )}
-            </div>
+            {/* Image — the bag placeholder is preview-only; live, no image means no column */}
+            {(imageUrl || sample) && (
+              <div className="w-full md:w-2/5 aspect-[4/3] md:aspect-auto bg-[hsl(var(--muted))]">
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt=""
+                    className="w-full h-full object-cover"
+                    style={applyImageTransform(imageTransform, "cover")}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-foreground/5">
+                    <ShoppingBag className="h-16 w-16 text-foreground/20" aria-hidden="true" />
+                  </div>
+                )}
+              </div>
+            )}
             {/* Content */}
             <div className="flex-1 flex flex-col justify-center p-8 md:p-12 text-center md:text-end">
               {badge && (
