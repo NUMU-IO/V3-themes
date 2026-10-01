@@ -2,7 +2,7 @@
 import { asArray, asBool, asImageAlt, asImageUrl, asNumber, asRecord, asString, localized, pickItems, readBlocks } from "@numueg/theme-kit";
 export { asArray, asBool, asImageAlt, asImageUrl, asNumber, asRecord, asString, localized, pickItems, readBlocks };
 
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { SectionInstance } from "@numueg/theme-sdk";
 
 export interface SectionRenderProps {
@@ -22,6 +22,31 @@ export interface SectionRenderProps {
  */
 export const DemoContext = createContext<boolean>(false);
 export const useDemo = (): boolean => useContext(DemoContext);
+
+/**
+ * Whether invented sample copy (reviews, offers, category taglines,
+ * guarantees) may render: only in the marketplace preview or the editor
+ * canvas, where it shows the merchant what to fill in. On a live store it
+ * would be published in the merchant's name, so sections render nothing (or
+ * the merchant's own text) instead. Editor check mirrors editorial's
+ * useInsideEditor: false on the server and first paint, flips after mount.
+ */
+export function useSampleContent(): boolean {
+  const demo = useDemo();
+  const [inEditor, setInEditor] = useState(false);
+  useEffect(() => {
+    try {
+      if (new URLSearchParams(window.location.search).get("editor")) {
+        setInEditor(true);
+        return;
+      }
+    } catch {
+      /* defensive */
+    }
+    setInEditor(window.parent !== window);
+  }, []);
+  return demo || inEditor;
+}
 
 /**
  * Host-provided page context. The storefront forwards the resolved route's

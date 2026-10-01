@@ -17,7 +17,7 @@ import {
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ArrowRight, ShoppingCart, Check, Truck, RotateCcw, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
-import { asBool, asNumber, asString, asImageUrl, localized, type SectionRenderProps } from "./_shared";
+import { asBool, asNumber, asString, asImageUrl, localized, useSampleContent, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -144,11 +144,15 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
 
   const options = product.options ?? [];
 
+  // The default promises (3-5 day shipping, 14-day returns, 100% authentic)
+  // are the theme's, not the merchant's: live, a badge shows only once the
+  // merchant has written its terms.
+  const sample = useSampleContent();
   const guarantees = [
-    { icon: Truck, label: shippingLabel, desc: shippingDesc },
-    { icon: RotateCcw, label: returnsLabel, desc: returnsDesc },
-    { icon: ShieldCheck, label: authenticLabel, desc: authenticDesc },
-  ];
+    { key: "shipping", icon: Truck, label: shippingLabel, desc: shippingDesc },
+    { key: "returns", icon: RotateCcw, label: returnsLabel, desc: returnsDesc },
+    { key: "authentic", icon: ShieldCheck, label: authenticLabel, desc: authenticDesc },
+  ].filter((g) => sample || asString(s[`${g.key}_desc`]));
 
   return (
     <div className="bg-background" data-lux-section={sectionId} data-testid="storefront-product-detail">
@@ -393,18 +397,16 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
             </div>
 
             {/* Trust guarantees */}
-            {showGuarantees && (
+            {showGuarantees && guarantees.length > 0 && (
               <div className="mt-8 pt-6 border-t border-border flex flex-wrap items-center justify-between gap-4">
-                {guarantees.map((item, i) => (
-                  <div key={item.label || i} className="flex items-center gap-2 text-muted-foreground">
+                {guarantees.map((item) => (
+                  <div key={item.key} className="flex items-center gap-2 text-muted-foreground">
                     <item.icon size={15} className="shrink-0" aria-hidden="true" />
                     <div>
                       <span className="text-[11px] font-medium text-foreground/70">
                         <InlineEditable
                           sectionId={sectionId}
-                          settingKey={
-                            i === 0 ? "shipping_label" : i === 1 ? "returns_label" : "authentic_label"
-                          }
+                          settingKey={`${item.key}_label`}
                           value={item.label}
                         />
                       </span>
@@ -412,9 +414,7 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
                       <span className="text-[10px] text-muted-foreground">
                         <InlineEditable
                           sectionId={sectionId}
-                          settingKey={
-                            i === 0 ? "shipping_desc" : i === 1 ? "returns_desc" : "authentic_desc"
-                          }
+                          settingKey={`${item.key}_desc`}
                           value={item.desc}
                         />
                       </span>

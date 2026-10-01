@@ -6,6 +6,7 @@ import {
   asString,
   localized,
   readBlocks,
+  useSampleContent,
   type SectionRenderProps,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
@@ -56,13 +57,16 @@ export default function LuxFooter({ instance, sectionId }: SectionRenderProps) {
     asImageUrl(themeSettings.global_settings?.logo_url) ||
     "";
 
+  const sample = useSampleContent();
   const footerText =
     asString(s.footer_text) ||
-    localized(
-      locale,
-      "A curated edit of clothing and accessories — contemporary design, exceptional quality.",
-      "تشكيلة مميزة من الملابس والإكسسوارات بتصميم عصري وجودة عالية.",
-    );
+    (sample
+      ? localized(
+          locale,
+          "A curated edit of clothing and accessories — contemporary design, exceptional quality.",
+          "تشكيلة مميزة من الملابس والإكسسوارات بتصميم عصري وجودة عالية.",
+        )
+      : "");
 
   // Optional override columns from `column` blocks (Empire / Gilded seam).
   const overrideColumns: FooterColumn[] = readBlocks(instance, "column")
@@ -116,14 +120,16 @@ export default function LuxFooter({ instance, sectionId }: SectionRenderProps) {
                 <InlineEditable sectionId={sectionId} settingKey="brand_name" value={brandName} />
               </h3>
             )}
-            <p className="text-xs leading-relaxed opacity-50">
-              <InlineEditable
-                sectionId={sectionId}
-                settingKey="footer_text"
-                value={footerText}
-                multiline
-              />
-            </p>
+            {footerText && (
+              <p className="text-xs leading-relaxed opacity-50">
+                <InlineEditable
+                  sectionId={sectionId}
+                  settingKey="footer_text"
+                  value={footerText}
+                  multiline
+                />
+              </p>
+            )}
           </div>
 
           {/* Shop / Help (or override) columns */}
