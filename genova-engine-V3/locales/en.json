@@ -116,7 +116,7 @@
     "shop_look": "Shop this look"
   },
   "header": {
-    "announcement_1": "Free shipping on all orders over 3,000 EGP",
+    "announcement_1": "Free shipping on all orders over {{amount}} EGP",
     "announcement_2": "New denim drop — now in store",
     "nav_about": "About",
     "nav_fit_guide": "Fit guide",

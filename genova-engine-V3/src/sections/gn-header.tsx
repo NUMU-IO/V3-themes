@@ -37,6 +37,7 @@ import {
   useIsCompact,
   useMotionOn,
   useStoreCollections,
+  useFreeShippingThreshold,
   useTemplateOpensWithHero,
   type SectionRenderProps,
 } from "../lib/shared";
@@ -335,6 +336,7 @@ export default function GnHeader({ instance }: SectionRenderProps) {
   }, [drawerOpen]);
 
   const itemCount = (cart?.items ?? []).reduce((n, i) => n + (i.quantity ?? 0), 0);
+  const freeShippingThreshold = useFreeShippingThreshold();
   const transparent = overHero && !scrolled && !drawerOpen && !searchOpen;
 
   // Ticker messages. Repeated inside a duplicated track so the loop is seamless;
@@ -344,8 +346,18 @@ export default function GnHeader({ instance }: SectionRenderProps) {
   // does: schema defaults do not exist on the instance at render time, so a
   // bare preset would otherwise show a black bar with nothing in it. The third
   // has no fallback — it is genuinely optional.
+  //
+  // The free-shipping fallback quotes the store's real threshold (its shipping
+  // rates) and is left out when there is none. It used to say "over 3,000 EGP"
+  // on every store, including rabbit and genova, which have no free tier.
   const messages = [
-    asString(s.announcement_text_1) || t("header.announcement_1", "Free shipping on all orders over 3,000 EGP"),
+    asString(s.announcement_text_1) ||
+      (freeShippingThreshold > 0
+        ? t("header.announcement_1", "Free shipping on all orders over {{amount}} EGP").replace(
+            "{{amount}}",
+            freeShippingThreshold.toLocaleString("en-EG"),
+          )
+        : ""),
     asString(s.announcement_text_2) || t("header.announcement_2", "New denim drop — now in store"),
     asString(s.announcement_text_3),
   ].filter(Boolean);

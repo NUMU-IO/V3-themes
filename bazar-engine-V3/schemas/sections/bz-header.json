@@ -36,15 +36,15 @@
       "id": "announcement_text",
       "label": "Announcement text",
       "label_ar": "نص الإعلان",
-      "default": "✦ Free shipping on orders over 1000 EGP",
-      "info": "Write anything you like. Add more rotating messages as \"Announcement message\" blocks below."
+      "default": "",
+      "info": "Write anything you like. Add more rotating messages as \"Announcement message\" blocks below. Left empty, the bar shows your real free-shipping offer from your shipping rates."
     },
     {
       "type": "text",
       "id": "announcement_text_ar",
       "label": "Announcement text (Arabic)",
       "label_ar": "نص الإعلان (عربي)",
-      "default": "✦ شحن مجاني للطلبات فوق ١٠٠٠ جنيه"
+      "default": ""
     },
     {
       "type": "select",
@@ -163,8 +163,6 @@
       },
       "settings": {
         "announcement_enabled": true,
-        "announcement_text": "✦ Free shipping on orders over 1000 EGP",
-        "announcement_text_ar": "✦ شحن مجاني للطلبات فوق ١٠٠٠ جنيه",
         "announcement_mode": "slide",
         "announcement_speed": 4,
         "show_search": true,

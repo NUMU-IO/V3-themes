@@ -27,7 +27,9 @@
       "id": "announcement_text_1",
       "label": "Message 1",
       "label_ar": "الرسالة الأولى",
-      "default": "Free shipping on all orders over 3,000 EGP",
+      "default": "",
+      "info": "Leave empty to show your real free-shipping offer, from your shipping rates (nothing shows if you have none).",
+      "info_ar": "سيبيها فاضية عشان يظهر عرض الشحن المجاني الحقيقي من أسعار الشحن بتاعتك (ومش هيظهر حاجة لو مفيش عرض).",
       "visible_if": "show_announcement"
     },
     {
