@@ -9,7 +9,7 @@ import {
   type CartItem,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Minus, Plus, ShoppingBag, X } from "lucide-react";
-import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, useFreeShippingThreshold, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { CouponBox } from "./_coupon-box";
 
@@ -44,10 +44,11 @@ export default function BzCart({ instance, sectionId }: SectionRenderProps) {
   // Gap #4 — no fabricated flat shipping fee at the cart. The real rate
   // depends on the shipping address and the store's zones, which only exist in
   // the platform checkout; here we show FREE when the merchant's real free-ship
-  // threshold is met, otherwise "calculated at checkout". `free_shipping_threshold`
-  // is the merchant's actual promo (0 = none); the legacy `shipping_flat` literal
-  // is no longer the source of truth.
-  const freeThreshold = asNumber(s.free_shipping_threshold, 0);
+  // threshold is met, otherwise "calculated at checkout". The threshold comes
+  // from the store's shipping rates (0 = none); the legacy `shipping_flat`
+  // literal is no longer the source of truth.
+  // From the store's shipping rates, not a theme setting (see the hook).
+  const freeThreshold = useFreeShippingThreshold();
   const shippingCalcLabel =
     asString(s.shipping_calc_label) ||
     localized(locale, "Calculated at checkout", "يُحسب عند الدفع");

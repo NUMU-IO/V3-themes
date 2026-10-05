@@ -140,14 +140,6 @@
       "label": "Remove item label",
       "label_ar": "نص إزالة المنتج",
       "default": "Remove"
-    },
-    {
-      "type": "number",
-      "id": "free_shipping_threshold",
-      "label": "Free shipping threshold",
-      "label_ar": "حد الشحن المجاني",
-      "default": 0,
-      "info": "Order subtotal (in your store currency) above which shipping shows as free. 0 = no free-shipping offer."
     }
   ],
   "presets": [
@@ -175,8 +167,7 @@
         "free_label": "Free",
         "total_label": "Total",
         "checkout_label": "Secure Checkout",
-        "remove_label": "Remove",
-        "free_shipping_threshold": 0
+        "remove_label": "Remove"
       }
     }
   ]

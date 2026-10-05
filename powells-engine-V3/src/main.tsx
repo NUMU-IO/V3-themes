@@ -452,11 +452,13 @@ if (import.meta.env.DEV && typeof window !== "undefined" && typeof document !== 
           currency: "USD",
           default_language: params.get("locale") === "ar" ? "ar" : "en",
           use_nextjs_storefront: true,
-        },
+          // ?ship=<amount> previews the free-shipping meter; real stores get it from their rates.
+          free_shipping_threshold_cents: Number(params.get("ship") ?? 0) * 100,
+        } as Parameters<typeof mount>[1]["store"],
         themeSettings: {
           schema_version: 3,
           theme_id: "powells-v3",
-          global_settings: { free_shipping_threshold: Number(params.get("ship") ?? 0) },
+          global_settings: {},
           templates: {},
           section_groups: {},
         },

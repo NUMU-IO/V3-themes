@@ -968,7 +968,6 @@
               "show_popular_picks": true,
               "popular_picks_limit": 4,
               "show_progress_bar": true,
-              "free_shipping_threshold": 0,
               "show_coupon": true,
               "show_payment_marks": true
             }

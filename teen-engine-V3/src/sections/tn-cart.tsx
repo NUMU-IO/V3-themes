@@ -32,6 +32,7 @@ import {
   asString,
   cx,
   useDemo,
+  useFreeShippingThreshold,
   useInsideEditor,
   type SectionRenderProps,
 } from "../lib/shared";
@@ -51,6 +52,8 @@ const SAMPLE_ITEMS = [
 
 export default function TnCart({ instance }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
+  // From the store's shipping rates, not a theme setting (see the hook).
+  const freeShippingThreshold = useFreeShippingThreshold();
   const t = useT();
   const locale = useLocale();
   const demo = useDemo();
@@ -228,7 +231,7 @@ export default function TnCart({ instance }: SectionRenderProps) {
 
           <aside className="tn-cart-summary" aria-label={t("cart.summary", "Order summary")}>
             <div className="tn-card tn-cart-summarycard">
-              <FreeShipBar subtotal={subtotal} threshold={asNumber(s.free_shipping_threshold, 0)} currency={currency} enabled={asBool(s.show_progress_bar, true)} t={t} />
+              <FreeShipBar subtotal={subtotal} threshold={freeShippingThreshold} currency={currency} enabled={asBool(s.show_progress_bar, true)} t={t} />
 
               {asBool(s.show_coupon, true) && (
                 <div className="tn-cart-coupon">

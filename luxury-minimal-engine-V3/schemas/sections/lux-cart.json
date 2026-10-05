@@ -88,14 +88,6 @@
       "label_ar": "نص الشحن المؤجل",
       "default": "",
       "info": "Shown when shipping is not free; the real rate is computed at checkout."
-    },
-    {
-      "type": "number",
-      "id": "free_shipping_threshold",
-      "label": "Free shipping threshold",
-      "label_ar": "حد الشحن المجاني",
-      "default": 0,
-      "info": "Order subtotal (in your store currency) above which shipping shows as free. 0 = no free-shipping offer."
     }
   ],
   "presets": [
@@ -116,8 +108,7 @@
         "shipping_label": "",
         "total_label": "",
         "free_label": "",
-        "shipping_calc_label": "",
-        "free_shipping_threshold": 0
+        "shipping_calc_label": ""
       }
     }
   ]

@@ -22,7 +22,7 @@ import {
   type Product,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Banknote, Minus, Plus, ShieldCheck, ShoppingBag, Truck, X } from "lucide-react";
-import { localized, productCurrency, productImage } from "./_shared";
+import { localized, productCurrency, productImage, useFreeShippingThreshold } from "./_shared";
 import { PricePair } from "./_price";
 
 export function MiniCartDrawer({ open, onClose, locale }: {
@@ -32,23 +32,10 @@ export function MiniCartDrawer({ open, onClose, locale }: {
 }) {
   const { cart, updateQuantity, removeItem } = useCart();
   const { products: catalogProducts } = useProducts();
-  // CRO — free-shipping progress INSIDE the drawer. The threshold lives on the
-  // cart SECTION's settings; read it cross-section from the published
-  // customization so the drawer and the cart page always tell the same story.
-  const themeSettings = useThemeSettings();
-  const freeThreshold = (() => {
-    const tpls = themeSettings.templates ?? {};
-    for (const tpl of Object.values(tpls)) {
-      const sections = (tpl as { sections?: Record<string, { type?: string; settings?: Record<string, unknown> }> })?.sections ?? {};
-      for (const sec of Object.values(sections)) {
-        if (sec?.type === "skeu-cart") {
-          const v = Number(sec.settings?.free_shipping_threshold ?? 0);
-          if (v > 0) return v;
-        }
-      }
-    }
-    return 0;
-  })();
+  // CRO — free-shipping progress INSIDE the drawer. The threshold comes from
+  // the store's shipping rates (see useFreeShippingThreshold), so the drawer,
+  // the cart page and checkout always tell the same story.
+  const freeThreshold = useFreeShippingThreshold();
   const items = cart?.items ?? [];
   const firstProductId = items[0]?.product_id ?? null;
   const related = useRelatedProducts(open ? firstProductId : null, { limit: 8 });

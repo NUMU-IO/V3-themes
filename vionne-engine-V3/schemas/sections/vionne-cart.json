@@ -106,14 +106,6 @@
       "info": "Shown for shipping at the cart; the real rate is calculated in checkout once an address is entered."
     },
     {
-      "type": "number",
-      "id": "free_shipping_threshold",
-      "label": "Free shipping over (0 = no promo)",
-      "label_ar": "شحن مجاني فوق (0 = بدون عرض)",
-      "default": 0,
-      "info": "Your real free-shipping threshold. Drives the FREE label + 'add X more' progress hint."
-    },
-    {
       "type": "header",
       "content": "Recommendations",
       "content_ar": "الاقتراحات"

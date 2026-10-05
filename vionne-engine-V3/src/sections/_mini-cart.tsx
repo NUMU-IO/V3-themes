@@ -41,9 +41,9 @@ export function MiniCartDrawer({ open, onClose, locale }: {
   // most used (cart, checkout, account, any CMS page). `useStoreProducts`
   // fetches for itself and accepts every envelope.
   const catalogProducts = useStoreProducts(12);
-  // CRO — free-shipping progress INSIDE the drawer. The threshold lives on the
-  // cart SECTION's settings; read it cross-section (see useFreeShippingThreshold)
-  // so the drawer, the cart page and the FAQ always quote the same number.
+  // CRO — free-shipping progress INSIDE the drawer. The threshold comes from
+  // the store's shipping rates (see useFreeShippingThreshold), so the drawer,
+  // the cart page and checkout always agree.
   const freeThreshold = useFreeShippingThreshold();
   const items = cart?.items ?? [];
   const firstProductId = items[0]?.product_id ?? null;

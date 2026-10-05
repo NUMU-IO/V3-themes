@@ -25,18 +25,8 @@
     },
     {
       "type": "paragraph",
-      "content": "Set the amount that unlocks free shipping and shoppers see how close they are. Leave it at 0 to hide the bar entirely — a progress bar toward a threshold you don’t actually offer is worse than nothing.",
-      "content_ar": "حطي المبلغ اللي بيخلي الشحن مجاني والزباين هيشوفوا فاضلهم كام. سيبيه 0 عشان الشريط يختفي — شريط تقدم لهدف مش موجود أصلًا أسوأ من إنه مايكونش موجود."
-    },
-    {
-      "type": "range",
-      "id": "free_shipping_threshold",
-      "label": "Free shipping over",
-      "label_ar": "الشحن مجاني فوق",
-      "default": 0,
-      "min": 0,
-      "max": 10000,
-      "step": 100
+      "content": "The free-shipping bar follows your shipping rates. It shows only when every shipping zone has a “Free over” rate, and it counts to that amount, so the bag never promises what checkout doesn’t give. Change the amount in your shipping settings.",
+      "content_ar": "شريط الشحن المجاني ماشي على أسعار الشحن بتاعتك. بيظهر بس لما كل مناطق الشحن يكون فيها سعر «مجاني فوق»، وبيعدّ لحد المبلغ ده، عشان الشنطة ماتوعدش بحاجة الدفع مش هيديها. غيّري المبلغ من إعدادات الشحن."
     },
     {
       "type": "checkbox",
