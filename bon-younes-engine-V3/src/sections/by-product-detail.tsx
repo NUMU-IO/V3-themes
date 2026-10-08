@@ -1,7 +1,7 @@
 "use client";
 
 import { VariantPicker, useInstalledApp } from "@numueg/theme-sdk";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Link,
   Money,
@@ -13,16 +13,78 @@ import {
   useThemeSettings,
 } from "@numueg/theme-sdk";
 import { Coffee, Heart, Leaf, Minus, Plus, ShieldCheck, ShoppingBag, Sparkles, Star, Truck } from "lucide-react";
-import { applyImageTransform, asArray, asImageTransform, asImageUrl, asNumber, asRecord, asString, demoOrPlaceholder, localized, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asArray, asImageTransform, asImageUrl, asRecord, asString, demoOrPlaceholder, localized, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type ImageTransform, type SectionRenderProps } from "./_shared";
+
+/** The product an add-on block links to: what the shopper is charged for. */
+interface AddonProduct {
+  id: string;
+  variantId?: string;
+  name: string;
+  /** Major units, as the rest of the page. */
+  price: number;
+  currency?: string;
+  image?: string;
+}
 
 interface Addon {
-  id: string;
+  key: string;
   name: string;
-  price: number;
   image?: string;
   // Non-destructive focal/zoom/rotation for the merchant-configured add-on
   // image. Undefined when none set → image renders unchanged.
   transform?: ImageTransform;
+  /** Demo add-ons only: a display price with no product behind it. */
+  demoPrice?: number;
+  /** Set only for a block linked to a real, in-stock product: only these can be chosen. */
+  product?: AddonProduct;
+}
+
+/**
+ * Each add-on block links a real product by id, so its name, price, stock and
+ * tax are the platform's own and it is charged as that product's own cart line.
+ * The page's product list holds only 12 products, so each linked product is
+ * read from the host's detail route, once, after mount. A product that cannot
+ * be loaded or is sold out is left out.
+ */
+function useAddonProducts(ids: string[]): Record<string, AddonProduct> {
+  const key = ids.join("|");
+  const [found, setFound] = useState<Record<string, AddonProduct>>({});
+  useEffect(() => {
+    if (!key) return;
+    let cancelled = false;
+    const wanted = key.split("|");
+    void Promise.all(
+      wanted.map((id) =>
+        fetch(`/api/storefront/products/${encodeURIComponent(id)}`)
+          .then((res) => (res.ok ? res.json() : null))
+          .catch(() => null),
+      ),
+    ).then((rows) => {
+      if (cancelled) return;
+      const next: Record<string, AddonProduct> = {};
+      rows.forEach((row, i) => {
+        const raw = asRecord(row);
+        const p = raw.data && typeof raw.data === "object" ? asRecord(raw.data) : raw;
+        const price = Number(p.price);
+        if (!asString(p.id) || p.is_in_stock === false || !Number.isFinite(price)) return;
+        // ponytail: first variant; link add-on products that have no options.
+        const variant = asRecord(asArray(p.variants)[0]);
+        next[wanted[i]] = {
+          id: asString(p.id),
+          variantId: asString(variant.id) || undefined,
+          name: asString(p.name),
+          price,
+          currency: asString(p.currency) || asString(p.price_currency) || undefined,
+          image: asImageUrl(asArray(p.images)[0]) || undefined,
+        };
+      });
+      setFound(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [key]);
+  return found;
 }
 
 const FALLBACK_PRODUCT = {
@@ -43,23 +105,25 @@ const FALLBACK_PRODUCT = {
   ],
 };
 
+// Demo preview only: no product behind them, so they show no toggle and can
+// never reach the cart.
 const FALLBACK_ADDONS: Addon[] = [
   {
-    id: "extra-shot",
+    key: "extra-shot",
     name: "Extra espresso shot",
-    price: 15,
+    demoPrice: 15,
     image: "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?auto=format&fit=crop&w=400&q=70",
   },
   {
-    id: "syrup",
+    key: "syrup",
     name: "Caramel syrup",
-    price: 10,
+    demoPrice: 10,
     image: "https://images.unsplash.com/photo-1587080413959-06b859fb107d?auto=format&fit=crop&w=400&q=70",
   },
   {
-    id: "brownie",
+    key: "brownie",
     name: "Walnut brownie",
-    price: 65,
+    demoPrice: 65,
     image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=400&q=70",
   },
 ];
@@ -139,17 +203,31 @@ export default function ByProductDetail({
   ];
 
   const blkCtx = useBlockResolveContext();
-  const configuredAddons: Addon[] = resolveBlocks(instance, "addon", blkCtx)
+  // A block with no product linked is not an add-on yet, so it shows nothing.
+  const addonBlocks = resolveBlocks(instance, "addon", blkCtx)
     .map((r) => ({
-      id: asString(r.id),
-      name: asString(r.name),
-      price: asNumber(r.price),
+      productId: asString(r.product),
       image: asImageUrl(r.image) || undefined,
       transform: asImageTransform(r.image),
     }))
-    .filter((a) => a.id && a.name);
+    .filter((b, i, all) => b.productId && all.findIndex((x) => x.productId === b.productId) === i);
+  const linked = useAddonProducts(addonBlocks.map((b) => b.productId));
+  const configuredAddons: Addon[] = addonBlocks.flatMap((b) => {
+    const p = linked[b.productId];
+    if (!p) return [];
+    return [
+      {
+        key: b.productId,
+        name: p.name,
+        image: b.image ?? p.image,
+        transform: b.image ? b.transform : undefined,
+        product: p,
+      },
+    ];
+  });
 
-  const addons = configuredAddons.length > 0 ? configuredAddons : demoOrPlaceholder(demo, FALLBACK_ADDONS);
+  const addons =
+    addonBlocks.length > 0 ? configuredAddons : demoOrPlaceholder(demo, FALLBACK_ADDONS);
 
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -186,10 +264,10 @@ export default function ByProductDetail({
 
   const isFallback = !productCtx;
 
-  const addonsSubtotal = Array.from(chosenAddons).reduce((sum, id) => {
-    const a = addons.find((x) => x.id === id);
-    return sum + (a?.price ?? 0);
-  }, 0);
+  const chosenProducts = addons.flatMap((a) =>
+    a.product && chosenAddons.has(a.key) ? [a.product] : [],
+  );
+  const addonsSubtotal = chosenProducts.reduce((sum, p) => sum + p.price, 0);
 
   // Variant gate (V2 parity): when the product has option axes, every axis
   // must be chosen before the item can be added; a product with no axes adds
@@ -229,6 +307,15 @@ export default function ByProductDetail({
       await cart.addItem(productCtx.id, selectedVariant?.id, cappedQuantity);
     } catch (err) {
       console.warn("[bon-younes] add to cart failed", err);
+      return;
+    }
+    // Each chosen add-on is its own line, charged as its own product.
+    for (const p of chosenProducts) {
+      try {
+        await cart.addItem(p.id, p.variantId, 1);
+      } catch (err) {
+        console.warn("[bon-younes] add-on add to cart failed", err);
+      }
     }
   };
 
@@ -453,9 +540,9 @@ export default function ByProductDetail({
             <div className="by-pdp-addons">
               <p className="by-pdp-addons-title">{addonsTitle}</p>
               {addons.map((a) => {
-                const active = chosenAddons.has(a.id);
+                const active = chosenAddons.has(a.key);
                 return (
-                  <div key={a.id} className="by-pdp-addon">
+                  <div key={a.key} className="by-pdp-addon">
                     <div className="by-pdp-addon-img">
                       {a.image && (
                         <img src={a.image} alt="" loading="lazy" decoding="async" style={applyImageTransform(a.transform, "cover")} />
@@ -463,21 +550,31 @@ export default function ByProductDetail({
                     </div>
                     <div className="by-pdp-addon-meta">
                       <p className="by-pdp-addon-name">{a.name}</p>
-                      <p className="by-pdp-addon-price">
-                        + {a.price} {fallbackCurrency}
-                      </p>
+                      {a.product ? (
+                        <p className="by-pdp-addon-price">
+                          + <Money amount={a.product.price} currency={a.product.currency ?? product.currency} />
+                        </p>
+                      ) : a.demoPrice != null ? (
+                        <p className="by-pdp-addon-price">
+                          + {a.demoPrice} {fallbackCurrency}
+                        </p>
+                      ) : null}
                     </div>
-                    <button
-                      type="button"
-                      className={`by-pdp-addon-toggle ${active ? "is-active" : ""}`}
-                      onClick={() => toggleAddon(a.id)}
-                      aria-pressed={active}
-                      aria-label={
-                        active ? `Remove ${a.name}` : `Add ${a.name}`
-                      }
-                    >
-                      {active ? <Minus size={16} /> : <Plus size={16} />}
-                    </button>
+                    {a.product && (
+                      <button
+                        type="button"
+                        className={`by-pdp-addon-toggle ${active ? "is-active" : ""}`}
+                        onClick={() => toggleAddon(a.key)}
+                        aria-pressed={active}
+                        aria-label={
+                          active
+                            ? localized(locale, `Remove ${a.name}`, `شيل ${a.name}`)
+                            : localized(locale, `Add ${a.name}`, `ضيف ${a.name}`)
+                        }
+                      >
+                        {active ? <Minus size={16} /> : <Plus size={16} />}
+                      </button>
+                    )}
                   </div>
                 );
               })}
@@ -486,7 +583,7 @@ export default function ByProductDetail({
                   className="by-pdp-addon-price"
                   style={{ alignSelf: "flex-end", marginTop: "0.25rem" }}
                 >
-                  {addonsTotalLabel} + {addonsSubtotal} {fallbackCurrency}
+                  {addonsTotalLabel} + <Money amount={addonsSubtotal} currency={chosenProducts[0]?.currency ?? product.currency} />
                 </p>
               )}
             </div>
