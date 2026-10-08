@@ -39,7 +39,6 @@ export default function KGProductDetail({ instance }: SectionRenderProps) {
 
   // Trust badges + stock render by default (merchant can still hide via the
   // setting). Rating stays opt-in since the SDK product carries no review data.
-  const showRating = s.show_rating ?? false;
   const showStock = s.show_stock ?? true;
   const showGuarantees = s.show_guarantees ?? true;
   const showRelated = s.show_related_products ?? true;
@@ -202,12 +201,6 @@ export default function KGProductDetail({ instance }: SectionRenderProps) {
             </h1>
 
             {/* Rating */}
-            {showRating && (
-              <div className="flex items-center gap-1 mb-4 text-[var(--vn-muted)]">
-                <span className="text-sm">★★★★★</span>
-                <span className="text-xs">{localized(locale, "(reviews)", "(التقييمات)")}</span>
-              </div>
-            )}
 
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-5">

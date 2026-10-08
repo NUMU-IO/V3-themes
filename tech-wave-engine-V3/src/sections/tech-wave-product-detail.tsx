@@ -37,7 +37,6 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
   const s = instance.settings ?? {};
   const locale = useLocale();
 
-  const showRating = s.show_rating ?? true;
   const showStock = s.show_stock ?? true;
   const showGuarantees = s.show_guarantees ?? true;
   const showRelated = s.show_related_products ?? true;
@@ -200,12 +199,6 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
             </h1>
 
             {/* Rating (static — review data not exposed on the SDK product) */}
-            {showRating && (
-              <div className="flex items-center gap-1 mb-4 text-[var(--vn-muted)]">
-                <span className="text-sm tw-star text-[hsl(var(--warning))]">★★★★★</span>
-                <span className="text-xs">{localized(locale, "(reviews)", "(تقييمات)")}</span>
-              </div>
-            )}
 
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-5">
