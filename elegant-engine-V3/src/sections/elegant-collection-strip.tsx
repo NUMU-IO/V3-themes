@@ -1,6 +1,6 @@
 "use client";
 import { Link } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asString, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, type ImageTransform, type SectionRenderProps } from "./_shared";
 
 interface Item {
   image: string;
@@ -16,7 +16,7 @@ export default function CollectionStrip({ instance }: SectionRenderProps) {
 
   const items: Item[] = [];
   for (let i = 1; i <= 4; i++) {
-    const image = asString(s[`item_${i}_image`]);
+    const image = asImageUrl(s[`item_${i}_image`]);
     const imageTransform = asImageTransform(s[`item_${i}_image`]);
     const label = asString(s[`item_${i}_label`]);
     const link = asString(s[`item_${i}_link`]);
