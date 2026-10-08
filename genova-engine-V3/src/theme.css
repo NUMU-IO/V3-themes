@@ -2968,7 +2968,10 @@
 
 @media (max-width: 900px) {
   .gn-cart-grid {
-    grid-template-columns: 1fr;
+    /* minmax(0, …), as on desktop: a bare 1fr cannot shrink below its
+       widest child, and the bag row made /cart 393 px wide on a 360 px
+       phone (rabbit and genova, live, 2026-10-05). */
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.75rem;
   }
   .gn-cart-summary {

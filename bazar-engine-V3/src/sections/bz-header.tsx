@@ -18,6 +18,7 @@ import {
   asString,
   localized,
   readBlocks,
+  useFreeShippingThreshold,
   type SectionRenderProps,
 } from "./_shared";
 import BzAnnouncementBar from "./_announcement";
@@ -38,16 +39,24 @@ const defaultNav = (locale: string | undefined): NavItem[] => [
 // Default announcement slides — shown when the merchant hasn't added any
 // "Announcement message" blocks yet (mirrors defaultNav). Merchant blocks
 // override these; the announcement_enabled toggle hides the bar entirely.
+// The free-shipping slide quotes the store's real threshold (its shipping
+// rates) and is left out when there is none; it used to promise "over 1000
+// EGP" on every store.
 const defaultAnnouncements = (
   locale: string | undefined,
+  freeThreshold: number,
 ): { text: string; link?: string }[] => [
-  {
-    text: localized(
-      locale,
-      "✦ Free shipping on orders over 1000 EGP",
-      "✦ شحن مجاني للطلبات فوق ١٠٠٠ جنيه",
-    ),
-  },
+  ...(freeThreshold > 0
+    ? [
+        {
+          text: localized(
+            locale,
+            `✦ Free shipping on orders over ${freeThreshold.toLocaleString("en-EG")} EGP`,
+            `✦ شحن مجاني للطلبات فوق ${freeThreshold.toLocaleString("ar-EG")} جنيه`,
+          ),
+        },
+      ]
+    : []),
   {
     text: localized(
       locale,
@@ -132,6 +141,7 @@ export default function BzHeader({ instance, sectionId }: SectionRenderProps) {
   // The merchant's main message (the always-editable "Announcement text" header
   // setting) is slide #1 — this is what lets them "write whatever they want".
   // Optional `announcement` blocks add further rotating slides after it.
+  const freeThreshold = useFreeShippingThreshold();
   const primaryText = isAr
     ? asString(s.announcement_text_ar) || asString(s.announcement_text)
     : asString(s.announcement_text) || asString(s.announcement_text_ar);
@@ -148,7 +158,7 @@ export default function BzHeader({ instance, sectionId }: SectionRenderProps) {
     .filter((m) => m.text.trim());
   const combined = [...primaryMessage, ...blockMessages];
   const announcementMessages =
-    combined.length > 0 ? combined : defaultAnnouncements(locale);
+    combined.length > 0 ? combined : defaultAnnouncements(locale, freeThreshold);
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);

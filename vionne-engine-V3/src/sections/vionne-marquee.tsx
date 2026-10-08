@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { localized, type SectionRenderProps } from "./_shared";
+import { Link, useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
+import { localized, useFreeShippingThreshold, type SectionRenderProps } from "./_shared";
 
 /**
  * Vionne Scrolling Banner section.
@@ -70,14 +70,26 @@ const VionneMarquee = ({ instance }: SectionRenderProps) => {
 
   // If the merchant cleared every slot, fall back to a tasteful default so
   // the section never renders as an empty bar (which would silently push
-  // the rest of the page up and look broken in the editor preview).
+  // the rest of the page up and look broken in the editor preview). The
+  // default makes no promise the store does not keep: free shipping only with
+  // the threshold its shipping rates really have, and no worldwide claim.
+  const freeThreshold = useFreeShippingThreshold();
+  const currency = useShop().currency || "EGP";
   const items =
     rawItems.length > 0
       ? rawItems
       : [
           localized(locale, "NEW SEASON", "تشكيلة الموسم الجديد"),
-          localized(locale, "FREE SHIPPING", "شحن مجاني"),
-          localized(locale, "WORLDWIDE DELIVERY", "توصيل لكل العالم"),
+          ...(freeThreshold > 0
+            ? [
+                localized(
+                  locale,
+                  `FREE SHIPPING OVER ${currency} ${freeThreshold.toLocaleString("en-EG")}`,
+                  `شحن مجاني فوق ${freeThreshold.toLocaleString("ar-EG")} ${currency === "EGP" ? "ج.م" : currency}`,
+                ),
+              ]
+            : []),
+          localized(locale, "NEW ARRIVALS", "وصل جديد"),
         ];
 
   const separatorKey = (s.separator as string) ?? "dot";

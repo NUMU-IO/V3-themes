@@ -22,7 +22,7 @@ export function PricePair({ price, compareAt, currency, size = "md" }: {
   const has = typeof compareAt === "number" && compareAt > price;
   const cls = SIZES[size];
   return (
-    <span className="inline-flex items-baseline gap-2">
+    <span className="inline-flex flex-wrap items-baseline gap-x-2">
       {has && (
         <s className={`${cls.compare} font-medium text-[var(--vn-sale)] decoration-[var(--vn-sale)]`}>
           <Money amount={compareAt} currency={currency} />

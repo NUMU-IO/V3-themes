@@ -267,29 +267,20 @@ export function useInheritedChrome(
 }
 
 /**
- * The merchant's free-shipping threshold, in MAJOR units. 0 = not configured.
+ * The store's free-shipping threshold, in MAJOR units. 0 = no free tier.
  *
- * It lives on the CART section's settings, but three surfaces outside the cart
- * need it — the mini-cart drawer, the FAQ's shipping answer, and anything else
- * that promises free delivery — and a second hardcoded copy is how a store ends
- * up advertising two different numbers. Read cross-section from the published
- * customization so every surface quotes the same figure the bag counts to.
+ * It comes from the store's own shipping rates: the API sends
+ * `free_shipping_threshold_cents`, the subtotal from which every zone ships
+ * free, counted the way checkout counts it. It used to be a number typed into
+ * the cart section, which drifted from the rates: the bag promised free
+ * shipping from 500 while checkout charged it below 1,500. The drawer, the cart
+ * page, the FAQ and the marquee all read this one hook, so they cannot quote
+ * different numbers, and a store with no free tier shows no promise at all.
  */
 export function useFreeShippingThreshold(): number {
-  const themeSettings = useThemeSettings();
-  const templates = themeSettings.templates ?? {};
-  for (const tpl of Object.values(templates)) {
-    const sections =
-      (tpl as { sections?: Record<string, { type?: string; settings?: Record<string, unknown> }> })
-        ?.sections ?? {};
-    for (const sec of Object.values(sections)) {
-      if (sec?.type === "vionne-cart") {
-        const v = Number(sec.settings?.free_shipping_threshold ?? 0);
-        if (v > 0) return v;
-      }
-    }
-  }
-  return 0;
+  const shop = useShop() as { free_shipping_threshold_cents?: number | null };
+  const cents = Number(shop.free_shipping_threshold_cents ?? 0);
+  return cents > 0 ? cents / 100 : 0;
 }
 
 /**

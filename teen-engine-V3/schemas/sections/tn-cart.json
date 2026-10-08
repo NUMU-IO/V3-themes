@@ -98,19 +98,6 @@
       "default": true
     },
     {
-      "type": "range",
-      "id": "free_shipping_threshold",
-      "label": "Free shipping over",
-      "label_ar": "شحن مجاني فوق",
-      "default": 0,
-      "min": 0,
-      "max": 5000,
-      "step": 50,
-      "info": "In your store's currency. Leave at 0 and the bar stays hidden — better than promising free delivery you have not set up in your shipping zones.",
-      "info_ar": "بعملة متجرك. سيبها 0 والشريط هيفضل مخفي — أحسن من وعد بشحن مجاني مش متظبط في مناطق الشحن.",
-      "visible_if": "{{ section.settings.show_progress_bar }}"
-    },
-    {
       "type": "checkbox",
       "id": "show_coupon",
       "label": "Show the discount-code field",
@@ -134,7 +121,6 @@
         "show_popular_picks": true,
         "popular_picks_limit": 4,
         "show_progress_bar": true,
-        "free_shipping_threshold": 0,
         "show_coupon": true,
         "show_payment_marks": true
       }

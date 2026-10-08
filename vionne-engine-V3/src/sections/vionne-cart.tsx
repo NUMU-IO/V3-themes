@@ -14,7 +14,7 @@ import {
   type Product,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Check, Copy, Minus, Plus, ShoppingBag, Tag, Truck, X } from "lucide-react";
-import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps, useStoreProducts, productHref } from "./_shared";
+import { asNumber, asString, localized, productCurrency, productImage, responsiveImg, PRODUCT_CARD_IMG, THUMB_IMG, type SectionRenderProps, useFreeShippingThreshold, useStoreProducts, productHref } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { CouponBox } from "./_coupon-box";
 import { cartNudges, promoPagePath, useActivePromotions, visibleCodeOffers, type VisibleCodeOffer } from "./_promotions";
@@ -122,7 +122,8 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
   const freeLabel = asString(s.free_label) || localized(locale, "Free", "مجاني");
   const shippingCalcLabel =
     asString(s.shipping_calc_label) || localized(locale, "Calculated at checkout", "يُحسب عند الدفع");
-  const freeThreshold = asNumber(s.free_shipping_threshold, 0);
+  // From the store's shipping rates, not a theme setting (see the hook).
+  const freeThreshold = useFreeShippingThreshold();
   // A3 — merchant-configured offer nudge (on by default; merchant can hide it).
   const showPromoNudge = s.show_promo_nudge !== false;
   // A2 — cart recommendations rail (on by default; merchant can hide it).
@@ -294,7 +295,7 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
         {/* A1 — free-shipping PROGRESS BAR. The threshold nudge used to be a
             small text line buried in the summary; a visible filling bar at the
             top of the cart is the classic "add one more item" AOV mechanic.
-            Renders only when the merchant sets `free_shipping_threshold`. */}
+            Renders only when the store's shipping rates have a free tier. */}
         {freeThreshold > 0 && (
           <div className="mb-8 border border-[var(--vn-border)] p-4">
             <div className="flex items-center gap-2.5 mb-3 text-sm">
@@ -431,7 +432,7 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
                     </button>
                   </div>
 
-                  <div className="flex items-end justify-between mt-auto pt-4">
+                  <div className="flex flex-wrap items-end justify-between gap-x-3 gap-y-2 mt-auto pt-4">
                     {/* Quantity stepper */}
                     <div className="inline-flex items-center border border-[var(--vn-border)] rounded-full">
                       <button
@@ -456,7 +457,7 @@ export default function VionneCart({ instance, sectionId }: SectionRenderProps) 
                         <Plus size={13} aria-hidden="true" />
                       </button>
                     </div>
-                    <span className="text-base font-semibold text-[var(--vn-ink)]">
+                    <span className="ms-auto text-base font-semibold text-[var(--vn-ink)]">
                       <Money amount={it.price * it.quantity} currency={currency} />
                     </span>
                   </div>

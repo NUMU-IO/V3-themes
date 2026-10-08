@@ -424,30 +424,19 @@ export function useOverlayBehaviour(active: boolean, onClose: () => void): void 
 }
 
 /**
- * The merchant's free-shipping threshold, in MAJOR units. 0 = not configured.
+ * The store's free-shipping threshold, in MAJOR units. 0 = no free tier.
  *
- * It is authored on the CART section, but the mini-cart drawer needs the same
- * number — and a second hardcoded copy is exactly how a store ends up promising
- * two different figures on two surfaces. Read cross-section from the published
- * customization so every surface quotes the one the bag actually counts to.
+ * It comes from the store's own shipping rates: the API sends
+ * `free_shipping_threshold_cents`, the subtotal from which every zone ships
+ * free, counted the way checkout counts it. It used to be a number typed into
+ * the cart section, and this theme's preset seeded 3,000 into every store, so
+ * stores with flat shipping and no free tier promised "Free shipping unlocked"
+ * that checkout never gave. The drawer and the cart page both read this hook.
  */
 export function useFreeShippingThreshold(): number {
-  const themeSettings = useThemeSettings();
-  const templates = (themeSettings.templates ?? {}) as Record<
-    string,
-    { sections?: Record<string, unknown> | unknown[] } | undefined
-  >;
-  for (const tpl of Object.values(templates)) {
-    const secs = tpl?.sections;
-    const list = Array.isArray(secs) ? secs : Object.values(secs ?? {});
-    for (const sec of list) {
-      const s = sec as { type?: string; settings?: Record<string, unknown> } | null;
-      if (s?.type !== "gn-cart") continue;
-      const n = Number(s.settings?.free_shipping_threshold ?? 0);
-      if (Number.isFinite(n) && n > 0) return n;
-    }
-  }
-  return 0;
+  const shop = useShop() as { free_shipping_threshold_cents?: number | null };
+  const cents = Number(shop.free_shipping_threshold_cents ?? 0);
+  return Number.isFinite(cents) && cents > 0 ? cents / 100 : 0;
 }
 
 /**

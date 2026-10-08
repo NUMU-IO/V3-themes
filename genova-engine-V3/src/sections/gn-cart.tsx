@@ -15,8 +15,8 @@
 
 import { useState } from "react";
 import { Image, Link, Money, useCart, useLocale, useProducts } from "@numueg/theme-sdk";
-import { asBool, asNumber, asString } from "@numueg/theme-kit";
-import { cx, useDemo, useInsideEditor, type SectionRenderProps } from "../lib/shared";
+import { asBool, asString } from "@numueg/theme-kit";
+import { cx, useDemo, useFreeShippingThreshold, useInsideEditor, type SectionRenderProps } from "../lib/shared";
 import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
 import { QuickAddSheet, useQuickAdd } from "../lib/quick-add";
@@ -60,7 +60,8 @@ export default function GnCart({ instance }: SectionRenderProps) {
     : (cart?.subtotal ?? 0);
   const currency = cart?.currency;
 
-  const threshold = asNumber(s.free_shipping_threshold, 0);
+  // From the store's shipping rates, not a theme setting (see the hook).
+  const threshold = useFreeShippingThreshold();
   const remaining = Math.max(0, threshold - subtotal);
   const progress = threshold > 0 ? Math.min(1, subtotal / threshold) : 0;
 

@@ -22,13 +22,12 @@
  */
 
 import { useState, type FormEvent } from "react";
-import { Image, Link, Money, useCart, useResolvedSettings, useThemeSettings } from "@numueg/theme-sdk";
+import { Image, Link, Money, useCart, useResolvedSettings } from "@numueg/theme-sdk";
 import { formatMoney } from "@numueg/theme-kit";
 import {
   asBool,
-  asNumber,
-  asRecord,
   asString,
+  useFreeShippingThreshold,
   useInsideEditor,
   useOrnaments,
   type SectionRenderProps,
@@ -87,8 +86,8 @@ export default function PwCart({ instance }: SectionRenderProps) {
   const discount = (cart?.discount_amount ?? 0) + (cart?.automatic_discount ?? 0);
   const total = sampling ? subtotal : (cart?.total ?? subtotal);
 
-  const globals = asRecord(useThemeSettings().global_settings);
-  const threshold = asNumber(s.free_shipping_threshold, 0) || asNumber(globals.free_shipping_threshold, 0);
+  // From the store's shipping rates, not a theme setting (see the hook).
+  const threshold = useFreeShippingThreshold();
   const remaining = Math.max(0, threshold - subtotal);
   const showMeter = asBool(s.show_progress_bar, true) && threshold > 0 && !isEmpty;
 

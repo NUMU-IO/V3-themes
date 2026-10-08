@@ -9,7 +9,7 @@ import {
   type CartItem,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingCart, X } from "lucide-react";
-import { asNumber, asString, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, useFreeShippingThreshold, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { CouponBox } from "./_coupon-box";
 
@@ -59,11 +59,11 @@ export default function LuxCart({ instance, sectionId }: SectionRenderProps) {
     asString(s.shipping_calc_label) ||
     localized(locale, "Calculated at checkout", "يُحسب عند الدفع");
 
-  // No fabricated flat shipping fee at the cart. FREE only when the merchant's
-  // real free-ship threshold (0 = none) is met; otherwise "calculated at
+  // No fabricated flat shipping fee at the cart. FREE only when the store's
+  // free-shipping threshold, from its shipping rates (0 = none), is met; otherwise "calculated at
   // checkout". The grand total reflects the items subtotal — the platform
   // checkout adds the real, address-derived rate.
-  const freeThreshold = asNumber(s.free_shipping_threshold, 0);
+  const freeThreshold = useFreeShippingThreshold();
 
   const items: CartItem[] = cart?.items ?? [];
   const currency = cart?.currency;

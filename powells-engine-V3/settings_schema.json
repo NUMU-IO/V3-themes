@@ -221,24 +221,6 @@
     ]
   },
   {
-    "name": "Shopping",
-    "name_ar": "الشراء",
-    "settings": [
-      {
-        "type": "range",
-        "id": "free_shipping_threshold",
-        "label": "Free delivery from",
-        "label_ar": "التوصيل مجاني من",
-        "default": 0,
-        "min": 0,
-        "max": 5000,
-        "step": 50,
-        "info": "In your store currency. The cart shows how far the shopper is from it. 0 hides the meter.",
-        "info_ar": "بعملة متجرك. السلة بتوري الزبون فاضله قد إيه. صفر بيخفي المؤشر."
-      }
-    ]
-  },
-  {
     "name": "Floating buttons",
     "name_ar": "الأزرار العائمة",
     "settings": [

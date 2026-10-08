@@ -170,7 +170,12 @@
 
 /* ─── Buttons ─── */
 
+/* `position: relative` keeps a button's own absolute children (the sr-only
+   status line in QuickAddBar) inside the button. Without it they attach to a
+   box outside a sideways-scrolling rail and widen the whole page: /cart was
+   625 px wide on every phone, and in-app browsers shrank it to fit. */
 .vn-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;

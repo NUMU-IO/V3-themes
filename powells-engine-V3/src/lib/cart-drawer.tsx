@@ -33,7 +33,7 @@ import { IconClose, SceneEmptyBag } from "./ornaments";
 import { BookJacket } from "./jacket";
 import { CartNudges } from "./promotions";
 import { fetchProductDetail } from "./product-detail";
-import { asNumber, asRecord, bookFormat, productAuthor, productImages } from "./shared";
+import { asRecord, bookFormat, productAuthor, productImages, useFreeShippingThreshold } from "./shared";
 
 /** An open/closed flag that unrelated sections can flip without a shared parent. */
 export function createOpenStore() {
@@ -298,7 +298,7 @@ function CartDrawerPanel() {
   const { cart, updateQuantity, removeItem, loading } = useCart();
   const settings = useThemeSettings();
   const globals = asRecord(settings.global_settings);
-  const threshold = asNumber(globals.free_shipping_threshold, 0);
+  const threshold = useFreeShippingThreshold();
   const ornaments = globals.show_ornaments !== false;
 
   const items = cart?.items ?? [];

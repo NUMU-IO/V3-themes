@@ -32,7 +32,7 @@ export {
 };
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { useThemeSettings, type Product, type SectionInstance } from "@numueg/theme-sdk";
+import { useShop, useThemeSettings, type Product, type SectionInstance } from "@numueg/theme-sdk";
 import type { RawBlock } from "@numueg/theme-kit";
 
 /** Join class names, dropping falsy entries. */
@@ -279,4 +279,19 @@ export function copiesLeft(product: Product | null | undefined, few = 3): number
   if (!product) return 0;
   const quantity = Number((product as unknown as Record<string, unknown>).quantity);
   return Number.isFinite(quantity) && quantity > 0 && quantity <= few ? quantity : 0;
+}
+
+/**
+ * The store's free-shipping threshold, in MAJOR units. 0 = no free tier.
+ *
+ * It comes from the store's own shipping rates (the API's
+ * `free_shipping_threshold_cents`: the subtotal from which every zone ships
+ * free, counted the way checkout counts it). It used to be a number typed into
+ * the cart section, which could drift from what checkout charges: on Vionne
+ * the bag promised free shipping from 500 while checkout charged it to 1,500.
+ */
+export function useFreeShippingThreshold(): number {
+  const shop = useShop() as { free_shipping_threshold_cents?: number | null };
+  const cents = Number(shop.free_shipping_threshold_cents ?? 0);
+  return Number.isFinite(cents) && cents > 0 ? cents / 100 : 0;
 }

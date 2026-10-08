@@ -3,7 +3,7 @@ import { asArray, asBool, asImageAlt, asImageUrl, asNumber, asRecord, asString, 
 export { asArray, asBool, asImageAlt, asImageUrl, asNumber, asRecord, asString, localized, pickItems, readBlocks };
 
 import { createContext, useContext, useEffect, useState } from "react";
-import type { SectionInstance } from "@numueg/theme-sdk";
+import { useShop, type SectionInstance } from "@numueg/theme-sdk";
 
 export interface SectionRenderProps {
   instance: SectionInstance;
@@ -155,3 +155,18 @@ export {
   asImageTransform,
   type ImageTransform,
 } from "@numueg/theme-sdk";
+
+/**
+ * The store's free-shipping threshold, in MAJOR units. 0 = no free tier.
+ *
+ * It comes from the store's own shipping rates (the API's
+ * `free_shipping_threshold_cents`: the subtotal from which every zone ships
+ * free, counted the way checkout counts it). It used to be a number typed into
+ * the cart section, which could drift from what checkout charges: on Vionne
+ * the bag promised free shipping from 500 while checkout charged it to 1,500.
+ */
+export function useFreeShippingThreshold(): number {
+  const shop = useShop() as { free_shipping_threshold_cents?: number | null };
+  const cents = Number(shop.free_shipping_threshold_cents ?? 0);
+  return Number.isFinite(cents) && cents > 0 ? cents / 100 : 0;
+}

@@ -113,10 +113,10 @@ export default function VionneSearchResults({ instance, sectionId }: SectionRend
         ) : matches.length > 0 ? (
           <motion.div
             layout
-            className="grid gap-4 md:gap-5"
+            className="grid gap-4 md:gap-5 grid-cols-[var(--cols-mobile)] md:grid-cols-[var(--cols-desktop)]"
             style={
               {
-                gridTemplateColumns: `repeat(${colsDesktop},minmax(0,1fr))`,
+                ["--cols-desktop" as string]: `repeat(${colsDesktop},minmax(0,1fr))`,
                 ["--cols-mobile" as string]: `repeat(${colsMobile},minmax(0,1fr))`,
               } as React.CSSProperties
             }

@@ -563,7 +563,7 @@ const VionneUgcCarousel = ({ instance, sectionId }: SectionRenderProps) => {
           {ctaText && (
             <Link
               to={ctaLink}
-              className="vn-label inline-flex items-center gap-1.5 hover:opacity-70 transition-opacity shrink-0 pb-2"
+              className="vn-label inline-flex items-center gap-1.5 hover:opacity-70 transition-opacity text-end pb-2"
             >
               <InlineEditable sectionId={sectionId} settingKey="cta_text" value={ctaText} />
               <ArrowRight size={14} className="rtl:rotate-180" />

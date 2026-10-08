@@ -14,7 +14,7 @@ import {
   type Product,
 } from "@numueg/theme-sdk";
 import { ArrowRight, Check, Minus, Plus, ShoppingBag, Tag, Truck, X } from "lucide-react";
-import { asNumber, asString, localized, productCurrency, productImage, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, productCurrency, productImage, useFreeShippingThreshold, type SectionRenderProps } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { CouponBox } from "./_coupon-box";
 import { bestCartNudge, useActivePromotions } from "./_promotions";
@@ -115,7 +115,8 @@ export default function ManshetCart({ instance, sectionId }: SectionRenderProps)
   const freeLabel = asString(s.free_label) || localized(locale, "Free", "مجاني");
   const shippingCalcLabel =
     asString(s.shipping_calc_label) || localized(locale, "Calculated at checkout", "يُحسب عند الدفع");
-  const freeThreshold = asNumber(s.free_shipping_threshold, 0);
+  // From the store's shipping rates, not a theme setting (see the hook).
+  const freeThreshold = useFreeShippingThreshold();
   // A3 — merchant-configured offer nudge (on by default; merchant can hide it).
   const showPromoNudge = s.show_promo_nudge !== false;
   // A2 — cart recommendations rail (on by default; merchant can hide it).
@@ -238,7 +239,7 @@ export default function ManshetCart({ instance, sectionId }: SectionRenderProps)
         {/* A1 — free-shipping PROGRESS BAR. The threshold nudge used to be a
             small text line buried in the summary; a visible filling bar at the
             top of the cart is the classic "add one more item" AOV mechanic.
-            Renders only when the merchant sets `free_shipping_threshold`. */}
+            Renders only when the store's shipping rates have a free tier. */}
         {freeThreshold > 0 && (
           <div className="mb-8 border border-[var(--vn-border)] p-4">
             <div className="flex items-center gap-2.5 mb-3 text-sm">
