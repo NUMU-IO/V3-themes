@@ -10,6 +10,7 @@ import {
   useLocale,
   type Product,
   type ProductVariant,
+  ProductAppSlot,
   VariantPicker,
   useInstalledApp,
 } from "@numueg/theme-sdk";
@@ -227,6 +228,7 @@ export default function NBProductDetail({ instance }: SectionRenderProps) {
                 </span>
               )}
             </div>
+            <ProductAppSlot position="below_title" product={product} variant={selectedVariant} />
 
             {/* Description */}
             {product.description && (
@@ -327,6 +329,7 @@ export default function NBProductDetail({ instance }: SectionRenderProps) {
             })}
             </VariantPicker>
 
+            <ProductAppSlot position="before_buy" product={product} variant={selectedVariant} />
             {/* Quantity + Add to cart */}
             <div className="flex items-center gap-3 mb-4">
               <div className="flex items-center border-[3px] border-[var(--vn-border)] rounded-lg">
@@ -378,6 +381,7 @@ export default function NBProductDetail({ instance }: SectionRenderProps) {
                 data-testid="storefront-add-to-cart"
               />
             </div>
+            <ProductAppSlot position="after_buy" product={product} variant={selectedVariant} />
 
             {/* Trust guarantees */}
             {showGuarantees && (

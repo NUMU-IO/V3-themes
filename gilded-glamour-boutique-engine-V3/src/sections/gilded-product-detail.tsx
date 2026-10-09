@@ -13,6 +13,7 @@ import {
   type ProductVariant,
   VariantPicker,
   useInstalledApp,
+  ProductAppSlot,
 } from "@numueg/theme-sdk";
 import {
   Check,
@@ -285,6 +286,7 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
                 </span>
               )}
             </div>
+            <ProductAppSlot position="below_title" product={product} variant={selectedVariant} />
 
             {/* Rating */}
             {showRating && rating > 0 && (
@@ -439,6 +441,7 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
             })}
             </VariantPicker>
 
+            <ProductAppSlot position="before_buy" product={product} variant={selectedVariant} />
             {/* Quantity */}
             <div className="mb-6">
               <h3 className="text-xs tracking-[0.2em] uppercase text-muted-foreground mb-3 font-semibold">
@@ -503,6 +506,7 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
               soldOutLabel={soldOutLabel}
               data-testid="storefront-add-to-cart"
             />
+            <ProductAppSlot position="after_buy" product={product} variant={selectedVariant} />
 
             {/* Trust badges */}
             {showGuarantees && (
