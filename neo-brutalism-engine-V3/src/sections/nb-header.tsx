@@ -14,7 +14,7 @@
  * this header deliberately does NOT render an announcement strip.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { type JSX, useEffect, useRef, useState } from "react";
 import {
   Link,
   logoImgStyle,

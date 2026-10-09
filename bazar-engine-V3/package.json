@@ -7,7 +7,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview --port 5173"
+    "preview": "vite preview --port 5173",
+    "typecheck": "tsc --noEmit",
+    "lint": "node ../../numu-theme-cli/dist/index.js lint",
+    "check": "node ../../numu-theme-cli/dist/index.js check",
+    "verify": "node ../../numu-theme-cli/dist/index.js verify"
   },
   "dependencies": {
     "@numueg/theme-kit": "^0.1.0",

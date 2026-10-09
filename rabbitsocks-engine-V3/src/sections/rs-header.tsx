@@ -366,7 +366,7 @@ export default function RsHeader({ instance, sectionId }: SectionRenderProps) {
       {/* Mobile drawer */}
       <div
         className={`vn-drawer ${drawerOpen ? "is-open" : ""}`}
-        {...(!drawerOpen ? { inert: "" as unknown as undefined } : {})}
+        {...(!drawerOpen ? { inert: true } : {})}
       >
         <div className="vn-drawer-overlay" onClick={() => setDrawerOpen(false)} />
         <aside className="vn-drawer-panel">
