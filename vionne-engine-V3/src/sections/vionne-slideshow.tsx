@@ -161,7 +161,7 @@ const VionneSlideshow = ({ instance, sectionId }: SectionRenderProps) => {
             // `inert` (HTML5) hides the subtree from sequential focus AND
             // assistive tech without needing tabIndex={-1} on every Link.
             // aria-hidden alone leaves CTAs focusable.
-            {...(!isActive ? { inert: "" as unknown as undefined } : {})}
+            {...(!isActive ? { inert: true } : {})}
             className={`vn-slide ${isActive ? "is-active" : ""}`}
           >
             {sl.image ? (

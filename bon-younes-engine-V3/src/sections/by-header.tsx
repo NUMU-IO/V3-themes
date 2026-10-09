@@ -272,7 +272,7 @@ export default function ByHeader({ instance, sectionId }: SectionRenderProps) {
         aria-modal="true"
         aria-label="Menu"
         aria-hidden={!mobileOpen}
-        {...(mobileOpen ? {} : { inert: "" })}
+        {...(mobileOpen ? {} : { inert: true })}
       >
         <div className="by-mobile-panel-head">
           <span className="by-header-brand">

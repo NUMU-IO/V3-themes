@@ -13,6 +13,7 @@
  * default fills in" idiom the theme's other sections use.
  */
 
+import type { JSX } from "react";
 import {
   Link,
   useLocale,
