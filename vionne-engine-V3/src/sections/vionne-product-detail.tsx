@@ -4,6 +4,7 @@ import {
   Link,
   Money,
   AddToCartButton,
+  ProductAppSlot,
   sanitizeHtml,
   useLocale,
   useProductOptional,
@@ -376,6 +377,7 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                 {offerLine}
               </p>
             )}
+            <ProductAppSlot position="below_title" product={product} variant={selectedVariant} />
 
             {/* Description */}
             {showDescription && product.description && (
@@ -507,6 +509,7 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
             })}
             </VariantPicker>
 
+            <ProductAppSlot position="before_buy" product={product} variant={selectedVariant} />
             {/* A5 — BOGO-aware quantity hint. Quantity-sensitive ("Add 1 more
                 to get 1 free" → "You qualify") so the stepper itself sells
                 the extra unit. Spend-tier progress lives in the cart nudge. */}
@@ -584,6 +587,7 @@ export default function VionneProductDetail({ instance, sectionId }: SectionRend
                 data-testid="storefront-add-to-cart"
               />
             </div>
+            <ProductAppSlot position="after_buy" product={product} variant={selectedVariant} />
 
             {/* Trust guarantees */}
             {showGuarantees && (

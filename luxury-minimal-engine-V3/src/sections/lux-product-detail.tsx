@@ -14,6 +14,7 @@ import {
   type ProductVariant,
   VariantPicker,
   useInstalledApp,
+  ProductAppSlot,
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ArrowRight, ShoppingCart, Check, Truck, RotateCcw, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
@@ -248,6 +249,7 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
                 </span>
               )}
             </div>
+            <ProductAppSlot position="below_title" product={product} variant={selectedVariant} />
 
             {/* Description (rich HTML, sanitized — mirrors lux-rich-text) */}
             {product.description && (
@@ -338,6 +340,7 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
             })}
             </VariantPicker>
 
+            <ProductAppSlot position="before_buy" product={product} variant={selectedVariant} />
             {/* Quantity + Add to cart */}
             <div className="flex items-center gap-3 mb-6">
               <div className="flex items-center border border-border">
@@ -395,6 +398,7 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
                 data-testid="storefront-add-to-cart"
               />
             </div>
+            <ProductAppSlot position="after_buy" product={product} variant={selectedVariant} />
 
             {/* Trust guarantees */}
             {showGuarantees && guarantees.length > 0 && (

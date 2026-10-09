@@ -13,6 +13,7 @@ import {
   VariantPicker,
   useInstalledApp,
   useLocale,
+  ProductAppSlot,
 } from "@numueg/theme-sdk";
 import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
@@ -56,6 +57,14 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
     { autoSelect: true },
   );
   const related = useRelatedProducts(product?.id, { limit: 4 });
+
+  // `?variant=<id>` picks that variant on flat-variant products (pickedId);
+  // useVariantSelection does the same for option axes. After mount, once per product.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("variant");
+    const chosen = id ? product?.variants?.find((v) => String(v.id) === id) : undefined;
+    if (chosen) setPickedId(chosen.id);
+  }, [product?.id]);
 
   if (!product) {
     return (
@@ -254,6 +263,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
               <span className="empire-pdp__dot" aria-hidden />
             </span>
           </div>
+          <ProductAppSlot position="below_title" product={product} variant={activeVariant} />
 
           {product.description ? (
             <div
@@ -379,6 +389,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
             </button>
           ) : null}
 
+          <ProductAppSlot position="before_buy" product={product} variant={activeVariant} />
           {/* Quantity */}
           <div className="empire-pdp__qtyblock">
             <span className="empire-pdp__opt-label">{t("Quantity", "الكمية")}</span>
@@ -426,6 +437,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
               {t("Ask via WhatsApp", "اسأل عبر واتساب")} <IconWhatsApp />
             </a>
           ) : null}
+          <ProductAppSlot position="after_buy" product={product} variant={activeVariant} />
 
           {/* Share */}
           <div className="empire-pdp__share">
