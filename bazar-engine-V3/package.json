@@ -1,6 +1,6 @@
 {
   "name": "bazar-v3",
-  "version": "0.4.24",
+  "version": "0.4.25",
   "private": true,
   "description": "Bazar (V3) (V3 port)",
   "type": "module",
