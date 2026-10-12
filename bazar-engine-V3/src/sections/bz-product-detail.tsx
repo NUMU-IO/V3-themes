@@ -12,6 +12,7 @@ import {
   useResolvedSettings,
   useVariantSelection,
   useInstalledApp,
+  ProductAppSlot,
   VariantPicker,
 } from "@numueg/theme-sdk";
 import {
@@ -276,6 +277,7 @@ export default function BzProductDetail({
                 </>
               )}
             </div>
+            <ProductAppSlot position="below_title" product={product} variant={variant} />
 
             {/* Stock state */}
             {!inStock ? (
@@ -357,6 +359,7 @@ export default function BzProductDetail({
               </div>
             )}
 
+            <ProductAppSlot position="before_buy" product={product} variant={variant} />
             {/* Quantity */}
             <div className="mt-6">
               <span className="bz-label text-[var(--bz-dark)]/60 mb-3 block">
@@ -422,6 +425,7 @@ export default function BzProductDetail({
                 />
               )}
             </button>
+            <ProductAppSlot position="after_buy" product={product} variant={variant} />
 
             {/* Trust badges */}
             <div className="mt-8 pt-6 border-t border-[var(--bz-dark)]/15 grid grid-cols-3 gap-3">

@@ -26,6 +26,7 @@ import {
   useRelatedProducts,
   useVariantSelection,
   useInstalledApp,
+  ProductAppSlot,
   VariantPicker,
 } from "@numueg/theme-sdk";
 import { asBool, asString } from "@numueg/theme-kit";
@@ -241,6 +242,7 @@ export default function GnProductDetail({ instance }: SectionRenderProps) {
             }
             unitPrice={price}
           />
+          <ProductAppSlot position="below_title" product={product} variant={vs.variant} />
 
           {asBool(s.show_rating, true) && stats.count > 0 && (
             <a href="#gn-pdp-reviews" className="gn-pdp-rating">
@@ -353,6 +355,7 @@ export default function GnProductDetail({ instance }: SectionRenderProps) {
             </p>
           )}
 
+          <ProductAppSlot position="before_buy" product={product} variant={vs.variant} />
           {asBool(s.show_quantity, true) && (
             <div className="gn-qty">
               <span className="gn-label">{t("product.quantity", "Quantity")}</span>
@@ -407,6 +410,7 @@ export default function GnProductDetail({ instance }: SectionRenderProps) {
               {error}
             </p>
           )}
+          <ProductAppSlot position="after_buy" product={product} variant={vs.variant} />
           {/* Returns promise sits directly under the buttons — the objection
               belongs where the decision is being made, not below the fold.
               Same placement as the reference PDP.

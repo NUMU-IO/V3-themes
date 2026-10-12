@@ -13,7 +13,7 @@
     "verify": "node ../../numu-theme-cli/dist/index.js verify"
   },
   "dependencies": {
-    "@numueg/theme-sdk": "^0.16.0"
+    "@numueg/theme-sdk": "^0.18.0"
   },
   "devDependencies": {
     "@numueg/theme-plugin": "^0.6.0",

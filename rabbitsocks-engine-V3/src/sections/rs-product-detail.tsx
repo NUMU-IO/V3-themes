@@ -15,6 +15,7 @@ import {
   useProducts,
   type Product,
   type ProductVariant,
+  ProductAppSlot,
   VariantPicker,
   useInstalledApp,
 } from "@numueg/theme-sdk";
@@ -333,6 +334,7 @@ export default function MashkalProductDetail({ instance, sectionId }: SectionRen
                 {offerLine}
               </p>
             )}
+            <ProductAppSlot position="below_title" product={product} variant={selectedVariant} />
 
             {/* Description */}
             {showDescription && product.description && (
@@ -442,6 +444,7 @@ export default function MashkalProductDetail({ instance, sectionId }: SectionRen
             })}
             </VariantPicker>
 
+            <ProductAppSlot position="before_buy" product={product} variant={selectedVariant} />
             {/* A5 — BOGO-aware quantity hint. Quantity-sensitive ("Add 1 more
                 to get 1 free" → "You qualify") so the stepper itself sells
                 the extra unit. Spend-tier progress lives in the cart nudge. */}
@@ -512,6 +515,7 @@ export default function MashkalProductDetail({ instance, sectionId }: SectionRen
                 data-testid="storefront-add-to-cart"
               />
             </div>
+            <ProductAppSlot position="after_buy" product={product} variant={selectedVariant} />
 
             {/* Trust guarantees */}
             {showGuarantees && (

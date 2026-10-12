@@ -5,6 +5,7 @@ import {
   AddToCartButton,
   Link,
   Money,
+  ProductAppSlot,
   RichText,
   useLocale,
   useProductOptional,
@@ -125,6 +126,7 @@ export default function StProductDetail({ instance, sectionId }: StSectionProps)
               </span>
             )}
           </p>
+          <ProductAppSlot position="below_title" product={product} variant={variant} />
 
           {/* The SDK owns the single renderer; this theme's markup is its
               CHILDREN and renders only when there is no swatch decoration. */}
@@ -160,6 +162,7 @@ export default function StProductDetail({ instance, sectionId }: StSectionProps)
           ))}
           </VariantPicker>
 
+          <ProductAppSlot position="before_buy" product={product} variant={variant} />
           <div className="mt-8">
             {canAddToCart ? (
               <AddToCartButton
@@ -174,6 +177,7 @@ export default function StProductDetail({ instance, sectionId }: StSectionProps)
               </button>
             )}
           </div>
+          <ProductAppSlot position="after_buy" product={product} variant={variant} />
 
           {showDescription &&
             (product as { description?: string }).description && (

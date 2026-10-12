@@ -1,6 +1,6 @@
 "use client";
 
-import { VariantPicker, useInstalledApp } from "@numueg/theme-sdk";
+import { ProductAppSlot, VariantPicker, isSoldOut, useInstalledApp } from "@numueg/theme-sdk";
 import { useEffect, useMemo, useState } from "react";
 import {
   Link,
@@ -177,6 +177,7 @@ export default function ByProductDetail({
   const quantityLabel = asString(s.quantity_label) || localized(locale, "Quantity", "الكمية");
   const addToCartLabel = asString(s.add_to_cart_label) || localized(locale, "Add to cart", "أضف للسلة");
   const selectOptionsLabel = localized(locale, "Choose options first", "اختر الخيارات أولاً");
+  const soldOutLabel = localized(locale, "Sold out", "خلص");
   const saveLabel = asString(s.save_label) || localized(locale, "Save for later", "احفظه لبعدين");
   const addonsTotalLabel = asString(s.addons_total_label) || localized(locale, "Add-ons total:", "إجمالي الإضافات:");
   const recoCtaLabel = asString(s.reco_cta_label) || localized(locale, "View", "شوف");
@@ -238,6 +239,15 @@ export default function ByProductDetail({
     {},
   );
   const [chosenAddons, setChosenAddons] = useState<Set<string>>(new Set());
+  // `?variant=<id>` (a Back in Stock alert's link, an ad's deep link) picks that
+  // variant. After mount, so the server render and the first client render
+  // agree; keyed on the product id alone, so the shopper's own pick stays.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("variant");
+    const chosen = id ? productCtx?.variants?.find((v) => String(v.id) === id) : undefined;
+    const values = chosen?.option_values || chosen?.options;
+    if (values && Object.keys(values).length > 0) setSelectedOptions({ ...values });
+  }, [productCtx?.id]);
   // First-render install state off the store payload, never a fetch.
   const swatchSettings = useInstalledApp("variant-swatches");
 
@@ -294,6 +304,10 @@ export default function ByProductDetail({
   // Clamp display + add-to-cart so switching to a lower-stock variant can never
   // leave the stepper above that variant's cap.
   const cappedQuantity = Math.min(quantity, maxQty);
+  // Until every axis is chosen, apps judge the product, not the first partial match.
+  const slotVariant = allOptionsChosen ? selectedVariant ?? null : null;
+  // The button never offers a size the store cannot sell (the cart would refuse it).
+  const soldOut = productCtx ? isSoldOut(productCtx, slotVariant) : false;
 
   const handleAddToCart = async () => {
     if (isFallback || !productCtx) {
@@ -383,6 +397,7 @@ export default function ByProductDetail({
                   </span>
                 )}
             </div>
+            {productCtx && <ProductAppSlot position="below_title" product={productCtx} variant={slotVariant} />}
 
             {product.description && (
               <p className="by-pdp-desc">{product.description}</p>
@@ -444,6 +459,7 @@ export default function ByProductDetail({
               </div>
             )}
 
+            {productCtx && <ProductAppSlot position="before_buy" product={productCtx} variant={slotVariant} />}
             <div>
               <div className="by-pdp-option-label">{quantityLabel}</div>
               <div className="by-pdp-qty">
@@ -479,15 +495,16 @@ export default function ByProductDetail({
                 type="button"
                 className="by-btn"
                 onClick={handleAddToCart}
-                disabled={cart.loading || (hasOptions && !allOptionsChosen)}
+                disabled={cart.loading || (hasOptions && !allOptionsChosen) || soldOut}
               >
                 <ShoppingBag size={16} />{" "}
-                {hasOptions && !allOptionsChosen ? selectOptionsLabel : addToCartLabel}
+                {hasOptions && !allOptionsChosen ? selectOptionsLabel : soldOut ? soldOutLabel : addToCartLabel}
               </button>
               <button type="button" className="by-btn by-btn-ghost">
                 <Heart size={16} /> {saveLabel}
               </button>
             </div>
+            {productCtx && <ProductAppSlot position="after_buy" product={productCtx} variant={slotVariant} />}
 
             {/* Trust strip — reassurance row (freshly roasted / delivery /
                 secure checkout), bilingual + on-brand. */}
@@ -639,8 +656,8 @@ export default function ByProductDetail({
               <Money amount={product.price} currency={product.currency} />
             )}
           </span>
-          <button type="button" className="by-btn" onClick={handleAddToCart}>
-            {addToCartLabel}
+          <button type="button" className="by-btn" onClick={handleAddToCart} disabled={soldOut}>
+            {soldOut ? soldOutLabel : addToCartLabel}
           </button>
         </div>
       </div>

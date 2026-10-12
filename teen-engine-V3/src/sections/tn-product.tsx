@@ -34,6 +34,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Image,
   Link,
+  ProductAppSlot,
   requestNavigate,
   sanitizeHtml,
   useCart,
@@ -537,6 +538,7 @@ function ProductBody({
                 />
               )}
             </div>
+            <ProductAppSlot position="below_title" product={product} variant={vs.variant} />
 
             {showAssurance && (
               <ul className="tn-assure">
@@ -643,8 +645,10 @@ function ProductBody({
               visible and pin the sticky bar open for the whole page. */}
           <aside className="tn-pdp-buy" aria-label={t("product.purchase", "Purchase")}>
             <div className="tn-card tn-pdp-buycard">
+              <ProductAppSlot position="before_buy" product={product} variant={vs.variant} />
               {showQuantity && <p className="tn-pdp-qtylabel">{t("product.quantity", "Quantity")}</p>}
               {purchase}
+              <ProductAppSlot position="after_buy" product={product} variant={vs.variant} />
             </div>
           </aside>
 

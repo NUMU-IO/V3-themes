@@ -31,6 +31,7 @@ import {
   Image,
   Link,
   Money,
+  ProductAppSlot,
   requestNavigate,
   RichText,
   useCart,
@@ -396,6 +397,7 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
             {formatLine && <p className="pw-pdp-format">{formatLine}</p>}
             <PriceLine picker={picker} />
             {offer && <p className="pw-offer">{offer}</p>}
+            <ProductAppSlot position="below_title" product={product} variant={chosen} />
 
             <OptionChips picker={picker} />
             <EditionList picker={picker} productName={product.name} />
@@ -421,6 +423,7 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
               </p>
             )}
 
+            <ProductAppSlot position="before_buy" product={product} variant={chosen} />
             <div className="pw-buyrow" ref={buyRowRef}>
               <QtyStepper value={shownQty} max={picker.maxQty} onChange={setQty} />
               <button
@@ -442,6 +445,7 @@ function BookPage({ product, s }: { product: Product; s: Record<string, unknown>
             >
               {t("product.buy_now", "Buy now")}
             </button>
+            <ProductAppSlot position="after_buy" product={product} variant={chosen} />
 
             <p className="pw-secure">
               <IconShield size={16} />

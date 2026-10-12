@@ -17,7 +17,7 @@
  * starts empty and never auto-selects.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { centsToMajor } from "@numueg/theme-kit";
 import {
   Money,
@@ -91,6 +91,14 @@ export function useVariantPicker(product: Product) {
   );
   const vs = useVariantSelection(product);
   const [chosenId, setChosenId] = useState<string | null>(null);
+
+  // `?variant=<id>` for editions without option axes, which the SDK hook cannot
+  // select: after mount, once per product, like useVariantSelection does.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("variant");
+    if (id && variants.some((v) => String(v.id) === id)) setChosenId(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.id]);
 
   // Axes over a single variant row are older products that keep their choices
   // in attributes: no row matches a selection, but the selection still reaches
