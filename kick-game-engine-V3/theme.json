@@ -98,7 +98,6 @@
           {
             "type": "kg-product-detail",
             "settings": {
-              "show_rating": false,
               "show_stock": true,
               "show_guarantees": true,
               "show_related_products": true,

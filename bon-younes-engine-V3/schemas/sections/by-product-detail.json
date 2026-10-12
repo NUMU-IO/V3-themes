@@ -67,25 +67,21 @@
       "name": "Add-on / pairing",
       "settings": [
         {
-          "type": "text",
-          "id": "id",
-          "label": "Add-on id"
-        },
-        {
-          "type": "text",
-          "id": "name",
-          "label": "Name"
-        },
-        {
-          "type": "number",
-          "id": "price",
-          "label": "Price (major units)"
+          "type": "product",
+          "id": "product",
+          "label": "Product",
+          "label_ar": "المنتج",
+          "info": "The add-on is this product: its name, price and stock, added to the cart as its own line. Pick a product with no options.",
+          "info_ar": "الإضافة هي المنتج ده: اسمه وسعره ومخزونه، وبيتضاف للسلة لوحده. اختار منتج من غير مقاسات أو ألوان."
         },
         {
           "type": "image_picker",
           "id": "image",
-          "label": "Image",
-          "aspect_ratio": "1/1"
+          "label": "Image (optional)",
+          "aspect_ratio": "1/1",
+          "label_ar": "صورة (اختياري)",
+          "info": "Leave empty to use the product's own image.",
+          "info_ar": "سيبها فاضية عشان تظهر صورة المنتج نفسه."
         }
       ]
     }

@@ -167,14 +167,14 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
   // drops stock below the current quantity (UX only; backend re-enforces stock).
   const cartQuantity = Math.min(quantity, maxQty);
 
-  // Rating is not exposed on the SDK Product, so render static gold stars (V2
-  // showed product.rating; the engine product has no equivalent field yet).
+  // Rating is not on the SDK Product today, so the row stays hidden until a
+  // real rating arrives. It used to fill five stars with no rating behind them.
   const ratingExtras = product as typeof product & {
     rating?: number;
     review_count?: number;
   };
   const rating = typeof ratingExtras.rating === "number" ? ratingExtras.rating : 0;
-  const filledStars = rating > 0 ? Math.round(rating) : 5;
+  const filledStars = Math.round(rating);
   const reviewCount =
     typeof ratingExtras.review_count === "number" ? ratingExtras.review_count : 0;
 
@@ -287,7 +287,7 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
             </div>
 
             {/* Rating */}
-            {showRating && (
+            {showRating && rating > 0 && (
               <div className="flex items-center mb-5">
                 <div className="flex items-center gap-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (

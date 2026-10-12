@@ -8,13 +8,6 @@
       "content": "Layout"
     },
     {
-      "id": "show_rating",
-      "type": "checkbox",
-      "label": "Show rating",
-      "label_ar": "إظهار التقييم",
-      "default": true
-    },
-    {
       "id": "show_stock",
       "type": "checkbox",
       "label": "Show stock status",

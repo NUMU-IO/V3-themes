@@ -103,7 +103,6 @@
           {
             "type": "modern-product-detail",
             "settings": {
-              "show_rating": true,
               "show_stock": true,
               "show_guarantees": true,
               "show_related_products": true,
