@@ -12,6 +12,7 @@
  * and a bilingual default set as the last resort.
  */
 
+import type { JSX } from "react";
 import {
   Link,
   useLocale,

@@ -10,6 +10,7 @@
  * settings, not blocks — see nbtestimonials / nbnewsletter).
  */
 
+import type { JSX } from "react";
 import {
   Link,
   useLocale,
