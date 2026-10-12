@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useLocale } from "@numueg/theme-sdk";
 import { ArrowRight, ShoppingBag, Sparkles } from "lucide-react";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
 
 const BoutiquePromoBanner = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
@@ -12,7 +12,7 @@ const BoutiquePromoBanner = ({ instance }: SectionRenderProps) => {
   const subtitle = asString(s.subtitle) || localized(locale, "Shop our latest collection", "تسوّقي أحدث تشكيلاتنا");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوّقي الآن");
   const ctaLink = asString(s.cta_link) || "/products";
-  const imageUrl = asString(s.image_url);
+  const imageUrl = asImageUrl(s.image_url);
   const imageTransform = asImageTransform(s.image_url);
 
   const [imageLoading, setImageLoading] = useState(true);
