@@ -33,6 +33,7 @@ import {
   PLACEHOLDER_IMG,
   useDemo,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
@@ -77,6 +78,7 @@ export default function BzProductDetail({
   const { addItem, loading } = useCart();
   const demo = useDemo();
   const locale = useLocale();
+  const sample = useSampleContent();
 
   // Editable buy-box labels.
   const addToCartLabel = asString(s.add_to_cart_label) || localized(locale, "ADD TO CART", "أضف للسلة");
@@ -157,7 +159,7 @@ export default function BzProductDetail({
   const cappedQuantity = Math.min(quantity, maxQty);
 
   const badges =
-    demoOrPlaceholder(true, fallbackBadges(locale)); // labels are static chrome, always shown
+    demoOrPlaceholder(sample, fallbackBadges(locale)); // invented promises: preview/editor only
 
   const handleAdd = async () => {
     if (isFallback || addInFlight.current || added || !inStock) return;

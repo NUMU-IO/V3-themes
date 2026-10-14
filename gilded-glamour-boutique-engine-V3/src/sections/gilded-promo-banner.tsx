@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { asString, localized, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 /**
@@ -23,17 +23,18 @@ import { InlineEditable } from "./_inline-editable";
 export default function GildedPromoBanner({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const heading =
     asString(s.headline) ||
-    localized(locale, "WHERE HERITAGE MEETS THE FUTURE", "حيث يلتقي التراث بالمستقبل");
+    (sample ? localized(locale, "WHERE HERITAGE MEETS THE FUTURE", "حيث يلتقي التراث بالمستقبل") : "");
   const body =
     asString(s.subtitle) ||
-    localized(
+    (sample ? localized(
       locale,
       "Every thread tells a story, every silhouette commands a room, and every piece is destined to become an heirloom.",
       "كل خيط بيحكي حكاية، وكل تصميم بيخطف الأنظار، وكل قطعة مقدّر لها تبقى إرث يتوارث.",
-    );
+    ) : "");
   const ctaText = asString(s.cta_text);
   const ctaLink = asString(s.cta_link) || "/products";
 
@@ -48,6 +49,8 @@ export default function GildedPromoBanner({ instance, sectionId }: SectionRender
     [0, 1],
     ["inset(0 100% 0 0)", "inset(0 0% 0 0)"],
   );
+
+  if (!heading) return null;
 
   return (
     <section className="py-16 md:py-24 lg:py-40" data-gilded-section={sectionId}>

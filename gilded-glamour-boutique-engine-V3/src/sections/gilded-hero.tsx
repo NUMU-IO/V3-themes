@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { HeroMedia, Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
   asImageAlt,
@@ -10,6 +10,7 @@ import {
   asString,
   localized,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
@@ -34,16 +35,18 @@ import { InlineEditable } from "./_inline-editable";
 export default function GildedHero({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const shop = useShop();
+  const sample = useSampleContent();
 
   const headline =
-    asString(s.headline) || localized(locale, "THE NEW EMPIRE", "الإمبراطورية الجديدة");
+    asString(s.headline) || (sample ? localized(locale, "THE NEW EMPIRE", "الإمبراطورية الجديدة") : shop?.name ?? "");
   const subtitle =
     asString(s.subtitle) ||
-    localized(
+    (sample ? localized(
       locale,
       "Curated Excellence & Timeless Precision",
       "تميّز منتقى بعناية وإتقان لا يعرف الزمن",
-    );
+    ) : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Discover Collection", "اكتشف التشكيلة");
   const ctaLink = asString(s.cta_link) || "/products";
 

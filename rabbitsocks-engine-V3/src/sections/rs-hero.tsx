@@ -1,5 +1,5 @@
 "use client";
-import { Link, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useProducts, useResolvedSettings, useShop } from "@numueg/theme-sdk";
 import {
   asImageAlt,
   asImageUrl,
@@ -9,6 +9,7 @@ import {
   useDemo,
   useInsideEditor,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { Aperture, Focus, FrameSpin, Rise, useMotionOn } from "./_motion";
@@ -25,6 +26,8 @@ import { Aperture, Focus, FrameSpin, Rise, useMotionOn } from "./_motion";
 export default function RsHero({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const shop = useShop();
+  const sample = useSampleContent();
   const { products } = useProducts();
   const demo = useDemo();
   const inEditor = useInsideEditor();
@@ -32,14 +35,14 @@ export default function RsHero({ instance, sectionId }: SectionRenderProps) {
 
   const headline =
     asString(s.headline) ||
-    localized(locale, "Made to be looked at,\nworn anyway", "معمولة تتفرج عليها،\nوتتلبس برضه");
+    (sample ? localized(locale, "Made to be looked at,\nworn anyway", "معمولة تتفرج عليها،\nوتتلبس برضه") : shop?.name ?? "");
   const subtitle =
     asString(s.subtitle) ||
-    localized(
+    (sample ? localized(
       locale,
       "A small collection, displayed like a gallery and priced like a friend.",
       "تشكيلة صغيرة، معروضة كأنها معرض فني وسعرها صاحبك.",
-    );
+    ) : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Browse the collection", "اتفرج على التشكيلة");
   const ctaLink = asString(s.cta_link) || "/products";
   const specLabel = asString(s.spec_label);

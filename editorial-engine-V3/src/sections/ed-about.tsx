@@ -1,10 +1,11 @@
 "use client";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const ManshetAbout = ({ instance, sectionId }: SectionRenderProps) => {
   const locale = useLocale();
+  const sample = useSampleContent();
   // Resolve dynamic-source bindings (e.g. a CTA bound to "Store → Name")
   // to their real values, THEN coerce every field to a primitive. Reading
   // `instance.settings` raw meant a bound field arrived as an object and
@@ -13,7 +14,7 @@ const ManshetAbout = ({ instance, sectionId }: SectionRenderProps) => {
   // ErrorBoundary ("ed-about — Section failed to render").
   const s = useResolvedSettings(instance);
   const eyebrow = asString(s.eyebrow) || localized(locale, "About us", "من نحن");
-  const headline = asString(s.headline) || localized(locale, "Made for the way you dress", "مصمَّمة على مزاج لبسك");
+  const headline = asString(s.headline) || (sample ? localized(locale, "Made for the way you dress", "مصمَّمة على مزاج لبسك") : "");
   const quote = asString(s.quote);
   const description = asString(s.description);
   const image = asImageUrl(s.image);

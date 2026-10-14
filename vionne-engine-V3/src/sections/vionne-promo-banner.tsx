@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useCart, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
 import { ArrowRight, ShoppingBag } from "lucide-react";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps, useSampleContent } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { multibuyHeadline, multibuyOffers, promoPagePath, useActivePromotions } from "./_promotions";
 
@@ -29,6 +29,7 @@ import { multibuyHeadline, multibuyOffers, promoPagePath, useActivePromotions } 
  */
 export default function PromoBanner({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
+  const sample = useSampleContent();
   const s = useResolvedSettings(instance);
   const { cart } = useCart();
 
@@ -81,8 +82,8 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
   // one was accurate, so this is a no-op until the offer changes.
   const headline = isAuto
     ? autoHeadline || manualHeadline
-    : manualHeadline || localized(locale, "Special Offer", "عرض خاص");
-  const subtitle = asString(s.subtitle) || (isAuto ? "" : localized(locale, "Shop our latest collection", "اكتشفي أحدث تشكيلة"));
+    : manualHeadline || (sample ? localized(locale, "Special Offer", "عرض خاص") : "");
+  const subtitle = asString(s.subtitle) || (isAuto ? "" : (sample ? localized(locale, "Shop our latest collection", "اكتشفي أحدث تشكيلة") : ""));
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوّقي دلوقتي");
   const ctaLink = asString(s.cta_link) || "/products";
   // image_picker stores either a plain URL (legacy) or an `{ url, transform }`
@@ -243,6 +244,8 @@ export default function PromoBanner({ instance, sectionId }: SectionRenderProps)
       </section>
     );
   }
+
+  if (!headline) return null;
 
   return (
     <section className={isTall ? "py-10" : "py-6"}>

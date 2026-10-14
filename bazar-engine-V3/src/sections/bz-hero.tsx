@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { HeroMedia, Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useResolvedSettings, useShop } from "@numueg/theme-sdk";
 import { ArrowRight } from "lucide-react";
 import {
   asImageAlt,
@@ -10,12 +10,15 @@ import {
   asString,
   localized,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const shop = useShop();
+  const sample = useSampleContent();
 
   // Drop-letter is now bilingual: Arabic stores can set a separate Arabic
   // glyph (`letter_ar`) — used when the active locale is Arabic, falling back
@@ -26,11 +29,11 @@ const BzHero = ({ instance, sectionId }: SectionRenderProps) => {
   const letterAr = asString(s.letter_ar);
   const letter = isArabic ? letterAr || letterEn : letterEn;
   const letterKey = isArabic ? "letter_ar" : "letter";
-  const headline = asString(s.headline) || localized(locale, "BAZAR DREAMS", "أحلام بازار");
-  const subline = asString(s.subline) || localized(locale, "COME TO LIFE", "بتتحقق");
+  const headline = asString(s.headline) || (sample ? localized(locale, "BAZAR DREAMS", "أحلام بازار") : shop?.name ?? "");
+  const subline = asString(s.subline) || (sample ? localized(locale, "COME TO LIFE", "بتتحقق") : "");
   const tagline =
     asString(s.tagline) ||
-    localized(locale, "Handpicked summer essentials, made in Egypt.", "مختارات الصيف الأساسية، صناعة مصرية.");
+    (sample ? localized(locale, "Handpicked summer essentials, made in Egypt.", "مختارات الصيف الأساسية، صناعة مصرية.") : "");
   const ctaText = asString(s.cta_text) || localized(locale, "SHOP NEW ARRIVALS", "تسوّق وصل حديثًا");
   const ctaLink = asString(s.cta_link) || "/products";
   const secondaryCtaText = asString(s.secondary_cta_text);

@@ -280,3 +280,14 @@ export function copiesLeft(product: Product | null | undefined, few = 3): number
   const quantity = Number((product as unknown as Record<string, unknown>).quantity);
   return Number.isFinite(quantity) && quantity > 0 && quantity <= few ? quantity : 0;
 }
+
+/**
+ * Whether invented sample copy (reviews, offers, guarantees, category
+ * taglines) may render: only in the marketplace preview or the editor canvas.
+ * On a live store it would be published in the merchant's name.
+ */
+export function useSampleContent(): boolean {
+  const demo = useDemo();
+  const inEditor = useInsideEditor();
+  return demo || inEditor;
+}

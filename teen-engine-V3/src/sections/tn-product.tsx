@@ -56,6 +56,7 @@ import {
   productName,
   useInsideEditor,
   type SectionRenderProps,
+  useSampleContent,
 } from "../lib/shared";
 import { useT, type TFunction } from "../lib/i18n";
 import { isSoldOut, variantBuyable } from "../lib/availability";
@@ -374,6 +375,9 @@ function ProductBody({
   const showRating = asBool(s.show_rating, true);
   const showSave = asBool(s.show_save_badge, true);
   const showAssurance = asBool(s.show_assurance_strip, true);
+  const sample = useSampleContent();
+  const assurance1 = asString(s.assurance_1) || (sample ? "Delivery 2–3 days" : "");
+  const assurance2 = asString(s.assurance_2) || (sample ? "Easy exchange & returns" : "");
   const showFacts = asBool(s.show_facts, true);
   const showQuantity = asBool(s.show_quantity, true);
   const showShare = asBool(s.show_share, true);
@@ -538,16 +542,20 @@ function ProductBody({
               )}
             </div>
 
-            {showAssurance && (
+            {showAssurance && (assurance1 || assurance2) && (
               <ul className="tn-assure">
-                <li>
-                  <IconTruck size={14} />
-                  {asString(s.assurance_1, "Delivery 2–3 days")}
-                </li>
-                <li>
-                  <IconRefresh size={14} />
-                  {asString(s.assurance_2, "Easy exchange & returns")}
-                </li>
+                {assurance1 && (
+                  <li>
+                    <IconTruck size={14} />
+                    {assurance1}
+                  </li>
+                )}
+                {assurance2 && (
+                  <li>
+                    <IconRefresh size={14} />
+                    {assurance2}
+                  </li>
+                )}
               </ul>
             )}
 

@@ -8,7 +8,7 @@
  * only the CSS prefix (`by-` → `bz-`) and the placeholder palette differ.
  */
 
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { SectionInstance } from "@numueg/theme-sdk";
 
 export interface SectionRenderProps {
@@ -143,3 +143,27 @@ export {
   asImageTransform,
   type ImageTransform,
 } from "@numueg/theme-sdk";
+
+/**
+ * Whether invented sample copy (reviews, offers, guarantees, category
+ * taglines) may render: only in the marketplace preview or the editor canvas,
+ * where it shows the merchant what to fill in. On a live store it would be
+ * published in the merchant's name, so sections render nothing (or the
+ * merchant's own text) instead. False on the server and first paint.
+ */
+export function useSampleContent(): boolean {
+  const demo = useDemo();
+  const [inEditor, setInEditor] = useState(false);
+  useEffect(() => {
+    try {
+      if (new URLSearchParams(window.location.search).get("editor")) {
+        setInEditor(true);
+        return;
+      }
+    } catch {
+      /* defensive */
+    }
+    setInEditor(window.parent !== window);
+  }, []);
+  return demo || inEditor;
+}

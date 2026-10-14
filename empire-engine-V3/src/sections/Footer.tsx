@@ -6,6 +6,7 @@ import { EditableText } from "../lib/EditableText";
 import type { EmpSectionProps } from "../lib/section";
 import { useT } from "../lib/i18n";
 
+import { useSampleContent } from "../lib/demo";
 interface FooterSettings {
   brand_name?: string;
   description?: string;
@@ -19,6 +20,7 @@ interface FooterSettings {
 export default function Footer({ id, settings }: EmpSectionProps) {
   const s = settings as FooterSettings;
   const t = useT();
+  const sample = useSampleContent();
   const shop = useShop();
   const { collections } = useCollections({ limit: 5 });
   // Prefer the real store name; the theme placeholder ("EMPIRE") is treated as
@@ -27,7 +29,7 @@ export default function Footer({ id, settings }: EmpSectionProps) {
     s.brand_name && s.brand_name !== "EMPIRE"
       ? s.brand_name
       : shop?.name || s.brand_name || "EMPIRE";
-  const ticker = s.ticker_text || "100% مستقل";
+  const ticker = s.ticker_text || (sample ? "100% مستقل" : brand);
 
   // Year is computed client-side to keep the SSR render path deterministic.
   const [year, setYear] = useState<number | null>(null);

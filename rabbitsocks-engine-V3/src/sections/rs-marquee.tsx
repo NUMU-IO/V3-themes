@@ -1,6 +1,6 @@
 "use client";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { localized, useAnimationsEnabled, type SectionRenderProps } from "./_shared";
+import { localized, useAnimationsEnabled, type SectionRenderProps, useSampleContent } from "./_shared";
 
 /**
  * Mashkal Scrolling Banner section.
@@ -61,6 +61,7 @@ const COLOR_PRESETS: Record<
 
 const MashkalMarquee = ({ instance }: SectionRenderProps) => {
   const locale = useLocale();
+  const sample = useSampleContent();
   const animate = useAnimationsEnabled();
   // useResolvedSettings (not raw instance.settings) so editor edits + dynamic
   // sources reflect live. Marquee items scroll in a duplicated track, so they
@@ -80,7 +81,9 @@ const MashkalMarquee = ({ instance }: SectionRenderProps) => {
   const items =
     rawItems.length > 0
       ? rawItems
-      : [
+      : !sample
+        ? []
+        : [
           localized(locale, "NEW SEASON", "تشكيلة الموسم الجديد"),
           localized(locale, "FREE SHIPPING", "شحن مجاني"),
           localized(locale, "WORLDWIDE DELIVERY", "توصيل لكل العالم"),
@@ -136,6 +139,8 @@ const MashkalMarquee = ({ instance }: SectionRenderProps) => {
       </span>
     </div>
   );
+
+  if (items.length === 0) return null;
 
   return (
     <section

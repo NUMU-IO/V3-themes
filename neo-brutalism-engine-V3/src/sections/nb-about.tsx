@@ -1,12 +1,13 @@
 "use client";
 import { Link, useLocale } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 const NBAbout = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
+  const sample = useSampleContent();
   const eyebrow = asString(s.eyebrow) || localized(locale, "ABOUT US", "عن المتجر");
-  const headline = asString(s.headline) || localized(locale, "Bold. Raw. Unapologetic.", "جريء. خام. بلا اعتذار.");
+  const headline = asString(s.headline) || (sample ? localized(locale, "Bold. Raw. Unapologetic.", "جريء. خام. بلا اعتذار.") : "");
   const quote = asString(s.quote, "");
   const description = asString(s.description, "");
   const image = asString(s.image, "");

@@ -1,19 +1,21 @@
 "use client";
-import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useShop } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 const NBHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
-  const badge = asString(s.badge_text) || localized(locale, "🎉 Up to 25% off", "🎉 خصومات تصل لـ ٢٥٪");
-  const headline = asString(s.headline) || localized(locale, "Discover the best products at the best prices", "اكتشف أحلى المنتجات بأفضل الأسعار");
-  const subtitle = asString(s.subtitle) || localized(
+  const shop = useShop();
+  const sample = useSampleContent();
+  const badge = asString(s.badge_text) || (sample ? localized(locale, "🎉 Up to 25% off", "🎉 خصومات تصل لـ ٢٥٪") : "");
+  const headline = asString(s.headline) || (sample ? localized(locale, "Discover the best products at the best prices", "اكتشف أحلى المنتجات بأفضل الأسعار") : shop?.name ?? "");
+  const subtitle = asString(s.subtitle) || (sample ? localized(
     locale,
     "A curated selection of clothing and accessories, delivered across Egypt. High quality at fair prices.",
     "تشكيلة مميزة من الملابس والإكسسوارات بتوصيل لكل مصر. جودة عالية وأسعار مناسبة.",
-  );
+  ) : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop now", "تسوق الآن");
   const ctaLink = asString(s.cta_link, "/products");
   const secondaryText = asString(s.secondary_text) || localized(locale, "New clothing", "الملابس الجديدة");

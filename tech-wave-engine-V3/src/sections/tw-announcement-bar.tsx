@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { useLocale } from "@numueg/theme-sdk";
-import { asString, localized, type SectionRenderProps } from "./_shared";
+import { asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 /**
  * Tech Wave announcement bar — faithful port of the V2 in-tree
@@ -12,13 +12,16 @@ import { asString, localized, type SectionRenderProps } from "./_shared";
 const TwAnnouncementBar = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
-  const text = asString(s.text) || localized(locale, "🎉 Free shipping on orders over 500 EGP", "🎉 شحن مجاني للطلبات فوق 500 جنيه");
+  const sample = useSampleContent();
+  const text = asString(s.text) || (sample ? localized(locale, "🎉 Free shipping on orders over 500 EGP", "🎉 شحن مجاني للطلبات فوق 500 جنيه") : "");
   const linkUrl = asString(s.link_url);
   const linkText = asString(s.link_text) || localized(locale, "Shop now", "تسوق الآن");
   const dismissible = s.dismissible ?? true;
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed) return null;
+
+  if (!text) return null;
 
   return (
     <div className="tw-announcement relative py-2.5 px-4 text-center text-sm font-medium">

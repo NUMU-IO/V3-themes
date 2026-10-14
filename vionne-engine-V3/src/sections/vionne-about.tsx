@@ -1,10 +1,11 @@
 "use client";
 import { Link, useLocale, useResolvedSettings } from "@numueg/theme-sdk";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, localized, responsiveImg, EDITORIAL_IMG, type SectionRenderProps, useSampleContent } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 const VionneAbout = ({ instance, sectionId }: SectionRenderProps) => {
   const locale = useLocale();
+  const sample = useSampleContent();
   // Resolve dynamic-source bindings (e.g. a CTA bound to "Store → Name")
   // to their real values, THEN coerce every field to a primitive. Reading
   // `instance.settings` raw meant a bound field arrived as an object and
@@ -12,8 +13,8 @@ const VionneAbout = ({ instance, sectionId }: SectionRenderProps) => {
   // valid as a React child" — which is what tripped the section
   // ErrorBoundary ("vionne-about — Section failed to render").
   const s = useResolvedSettings(instance);
-  const eyebrow = asString(s.eyebrow) || localized(locale, "ABOUT VIONNE", "عن فيون");
-  const headline = asString(s.headline) || localized(locale, "Made for the way you dress", "مصمَّمة على مزاج لبسك");
+  const eyebrow = asString(s.eyebrow) || (sample ? localized(locale, "ABOUT VIONNE", "عن فيون") : "");
+  const headline = asString(s.headline) || (sample ? localized(locale, "Made for the way you dress", "مصمَّمة على مزاج لبسك") : "");
   const quote = asString(s.quote);
   const description = asString(s.description);
   const image = asImageUrl(s.image);

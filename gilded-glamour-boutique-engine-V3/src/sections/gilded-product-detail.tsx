@@ -30,6 +30,7 @@ import {
   asImageUrl,
   localized,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { GildedProductCard } from "./_product-card";
@@ -71,6 +72,7 @@ import { GildedProductCard } from "./_product-card";
 export default function GildedProductDetail({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const showRating = asBool(s.show_rating, true);
   const showStock = asBool(s.show_stock, true);
@@ -191,7 +193,7 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
     { icon: ShieldCheck, label: secureLabel, desc: secureDesc, keyPrefix: "secure" },
     { icon: RotateCcw, label: returnsLabel, desc: returnsDesc, keyPrefix: "returns" },
     { icon: Truck, label: shippingLabel, desc: shippingDesc, keyPrefix: "shipping" },
-  ];
+  ].filter((g) => sample || asString(s[`${g.keyPrefix}_desc`]));
 
   return (
     <div className="bg-background min-h-screen pb-24 md:pb-0" data-testid="storefront-product-detail">
@@ -287,7 +289,7 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
             </div>
 
             {/* Rating */}
-            {showRating && (
+            {showRating && (rating > 0 || sample) && (
               <div className="flex items-center mb-5">
                 <div className="flex items-center gap-0.5">
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -505,7 +507,7 @@ export default function GildedProductDetail({ instance, sectionId }: SectionRend
             />
 
             {/* Trust badges */}
-            {showGuarantees && (
+            {showGuarantees && guarantees.length > 0 && (
               <div className="mt-8 pt-6 border-t border-[var(--gilded-gold)]/15 grid grid-cols-3 gap-3">
                 {guarantees.map((item) => (
                   <div key={item.keyPrefix} className="flex flex-col items-start gap-1">

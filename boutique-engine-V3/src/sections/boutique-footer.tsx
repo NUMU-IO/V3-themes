@@ -22,7 +22,7 @@ import {
   whatsappHref,
 } from "@numueg/theme-sdk";
 import { Facebook, Mail, MessageCircle, Music2, Phone, Send, Twitter, Youtube } from "lucide-react";
-import { asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageUrl, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 interface FooterLink {
   label: string;
@@ -95,6 +95,7 @@ const BoutiqueFooter = ({ instance, sectionId }: SectionRenderProps) => {
   const shop = useShop();
   const themeSettings = useThemeSettings();
   const locale = useLocale();
+  const sample = useSampleContent();
   const isAr = (locale || "").toLowerCase().startsWith("ar");
 
   const brandName =
@@ -113,11 +114,11 @@ const BoutiqueFooter = ({ instance, sectionId }: SectionRenderProps) => {
     (isAr
       ? asString(s.tagline_ar) || asString(s.tagline)
       : asString(s.tagline) || asString(s.tagline_ar)) ||
-    localized(
+    (sample ? localized(
       locale,
       "A curated edit of fashion and accessories — refined design, beautiful quality.",
       "تشكيلة مختارة من الأزياء والإكسسوارات — تصميم راقٍ وجودة تفرق.",
-    );
+    ) : "");
 
   // Columns: merchant `footer` menu (nested) → schema link-list settings → defaults.
   const menuHandle = asString(s.menu_handle) || "footer";

@@ -9,6 +9,7 @@ import {
   localized,
   readBlocks,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
@@ -70,6 +71,7 @@ export default function GildedFooter({ instance, sectionId }: SectionRenderProps
   const { collections } = useCollections();
   const themeSettings = useThemeSettings();
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const globals = themeSettings.global_settings ?? {};
 
@@ -87,11 +89,11 @@ export default function GildedFooter({ instance, sectionId }: SectionRenderProps
 
   const footerText =
     asString(s.footer_text) ||
-    localized(
+    (sample ? localized(
       locale,
       "The Gilded Curator — curated excellence and timeless precision since 2024.",
       "Gilded Curator — تميّز مختار ودقّة خالدة منذ 2024.",
-    );
+    ) : "");
 
   const showNewsletter = (s.show_newsletter as boolean) !== false;
   const newsletterTitle =

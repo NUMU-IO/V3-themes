@@ -7,6 +7,7 @@ import {
   localized,
   readBlockNodes,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 import { PaymentMark, useEnabledPaymentMarks } from "./_payment-marks";
@@ -42,6 +43,7 @@ interface FooterColumn {
 export default function ManshetFooter({ instance, sectionId }: SectionRenderProps) {
   const s = useResolvedSettings(instance);
   const locale = useLocale();
+  const sample = useSampleContent();
   const shop = useShop();
   const { collections } = useCollections();
   const themeSettings = useThemeSettings();
@@ -57,14 +59,14 @@ export default function ManshetFooter({ instance, sectionId }: SectionRenderProp
   const aboutText =
     asString(s.footer_about_text) ||
     asString(globals.footer_tagline) ||
-    t(
+    (sample ? t(
       "footer.brand_blurb",
       localized(
         locale,
         "Modest, refined, made to be lived in.",
         "موضة محتشمة وراقية — مصمَّمة تتلبس كل يوم.",
       ),
-    );
+    ) : "");
 
   const shopTitle =
     asString(s.shop_title) || t("footer.shop_title", localized(locale, "Shop", "تسوّق"));

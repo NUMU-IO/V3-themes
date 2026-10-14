@@ -20,7 +20,7 @@ import {
 } from "@numueg/theme-sdk";
 import { Check, Minus, Plus, ShoppingBag, Tag, Truck, RotateCcw, ShieldCheck, ArrowRight, X } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, asString, localized, productCurrency, productImage, type SectionRenderProps } from "./_shared";
+import { asNumber, asString, localized, productCurrency, productImage, type SectionRenderProps, useSampleContent } from "./_shared";
 import { bestCartNudge, pdpOfferLine, qtyBogoHint, useActivePromotions } from "./_promotions";
 import { InlineEditable } from "./_inline-editable";
 import { PricePair } from "./_price";
@@ -63,6 +63,7 @@ const GALLERY_ASPECT: Record<string, string> = {
 
 export default function ManshetProductDetail({ instance, sectionId }: SectionRenderProps) {
   const locale = useLocale();
+  const sample = useSampleContent();
   const { t } = useTranslation();
   const s = useResolvedSettings(instance);
 
@@ -83,7 +84,7 @@ export default function ManshetProductDetail({ instance, sectionId }: SectionRen
     { icon: Truck, key: "guarantee_1", label: asString(s.guarantee_1_label) || localized(locale, "Fast Shipping", "شحن سريع"), desc: asString(s.guarantee_1_desc) || localized(locale, "3-5 days", "٣-٥ أيام") },
     { icon: RotateCcw, key: "guarantee_2", label: asString(s.guarantee_2_label) || localized(locale, "Easy Returns", "إرجاع سهل"), desc: asString(s.guarantee_2_desc) || localized(locale, "14 days", "١٤ يوم") },
     { icon: ShieldCheck, key: "guarantee_3", label: asString(s.guarantee_3_label) || localized(locale, "Authentic", "أصلي"), desc: asString(s.guarantee_3_desc) || localized(locale, "100% Genuine", "أصلي ١٠٠٪") },
-  ];
+  ].filter((g) => sample || asString(s[`${g.key}_desc`]));
 
   const product = useProductOptional();
 
@@ -514,7 +515,7 @@ export default function ManshetProductDetail({ instance, sectionId }: SectionRen
             </div>
 
             {/* Trust guarantees */}
-            {showGuarantees && (
+            {showGuarantees && guarantees.length > 0 && (
               <div className="mt-8 pt-6 border-t border-[var(--vn-border)] flex flex-wrap items-center justify-between gap-4">
                 {guarantees.map((item) => (
                   <div key={item.key} className="flex items-center gap-2 text-[var(--vn-muted)]">

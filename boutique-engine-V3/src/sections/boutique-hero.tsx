@@ -1,21 +1,23 @@
 "use client";
-import { HeroMedia, Link, useLocale } from "@numueg/theme-sdk";
+import { HeroMedia, Link, useLocale, useShop } from "@numueg/theme-sdk";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps } from "./_shared";
+import { asImageAlt, asImageTransform, asImageUrl, asString, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 const BoutiqueHero = ({ instance }: SectionRenderProps) => {
   const s = instance.settings ?? {};
   const locale = useLocale();
+  const shop = useShop();
+  const sample = useSampleContent();
 
-  const headline = asString(s.headline) || localized(locale, "Discover Your Elegance", "اكتشفي أناقتك");
+  const headline = asString(s.headline) || (sample ? localized(locale, "Discover Your Elegance", "اكتشفي أناقتك") : shop?.name ?? "");
   const subtitle =
     asString(s.subtitle) ||
-    localized(
+    (sample ? localized(
       locale,
       "A curated edit of fashion and accessories — refined design and beautiful quality.",
       "تشكيلة مميزة من الأزياء والإكسسوارات بتصميم راقٍ وجودة عالية",
-    );
+    ) : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Shop Now", "تسوقي الآن");
   const ctaLink = asString(s.cta_link) || "/products";
   const heroImageUrl = asImageUrl(s.hero_image_url) || undefined;

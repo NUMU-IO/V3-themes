@@ -40,6 +40,7 @@ import ModernProfile from "./sections/modern-profile";
 import ModernHeader from "./sections/modern-header";
 import ModernFooter from "./sections/modern-footer";
 
+import { DemoContext } from "./sections/_shared";
 interface MountResult {
   cleanup: () => void;
   applyDraft: (next: ThemeSettingsV3) => void;
@@ -202,8 +203,10 @@ function pickTemplate(ctx: MountContext): string {
 // defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
 // (host-side renderToString for SSR) from a single render function, so the
 // server markup and the client hydration tree are identical by construction.
-const entry = defineThemeEntry(({ currentTemplate }) => (
-  <ThemeApp currentTemplate={currentTemplate} />
+const entry = defineThemeEntry(({ currentTemplate, demo }) => (
+  <DemoContext.Provider value={Boolean(demo)}>
+    <ThemeApp currentTemplate={currentTemplate} />
+  </DemoContext.Provider>
 ));
 
 export const mount = entry.mount;

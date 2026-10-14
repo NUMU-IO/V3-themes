@@ -41,6 +41,7 @@ import NbAbout from "./sections/nb-about";
 import NbContact from "./sections/nb-contact";
 import NbOrderConfirmationSection from "./sections/nb-order-confirmation-section";
 
+import { DemoContext } from "./sections/_shared";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const SECTION_REGISTRY: Record<string, ComponentType<any>> = {
   // Chrome. Aliased to the GENERIC "header"/"footer" types too, so chrome
@@ -215,8 +216,10 @@ function pickTemplate(ctx: MountContext): string {
 // defineThemeEntry yields BOTH `mount` (client mount/hydrate) and `createApp`
 // (host-side renderToString for SSR) from a single render function, so the
 // server markup and the client hydration tree are identical by construction.
-const entry = defineThemeEntry(({ currentTemplate }) => (
-  <ThemeApp currentTemplate={currentTemplate} />
+const entry = defineThemeEntry(({ currentTemplate, demo }) => (
+  <DemoContext.Provider value={Boolean(demo)}>
+    <ThemeApp currentTemplate={currentTemplate} />
+  </DemoContext.Provider>
 ));
 
 export const mount = entry.mount;

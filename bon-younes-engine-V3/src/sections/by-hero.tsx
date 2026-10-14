@@ -1,8 +1,8 @@
 "use client";
 
-import { Link, useLocale, useProducts, useResolvedSettings } from "@numueg/theme-sdk";
+import { Link, useLocale, useProducts, useResolvedSettings, useShop } from "@numueg/theme-sdk";
 import { ArrowUpRight } from "lucide-react";
-import { applyImageTransform, asImageTransform, asImageUrl, asString, demoOrPlaceholder, localized, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type ImageTransform, type SectionRenderProps } from "./_shared";
+import { applyImageTransform, asImageTransform, asImageUrl, asString, demoOrPlaceholder, localized, PLACEHOLDER_IMG, productHref, resolveBlocks, useBlockResolveContext, useDemo, type ImageTransform, type SectionRenderProps, useSampleContent } from "./_shared";
 import { InlineEditable } from "./_inline-editable";
 
 interface DrinkCard {
@@ -53,18 +53,20 @@ export default function ByHero({ instance, sectionId }: SectionRenderProps) {
   const { products } = useProducts();
   const blkCtx = useBlockResolveContext();
   const locale = useLocale();
+  const shop = useShop();
+  const sample = useSampleContent();
 
   const eyebrow = asString(s.eyebrow);
   const headline =
     asString(s.headline) ||
-    localized(locale, "Enjoy Your Coffee with Bon Younes", "اشرب قهوتك مع بون يونس");
+    (sample ? localized(locale, "Enjoy Your Coffee with Bon Younes", "اشرب قهوتك مع بون يونس") : shop?.name ?? "");
   const subtitle =
     asString(s.subtitle) ||
-    localized(
+    (sample ? localized(
       locale,
       "Discover the daily roast — beans pulled fresh, milk steamed slow, and every cup poured with care from our Mansoura roastery.",
       "اكتشف تحميصة اليوم — بُن طازة، لبن بيتبخّر على مهل، وكل فنجان بيتحضّر بحب من محمصتنا في المنصورة.",
-    );
+    ) : "");
   const ctaText = asString(s.cta_text) || localized(locale, "Explore product", "اكتشف المنتجات");
   const ctaLink = asString(s.cta_link) || "/products";
 

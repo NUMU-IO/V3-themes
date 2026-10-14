@@ -21,6 +21,7 @@ import { openCart } from "../lib/cartUI";
 import { useT } from "../lib/i18n";
 import FrequentlyBought from "./frequently_bought";
 
+import { useSampleContent } from "../lib/demo";
 interface PdpSettings {
   add_to_cart_label?: string;
   show_compare_price?: boolean;
@@ -38,6 +39,7 @@ interface PdpSettings {
 export default function ProductDetails({ id, settings }: EmpSectionProps) {
   const s = settings as PdpSettings;
   const t = useT();
+  const sample = useSampleContent();
   const product = useProductOptional();
   const { cart, addItem, updateNote } = useCart();
   const { formatMoney } = useLocalization();
@@ -440,6 +442,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
           </div>
 
           {/* Trust row */}
+          {sample && (
           <ul className="empire-pdp__trust">
             <li>
               <TruckIcon />
@@ -457,6 +460,7 @@ export default function ProductDetails({ id, settings }: EmpSectionProps) {
               <span className="empire-pdp__trust-sub">{t("100% guaranteed", "مضمون 100%")}</span>
             </li>
           </ul>
+          )}
 
           {/* Frequently bought — embedded in the buy column */}
           {s.show_fbt !== false ? (

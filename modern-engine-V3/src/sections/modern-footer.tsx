@@ -26,6 +26,7 @@ import {
   asString,
   localized,
   type SectionRenderProps,
+  useSampleContent,
 } from "./_shared";
 
 interface FooterLink {
@@ -109,6 +110,7 @@ export default function ModernFooter({
   const shop = useShop();
   const themeSettings = useThemeSettings();
   const locale = useLocale();
+  const sample = useSampleContent();
   const isAr = (locale || "").toLowerCase().startsWith("ar");
 
   const brandName = asString(s.brand_name) || shop?.name || "";
@@ -124,11 +126,11 @@ export default function ModernFooter({
     : asString(s.tagline) || asString(s.tagline_ar);
   const tagline =
     taglineSetting ||
-    localized(
+    (sample ? localized(
       locale,
       "A curated selection, delivered across Egypt. Honest quality, fair prices.",
       "تشكيلة مختارة بعناية بتوصيل لكل مصر. جودة صادقة وأسعار مناسبة.",
-    );
+    ) : "");
 
   const email = asString(s.contact_email);
   const phone = asString(s.contact_phone);

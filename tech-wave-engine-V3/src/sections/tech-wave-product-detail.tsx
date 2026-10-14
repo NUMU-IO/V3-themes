@@ -15,7 +15,7 @@ import {
 } from "@numueg/theme-sdk";
 import { Minus, Plus, ShoppingBag, Truck, RotateCcw, ShieldCheck, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { asNumber, localized, type SectionRenderProps } from "./_shared";
+import { asNumber, localized, type SectionRenderProps, useSampleContent } from "./_shared";
 
 /** Product + optional merchant-assigned label (first-class `label`, bilingual). */
 type ProductExtras = Product & {
@@ -36,6 +36,7 @@ type ProductExtras = Product & {
 export default function TechWaveProductDetail({ instance }: SectionRenderProps) {
   const s = instance.settings ?? {};
   const locale = useLocale();
+  const sample = useSampleContent();
 
   const showRating = s.show_rating ?? true;
   const showStock = s.show_stock ?? true;
@@ -200,7 +201,7 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
             </h1>
 
             {/* Rating (static — review data not exposed on the SDK product) */}
-            {showRating && (
+            {showRating && sample && (
               <div className="flex items-center gap-1 mb-4 text-[var(--vn-muted)]">
                 <span className="text-sm tw-star text-[hsl(var(--warning))]">★★★★★</span>
                 <span className="text-xs">{localized(locale, "(reviews)", "(تقييمات)")}</span>
@@ -364,7 +365,7 @@ export default function TechWaveProductDetail({ instance }: SectionRenderProps) 
             </div>
 
             {/* Trust guarantees */}
-            {showGuarantees && (
+            {showGuarantees && sample && (
               <div className="mt-8 pt-6 border-t border-[var(--vn-border)] flex flex-wrap items-center justify-between gap-4">
                 {[
                   { icon: Truck, label: localized(locale, "Fast Shipping", "شحن سريع"), desc: localized(locale, "3-5 days", "٣-٥ أيام") },
