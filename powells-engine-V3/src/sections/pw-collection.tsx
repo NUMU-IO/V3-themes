@@ -26,6 +26,7 @@ import {
   Link,
   useCollectionOptional,
   useListingHeading,
+  usePage,
   useProducts,
   useResolvedSettings,
 } from "@numueg/theme-sdk";
@@ -39,7 +40,7 @@ import {
   type SectionRenderProps,
 } from "../lib/shared";
 import { buildFacets, matchesFilters, type FacetSource } from "../lib/facets";
-import { useMoreProducts } from "../lib/more-products";
+import { useListingTotal, useMoreProducts } from "../lib/more-products";
 import { useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
 import { BookStack, IconChevron, Sprig, Twinkle } from "../lib/ornaments";
@@ -57,8 +58,19 @@ export default function PwCollection({ instance }: SectionRenderProps) {
   // collection the storefront rendered from cache.
   const pageSize = asNumber(s.max_products, 48);
   const { products: firstPage, loading } = useProducts({ limit: pageSize, fetchIfMissing: true });
-  const more = useMoreProducts(firstPage, pageSize);
+  // Search results are not a shelf: "Show more" and the shop total would both
+  // pull in books that did not match the query.
+  const isSearch = usePage()?.type === "search";
+  const more = useMoreProducts(firstPage, pageSize, collection?.id || undefined);
   const products = more.products;
+  // The real size of THIS shelf: the collection's own count, or the shop's
+  // total on the all-books page — never just how many books were loaded.
+  const total = useListingTotal(
+    asNumber(collection?.product_count, 0),
+    products.length,
+    pageSize,
+    !isSearch,
+  );
 
   const heading = useListingHeading({
     title: asString(s.heading),
@@ -124,6 +136,9 @@ export default function PwCollection({ instance }: SectionRenderProps) {
     });
 
   const activeCount = Object.values(selected).reduce((n, v) => n + v.length, 0);
+  // Filters only narrow the books already loaded, so with one on, the count is
+  // what the shopper sees; without, it is the whole shelf.
+  const shownCount = activeCount > 0 ? sorted.length : total;
   const railTitle = asString(s.rail_title) || t("collection.browse", "Browse");
   const railNote = asString(s.rail_note);
   const resultsNote = asString(s.results_note);
@@ -272,11 +287,11 @@ export default function PwCollection({ instance }: SectionRenderProps) {
           </span>
           {sorted.length > 0 && (
             <span className="pw-count">
-              {sorted.length === 1
+              {shownCount === 1
                 ? t("collection.count_one", "1 book")
                 : t("collection.count_many", "{{count}} books").replace(
                     "{{count}}",
-                    String(sorted.length),
+                    shownCount.toLocaleString("en"),
                   )}
             </span>
           )}
@@ -306,7 +321,7 @@ export default function PwCollection({ instance }: SectionRenderProps) {
                 />
               ))}
             </div>
-            {more.canLoadMore && (
+            {more.canLoadMore && !isSearch && (
               <div className="pw-more">
                 <button
                   type="button"
