@@ -19,6 +19,8 @@
   "collection.sort_title": "Title, A–Z",
   "collection.count_one": "1 book",
   "collection.count_many": "{{count}} books",
+  "collection.item_one": "1 item",
+  "collection.item_many": "{{count}} items",
   "collection.empty": "No books on this shelf yet.",
   "collection.empty_cta": "Browse everything",
   "collection.clear_filters": "Clear filters",

@@ -49,6 +49,32 @@
       "step": 12
     },
     {
+      "type": "select",
+      "id": "count_word",
+      "label": "Word after the count",
+      "label_ar": "الكلمة بعد العدد",
+      "default": "books",
+      "info": "What the count beside the sort says. A \"Count word\" block can set its own word for one collection.",
+      "info_ar": "الكلمة اللي بتظهر جنب العدد. بلوك \"كلمة العدد\" يقدر يحدد كلمة خاصة لتصنيف معيّن.",
+      "options": [
+        {
+          "value": "books",
+          "label": "Books (294 books)",
+          "label_ar": "كتب (294 كتاب)"
+        },
+        {
+          "value": "items",
+          "label": "Items (294 items)",
+          "label_ar": "منتجات (294 منتج)"
+        },
+        {
+          "value": "collection",
+          "label": "The collection's name (12 Bookmarks)",
+          "label_ar": "اسم التصنيف (12 Bookmarks)"
+        }
+      ]
+    },
+    {
       "type": "checkbox",
       "id": "show_wishlist",
       "label": "Show the wishlist heart",
@@ -134,6 +160,32 @@
           "info": "The option axis name, exactly as it appears on your products — Format, Condition, Size.",
           "info_ar": "اسم الاختيار زي ما هو على منتجاتك — Format أو Condition أو المقاس.",
           "visible_if": "{{ block.settings.source == 'option' }}"
+        }
+      ]
+    },
+    {
+      "type": "count_word",
+      "name": "Count word",
+      "name_ar": "كلمة العدد",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Pick a collection and the word its count should use — e.g. Bookmarks → \"tools\" shows \"12 tools\".",
+          "content_ar": "اختار تصنيف والكلمة اللي العدد يستخدمها — مثلاً Bookmarks ← \"أدوات\" هيظهر \"12 أدوات\"."
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection",
+          "label_ar": "التصنيف",
+          "default": ""
+        },
+        {
+          "type": "text",
+          "id": "word",
+          "label": "Word",
+          "label_ar": "الكلمة",
+          "default": "items"
         }
       ]
     }
