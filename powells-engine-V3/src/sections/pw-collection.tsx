@@ -41,7 +41,7 @@ import {
 } from "../lib/shared";
 import { buildFacets, matchesFilters, type FacetSource } from "../lib/facets";
 import { useListingTotal, useMoreProducts } from "../lib/more-products";
-import { useT } from "../lib/i18n";
+import { fill, useT } from "../lib/i18n";
 import { ProductCard } from "../lib/product-card";
 import { BookStack, IconChevron, Sprig, Twinkle } from "../lib/ornaments";
 
@@ -139,6 +139,36 @@ export default function PwCollection({ instance }: SectionRenderProps) {
   // Filters only narrow the books already loaded, so with one on, the count is
   // what the shopper sees; without, it is the whole shelf.
   const shownCount = activeCount > 0 ? sorted.length : total;
+
+  // The word after the count follows the collection: a "Count word" block for
+  // this collection wins, then the section's choice (books, items, or the
+  // collection's own name). A shop that also sells bookmarks or tools would
+  // otherwise call every one of them a book.
+  const countWords = useMemo(
+    () =>
+      readBlockNodes(instance, "count_word").map((block) => ({
+        collectionId: asString(block.settings.collection),
+        word: asString(block.settings.word).trim(),
+      })),
+    [instance],
+  );
+  const countText = (() => {
+    const n = shownCount.toLocaleString("en");
+    const own = collection
+      ? countWords.find((c) => c.word && c.collectionId === String(collection.id))?.word
+      : undefined;
+    if (own) return `${n} ${own}`;
+    const mode = asString(s.count_word) || "books";
+    if (mode === "collection" && collection?.name) return `${n} ${collection.name}`;
+    if (mode === "items") {
+      return shownCount === 1
+        ? t("collection.item_one", "1 item")
+        : fill(t("collection.item_many", "{{count}} items"), { count: n });
+    }
+    return shownCount === 1
+      ? t("collection.count_one", "1 book")
+      : fill(t("collection.count_many", "{{count}} books"), { count: n });
+  })();
   const railTitle = asString(s.rail_title) || t("collection.browse", "Browse");
   const railNote = asString(s.rail_note);
   const resultsNote = asString(s.results_note);
@@ -286,14 +316,7 @@ export default function PwCollection({ instance }: SectionRenderProps) {
             <IconChevron />
           </span>
           {sorted.length > 0 && (
-            <span className="pw-count">
-              {shownCount === 1
-                ? t("collection.count_one", "1 book")
-                : t("collection.count_many", "{{count}} books").replace(
-                    "{{count}}",
-                    shownCount.toLocaleString("en"),
-                  )}
-            </span>
+            <span className="pw-count">{countText}</span>
           )}
         </div>
 

@@ -19,6 +19,8 @@
   "collection.sort_title": "العنوان أبجديًا",
   "collection.count_one": "كتاب واحد",
   "collection.count_many": "{{count}} كتاب",
+  "collection.item_one": "منتج واحد",
+  "collection.item_many": "{{count}} منتج",
   "collection.empty": "الرف ده لسه فاضي.",
   "collection.empty_cta": "تصفح كل الكتب",
   "collection.clear_filters": "مسح الفلاتر",
