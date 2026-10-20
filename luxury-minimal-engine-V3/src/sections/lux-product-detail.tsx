@@ -57,7 +57,6 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
   const s = useResolvedSettings(instance);
   const locale = useLocale();
 
-  const showRating = asBool(s.show_rating, false);
   const showStock = asBool(s.show_stock, false);
   const showGuarantees = asBool(s.show_guarantees, true);
   const showRelated = asBool(s.show_related_products, true);
@@ -229,14 +228,6 @@ export default function LuxProductDetail({ instance, sectionId }: SectionRenderP
             >
               {product.name}
             </h1>
-
-            {/* Rating (static) */}
-            {showRating && (
-              <div className="flex items-center gap-1 mb-4 text-muted-foreground">
-                <span className="text-sm">★★★★★</span>
-                <span className="text-xs">{localized(locale, "(reviews)", "(التقييمات)")}</span>
-              </div>
-            )}
 
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-5">
